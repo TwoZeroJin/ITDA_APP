@@ -1,9 +1,13 @@
 import queryClient from '@/api/queryClient';
+import useNotificationObserver from '@/hooks/useNotificationObserver';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import * as Notifications from "expo-notifications";
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
 import 'react-native-reanimated';
+import Toast from 'react-native-toast-message';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -49,7 +53,7 @@ useEffect(() => {
 
 function RootNavigator() {
   // const { auth } = useAuth();
-  // useNotificationObserver();
+  useNotificationObserver();
   
   // useEffect(() => {
   //   auth.id && Toast.show({

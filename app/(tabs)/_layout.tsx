@@ -6,6 +6,9 @@ import { Platform } from 'react-native';
 export default function TabLayout() {
 
   return (
+    // <Tabs 추후 커스텀으로 작업
+    //   tabBar={(props) => <CustomTabBar {...props}/>}>
+    // </Tabs>
     <Tabs
       screenOptions={{
         headerShown: false,
@@ -20,15 +23,31 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          //tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+            title: '메인',
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="review"
         options={{
-          title: 'Explore',
-          //tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+            title: '게시판',
+        }}
+      />
+      <Tabs.Screen
+        name="meet"
+        options={{
+            title: '소모임 만들기',
+        }}
+      />
+      <Tabs.Screen
+        name="chat"
+        options={{
+            title: '채팅',
+        }}
+      />
+      <Tabs.Screen
+        name="my"
+        options={{
+            title: '마이페이지',
         }}
       />
     </Tabs>
