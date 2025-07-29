@@ -41,7 +41,26 @@ interface FileInfo {
  * 소모임 정보
  */
 interface MeetInfo {
-
+  meet_id       : number;
+  meet_name     : string;
+  meet_type     : string;
+  meet_subj     : string;
+  meet_datetime : string;
+  meet_desc     : string;
+  meet_min      : number;
+  meet_max      : number;
+  meet_question : string;
+  age_min       : number;
+  age_max       : number;
+  gender_ratio  : number;
+  apply_type    : string;
+  fee_yn        : string;
+  fee_info      : string;
+  fee_entry     : number;
+  place_type    : string;
+  place_addr    : string;
+  mem_id        : number;
+  group_id      : number;
 }
 
 /**
