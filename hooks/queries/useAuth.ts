@@ -103,9 +103,12 @@ function useAuth() {
     }
 
     return { loginMutation, signupMutation, autoLoginMutation, logout, auth: {
-        // id: data?.id || "",
-        // nickname: data?.nickname || "",
-        // imageUri: data?.imageUri || "",
+        mem_id      : 0,
+        mem_name    : "공영진",
+        mem_nick    : "외치는자의 소리",
+        // mem_id      : data?.mem_id || "",
+        // mem_name    : data?.mem_name || "",
+        // mem_nick    : data?.mem_nick || "",
         // introduce: data?.introduce || "",
         // hatId: data?.hatId || '',
         // faceId: data?.faceId || '',

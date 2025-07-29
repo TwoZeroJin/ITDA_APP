@@ -1,5 +1,5 @@
 import useAuth from '@/hooks/queries/useAuth';
-import { useFocusEffect } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import React, { ReactNode } from 'react';
 
 interface AuthRouteProps {
@@ -10,7 +10,7 @@ function AuthRoute({children}: AuthRouteProps) {
     const { auth } = useAuth();
 
     useFocusEffect(() => {
-        // !auth.id && router.replace("/auth");
+        !auth.mem_id && router.replace("/user");
     });
 
     return (

@@ -1,9 +1,8 @@
 import queryClient from '@/api/queryClient';
-import useNotificationObserver from '@/hooks/useNotificationObserver';
+import AuthRoute from '@/components/AuthRoute';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import * as Notifications from "expo-notifications";
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -11,19 +10,19 @@ import Toast from 'react-native-toast-message';
 
 SplashScreen.preventAutoHideAsync();
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    // shouldPlaySound: true,
-    // shouldSetBadge: true,
-    // shouldShowAlert: true,
-    // shouldShowBanner: true,
-    // shouldShowList: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
+// Notifications.setNotificationHandler({
+//   handleNotification: async () => ({
+//     // shouldPlaySound: true,
+//     // shouldSetBadge: true,
+//     // shouldShowAlert: true,
+//     // shouldShowBanner: true,
+//     // shouldShowList: true,
+//     shouldPlaySound: false,
+//     shouldSetBadge: false,
+//     shouldShowBanner: true,
+//     shouldShowList: true,
+//   }),
+// });
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -41,11 +40,12 @@ useEffect(() => {
   }
   
   return (
-    
     <ActionSheetProvider>
       <QueryClientProvider client={queryClient}>
-        <RootNavigator />
-        <Toast />
+        <AuthRoute>
+          <RootNavigator />
+          <Toast />
+        </AuthRoute>
       </QueryClientProvider>
     </ActionSheetProvider>
   );
@@ -53,7 +53,7 @@ useEffect(() => {
 
 function RootNavigator() {
   // const { auth } = useAuth();
-  useNotificationObserver();
+  // useNotificationObserver();
   
   // useEffect(() => {
   //   auth.id && Toast.show({
@@ -66,6 +66,7 @@ function RootNavigator() {
   return (
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="user"   options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" />
     </Stack>
   );
