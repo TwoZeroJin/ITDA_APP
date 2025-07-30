@@ -8,22 +8,30 @@ interface CommBottomButtonProps {
     onPress: () => void;
 }
 
-function CommBottomButton({label, onPress }: CommBottomButtonProps) {
+function CommBottomButton({ label, onPress }: CommBottomButtonProps) {
     const inset = useSafeAreaInsets();
   return (
         <View style={[styles.fixed, {paddingBottom: inset.bottom || 12}]}>
-            <CustomButton label={label} onPress={onPress}/>
+            <CustomButton 
+                label={label} 
+                variant="filled"
+                style={styles.bottomStyle}
+                onPress={onPress}/>
         </View>
   )
 }
 
 const styles = StyleSheet.create({
     fixed: {
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
-        paddingTop: 12,
-        paddingHorizontal: 16
+        position            : "absolute",
+        bottom              : 0,
+        width               : "100%",
+        paddingTop          : 12,
+        paddingHorizontal   : 10
+    },
+    bottomStyle: {
+        height          : 52,
+        borderRadius    : 12,
     }
 });
 

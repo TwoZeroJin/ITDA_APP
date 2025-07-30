@@ -3,10 +3,10 @@ import React, { ForwardedRef, forwardRef, ReactNode } from 'react';
 import { StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
 
 interface InputFieldProps extends TextInputProps {
-    label?: string;
-    variant? : "filled" | "standard" | "outlined";
-    error? : string;
-    rightChild?: ReactNode;
+    label?      : string;
+    variant?    : "filled" | "standard" | "outlined";
+    error?      : string;
+    rightChild? : ReactNode;
 }
 
 const InputField = ({label, variant = "filled", error, rightChild = null, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
@@ -35,19 +35,19 @@ const InputField = ({label, variant = "filled", error, rightChild = null, ...pro
 
 const styles = StyleSheet.create({
     label: {
-        fontSize: 18,
-        fontWeight: 400,
-        lineHeight: 22,
-        color : COLOR.COMM_BLACK,
-        marginBottom : 7,
+        fontSize        : 18,
+        fontWeight      : 400,
+        lineHeight      : 22,
+        color           : COLOR.COMM_BLACK,
+        marginBottom    : 7,
     },
     container: {
-        height: 49,
-        borderRadius: 12,
-        padding: 10,
-        justifyContent : "center",
-        alignItems: "center",
-        flexDirection: "row"
+        justifyContent  : "center",
+        alignItems      : "center",
+        flexDirection   : "row",
+        height          : 49,
+        borderRadius    : 12,
+        padding         : 10,
     },
     filled: {
         backgroundColor: COLOR.COMM_GRAY
@@ -68,22 +68,22 @@ const styles = StyleSheet.create({
         color:COLOR.COMM_BLACK,
     },
     input: {
-        fontSize: 16,
-        padding: 0,
-        flex: 1
+        flex        : 1,
+        fontSize    : 16,
+        padding     : 0,
     },
     error: {
-        fontSize: 12,
-        marginTop: 5,
-        color: COLOR.COMM_RED
+        marginTop   : 5,
+        fontSize    : 12,
+        color       : COLOR.COMM_RED,
     },
     inputError: {
         backgroundColor: COLOR.COMM_RED
     },
     multiline: {
-        alignItems: "flex-start",
-        paddingVertical: 10,
-        height: 200
+        alignItems      : "flex-start",
+        paddingVertical : 10,
+        height          : 200
     }
 });
 

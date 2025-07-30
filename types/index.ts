@@ -9,20 +9,20 @@ interface User {
 /**
  * 회원 정보
  */
-interface MemberInfo {
+interface MemberInfo extends User {
   mem_id        : number;
   mem_name      : string;
-  mem_nick      : string;
+  mem_nick?     : string;
   mem_gender    : string;
   mem_team      : string;
   mem_birth     : string;
   mem_telno     : string;
-  mem_addr      : string;
-  mem_interest  : string;
+  mem_addr?     : string;
+  mem_interest? : string;
   church_name   : string;
   push_send_yn  : string;
-  push_token    : string;
-  mem_image     : string;
+  push_token?   : string;
+  mem_image?    : string;
 }
 
 /**

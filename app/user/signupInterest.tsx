@@ -12,7 +12,7 @@ type FormValues = {
     passwordConfirm: string;
 }
 
-export default function SignupScreen() {
+export default function SignupInterestScreen() {
     const { signupMutation } = useAuth();
     const signupForm = useForm<FormValues>({
         defaultValues: {

@@ -2,29 +2,28 @@ import InputField from "@/components/InputField";
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-function IdInput() {
+function NameInput() {
     const {control, setFocus} = useFormContext();
   return (
     <Controller
-        name='login_id'
+        name='mem_name'
         control={control}
         rules={{
           validate: (data: string) => {
             if (data.length === 0) {
-              return '아이디를 입력해주세요.';
+              return '이름을 입력해주세요.';
             }
           }
         }}
         render={({field: {onChange, value}, fieldState: {error}}) => (
             <InputField
-                autoFocus
-                label="아이디" 
-                placeholder="아이디를 입력하세요."
+                label="이름" 
+                placeholder="이름를 입력하세요."
                 inputMode='text'
                 autoCapitalize='none'
                 returnKeyType='next'
                 submitBehavior='submit'
-                onSubmitEditing={() => setFocus("login_pwd")}
+                // onSubmitEditing={() => setFocus("login_pwd")}
                 value={value}
                 onChangeText={onChange}
                 error={error?.message}
@@ -34,4 +33,4 @@ function IdInput() {
   )
 }
 
-export default IdInput;
+export default NameInput;

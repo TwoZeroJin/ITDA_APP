@@ -1,60 +1,58 @@
 import Logo from '@/assets/images/logo.svg';
 import CustomButton from '@/components/CustomButton';
-import IdInput from "@/components/IdInput";
-import PasswordInput from "@/components/PasswordInput";
+import IdInput from "@/components/inputs/IdInput";
+import PasswordInput from "@/components/inputs/PasswordInput";
 import { COLOR } from "@/constants";
 import useAuth from "@/hooks/queries/useAuth";
+import { User } from '@/types';
 import { router } from 'expo-router';
 import { FormProvider, useForm } from "react-hook-form";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-
-type FormValues = {
-    email: string;
-    password: string;
-}
+import { Keyboard, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 
 export default function LoginScreen() {
     const {loginMutation} = useAuth();
-    const loginForm = useForm<FormValues>({
+    const loginForm = useForm<User>({
         defaultValues: {
-            email: "",
-            password: "",
+            login_id    : "",
+            login_pwd   : "",
         }
     });
     //const {expoPushToken} = usePushNotification();
 
-    const onSubmit = (formValues: FormValues) => {
+    const onSubmit = (formValues: User) => {
         // loginMutation.mutate({...formValues, expoPushToken});
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.imageContainer}>
-                <Logo width={97} height={80.6}/>
-            </View>
-            <FormProvider {...loginForm}>
-                <View style={styles.inputContainer}>
-                    <IdInput />
-                    <PasswordInput />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.imageContainer}>
+                    <Logo width={97} height={80.6}/>
                 </View>
-                <View style={styles.buttonContainer}>
-                    <CustomButton label="로그인" onPress={loginForm.handleSubmit(onSubmit)}/>
-                    <CustomButton label="회원가입" onPress={() => router.push('/user/signup')}/>
-                </View>
-                <View style={styles.findUserContainer}>
-                    <Text style={styles.findIdText}>계정 정보를 잊으셨나요?</Text>
-                </View>
-                <View style={styles.snsLoginTextContainer}>
-                    <View style={styles.line}/>
-                    <Text style={styles.snsLoginText}>간편 로그인</Text>
-                    <View style={styles.line}/>
-                </View>
-                <View style={styles.snsLoginBtnContainer}>
-                    <CustomButton label="카카오톡으로 시작하기" onPress={() => {}}/>
-                    <CustomButton label="애플로 시작하기" onPress={() => {}}/>
-                </View>
-            </FormProvider>
-        </SafeAreaView>
+                <FormProvider {...loginForm}>
+                    <View style={styles.inputContainer}>
+                        <IdInput />
+                        <PasswordInput />
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <CustomButton label="로그인" onPress={loginForm.handleSubmit(onSubmit)}/>
+                        <CustomButton label="회원가입" onPress={() => router.push('/user/signupTerm')}/>
+                    </View>
+                    <View style={styles.findUserContainer}>
+                        <Text style={styles.findIdText}>계정 정보를 잊으셨나요?</Text>
+                    </View>
+                    <View style={styles.snsLoginTextContainer}>
+                        <View style={styles.line}/>
+                        <Text style={styles.snsLoginText}>간편 로그인</Text>
+                        <View style={styles.line}/>
+                    </View>
+                    <View style={styles.snsLoginBtnContainer}>
+                        <CustomButton label="카카오톡으로 시작하기" onPress={() => {}}/>
+                        <CustomButton label="애플로 시작하기" onPress={() => {}}/>
+                    </View>
+                </FormProvider>
+            </SafeAreaView>
+        </TouchableWithoutFeedback>
     )
 }
 
