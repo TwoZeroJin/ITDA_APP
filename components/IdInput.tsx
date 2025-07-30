@@ -2,7 +2,7 @@ import InputField from "@/components/InputField";
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-function EmailInput() {
+function IdInput() {
     const {control, setFocus} = useFormContext();
   return (
     <Controller
@@ -11,15 +11,15 @@ function EmailInput() {
         rules={{
           validate: (data: string) => {
             if (data.length === 0) {
-              return 'ID를 입력해주세요.';
+              return '아이디를 입력해주세요.';
             }
           }
         }}
         render={({field: {onChange, value}, fieldState: {error}}) => (
             <InputField
                 autoFocus
-                label="로그인 ID" 
-                placeholder="로그인 ID를 입력하세요."
+                label="아이디" 
+                placeholder="아이디를 입력하세요."
                 inputMode='text'
                 autoCapitalize='none'
                 returnKeyType='next'
@@ -34,4 +34,4 @@ function EmailInput() {
   )
 }
 
-export default EmailInput;
+export default IdInput;

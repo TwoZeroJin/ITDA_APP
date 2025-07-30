@@ -19,7 +19,13 @@ const InputField = ({label, variant = "filled", error, rightChild = null, ...pro
                 , Boolean(error) && styles.inputError
                 , props.multiline && styles.multiline
             ]}>
-            <TextInput ref={ref} placeholderTextColor={COLOR.COMM_GRAY} style={[styles.input, styles[`${variant}Text`]]} {...props} spellCheck={false} autoCorrect={false} />
+            <TextInput 
+                ref={ref} 
+                placeholderTextColor={COLOR.COMM_GRAY} 
+                style={[styles.input, styles[`${variant}Text`]]} 
+                {...props} 
+                spellCheck={false} 
+                autoCorrect={false} />
             {rightChild}
         </View>
         {Boolean(error) && <Text style={styles.error}>{error}</Text>}
@@ -29,13 +35,15 @@ const InputField = ({label, variant = "filled", error, rightChild = null, ...pro
 
 const styles = StyleSheet.create({
     label: {
-        fontSize: 12,
-        color : COLOR.COMM_GRAY,
-        marginBottom : 5,
+        fontSize: 18,
+        fontWeight: 400,
+        lineHeight: 22,
+        color : COLOR.COMM_BLACK,
+        marginBottom : 7,
     },
     container: {
-        height: 44,
-        borderRadius: 8,
+        height: 49,
+        borderRadius: 12,
         padding: 10,
         justifyContent : "center",
         alignItems: "center",
@@ -45,22 +53,19 @@ const styles = StyleSheet.create({
         backgroundColor: COLOR.COMM_GRAY
     },
     standard: {
-        borderWidth:1,
         borderColor:COLOR.COMM_GRAY
     },
     outlined: {
-        borderWidth:1,
         borderColor:COLOR.COMM_GRAY
     },
     filledText: {
-        color: COLOR.COMM_GRAY
+        color: COLOR.COMM_BLACK
     },
     standardText: {
-        color: COLOR.COMM_GRAY
+        color: COLOR.COMM_BLACK
     },
     outlinedText: {
-        color:COLOR.APP_MAIN,
-        fontWeight: "bold"
+        color:COLOR.COMM_BLACK,
     },
     input: {
         fontSize: 16,

@@ -1,5 +1,4 @@
 import CustomButton from "@/components/CustomButton";
-import { COLOR } from '@/constants';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -23,8 +22,6 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 0,
         width: "100%",
-        borderTopWidth: StyleSheet.hairlineWidth,
-        borderTopColor: COLOR.COMM_GRAY,
         paddingTop: 12,
         paddingHorizontal: 16
     }

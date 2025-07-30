@@ -5,14 +5,14 @@ import { Pressable, PressableProps, StyleProp, StyleSheet, Text, ViewStyle } fro
 interface CustomButtonProps extends PressableProps {
     label: string;
     size?: "medium" | "large";
-    variant? : "filled" | "standard" | "outlined";
+    variant? : "standard" | "filled" | "outlined";
     style?: StyleProp<ViewStyle>
 }
 
 function CustomButton({
     label, 
     size = "large",
-    variant = "filled",
+    variant = "standard",
     style = null,
     ...props
 } : CustomButtonProps) {
@@ -35,48 +35,52 @@ function CustomButton({
 
 const styles = StyleSheet.create({
     container: {
-        borderRadius: 8,
-        justifyContent: "center",
-        alignItems : "center"
+        borderRadius    : 20,
+        justifyContent  : "center",
+        alignItems      : "center"
     }, 
     large : {
-        width: "100%",
-        height : 44
+        width   : "100%",
+        height  : 45
     },
     medium : {
-        height: 38,
-        alignSelf: 'center',
-        paddingHorizontal: 12
+        height              : 38,
+        alignSelf           : 'center',
+        paddingHorizontal   : 12
     },
     filled: {
-        backgroundColor: COLOR.APP_MAIN,
+        backgroundColor : COLOR.APP_MAIN,
     },
-    standard: {},
+    standard: {
+        backgroundColor : COLOR.COMM_WHITE,
+        borderWidth     : 1,
+        borderColor     : COLOR.BTN_BORDER
+    },
     outlined: {
-        backgroundColor: COLOR.COMM_WHITE,
-        borderWidth: 1,
-        borderColor: COLOR.APP_MAIN
+        backgroundColor : COLOR.COMM_WHITE,
+        borderWidth     : 1,
+        borderColor     : COLOR.APP_MAIN
     },
     pressed: {
-        opacity : 0.8
+        opacity : 0.6,
     },
     disabled: {
-        backgroundColor: COLOR.TEXT_GRAY
+        backgroundColor : COLOR.TEXT_GRAY
     },
     filledText: {
-        fontSize : 14,
-        fontWeight : "bold",
-        color: COLOR.COMM_WHITE
+        fontSize    : 18,
+        fontWeight  : "normal",
+        color       : COLOR.COMM_WHITE
     },
     standardText: {
-        fontSize: 14,
-        fontWeight: "bold",
-        color: COLOR.APP_MAIN
+        fontSize    : 18,
+        fontWeight  : "normal",
+        color       : COLOR.TEXT_DEFAULT
     },
     outlinedText: {
-        fontSize: 14,
-        fontWeight: "bold",
-        color: COLOR.APP_MAIN
+        fontSize    : 18,
+        fontWeight  : "bold",
+        color       : COLOR.APP_MAIN
     },
 });
 

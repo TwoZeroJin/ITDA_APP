@@ -1,9 +1,12 @@
-import CommBottomButton from "@/components/CommBottomButton";
-// import EmailInput from "@/components/EmailInput";
-// import PasswordInput from "@/components/PasswordInput";
+import Logo from '@/assets/images/logo.svg';
+import CustomButton from '@/components/CustomButton';
+import IdInput from "@/components/IdInput";
+import PasswordInput from "@/components/PasswordInput";
+import { COLOR } from "@/constants";
 import useAuth from "@/hooks/queries/useAuth";
+import { router } from 'expo-router';
 import { FormProvider, useForm } from "react-hook-form";
-import { Image, SafeAreaView, StyleSheet, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 
 type FormValues = {
     email: string;
@@ -27,47 +30,78 @@ export default function LoginScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.imageContainer}>
-                <Image source={require('@/assets/images/icon.png')} style={styles.logo}/>
+                <Logo width={97} height={80.6}/>
             </View>
             <FormProvider {...loginForm}>
-                <View style={styles.container}>
-                    {/* <EmailInput
-                    />
-                    <PasswordInput
-                    /> */}
+                <View style={styles.inputContainer}>
+                    <IdInput />
+                    <PasswordInput />
                 </View>
-                <CommBottomButton label="로그인" onPress={loginForm.handleSubmit(onSubmit)}/>
+                <View style={styles.buttonContainer}>
+                    <CustomButton label="로그인" onPress={loginForm.handleSubmit(onSubmit)}/>
+                    <CustomButton label="회원가입" onPress={() => router.push('/user/signup')}/>
+                </View>
+                <View style={styles.findUserContainer}>
+                    <Text style={styles.findIdText}>계정 정보를 잊으셨나요?</Text>
+                </View>
+                <View style={styles.snsLoginTextContainer}>
+                    <View style={styles.line}/>
+                    <Text style={styles.snsLoginText}>간편 로그인</Text>
+                    <View style={styles.line}/>
+                </View>
+                <View style={styles.snsLoginBtnContainer}>
+                    <CustomButton label="카카오톡으로 시작하기" onPress={() => {}}/>
+                    <CustomButton label="애플로 시작하기" onPress={() => {}}/>
+                </View>
             </FormProvider>
-            <View style={styles.buttonContainer}>
-                {/* <CustomButton label="이메일 로그인" onPress={() => router.push('/auth/login')}/>
-                <Link href={"/auth/signup"} style={styles.signUpText}>이메일로 가입하기</Link> */}
-            </View>
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        margin: 16,
-        gap: 16
-    },
-    logo: {
-        width: 112,
-        height: 112
+        flex                : 1,
+        marginHorizontal    : 25,
     },
     imageContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        flex: 2
+        justifyContent  : "center",
+        alignItems      : "center",
+        marginTop       : 50,
+        marginBottom    : 30
     },
-    signUpText: {
-         textAlign: "center",
-         textDecorationLine: "underline",
-         marginTop: 20,
+    inputContainer: {
+        gap             : 20,
+        marginBottom    : 50
     },
     buttonContainer: {
-        paddingHorizontal: 32,
-        flex: 1
+        gap             : 10,
+        marginBottom    : 16
+    },
+    findUserContainer: {
+        alignItems      : "center",
+        marginBottom    : 40
+    },
+    findIdText: {
+        fontSize    : 14,
+        color       : COLOR.TEXT_GRAY
+    },
+    line: {
+        height          : 1,
+        flex            : 2,
+        backgroundColor : COLOR.BTN_BORDER
+    },
+    snsLoginTextContainer: {
+        flexDirection   : "row",
+        alignItems      : "center",
+        marginBottom    : 5
+    },
+    snsLoginText: {
+        fontSize            : 12,
+        fontWeight          : 500,
+        lineHeight          : 30,
+        marginHorizontal    : 12
+    },
+    snsLoginBtnContainer: {
+        gap : 10
     }
 })
