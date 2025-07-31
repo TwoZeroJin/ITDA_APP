@@ -1,7 +1,7 @@
-import { MemberInfo, User } from '@/types';
+import { MemberInfo, SignupInfo, User } from '@/types';
 import axiosInstance from './axios';
 
-async function userSignup(body: User): Promise<void> {
+async function userSignup(body: SignupInfo): Promise<void> {
     const {data} = await axiosInstance.post('/user/signup', body);
 
     return data;

@@ -6,11 +6,7 @@ interface User {
   login_pwd : string;
 }
 
-/**
- * 회원 정보
- */
-interface MemberInfo extends User {
-  mem_id        : number;
+interface SignupInfo extends User {
   mem_name      : string;
   mem_nick?     : string;
   mem_gender    : string;
@@ -19,6 +15,13 @@ interface MemberInfo extends User {
   mem_telno     : string;
   mem_addr?     : string;
   mem_interest? : string;
+}
+
+/**
+ * 회원 정보
+ */
+interface MemberInfo extends SignupInfo {
+  mem_id        : number;
   church_name   : string;
   push_send_yn  : string;
   push_token?   : string;
@@ -105,4 +108,5 @@ interface FeedBackData {
 
 }
 
-export type { BoardData, FeedBackData, FileInfo, GroupInfo, GroupMember, MeetApply, MeetInfo, MeetReview, MemberInfo, User };
+export type { BoardData, FeedBackData, FileInfo, GroupInfo, GroupMember, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, User };
+

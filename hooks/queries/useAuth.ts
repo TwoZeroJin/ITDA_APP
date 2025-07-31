@@ -1,7 +1,7 @@
 import queryClient from '@/api/queryClient';
 import { userAutoLogin, userLogin, userSignup } from '@/api/user';
-import { removeHeader, setHeader } from '@/utils/header';
-import { deleteSecureStore, saveSecureStore } from '@/utils/secureStore';
+import { removeHeader, setHeader } from '@/utils/headerUtil';
+import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { router } from 'expo-router';

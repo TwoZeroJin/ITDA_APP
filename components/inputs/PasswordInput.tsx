@@ -14,11 +14,11 @@ function PasswordInput({submitBehavior = 'blurAndSubmit', returnKeyType = 'defau
         name='login_pwd'
         control={control}
         rules={{
-          validate: (data: string) => {
-            if (data.length < 8) {
-              return '비밀번호는 8자 이상 입력해주세요.';
-            }
-          }
+          // validate: (data: string) => {
+          //   if (data.length < 8) {
+          //     return '비밀번호는 8자 이상 입력해주세요.';
+          //   }
+          // }
         }}
         render={({field: { ref, onChange, value}, fieldState: { error } }) => (
             <InputField

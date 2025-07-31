@@ -4,14 +4,14 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 function PasswordConfirmInput() {
     const {control} = useFormContext();
-    const password = useWatch({control, name: "password"});
+    const login_pwd = useWatch({control, name: "login_pwd"});
   return (
     <Controller
         name='passwordConfirm'
         control={control}
         rules={{
           validate: (data: string) => {
-            if (data !== password ) {
+            if (data !== login_pwd ) {
               return '동일한 비밀번호를 입력해주세요.';
             }
           }
