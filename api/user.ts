@@ -7,7 +7,8 @@ async function userSignup(body: SignupInfo): Promise<void> {
     return data;
 }
 
-async function userLogin(body: User & {expoPushToken?: string}): Promise<{accessToken: string}> {
+// async function userLogin(body: User & {expoPushToken?: string}): Promise<{accessToken: string}> {
+async function userLogin(body: User): Promise<MemberInfo> {
     const {data} = await axiosInstance.post('/user/login', body);
 
     return data;

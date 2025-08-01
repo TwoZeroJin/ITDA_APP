@@ -15,13 +15,22 @@ export default function LoginScreen() {
         defaultValues: {
             login_id    : "",
             login_pwd   : "",
+            login_type  : "D", // 테스트 값
         }
     });
     //const {expoPushToken} = usePushNotification();
 
     const onSubmit = (formValues: User) => {
-        // loginMutation.mutate({...formValues, expoPushToken});
+        loginMutation.mutate({...formValues});
     }
+
+    // 기본 로그인, ID / PASSWORD 입력
+    const defaultLogin = (formValues: User) => {
+        loginForm.setValue('login_type', "D");
+        onSubmit(formValues);
+    }
+
+    // 카카오 / 구글 / 애플 등 추후에 추가 작업 필요
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -35,7 +44,7 @@ export default function LoginScreen() {
                         <PasswordInput />
                     </View>
                     <View style={styles.buttonContainer}>
-                        <CustomButton label="로그인" onPress={loginForm.handleSubmit(onSubmit)}/>
+                        <CustomButton label="로그인" onPress={loginForm.handleSubmit(defaultLogin)}/>
                         <CustomButton label="회원가입" onPress={() => router.push('/user/signupTerm')}/>
                     </View>
                     <View style={styles.findUserContainer}>

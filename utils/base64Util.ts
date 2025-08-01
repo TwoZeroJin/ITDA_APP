@@ -1,3 +1,4 @@
+import { getOsId } from '@/utils/commUtil';
 import base64 from 'react-native-base64';
 
 function getClientId(appVersion?: string) {
@@ -5,7 +6,7 @@ function getClientId(appVersion?: string) {
         appVersion = '1.0.0';
     }
     const jsonObject = {
-        os_id: 'AOS',
+        os_id: getOsId(),
         app_ver: appVersion,
     };
 

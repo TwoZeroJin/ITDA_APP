@@ -13,22 +13,15 @@ export default function SignupInfoScreen() {
     const { signupMutation } = useAuth();
     const signupForm = useForm<SignupInfo>({
         defaultValues: {
-            login_id: "",
-            login_pwd: "",
-            mem_name: "",
-            mem_nick: "",
-            mem_team: "",
-            mem_birth: "",
-            mem_gender: "",
-            mem_interest: "",
-            mem_telno: "",
-            mem_addr: "",
+            // 두개는 테스트 값
+            login_type : "D",
+            mem_gender : "M",
         }
     })
 
     const onSubmit = (formValues: SignupInfo) => {
-        const { login_id, login_pwd, mem_name, mem_nick, mem_team, mem_birth, mem_addr, mem_interest, mem_gender, mem_telno } = formValues;
-        signupMutation.mutate({ login_id, login_pwd, mem_name, mem_nick, mem_team, mem_birth, mem_addr, mem_interest, mem_gender, mem_telno });
+        const { login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest } = formValues;
+        signupMutation.mutate({ login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest });
     }
 
     return (

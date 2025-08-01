@@ -1,7 +1,8 @@
 import queryClient from '@/api/queryClient';
 import { userAutoLogin, userLogin, userSignup } from '@/api/user';
-import { removeHeader, setHeader } from '@/utils/headerUtil';
-import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
+import { MemberInfo } from '@/types';
+import { removeHeader } from '@/utils/headerUtil';
+import { deleteSecureStore } from '@/utils/secureStoreUtil';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { router } from 'expo-router';
@@ -30,17 +31,15 @@ function useSignup() {
 function useLogin() {
     return useMutation({
         mutationFn: userLogin,
-        onSuccess: async ({accessToken}) => {
-            setHeader("Authorization", `Bearer ${accessToken}`);
-            await saveSecureStore("accessToken", accessToken);
-            queryClient.fetchQuery({queryKey: ["auth", "getMe"]});
-            router.replace("/");
+        onSuccess: async (result: MemberInfo) => {
+            console.log('result : ', result);
+            // setHeader("Authorization", `Bearer ${accessToken}`);
+            // await saveSecureStore("accessToken", accessToken);
+            // queryClient.fetchQuery({queryKey: ["auth", "getMe"]});
+            // router.replace("/");
         },
         onError: (error: ResponseError) => {
-            Toast.show({
-                type: 'error',
-                text1: error.response?.data.message
-            })
+            console.log('error : ', error);
         },
         onSettled: () => {},
     });

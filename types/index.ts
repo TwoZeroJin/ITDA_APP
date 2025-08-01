@@ -2,8 +2,9 @@
  * 로그인 정보
  */
 interface User {
-  login_id  : string;
-  login_pwd : string;
+  login_id    : string;
+  login_pwd   : string;
+  login_type  : string;
 }
 
 interface SignupInfo extends User {
