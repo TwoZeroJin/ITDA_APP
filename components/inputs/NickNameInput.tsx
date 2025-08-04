@@ -8,7 +8,7 @@ function NickNameInput() {
     <Controller
         name='mem_nick'
         control={control}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
+        render={({field: {onChange, value}}) => (
             <InputField
                 label="닉네임" 
                 placeholder="닉네임을 입력하세요."

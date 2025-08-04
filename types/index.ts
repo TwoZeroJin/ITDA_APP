@@ -1,12 +1,29 @@
 /**
+ * API 공통 결과
+ */
+interface ApiResult<T> {
+  ret_code  : number;
+  ret_msg   : string;
+  data?     : T;
+}
+
+interface Token {
+  access_token   : string;
+  refresh_token  : string;
+}
+
+/**
  * 로그인 정보
  */
 interface User {
-  login_id    : string;
-  login_pwd   : string;
-  login_type  : string;
+  login_id        : string;
+  login_pwd       : string;
+  login_type      : string;
 }
 
+/**
+ * 회원가입 정보
+ */
 interface SignupInfo extends User {
   mem_name      : string;
   mem_nick?     : string;
@@ -21,8 +38,15 @@ interface SignupInfo extends User {
 /**
  * 회원 정보
  */
-interface MemberInfo extends SignupInfo {
-  mem_id        : number;
+interface MemberInfo {
+  mem_name      : string;
+  mem_nick?     : string;
+  mem_gender    : string;
+  mem_team      : string;
+  mem_birth     : string;
+  mem_telno     : string;
+  mem_addr?     : string;
+  mem_interest? : string;
   church_name   : string;
   push_send_yn  : string;
   push_token?   : string;
@@ -109,5 +133,5 @@ interface FeedBackData {
 
 }
 
-export type { BoardData, FeedBackData, FileInfo, GroupInfo, GroupMember, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, User };
+export type { ApiResult, BoardData, FeedBackData, FileInfo, GroupInfo, GroupMember, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
 

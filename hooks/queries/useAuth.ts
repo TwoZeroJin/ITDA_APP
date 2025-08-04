@@ -1,7 +1,9 @@
 import queryClient from '@/api/queryClient';
 import { userAutoLogin, userLogin, userSignup } from '@/api/user';
-import { MemberInfo } from '@/types';
-import { removeHeader } from '@/utils/headerUtil';
+import { ApiResult, MemberInfo, Token } from '@/types';
+import { showToast } from '@/utils/commToast';
+import { saveMemberInfo } from '@/utils/commUtil';
+import { removeHeader, setHeader } from '@/utils/headerUtil';
 import { deleteSecureStore } from '@/utils/secureStoreUtil';
 import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -17,7 +19,19 @@ type ResponseError = AxiosError<{
 function useSignup() {
     return useMutation({
         mutationFn: userSignup,
-        onSuccess: () => router.replace("/user/login"),
+        onSuccess: async (result : ApiResult<null>) => {
+            if (result.ret_code != 200) {
+                showToast({
+                    text1: result.ret_msg
+                });
+            }
+            else {
+                showToast({
+                    text1: '회원가입되었습니다. 로그인해주세요.'
+                });
+                router.replace("/user/login");
+            }
+        },
         onError: (error: ResponseError) => {
             Toast.show({
                 type: 'error',
@@ -31,12 +45,22 @@ function useSignup() {
 function useLogin() {
     return useMutation({
         mutationFn: userLogin,
-        onSuccess: async (result: MemberInfo) => {
-            console.log('result : ', result);
-            // setHeader("Authorization", `Bearer ${accessToken}`);
-            // await saveSecureStore("accessToken", accessToken);
-            // queryClient.fetchQuery({queryKey: ["auth", "getMe"]});
-            // router.replace("/");
+        onSuccess: async (result: ApiResult<MemberInfo & Token>) => {
+            if (result.ret_code != 200) {
+                showToast({
+                    text1: result.ret_msg
+                });
+            }
+            else {
+                // Header 세팅 및 회원 정보 SecureStore에 저장
+                setHeader("x-access-token",     result.data?.access_token)
+                setHeader("x-refresh-token",    result.data?.refresh_token)
+                saveMemberInfo(result.data);
+                router.replace("/");
+                showToast({
+                    text1: "로그인하였습니다."
+                });
+            }
         },
         onError: (error: ResponseError) => {
             console.log('error : ', error);
@@ -64,33 +88,7 @@ function useAutoLogin() {
     });
 }
 
-function useGetMe() {
-    // const { data, isError, isSuccess } = useQuery({
-    //     queryFn: getMe,
-    //     queryKey: ["auth", "getMe"]
-    // });
-
-    // useEffect(() => {
-    //     (async () => {
-    //         if (isSuccess) {
-    //             const accessToken = await getSecureStore('accessToken');
-    //             setHeader("Authorization", `Bearer ${accessToken}`);
-    //         }
-    //     })()
-    // }, [isSuccess])
-
-    // useEffect(() => {
-    //     if (isError) {
-    //         removeHeader("Authorization");
-    //         deleteSecureStore("accessToken");
-    //     }
-    // }, [isError])
-
-    // return { data };
-}
-
 function useAuth() {
-    // const { data } = useGetMe();
     const loginMutation = useLogin();
     const signupMutation = useSignup();
     const autoLoginMutation = useAutoLogin();
@@ -101,21 +99,7 @@ function useAuth() {
         queryClient.resetQueries({ queryKey: ["auth"]});
     }
 
-    return { loginMutation, signupMutation, autoLoginMutation, logout, auth: {
-        mem_id      : 0,
-        mem_name    : "공영진",
-        mem_nick    : "외치는자의 소리",
-        // mem_id      : data?.mem_id || "",
-        // mem_name    : data?.mem_name || "",
-        // mem_nick    : data?.mem_nick || "",
-        // introduce: data?.introduce || "",
-        // hatId: data?.hatId || '',
-        // faceId: data?.faceId || '',
-        // topId: data?.topId || '',
-        // bottomId: data?.bottomId || '',
-        // handId: data?.handId || '',
-        // skinId: data?.skinId || '',
-    } };
+    return { loginMutation, signupMutation, autoLoginMutation, logout};
 }
 
 export default useAuth;

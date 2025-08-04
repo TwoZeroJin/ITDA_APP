@@ -1,4 +1,5 @@
-import useAuth from '@/hooks/queries/useAuth';
+import { STORE_KEY } from '@/constants';
+import { getSecureStore } from '@/utils/secureStoreUtil';
 import { router, useFocusEffect } from 'expo-router';
 import React, { ReactNode } from 'react';
 
@@ -7,10 +8,10 @@ interface AuthRouteProps {
 }
 
 function AuthRoute({children}: AuthRouteProps) {
-    const { auth } = useAuth();
+    const access_token = getSecureStore(STORE_KEY.X_ACCESS_TOKEN);
 
     useFocusEffect(() => {
-        !auth.mem_id && router.replace("/user");
+        !access_token && router.replace("/user" as any);
     });
 
     return (

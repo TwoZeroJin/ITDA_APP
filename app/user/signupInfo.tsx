@@ -20,6 +20,7 @@ export default function SignupInfoScreen() {
     })
 
     const onSubmit = (formValues: SignupInfo) => {
+        console.log('asdasd')
         const { login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest } = formValues;
         signupMutation.mutate({ login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest });
     }

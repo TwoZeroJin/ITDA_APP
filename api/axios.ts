@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
     //baseURL: "http://192.168.0.38:6528/api",
     baseURL: "http://146.56.105.2:6528/api",
     headers: {
-        'x-client-id' : getClientId()
+        'x-client-id' : getClientId(),
     }
 });
 

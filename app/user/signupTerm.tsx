@@ -26,7 +26,7 @@ export default function SignupTermScreen() {
                         onChange={() => setPrivacyChecked(!privacyChecked)}
                         />
                 </View>
-                <CommBottomButton label="다음" onPress={() => router.push('/user/signupInfo')}/>
+                <CommBottomButton label="다음" onPress={() => router.navigate('/user/signupInfo')}/>
         </SafeAreaView>
     )
 }

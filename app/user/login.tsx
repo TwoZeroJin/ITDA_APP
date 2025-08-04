@@ -45,7 +45,7 @@ export default function LoginScreen() {
                     </View>
                     <View style={styles.buttonContainer}>
                         <CustomButton label="로그인" onPress={loginForm.handleSubmit(defaultLogin)}/>
-                        <CustomButton label="회원가입" onPress={() => router.push('/user/signupTerm')}/>
+                        <CustomButton label="회원가입" onPress={() => router.navigate('/user/signupTerm')}/>
                     </View>
                     <View style={styles.findUserContainer}>
                         <Text style={styles.findIdText}>계정 정보를 잊으셨나요?</Text>
