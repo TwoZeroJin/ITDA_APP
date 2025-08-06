@@ -75,8 +75,11 @@ function RootNavigator() {
 
   return (
     <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="user"   options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)"   options={{ headerShown: false }} />
+      <Stack.Screen name="user"     options={{ headerShown: false }} />
+      {/* <Stack.Screen name="group"    options={{ headerShown: false }} />
+      <Stack.Screen name="meet"     options={{ headerShown: false }} />
+      <Stack.Screen name="review"   options={{ headerShown: false }} /> */}
       <Stack.Screen name="+not-found" />
     </Stack>
   );

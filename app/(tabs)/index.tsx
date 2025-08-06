@@ -1,9 +1,16 @@
-import { StyleSheet, View } from 'react-native';
+import CommHeader from '@/components/CommHeader';
+import { SafeAreaView, StyleSheet } from 'react-native';
 
 export default function HomeScreen() {
   return (
-    <View/>
+    <SafeAreaView style={styles.container}>
+      <CommHeader/>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container : {
+    
+  }
+});

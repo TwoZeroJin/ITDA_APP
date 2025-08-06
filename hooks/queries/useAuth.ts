@@ -1,5 +1,6 @@
 import queryClient from '@/api/queryClient';
 import { userAutoLogin, userLogin, userSignup } from '@/api/user';
+import { STORE_KEY } from '@/constants';
 import { ApiResult, MemberInfo, Token } from '@/types';
 import { showToast } from '@/utils/commToast';
 import { saveMemberInfo } from '@/utils/commUtil';
@@ -53,8 +54,8 @@ function useLogin() {
             }
             else {
                 // Header 세팅 및 회원 정보 SecureStore에 저장
-                setHeader("x-access-token",     result.data?.access_token)
-                setHeader("x-refresh-token",    result.data?.refresh_token)
+                setHeader(STORE_KEY.X_ACCESS_TOKEN,     result.data?.access_token)
+                setHeader(STORE_KEY.X_REFRESH_TOKEN,    result.data?.refresh_token)
                 saveMemberInfo(result.data);
                 router.replace("/");
                 showToast({
@@ -72,19 +73,22 @@ function useLogin() {
 function useAutoLogin() {
     return useMutation({
         mutationFn: userAutoLogin,
-        // onSuccess: async ({accessToken}) => {
-        //     setHeader("Authorization", `Bearer ${accessToken}`);
-        //     await saveSecureStore("accessToken", accessToken);
-        //     queryClient.fetchQuery({queryKey: ["auth", "getMe"]});
-        //     router.replace("/");
-        // },
-        // onError: (error: ResponseError) => {
-        //     Toast.show({
-        //         type: 'error',
-        //         text1: error.response?.data.message
-        //     })
-        // },
-        // onSettled: () => {},
+        onSuccess: async (result: ApiResult<MemberInfo & Token>) => {
+            if (result.ret_code != 200) {
+                removeHeader(STORE_KEY.X_ACCESS_TOKEN);
+                removeHeader(STORE_KEY.X_REFRESH_TOKEN);
+            }
+            else {
+                // Header 세팅 및 회원 정보 SecureStore에 저장
+                setHeader(STORE_KEY.X_ACCESS_TOKEN,     result.data?.access_token)
+                setHeader(STORE_KEY.X_REFRESH_TOKEN,    result.data?.refresh_token)
+                saveMemberInfo(result.data);
+            }
+        },
+        onError: (error: ResponseError) => {
+            console.log('error : ', error);
+        },
+        onSettled: () => {},
     });
 }
 
