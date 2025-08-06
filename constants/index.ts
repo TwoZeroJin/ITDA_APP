@@ -8,6 +8,7 @@ const COLOR = {
     COMM_WHITE      : '#FFFFFF',
     COMM_GRAY       : '#F2F2F2',
     COMM_RED        : '#FF0000',
+    COMM_SHADOW     : '#747474',
     APP_MAIN        : '#F58A78',
     TEXT_DEFAULT    : '#646464',
     TEXT_GRAY       : '#9B9B9B',
@@ -36,6 +37,7 @@ const STORE_KEY = {
     MEM_TELNO       : "mem_telno",
     MEM_ADDR        : "mem_addr",
     MEM_INTEREST    : "mem_interest",
+    
 }
 
 export { COLOR, QUERY_KEYS, STORE_KEY };

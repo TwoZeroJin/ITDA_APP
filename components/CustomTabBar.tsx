@@ -1,6 +1,12 @@
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
-import React from 'react'
-import { Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View, } from 'react-native'
+import Chat from '@/assets/images/main_chat.svg';
+import Home from '@/assets/images/main_home.svg';
+import Meet from '@/assets/images/main_meet.svg';
+import My from '@/assets/images/main_my.svg';
+import Review from '@/assets/images/main_review.svg';
+import { COLOR } from '@/constants';
+import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import React from 'react';
+import { Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 
 const { width } = Dimensions.get('window')
 
@@ -13,8 +19,8 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
     <View style={styles.tabContainer}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
-        const label = options.tabBarLabel ?? route.name
         const isFocused = state.index === index
+        const name = route.name;
 
         const onPress = () => {
           const event = navigation.emit({
@@ -23,37 +29,37 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             canPreventDefault: true,
           })
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name)
+            navigation.navigate(name)
           }
         }
 
-        // 중앙 버튼 (+)
-        if (index === 2) {
+        // 소모임 생성 버튼
+        if (name === "meet") {
           return (
             <TouchableOpacity
               key={route.key}
               onPress={onPress}
               style={styles.plusButtonWrapper}
-              activeOpacity={0.8}
+              activeOpacity={0.9}
             >
-              <View style={styles.plusButton}>
-                <Text style={styles.plusText}>＋</Text>
-              </View>
+              <Meet/>
             </TouchableOpacity>
           )
         }
 
-        // 일반 버튼
         return (
           <TouchableOpacity
             key={route.key}
             onPress={onPress}
             style={styles.tabButton}
-            activeOpacity={0.7}
+            activeOpacity={0.8}
           >
-            <Text style={{ color: isFocused ? '#FF6C5C' : '#666' }}>
-              {getLabelText(route.name)}
-            </Text>
+            <View style={styles.iconContainer}>
+              {getIcon(name)}
+              <Text style={[styles.tabButtonText, { color: isFocused ? COLOR.APP_MAIN : COLOR.TEXT_DEFAULT }]}>
+                {options.title}
+              </Text>
+            </View>
           </TouchableOpacity>
         )
       })}
@@ -61,62 +67,51 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
   )
 }
 
-const getLabelText = (name: string) => {
+const getIcon = (name: string) => {
   switch (name) {
     case 'index':
-      return '메인'
-    case 'board':
-      return '게시판'
+      return <Home/>;
+    case 'review':
+      return <Review/>;
     case 'chat':
-      return '채팅'
-    case 'mypage':
-      return '마이페이지'
+      return <Chat/>;
+    case 'my':
+      return <My/>;
     default:
-      return name
+      return <></>;
   }
-}
+};
 
 const styles = StyleSheet.create({
   tabContainer: {
-    flexDirection: 'row',
-    height: 70,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 10,
-    paddingHorizontal: 10,
-    backgroundColor: 'white',
-    elevation: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    flexDirection     : 'row',
+    justifyContent    : 'space-between',
+    alignItems        : 'center',
+    height            : 82,
+    paddingBottom     : Platform.OS === 'ios' ? 20 : 10,
+    paddingHorizontal : 10,
+    elevation         : 10,
+    shadowOffset      : { width: 0, height: -10 },
+    shadowOpacity     : 0.2,
+    shadowRadius      : 6,
+    backgroundColor   : COLOR.COMM_WHITE,
+    shadowColor       : COLOR.COMM_SHADOW,
+  },
+  iconContainer : {
+    marginBottom: 5,
+    alignItems  : 'center',
+    gap: 6
   },
   tabButton: {
-    flex: 1,
-    alignItems: 'center',
+    flex        : 1,
+    alignItems  : 'center',
+  },
+  tabButtonText: {
+    //
   },
   plusButtonWrapper: {
-    position: 'absolute',
-    top: -30,
-    left: width / 2 - 30,
+    top: -12,
     zIndex: 10,
-  },
-  plusButton: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FF6C5C',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5,
-  },
-  plusText: {
-    fontSize: 30,
-    color: '#fff',
   },
 })
 

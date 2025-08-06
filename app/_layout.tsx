@@ -1,6 +1,7 @@
 import queryClient from '@/api/queryClient';
 import AuthRoute from '@/components/AuthRoute';
 import { COLOR } from '@/constants';
+import useMainEntry from '@/hooks/queries/useMain';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
@@ -28,21 +29,17 @@ SplashScreen.preventAutoHideAsync();
 // });
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [loadedFonts] = useFonts({
     // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
-
-  console.log('11111111111111')
-
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    if(loaded) {
-      SplashScreen.hideAsync();
+    if(loadedFonts) {
     }
-  }, [loaded]);
+  }, [loadedFonts]);
 
-  if (!loaded) {
+  if (!loadedFonts) {
     return null; 
   }
   
@@ -66,16 +63,15 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  // const { auth } = useAuth();
-  // useNotificationObserver();
-  
-  // useEffect(() => {
-  //   auth.id && Toast.show({
-  //     type: 'success',
-  //     text1: `${auth.nickname ?? "회원"}님 환영합니다.`,
-  //     position: 'bottom'
-  //   });
-  // }, [auth.id]);
+  // API 처리 작업
+
+  // 1. Main Data 처리
+  // 2. 자동 로그인 처리
+  const mainData = useMainEntry();
+
+  if (mainData.data?.ret_code == 200) {
+    SplashScreen.hideAsync();
+  }
 
   return (
     <Stack>
