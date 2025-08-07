@@ -6,9 +6,7 @@ import Review from '@/assets/images/main_review.svg';
 import { COLOR } from '@/constants';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
-
-const { width } = Dimensions.get('window')
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const CustomTabBar: React.FC<BottomTabBarProps> = ({
   state,
@@ -29,7 +27,7 @@ const CustomTabBar: React.FC<BottomTabBarProps> = ({
             canPreventDefault: true,
           })
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(name)
+            navigation.navigate(name);
           }
         }
 

@@ -1,14 +1,19 @@
+import CommHeader from "@/components/CommHeader";
 import React from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 
 export default function ReviewScreen() {
 
   return (
-    <View>
-      <Text>게시글 후기</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      {/* <CommHeader isLogo={false}/> */}
+      <CommHeader/>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    
+  }
 });

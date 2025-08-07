@@ -1,14 +1,19 @@
+import CommHeader from "@/components/CommHeader";
 import React from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet } from 'react-native';
 
 export default function MyPageScreen() {
 
   return (
-    <View>
-      <Text>마이 페이지</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      {/* <CommHeader isLogo={false}/> */}
+      <CommHeader isSearch={false} isNoti={false} isSetting={true}/>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    
+  }
 });
