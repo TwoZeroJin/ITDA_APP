@@ -7,6 +7,11 @@ interface ApiResult<T> {
   data?     : T;
 }
 
+interface MainData {
+  app_ver_name  : string;
+  category_list : CodeInfo[];
+}
+
 interface Token {
   access_token   : string;
   refresh_token  : string;
@@ -133,5 +138,14 @@ interface FeedBackData {
 
 }
 
-export type { ApiResult, BoardData, FeedBackData, FileInfo, GroupInfo, GroupMember, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
+/**
+ * 앱에서 사용할 공통 코드 정보
+ */
+interface CodeInfo {
+  code_id     : string;
+  code_value  : string;
+  sub_list?   : CodeInfo[];
+}
+
+export type { ApiResult, BoardData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
 

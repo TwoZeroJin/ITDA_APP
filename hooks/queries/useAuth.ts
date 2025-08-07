@@ -1,14 +1,14 @@
 import queryClient from '@/api/queryClient';
 import { userAutoLogin, userLogin, userSignup } from '@/api/user';
-import { STORE_KEY } from '@/constants';
+import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { ApiResult, MemberInfo, Token } from '@/types';
 import { showToast } from '@/utils/commToast';
 import { saveMemberInfo } from '@/utils/commUtil';
-import { removeHeader, setHeader } from '@/utils/headerUtil';
 import { deleteSecureStore } from '@/utils/secureStoreUtil';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { router } from 'expo-router';
+import { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
 
 type ResponseError = AxiosError<{
@@ -53,9 +53,7 @@ function useLogin() {
                 });
             }
             else {
-                // Header 세팅 및 회원 정보 SecureStore에 저장
-                setHeader(STORE_KEY.X_ACCESS_TOKEN,     result.data?.access_token)
-                setHeader(STORE_KEY.X_REFRESH_TOKEN,    result.data?.refresh_token)
+                // 회원 정보 SecureStore에 저장
                 saveMemberInfo(result.data);
                 router.replace("/");
                 showToast({
@@ -70,40 +68,49 @@ function useLogin() {
     });
 }
 
-function useAutoLogin() {
-    return useMutation({
-        mutationFn: userAutoLogin,
-        onSuccess: async (result: ApiResult<MemberInfo & Token>) => {
-            if (result.ret_code != 200) {
-                removeHeader(STORE_KEY.X_ACCESS_TOKEN);
-                removeHeader(STORE_KEY.X_REFRESH_TOKEN);
-            }
-            else {
-                // Header 세팅 및 회원 정보 SecureStore에 저장
-                setHeader(STORE_KEY.X_ACCESS_TOKEN,     result.data?.access_token)
-                setHeader(STORE_KEY.X_REFRESH_TOKEN,    result.data?.refresh_token)
-                saveMemberInfo(result.data);
-            }
-        },
-        onError: (error: ResponseError) => {
-            console.log('error : ', error);
-        },
-        onSettled: () => {},
+function useAutoLoginQuery() {
+    const { data, isError, isSuccess } = useQuery({
+        queryFn: userAutoLogin,
+        queryKey: [QUERY_KEYS.USER , "auto_login"]
     });
+    //
+    useEffect(() => {
+        (async () => {
+            if (isSuccess) {
+                if (data.ret_code == 200 && data.data) {
+                    saveMemberInfo(data.data);
+                }
+                else {
+                    // 자동 로그인 실패
+                    deleteSecureStore(STORE_KEY.X_ACCESS_TOKEN);
+                    deleteSecureStore(STORE_KEY.X_REFRESH_TOKEN);
+                }
+            }
+        })()
+    }, [isSuccess])
+
+    useEffect(() => {
+        if (isError) {
+            console.log('error');
+        }
+    }, [isError])
+
+    return { data };
 }
 
+
 function useAuth() {
-    const loginMutation = useLogin();
-    const signupMutation = useSignup();
-    const autoLoginMutation = useAutoLogin();
+    const loginMutation     = useLogin();
+    const signupMutation    = useSignup();
+    const autoLogin         = useAutoLoginQuery();
 
     const logout = () => {
-        removeHeader("Authorization");
-        deleteSecureStore("accessToken");
-        queryClient.resetQueries({ queryKey: ["auth"]});
+        deleteSecureStore(STORE_KEY.X_ACCESS_TOKEN);
+        deleteSecureStore(STORE_KEY.X_REFRESH_TOKEN);
+        queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
     }
 
-    return { loginMutation, signupMutation, autoLoginMutation, logout};
+    return { loginMutation, signupMutation, autoLogin, logout};
 }
 
 export default useAuth;

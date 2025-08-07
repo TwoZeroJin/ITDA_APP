@@ -63,10 +63,6 @@ export default function RootLayout() {
 }
 
 function RootNavigator() {
-  // API 처리 작업
-
-  // 1. Main Data 처리
-  // 2. 자동 로그인 처리
   const mainData = useMainEntry();
 
   if (mainData.data?.ret_code == 200) {

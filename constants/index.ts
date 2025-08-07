@@ -20,7 +20,7 @@ const COLOR = {
  * 쿼리 키 값
  */
 const QUERY_KEYS = {
-
+    USER : "user",
 };
 
 /**
@@ -29,6 +29,7 @@ const QUERY_KEYS = {
 const STORE_KEY = {
     X_ACCESS_TOKEN  : "x-access-token",
     X_REFRESH_TOKEN : "x-refresh-token",
+    CATEGORY_LIST   : "category_list",
     MEM_NAME        : "mem_name",
     MEM_NICK        : "mem_nick",
     MEM_TEAM        : "mem_team",
@@ -37,7 +38,6 @@ const STORE_KEY = {
     MEM_TELNO       : "mem_telno",
     MEM_ADDR        : "mem_addr",
     MEM_INTEREST    : "mem_interest",
-    
 }
 
 export { COLOR, QUERY_KEYS, STORE_KEY };

@@ -8,10 +8,13 @@ interface AuthRouteProps {
 }
 
 function AuthRoute({children}: AuthRouteProps) {
-    const access_token = getSecureStore(STORE_KEY.X_ACCESS_TOKEN);
-
     useFocusEffect(() => {
-        !access_token && router.replace("/user" as any);
+        const checkLogin = async () => {
+            const access_token = await getSecureStore(STORE_KEY.X_ACCESS_TOKEN);
+            !access_token && router.replace("/user" as any);
+        }
+
+        checkLogin();
     });
 
     return (
