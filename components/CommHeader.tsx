@@ -16,7 +16,7 @@ interface CommHeaderProps {
   isSetting? : boolean;
 }
 
-function CommHeader({isLogo = true, isSearch = true, isLike = true, isNoti = true, isSetting = false} : CommHeaderProps) {
+function CommHeader({isLogo = true, isSearch = true, isLike = true, isNoti = true, isSetting = false}: CommHeaderProps) {
 
   return (
     <View style={styles.container}>

@@ -3,19 +3,13 @@ import React from "react";
 import { Pressable, PressableProps, StyleProp, StyleSheet, Text, ViewStyle } from "react-native";
 
 interface CustomButtonProps extends PressableProps {
-    label: string;
-    size?: "medium" | "large";
-    variant? : "standard" | "filled" | "outlined";
-    style?: StyleProp<ViewStyle>
+    label       : string;
+    size?       : "medium" | "large";
+    variant?    : "standard" | "filled" | "outlined";
+    style?      : StyleProp<ViewStyle>
 }
 
-function CustomButton({
-    label, 
-    size = "large",
-    variant = "standard",
-    style = null,
-    ...props
-} : CustomButtonProps) {
+function CustomButton({ label, size = "large", variant = "standard", style = null, ...props} : CustomButtonProps) {
     return (
         <Pressable 
             style={({pressed}) => [

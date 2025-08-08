@@ -8,11 +8,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const CustomTabBar: React.FC<BottomTabBarProps> = ({
-  state,
-  descriptors,
-  navigation,
-}) => {
+function CustomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
   return (
     <View style={styles.tabContainer}>
       {state.routes.map((route, index) => {
@@ -96,8 +92,8 @@ const styles = StyleSheet.create({
     shadowColor       : COLOR.COMM_SHADOW,
   },
   iconContainer : {
-    marginBottom: 5,
-    alignItems  : 'center',
+    marginBottom  : 5,
+    alignItems    : 'center',
     gap: 6
   },
   tabButton: {
@@ -108,8 +104,8 @@ const styles = StyleSheet.create({
     //
   },
   plusButtonWrapper: {
-    top: -12,
-    zIndex: 10,
+    top     : -12,
+    zIndex  : 10,
   },
 })
 

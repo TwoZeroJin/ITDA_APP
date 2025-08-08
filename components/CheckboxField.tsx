@@ -10,7 +10,7 @@ interface CheckboxFieldProps {
     label       : string;
 }
 
-const CheckboxField = ({value, onChange, label}: CheckboxFieldProps) => {
+const CheckboxField = ({ value, onChange, label }: CheckboxFieldProps) => {
   return (
     <View>
         <TouchableOpacity

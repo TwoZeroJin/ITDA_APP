@@ -4,8 +4,8 @@ import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface CommBottomButtonProps {
-    label: string;
-    onPress: () => void;
+    label   : string;
+    onPress : () => void;
 }
 
 function CommBottomButton({ label, onPress }: CommBottomButtonProps) {
