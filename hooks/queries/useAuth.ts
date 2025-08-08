@@ -108,6 +108,7 @@ function useAuth() {
         deleteSecureStore(STORE_KEY.X_ACCESS_TOKEN);
         deleteSecureStore(STORE_KEY.X_REFRESH_TOKEN);
         queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
+        router.replace("/user" as any);
     }
 
     return { loginMutation, signupMutation, autoLogin, logout};

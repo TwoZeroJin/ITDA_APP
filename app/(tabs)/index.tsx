@@ -29,7 +29,7 @@ export default function HomeScreen() {
 
 
       {/* 다이얼로그 테스트 */}
-       <TouchableOpacity onPress={openDialog}>
+      <TouchableOpacity onPress={openDialog}>
         <Text>다이얼로그 열기</Text>
       </TouchableOpacity>
       <CustomDialog
