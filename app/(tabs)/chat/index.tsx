@@ -11,7 +11,7 @@ export default function ChatListScreen() {
       {/* <CommHeader isLogo={false}/> */}
       <CommHeader isSearch={false} isNoti={false} isSetting={true}/>
       <View style={styles.container}>
-        <TouchableOpacity onPress={() => router.push("/chat")}>
+        <TouchableOpacity onPress={() => router.push("/chats")}>
           <Text>채팅하기</Text>
         </TouchableOpacity>
       </View>

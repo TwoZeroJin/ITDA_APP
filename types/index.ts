@@ -139,6 +139,14 @@ interface FeedBackData {
 }
 
 /**
+ * 채팅 정보
+ */
+interface ChatData {
+  mem_id : number;
+  chat_msg : string;
+}
+
+/**
  * 앱에서 사용할 공통 코드 정보
  */
 interface CodeInfo {
@@ -147,5 +155,5 @@ interface CodeInfo {
   sub_list?   : CodeInfo[];
 }
 
-export type { ApiResult, BoardData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
+export type { ApiResult, BoardData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, ChatData, MeetReview, MemberInfo, SignupInfo, Token, User };
 

@@ -4,6 +4,7 @@ import Noti from '@/assets/images/header_noti.svg';
 import Search from '@/assets/images/header_search.svg';
 import Setting from '@/assets/images/header_setting.svg';
 import Logo from '@/assets/images/logo.svg';
+import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
@@ -22,8 +23,8 @@ function CommHeader({isLogo = true, isSearch = true, isLike = true, isNoti = tru
         <View style={styles.container}>
           {isLogo && <Logo width={54} height={44} style={{marginStart: 33}}/>}
           {!isLogo && 
-            <TouchableOpacity onPress={() => {}}>
-              <Back width={54} height={44} style={{marginStart: 16}}/>
+            <TouchableOpacity onPress={() => {router.back()}}>
+              <Back width={54} height={44} style={{marginStart: 10}}/>
             </TouchableOpacity>
           }
         </View>

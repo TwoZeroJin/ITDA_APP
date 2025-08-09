@@ -9,7 +9,7 @@ export default function ChatLayout() {
                 backgroundColor: COLOR.COMM_WHITE
             },
         }}>
-            <Stack.Screen 
+            <Stack.Screen
                 name="index"
                 options={{
                     title: "채팅하기",
