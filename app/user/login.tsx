@@ -3,18 +3,19 @@ import CustomButton from '@/components/CustomButton';
 import IdInput from "@/components/inputs/IdInput";
 import PasswordInput from "@/components/inputs/PasswordInput";
 import { COLOR } from "@/constants";
-import useAuth from "@/hooks/queries/useAuth";
+import { useAuth } from "@/hooks/queries/useAuth";
 import { User } from '@/types';
 import { router } from 'expo-router';
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
     const {loginMutation} = useAuth();
     const loginForm = useForm<User>({
         defaultValues: {
-            login_id    : "",
-            login_pwd   : "",
+            login_id    : "ghong",
+            login_pwd   : "1111",
             login_type  : "D", // 테스트 값
         }
     });

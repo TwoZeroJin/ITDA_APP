@@ -1,12 +1,13 @@
 import CommHeader from "@/components/CommHeader";
 import { router } from "expo-router";
 import React from "react";
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ChatListScreen() {
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       {/* <CommHeader isLogo={false}/> */}
       <CommHeader isSearch={false} isNoti={false} isSetting={true}/>
       <View style={styles.container}>
@@ -21,8 +22,5 @@ export default function ChatListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    alignContent: "center",
-    justifyContent: "center"
   }
 });

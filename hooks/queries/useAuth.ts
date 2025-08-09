@@ -1,7 +1,8 @@
 import queryClient from '@/api/queryClient';
 import { userAutoLogin, userLogin, userSignup } from '@/api/user';
+import { useLoading } from '@/contexts/LoadingContext';
 import { QUERY_KEYS, STORE_KEY } from '@/constants';
-import { ApiResult, MemberInfo, Token } from '@/types';
+import { ApiResult, MemberInfo, Token, User } from '@/types';
 import { showToast } from '@/utils/commToast';
 import { saveMemberInfo } from '@/utils/commUtil';
 import { deleteSecureStore } from '@/utils/secureStoreUtil';
@@ -10,6 +11,7 @@ import { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
+
 
 type ResponseError = AxiosError<{
     statusCode: number;
@@ -44,8 +46,12 @@ function useSignup() {
 }
 
 function useLogin() {
+    const { setLoading } = useLoading();
     return useMutation({
-        mutationFn: userLogin,
+        mutationFn: async (body : User) => {
+            setLoading(true);
+            return userLogin(body);
+        },
         onSuccess: async (result: ApiResult<MemberInfo & Token>) => {
             if (result.ret_code != 200) {
                 showToast({
@@ -64,14 +70,17 @@ function useLogin() {
         onError: (error: ResponseError) => {
             console.log('error : ', error);
         },
-        onSettled: () => {},
+        onSettled: () => {
+            setLoading(false);
+        },
     });
 }
 
-function useAutoLoginQuery() {
+function useAutoLogin(options = {enabled : false}) {
     const { data, isError, isSuccess } = useQuery({
         queryFn: userAutoLogin,
-        queryKey: [QUERY_KEYS.USER , "auto_login"]
+        queryKey: [QUERY_KEYS.USER , "auto_login"],
+        enabled : options.enabled ?? true
     });
     //
     useEffect(() => {
@@ -102,7 +111,6 @@ function useAutoLoginQuery() {
 function useAuth() {
     const loginMutation     = useLogin();
     const signupMutation    = useSignup();
-    const autoLogin         = useAutoLoginQuery();
 
     const logout = () => {
         deleteSecureStore(STORE_KEY.X_ACCESS_TOKEN);
@@ -111,7 +119,7 @@ function useAuth() {
         router.replace("/user" as any);
     }
 
-    return { loginMutation, signupMutation, autoLogin, logout};
+    return { loginMutation, signupMutation, logout };
 }
 
-export default useAuth;
+export { useAuth, useAutoLogin };

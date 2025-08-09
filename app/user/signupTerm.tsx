@@ -3,7 +3,8 @@ import CheckboxField from '@/components/CheckboxField';
 import CommBottomButton from '@/components/CommBottomButton';
 import { router } from "expo-router";
 import { useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SignupTermScreen() {
     const [serviceChecked, setServiceChecked] = useState(false);

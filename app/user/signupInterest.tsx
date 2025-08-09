@@ -2,7 +2,7 @@ import CommBottomButton from "@/components/CommBottomButton";
 // import EmailInput from "@/components/EmailInput";
 // import PasswordConfirmInput from "@/components/PasswordConfirmInput";
 // import PasswordInput from "@/components/PasswordInput";
-import useAuth from "@/hooks/queries/useAuth";
+import { useAuth } from "@/hooks/queries/useAuth";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
 

@@ -3,7 +3,8 @@ import CustomDialog from '@/components/CustomDialog';
 import { CodeInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
 import { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function HomeScreen() {
   const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
@@ -25,9 +26,6 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <CommHeader/>
-
-
-
       {/* 다이얼로그 테스트 */}
       <TouchableOpacity onPress={openDialog}>
         <Text>다이얼로그 열기</Text>
