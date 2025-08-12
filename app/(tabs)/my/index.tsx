@@ -8,12 +8,12 @@ export default function MyPageScreen() {
   const {logout} = useAuth();
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       {/* <CommHeader isLogo={false}/> */}
       <CommHeader isSearch={false} isNoti={false} isSetting={true}/>
-      <View style={styles.container}>
+      <View>
         <TouchableOpacity onPress={logout}>
-          <Text>로그아웃 하기</Text>
+          <Text style={styles.text}>로그아웃 하기</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -22,6 +22,11 @@ export default function MyPageScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+  },
+  btnContainer: {
+    
+  },
+  text: {
   }
 });

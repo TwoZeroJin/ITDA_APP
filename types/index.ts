@@ -142,8 +142,9 @@ interface FeedBackData {
  * 채팅 정보
  */
 interface ChatData {
-  mem_id : number;
-  chat_msg : string;
+  chat_id     : number;
+  chat_type   : 'MEMBER' | 'MEET' | 'GROUP';
+  chat_msg    : string;
 }
 
 /**
@@ -155,5 +156,5 @@ interface CodeInfo {
   sub_list?   : CodeInfo[];
 }
 
-export type { ApiResult, BoardData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, ChatData, MeetReview, MemberInfo, SignupInfo, Token, User };
+export type { ApiResult, BoardData, ChatData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
 

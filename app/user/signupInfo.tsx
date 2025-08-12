@@ -7,7 +7,8 @@ import PasswordInput from "@/components/inputs/PasswordInput";
 import { useAuth } from "@/hooks/queries/useAuth";
 import { SignupInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignupInfoScreen() {
@@ -30,13 +31,13 @@ export default function SignupInfoScreen() {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <SafeAreaView style={styles.container}>
                 <FormProvider {...signupForm}>
-                    <View style={styles.container}>
+                    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
                         <NameInput/>
                         <NickNameInput/>
                         <IdInput/>
                         <PasswordInput/>
                         <PasswordConfirmInput/>
-                    </View>
+                    </KeyboardAwareScrollView>
                     <CommBottomButton label="다음" onPress={signupForm.handleSubmit(onSubmit)}/>
                 </FormProvider>
             </SafeAreaView>

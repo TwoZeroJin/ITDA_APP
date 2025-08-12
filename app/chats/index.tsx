@@ -1,56 +1,73 @@
 import CommHeader from '@/components/CommHeader';
-import CustomDialog from '@/components/CustomDialog';
-import MessageInput from '@/components/inputs/MessageInput';
-import { ChatData, CodeInfo } from '@/types';
-import { getCategoryList } from '@/utils/commUtil';
-import { useEffect, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import InputField from '@/components/InputField';
+import { COLOR } from '@/constants';
+import { useChatInsert } from '@/hooks/queries/useChat';
+import { ChatData } from '@/types';
+import React, { useEffect, useState } from 'react';
+import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function IndexScreen() {
-  const chatForm = useForm<ChatData>({
-    defaultValues: {
-        mem_id    : 1,
-        chat_msg  : "",
-    }
-  });
-
-  const insets = useSafeAreaInsets();
-  const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
-  const [dialogVisible, setDialogVisible] = useState(false);
+  const chatInsert = useChatInsert();
+  const [chatMsg, setChatMsg] = useState("");
   
   useEffect(() => {
     const fetchData = async () => {
-      setCategoryList(await getCategoryList());
     }
 
     fetchData();
   }, [])
 
-  // console.log('categoryList : ', categoryList);
+  const handleSubmitChat = () => {
+    console.log('느엄')
+    const chatData : ChatData = {
+      chat_id : 1,
+      chat_type : "MEMBER",
+      chat_msg  : chatMsg
+    };
+
+    chatInsert.mutate({...chatData});
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FormProvider {...chatForm}>
-      <CommHeader isLogo={false}/>
-        <View style={[styles.msgContainer, {marginBottom : insets.bottom}]}>
-          <MessageInput/>
-        </View>
-      </FormProvider>
-    </SafeAreaView>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SafeAreaView style={styles.container}>
+        <CommHeader isLogo={false}/>
+          <KeyboardAwareScrollView contentContainerStyle={styles.chatContainer}>
+            {/* 채팅 메시지 목록 */}
+            <View style={{borderColor: COLOR.COMM_RED, borderWidth: 10, width: '100%', height: '80%'}}></View>
+            <View style={[styles.inputContainer]}>
+              <InputField
+                  label="" 
+                  placeholder='메시지를 입력하세요.'
+                  inputMode='text'
+                  autoCapitalize='none'
+                  returnKeyType='send'
+                  submitBehavior='newline'
+                  keyboardType='default'
+                  onSubmitEditing={handleSubmitChat}
+                  value={chatMsg}
+                  onChangeText={(msg) => setChatMsg(msg)}
+              />
+            </View>
+          </KeyboardAwareScrollView>
+      </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container : {
-    flex : 1
+    flex : 1,
   },
-  msgContainer: {
-    position            : "absolute",
+  chatContainer: {
+    flex : 1,
+  },
+  inputContainer: {
+    position            :"absolute",
     bottom              : 0,
     width               : "100%",
-    paddingTop          : 12,
     paddingHorizontal   : 10
   }
 });

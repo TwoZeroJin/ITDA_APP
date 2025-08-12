@@ -1,6 +1,5 @@
 
 import { STORE_KEY } from "@/constants";
-import { useLoading } from "@/contexts/LoadingContext";
 import { getClientId } from "@/utils/base64Util";
 import { getAccessToken, getRefreshToken } from "@/utils/commUtil";
 import axios from "axios";
