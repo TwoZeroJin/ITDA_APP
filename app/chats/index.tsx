@@ -3,6 +3,10 @@ import InputField from '@/components/InputField';
 import { COLOR } from '@/constants';
 import { useChatInsert } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
+import { getAccessToken } from '@/utils/commUtil';
+import { MqttUtil } from '@/utils/mqttUtil';
+import { router } from 'expo-router';
+import { Message } from 'paho-mqtt';
 import React, { useEffect, useState } from 'react';
 import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -11,23 +15,44 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function IndexScreen() {
   const chatInsert = useChatInsert();
   const [chatMsg, setChatMsg] = useState("");
-  
+  const [chatMsgs, setChatMsgs] = useState([]);
+  const topic = "testTopic";
+  const mqttUtil = MqttUtil;
+
+  const msgReceiveCallback = (msg:string) => {
+    console.log('msg : ', msg);
+  }
+
+  const msgSendCallback = (msg:string) => {
+    console.log('msg : ', msg);
+  }
+
   useEffect(() => {
     const fetchData = async () => {
+      const accessTokon = await getAccessToken();
+      if (accessTokon) {
+        mqttUtil.initMqtt(accessTokon, topic, msgReceiveCallback, msgSendCallback);
+      }
+      else {
+        // 연결 안될 경우 back
+        router.back();
+      }
     }
 
     fetchData();
   }, [])
 
   const handleSubmitChat = () => {
-    console.log('느엄')
     const chatData : ChatData = {
       chat_id : 1,
       chat_type : "MEMBER",
       chat_msg  : chatMsg
     };
 
+    // Mongo DB Insert
     chatInsert.mutate({...chatData});
+    // MQTT SendMessage
+    mqttUtil.sendMessage(topic, chatMsg);
   }
 
   return (
