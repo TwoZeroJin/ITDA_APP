@@ -3,7 +3,11 @@ import { Client, Message } from 'paho-mqtt';
 let client: Client;
 
 /**
- * mqtt 설정
+ * MQTT INIT
+ * @param clientId 
+ * @param topic 
+ * @param msgReceiveCallback 
+ * @param msgSendCallback 
  */
 const initMqtt = (clientId: string, topic: string, msgReceiveCallback : (msg : string) => void, msgSendCallback : (msg : string) => void) => {
     if (client == null) {
@@ -41,24 +45,29 @@ const initMqtt = (clientId: string, topic: string, msgReceiveCallback : (msg : s
     }
 };
 
+/**
+ * 메시지 전달
+ * @param topic 
+ * @param payload 
+ */
 const sendMessage = (topic : string, payload: string) => {
     const message = new Message(payload);
     message.destinationName = topic;
+    message.qos = 1; // QoS 설정
     client.send(message);
 }
 
+/**
+ * 연결 해제
+ */
 const diconnect = () => {
     if (client != null) {
         client.disconnect();
     }
 }
 
-const setMessageCallback = () => {
-
-}
-
 export const MqttUtil = {
-    initMqtt:       initMqtt,
-    sendMessage:    sendMessage,
-    diconnect:      diconnect
+    initMqtt    : initMqtt,
+    sendMessage : sendMessage,
+    diconnect   : diconnect
 }
