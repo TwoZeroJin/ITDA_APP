@@ -15,6 +15,9 @@ export default function TabLayout() {
           ios: {
             position: 'absolute',
           },
+          android: {
+            position: 'absolute',
+          },
           default: {},
         }),
       }}>
