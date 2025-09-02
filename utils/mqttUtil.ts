@@ -8,7 +8,7 @@ let client: Client;
 export const initMqtt = () => {
     client = new Client(
         'ws://146.56.105.2:9001/mqtt',
-        'rn_' + Math.random.toString().substr(2, 8)
+        'rn_' + Math.random.toString().substring(0, 16)
     );
 
     client.onConnectionLost = (response) => {
@@ -22,12 +22,12 @@ export const initMqtt = () => {
     }
 
     client.connect({
-        onSuccess: () => {
-            console.log('MQTT Connected');
+        onSuccess: (response) => {
+            console.log('MQTT Connected', response);
             client.subscribe('chat/room1');
         },
-        onFailure: () => {
-            console.log('MQTT Connect Failed');
+        onFailure: (error) => {
+            console.log('MQTT Connect Failed', error);
         },
         useSSL: false,
     });

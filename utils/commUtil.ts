@@ -1,6 +1,7 @@
 import { STORE_KEY } from "@/constants";
 import { CodeInfo, MemberInfo, Token } from "@/types";
 import { Platform } from "react-native";
+import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
 
 /**
@@ -16,6 +17,27 @@ function getOsId() {
     else {
         '';
     }
+}
+
+/**
+ * Header에 넣을 ClientId
+ * @param appVersion 
+ * @returns 
+ */
+function getClientId(appVersion?: string) {
+    if (!appVersion) {
+        appVersion = '1.0.0';
+    }
+    const jsonObject = {
+        os_id: getOsId(),
+        app_ver: appVersion,
+    };
+
+    return base64.encode(JSON.stringify(jsonObject));
+}
+
+function getMqttClientId() {
+    //
 }
 
 /**
@@ -102,5 +124,5 @@ async function getCategoryList(): Promise<CodeInfo[]> {
     
 }
 
-export { getAccessToken, getCategoryList, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList };
+export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList };
 

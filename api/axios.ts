@@ -1,7 +1,6 @@
 
 import { STORE_KEY } from "@/constants";
-import { getClientId } from "@/utils/base64Util";
-import { getAccessToken, getRefreshToken } from "@/utils/commUtil";
+import { getAccessToken, getClientId, getRefreshToken } from "@/utils/commUtil";
 import axios from "axios";
 
 /**

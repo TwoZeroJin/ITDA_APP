@@ -3,6 +3,7 @@ import InputField from '@/components/InputField';
 import { COLOR } from '@/constants';
 import { useChatInsert } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
+import { initMqtt } from '@/utils/mqttUtil';
 import React, { useEffect, useState } from 'react';
 import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -11,6 +12,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function IndexScreen() {
   const chatInsert = useChatInsert();
   const [chatMsg, setChatMsg] = useState("");
+
+  const mqttClient = initMqtt();
   
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +23,6 @@ export default function IndexScreen() {
   }, [])
 
   const handleSubmitChat = () => {
-    console.log('느엄')
     const chatData : ChatData = {
       chat_id : 1,
       chat_type : "MEMBER",
