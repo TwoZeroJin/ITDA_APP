@@ -3,20 +3,41 @@ import InputField from '@/components/InputField';
 import { COLOR } from '@/constants';
 import { useChatInsert } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
-import { initMqtt } from '@/utils/mqttUtil';
+import { getAccessToken } from '@/utils/commUtil';
+import { MqttUtil } from '@/utils/mqttUtil';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
+import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function IndexScreen() {
   const chatInsert = useChatInsert();
   const [chatMsg, setChatMsg] = useState("");
+  const [chatMsgs, setChatMsgs] = useState<string[]>([]);
+  const topic = "testTopic";
+  const mqttUtil = MqttUtil;
 
-  const mqttClient = initMqtt();
-  
+  const msgReceiveCallback = (msg:string) => {
+    console.log('msg : ', msg);
+    setChatMsgs(prev => [...prev, msg]);
+  }
+
+  const msgSendCallback = (msg:string) => {
+    console.log('msg : ', msg);
+    setChatMsgs(prev => [...prev, msg]);
+  }
+
   useEffect(() => {
     const fetchData = async () => {
+      const accessTokon = await getAccessToken();
+      if (accessTokon) {
+        mqttUtil.initMqtt(accessTokon, topic, msgReceiveCallback, msgSendCallback);
+      }
+      else {
+        // 연결 안될 경우 back
+        router.back();
+      }
     }
 
     fetchData();
@@ -29,7 +50,10 @@ export default function IndexScreen() {
       chat_msg  : chatMsg
     };
 
+    // Mongo DB Insert
     chatInsert.mutate({...chatData});
+    // MQTT SendMessage
+    mqttUtil.sendMessage(topic, chatMsg);
   }
 
   return (
@@ -38,7 +62,11 @@ export default function IndexScreen() {
         <CommHeader isLogo={false}/>
           <KeyboardAwareScrollView contentContainerStyle={styles.chatContainer}>
             {/* 채팅 메시지 목록 */}
-            <View style={{borderColor: COLOR.COMM_RED, borderWidth: 10, width: '100%', height: '80%'}}></View>
+            <View style={{borderColor: COLOR.COMM_RED, borderWidth: 10, width: '100%', height: '80%'}}>
+              {chatMsgs.map((msg, idx) => (
+                <Text key={idx}>{msg}</Text>
+              ))}
+            </View>
             <View style={[styles.inputContainer]}>
               <InputField
                   label="" 
