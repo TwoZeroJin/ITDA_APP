@@ -1,7 +1,7 @@
 import CommHeader from '@/components/CommHeader';
 import CustomDialog from '@/components/CustomDialog';
-import CustomSelectModal from '@/components/CustomSelectModal';
 import RadioGroup from '@/components/RadioGroup';
+import SelectboxModal from '@/components/SelectboxModal';
 import { CodeInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
 import { useEffect, useState } from 'react';
@@ -52,7 +52,7 @@ export default function HomeScreen() {
       </View>
       {/* 셀렉트박스 모달 테스트 */}
       <View style={{ padding: 20 }}>
-        <CustomSelectModal
+        <SelectboxModal
           options={items}
           value={value}
           onChange={setValue}

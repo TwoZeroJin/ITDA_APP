@@ -6,14 +6,14 @@ type Option = {
   value : string | number;
 };
 
-interface CustomSelectModalProps {
+interface SelectboxModalProps {
     options       : Option[];
     value         : string | number | null;
     onChange      : (value: string | number) => void;
     placeholder?  : string;
 }
 
-function CustomSelectModal({ options, value, onChange, placeholder = "선택하세요", }: CustomSelectModalProps) {
+function SelectboxModal({ options, value, onChange, placeholder = "선택하세요", }: SelectboxModalProps) {
   const [open, setOpen] = useState(false);
 
   const selected = options.find((o) => o.value === value);
@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default CustomSelectModal;
+export default SelectboxModal;
