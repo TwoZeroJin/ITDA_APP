@@ -20,7 +20,9 @@ const COLOR = {
  * 쿼리 키 값
  */
 const QUERY_KEYS = {
-    USER : "user",
+    USER          : "user",
+    GROUP         : "group",
+    GROUP_PAGING  : "group_paging"
 };
 
 /**

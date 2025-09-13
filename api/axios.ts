@@ -1,4 +1,3 @@
-
 import { STORE_KEY } from "@/constants";
 import { getAccessToken, getClientId, getRefreshToken } from "@/utils/commUtil";
 import axios from "axios";
@@ -7,8 +6,7 @@ import axios from "axios";
  * Axios instance 설정
  */
 const axiosInstance = axios.create({
-    //baseURL: "http://192.168.0.38:6528/api",
-    baseURL: "http://146.56.105.2:6528/api",
+    baseURL: `${process.env.EXPO_PUBLIC_API_KEY}`,
     headers: {
         'x-client-id' : getClientId(),
     }

@@ -40,3 +40,4 @@ app-example
 # All Hidden File But .gitignore
 .*
 !.gitignore
+!.env.*

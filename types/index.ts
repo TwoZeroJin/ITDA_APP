@@ -4,17 +4,35 @@
 interface ApiResult<T> {
   ret_code  : number;
   ret_msg   : string;
+  paging?   : {
+    page          : number;
+    page_size     : number;
+    total_count   : number;
+  };
   data?     : T;
 }
 
-interface MainData {
-  app_ver_name  : string;
-  category_list : CodeInfo[];
+interface SearchParams {
+  page          : number;
+  page_size     : number;
+  search_type?  : string;
+  search_text?  : string;
 }
 
+/**
+ * 토큰 정보
+ */
 interface Token {
   access_token   : string;
   refresh_token  : string;
+}
+
+/**
+ * 메인 화면 정보
+ */
+interface MainData {
+  app_ver_name  : string;
+  category_list : CodeInfo[];
 }
 
 /**
@@ -114,14 +132,21 @@ interface MeetReview {
  * 공동체 정보
  */
 interface GroupInfo {
-
+  group_id        : number;
+  group_name      : string;
+  group_subj      : string;
+  group_desc      : string;
+  group_max       : number;
+  apply_type      : string;
+  reg_sdate       : string;
 }
 
 /**
  * 공동체 회원 매핑
  */
 interface GroupMember {
-
+  group_id    : number;
+  mem_id    : number;
 }
 
 /**
@@ -156,5 +181,5 @@ interface CodeInfo {
   sub_list?   : CodeInfo[];
 }
 
-export type { ApiResult, BoardData, ChatData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
+export type { ApiResult, SearchParams, BoardData, ChatData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
 

@@ -1,0 +1,16 @@
+{
+  "build": {
+    "local": {
+      "distribution": "internal",
+      "env": { "APP_ENV": "local" }
+    },
+    "dev": {
+      "distribution": "internal",
+      "env": { "APP_ENV": "dev" }
+    },
+    "prod": {
+      "distribution": "store",
+      "env": { "APP_ENV": "prod" }
+    }
+  }
+}

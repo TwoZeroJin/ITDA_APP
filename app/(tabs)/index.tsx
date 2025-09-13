@@ -2,8 +2,10 @@ import CommHeader from '@/components/CommHeader';
 import CustomDialog from '@/components/CustomDialog';
 import RadioGroup from '@/components/RadioGroup';
 import SelectboxModal from '@/components/SelectboxModal';
+import { COLOR } from '@/constants';
 import { CodeInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -63,6 +65,13 @@ export default function HomeScreen() {
       <View style={{ padding: 20 }}>
         <TouchableOpacity onPress={openDialog}>
           <Text>다이얼로그 열기</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ padding: 30 }}>
+        <TouchableOpacity 
+          style={{ borderColor : COLOR.COMM_BLACK, borderWidth : 2, width : 100 }} 
+          onPress={() => router.navigate('/test')}>
+          <Text>스크롤뷰 테스트 화면 이동</Text>
         </TouchableOpacity>
       </View>
       <CustomDialog
