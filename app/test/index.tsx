@@ -11,28 +11,33 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TestScreen() {
     // Paging Test
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useGroupListPaging({ page: 1, page_size: 10 });
+    const { data, results, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useGroupListPaging({ page: 1, page_size: 10 });
     const [isRefreshing, setIsRefreshing] = useState(false);
     const ref = useRef<FlatList | null>(null);
+
     useScrollToTop(ref);
 
+    // 위로 끌어올릴 경우 재조회
     const handleRefresh = async () => {
         setIsRefreshing(true);
         await refetch();
         setIsRefreshing(false);
     };
 
+    // 맨 밑에 도달할 경우 다음 페이지 조회
     const handleEndReached = () => {
         if (hasNextPage && !isFetchingNextPage) {
-        fetchNextPage();
+            fetchNextPage();
         }
     };
     return (
         <FlatList
             ref={ref}
-            data={data?.pages.flat()}
-            renderItem={({ item }) => <View><Text>{item.name}</Text></View>}
-            keyExtractor={(item) => String(item.id)}
+            data={results}
+            renderItem={({ item }) => (
+                <View><Text>{JSON.stringify(item.group_name)}</Text></View>
+            )}
+            keyExtractor={(item) => item.group_id}
             contentContainerStyle={{ paddingBottom: 100 }}
             onEndReached={handleEndReached}
             onEndReachedThreshold={0.5}

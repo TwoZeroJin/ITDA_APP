@@ -45,7 +45,7 @@ function getMqttClientId() {
  * @param logType 
  * @param logMessage 
  */
-function PrintCommLog(logType: string = COMM_CONSTANTS.COMM_INFO, ...logMessage: string[]) {
+function printCommLog(logType: string = COMM_CONSTANTS.COMM_INFO, ...logMessage: string[]) {
     let makeMessage = logMessage.join(" ");
     switch (logType) {
         case COMM_CONSTANTS.COMM_INFO : console.log(makeMessage);
@@ -61,24 +61,24 @@ function PrintCommLog(logType: string = COMM_CONSTANTS.COMM_INFO, ...logMessage:
  * Info Log
  * @param logMessage 
  */
-function PrintInfoLog(...logMessage: string[]) {
-    PrintCommLog(COMM_CONSTANTS.COMM_INFO, ...logMessage);
+function printInfoLog(...logMessage: string[]) {
+    printCommLog(COMM_CONSTANTS.COMM_INFO, ...logMessage);
 }
 
 /**
  * Debug Log
  * @param logMessage 
  */
-function PrintDebugLog(...logMessage: string[]) {
-    PrintCommLog(COMM_CONSTANTS.COMM_DEBUG, ...logMessage);
+function printDebugLog(...logMessage: string[]) {
+    printCommLog(COMM_CONSTANTS.COMM_DEBUG, ...logMessage);
 }
 
 /**
  * Error Log
  * @param logMessage 
  */
-function PrintErrorLog(...logMessage: string[]) {
-    PrintCommLog(COMM_CONSTANTS.COMM_ERROR, ...logMessage);
+function printErrorLog(...logMessage: string[]) {
+    printCommLog(COMM_CONSTANTS.COMM_ERROR, ...logMessage);
 }
 
 /**
@@ -165,5 +165,5 @@ async function getCategoryList(): Promise<CodeInfo[]> {
     
 }
 
-export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, PrintCommLog, PrintInfoLog, PrintDebugLog, PrintErrorLog };
+export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog as PrintCommLog, printInfoLog as PrintInfoLog, printDebugLog as PrintDebugLog, printErrorLog as PrintErrorLog };
 
