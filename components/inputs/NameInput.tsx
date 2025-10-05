@@ -10,8 +10,8 @@ function NameInput() {
         control={control}
         rules={{
           validate: (data: string) => {
-            if (data.length === 0) {
-              return '이름을 입력해주세요.';
+            if (!data || data.length === 0) {
+                return '이름을 입력해주세요.';
             }
           }
         }}

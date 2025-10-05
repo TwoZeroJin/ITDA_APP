@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         color       : COLOR.COMM_RED,
     },
     inputError: {
-        backgroundColor: COLOR.COMM_RED
+        backgroundColor: COLOR.COMM_GRAY
     },
     multiline: {
         alignItems      : "flex-start",

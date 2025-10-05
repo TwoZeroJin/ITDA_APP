@@ -1,4 +1,6 @@
 import CommBottomButton from "@/components/CommBottomButton";
+import ChurchNmInput from "@/components/inputs/ChurchNmInput";
+import ChurchTmNmInput from "@/components/inputs/ChurchTmNmInput";
 import IdInput from "@/components/inputs/IdInput";
 import NameInput from "@/components/inputs/NameInput";
 import NickNameInput from "@/components/inputs/NickNameInput";
@@ -22,8 +24,9 @@ export default function SignupInfoScreen() {
     })
 
     const onSubmit = (formValues: SignupInfo) => {
-        const { login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest } = formValues;
-        signupMutation.mutate({ login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest });
+        console.log("formValues",formValues);
+        const { login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest, mem_church_nm,  mem_church_tm_nm} = formValues;
+        signupMutation.mutate({ login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest, mem_church_nm,mem_church_tm_nm });
     }
 
     return (
@@ -31,9 +34,11 @@ export default function SignupInfoScreen() {
             <SafeAreaView style={styles.container}>
                 <FormProvider {...signupForm}>
                     <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+                        <ChurchNmInput/>
                         <NameInput/>
-                        <NickNameInput/>
                         <IdInput/>
+                        <NickNameInput/>
+                        <ChurchTmNmInput/>
                         <PasswordInput/>
                         <PasswordConfirmInput/>
                     </KeyboardAwareScrollView>
