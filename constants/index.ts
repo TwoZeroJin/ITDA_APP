@@ -42,4 +42,10 @@ const STORE_KEY = {
     MEM_INTEREST    : "mem_interest",
 }
 
-export { COLOR, QUERY_KEYS, STORE_KEY };
+const COMM_CONSTANTS = {
+    COMM_INFO       : "info",
+    COMM_ERROR      : "error",
+    COMM_DEBUG      : "debug"
+}
+
+export { COLOR, QUERY_KEYS, STORE_KEY, COMM_CONSTANTS };

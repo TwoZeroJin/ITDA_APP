@@ -1,5 +1,5 @@
 import { STORE_KEY } from "@/constants";
-import { getAccessToken, getClientId, getRefreshToken } from "@/utils/commUtil";
+import { getAccessToken, getClientId, getRefreshToken, PrintCommLog, PrintErrorLog, PrintInfoLog } from "@/utils/commUtil";
 import axios from "axios";
 
 /**
@@ -21,7 +21,10 @@ axiosInstance.interceptors.request.use(async (config) => {
     config.headers[STORE_KEY.X_REFRESH_TOKEN] = refresh_token;
 
     if (config.data) {
-        console.log('[API Request]', config.data);
+        PrintInfoLog('[API Request] :', JSON.stringify({
+          url   : config.url,
+          data  : config.data
+        }));
     }
 
     return config;
@@ -31,25 +34,25 @@ axiosInstance.interceptors.request.use(async (config) => {
 
 axiosInstance.interceptors.response.use(
     response => {
-        console.log('[API Response]', {
+        PrintInfoLog('[API Response] :', JSON.stringify({
             url     : response.config.url,
             status  : response.status,
             data    : response.data
-        });
+        }));
       return response;
     },
     error => {
       // 네트워크 에러
       if (!error.response) {
-        console.error('[API Error - Network]', error.message);
+        PrintErrorLog('[API Error - Network] :', JSON.stringify(error.message));
       } 
       // 서버 응답 에러
       else {
-        console.error('[API Error - Response]', {
+        PrintErrorLog('[API Error - Response] :', JSON.stringify({
             url     : error.config.url,
             status  : error.response.status,
             data    : error.response.data
-        });
+        }));
       }
 
       return Promise.reject(error);

@@ -10,7 +10,7 @@ function IdInput() {
         control={control}
         rules={{
           validate: (data: string) => {
-            if (data.length === 0) {
+            if (!data || data.length === 0) {
               return '아이디를 입력해주세요.';
             }
           }

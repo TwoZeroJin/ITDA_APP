@@ -38,7 +38,7 @@ function useSignup() {
         onError: (error: ResponseError) => {
             Toast.show({
                 type: 'error',
-                text1: error.response?.data.message
+                text1: error.response?.data.message || error.message || '회원가입 처리중 오류가 발생했습니다.'
             })
         },
         onSettled: () => {},

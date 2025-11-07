@@ -1,4 +1,4 @@
-import { STORE_KEY } from "@/constants";
+import { COMM_CONSTANTS, STORE_KEY } from "@/constants";
 import { CodeInfo, MemberInfo, Token } from "@/types";
 import { Platform } from "react-native";
 import base64 from 'react-native-base64';
@@ -38,6 +38,47 @@ function getClientId(appVersion?: string) {
 
 function getMqttClientId() {
     //
+}
+
+/**
+ * 공통 콘솔 로그
+ * @param logType 
+ * @param logMessage 
+ */
+function printCommLog(logType: string = COMM_CONSTANTS.COMM_INFO, ...logMessage: string[]) {
+    let makeMessage = logMessage.join(" ");
+    switch (logType) {
+        case COMM_CONSTANTS.COMM_INFO : console.log(makeMessage);
+        break;
+        case COMM_CONSTANTS.COMM_DEBUG : console.debug(makeMessage);
+        break;
+        case COMM_CONSTANTS.COMM_ERROR : console.error(makeMessage);
+        break;
+    }
+}
+
+/**
+ * Info Log
+ * @param logMessage 
+ */
+function printInfoLog(...logMessage: string[]) {
+    printCommLog(COMM_CONSTANTS.COMM_INFO, ...logMessage);
+}
+
+/**
+ * Debug Log
+ * @param logMessage 
+ */
+function printDebugLog(...logMessage: string[]) {
+    printCommLog(COMM_CONSTANTS.COMM_DEBUG, ...logMessage);
+}
+
+/**
+ * Error Log
+ * @param logMessage 
+ */
+function printErrorLog(...logMessage: string[]) {
+    printCommLog(COMM_CONSTANTS.COMM_ERROR, ...logMessage);
 }
 
 /**
@@ -124,5 +165,5 @@ async function getCategoryList(): Promise<CodeInfo[]> {
     
 }
 
-export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList };
+export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog as PrintCommLog, printInfoLog as PrintInfoLog, printDebugLog as PrintDebugLog, printErrorLog as PrintErrorLog };
 
