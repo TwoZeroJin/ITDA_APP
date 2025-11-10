@@ -47,7 +47,7 @@ export default function LoginScreen() {
                     </View>
                     <View style={styles.buttonContainer}>
                         <CustomButton label="로그인" onPress={loginForm.handleSubmit(defaultLogin)}/>
-                        <CustomButton label="회원가입" onPress={() => router.navigate('/user/signupTerm')}/>
+                        <CustomButton label="회원가입" variant='filled' onPress={() => router.navigate('/user/signupTerm')}/>
                     </View>
                     <View style={styles.findUserContainer}>
                         <Text style={styles.findIdText}>계정 정보를 잊으셨나요?</Text>
@@ -59,7 +59,7 @@ export default function LoginScreen() {
                     </View>
                     <View style={styles.snsLoginBtnContainer}>
                         <CustomButton label="카카오톡으로 시작하기" onPress={() => {}}/>
-                        <CustomButton label="애플로 시작하기" onPress={() => {}}/>
+                        {/* <CustomButton label="애플로 시작하기" onPress={() => {}}/> */}
                     </View>
                 </FormProvider>
             </View>

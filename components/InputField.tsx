@@ -35,10 +35,11 @@ const InputField = ({label, variant = "filled", error, rightChild = null, ...pro
 
 const styles = StyleSheet.create({
     label: {
-        fontSize        : 18,
+        fontSize        : 14,
         fontWeight      : 400,
         lineHeight      : 22,
-        color           : COLOR.COMM_BLACK,
+        color           : COLOR.TEXT_DEFAULT,
+        marginStart     : 10,
         marginBottom    : 7,
     },
     container: {
@@ -59,13 +60,13 @@ const styles = StyleSheet.create({
         borderColor:COLOR.COMM_GRAY
     },
     filledText: {
-        color: COLOR.COMM_BLACK
+        color: COLOR.TEXT_DEFAULT
     },
     standardText: {
-        color: COLOR.COMM_BLACK
+        color: COLOR.TEXT_DEFAULT
     },
     outlinedText: {
-        color:COLOR.COMM_BLACK,
+        color:COLOR.TEXT_DEFAULT,
     },
     input: {
         flex        : 1,

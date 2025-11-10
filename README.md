@@ -28,13 +28,17 @@ ITDA 사용자 앱
 #
 # #################
 # Android 실행 방법
-# Ctype 연결 후 소스 실행 -> Press a (open Android) 로 실행
+# 1. 개발자 옵션 ON 및 노트북 Ctype 선 연결 (권한 물어볼시 승인)
+# 2. 's' 눌러 Using Expo Go 모드로 실행
+# 3. 'a' 눌러서 open Android 실행
 # #################
 # 
 # #################
 # iPhone 실행 방법
-# 's' 눌러 Using Expo Go 모드로 실행
-# Camera -> QR 스캔
+# 1. npm run start:dev 명령어 실행
+# 2. 's' 눌러 Using Expo Go 모드로 실행
+# 3. Camera -> QR 스캔
+# 4. Expo Go 앱 실행
 # #################
 #
 #

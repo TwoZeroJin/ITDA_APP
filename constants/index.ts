@@ -14,10 +14,10 @@ const COLOR = {
     APP_MAIN        : '#F58A78',
     APP_ACTIVE_1    : '#FF826D',
     APP_ACTIVE_2    : '#71C6BC',
-    TEXT_DEFAULT    : '#646464',
+    TEXT_DEFAULT    : '#555555',
     TEXT_GRAY       : '#9B9B9B',
     TEXT_WARN       : '#FF0000',
-    BTN_BORDER      : '#8B8B8B',
+    BTN_BORDER      : '#DBDBDB',
 };
 
 /**

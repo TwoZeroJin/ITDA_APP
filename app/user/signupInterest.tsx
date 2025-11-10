@@ -60,48 +60,46 @@ export default function SignupInterestScreen() {
   };
 
   return (
-    <FormProvider {...signupForm}>
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          <Text style={styles.title}>관심분야</Text>
-          <Text style={styles.subtitle}>
-            관심있는 취미가 우선적으로 보여져요 {"\n"}(최소 2개)
-          </Text>
+    <View style={styles.container}>
+      <FormProvider {...signupForm}>
+        <Text style={styles.title}>관심분야</Text>
+        <Text style={styles.subtitle}>
+          관심있는 취미가 우선적으로 보여져요 {"\n"}(최소 2개)
+        </Text>
 
-          {INTEREST_CATEGORIES.map((category, idx) => (
-            <View key={idx} style={styles.categoryBox}>
-              <Text style={styles.categoryTitle}>{category.title}</Text>
-              <View style={styles.buttonGroup}>
-                {category.items.map((item) => {
-                  const isSelected = selected.includes(item);
-                  return (
-                    <TouchableOpacity
-                      key={item}
+        {INTEREST_CATEGORIES.map((category, idx) => (
+          <View key={idx} style={styles.categoryBox}>
+            <Text style={styles.categoryTitle}>{category.title}</Text>
+            <View style={styles.buttonGroup}>
+              {category.items.map((item) => {
+                const isSelected = selected.includes(item);
+                return (
+                  <TouchableOpacity
+                    key={item}
+                    style={[
+                      styles.itemButton,
+                      isSelected && styles.itemButtonSelected,
+                    ]}
+                    onPress={() => toggleSelect(item)}
+                  >
+                    <Text
                       style={[
-                        styles.itemButton,
-                        isSelected && styles.itemButtonSelected,
+                        styles.itemText,
+                        isSelected && styles.itemTextSelected,
                       ]}
-                      onPress={() => toggleSelect(item)}
                     >
-                      <Text
-                        style={[
-                          styles.itemText,
-                          isSelected && styles.itemTextSelected,
-                        ]}
-                      >
-                        {item}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
+                      {item}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
-          ))}
-        </View>
+          </View>
+        ))}
 
-        <CommBottomButton label="선택완료" onPress={onSubmit} />
-      </SafeAreaView>
-    </FormProvider>
+      </FormProvider>
+      <CommBottomButton label="선택완료" onPress={onSubmit} />
+    </View>
   );
 }
 
@@ -120,14 +118,10 @@ export default function SignupInterestScreen() {
 //     );
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#fff",
-  },
   container: {
     flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 40,
+    marginHorizontal: 20,
+    marginTop: 40,
   },
   title: {
     fontSize: 22,

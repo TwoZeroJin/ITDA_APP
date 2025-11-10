@@ -10,7 +10,7 @@ interface CommBottomButtonProps {
 
 function CommBottomButton({ label, onPress }: CommBottomButtonProps) {
     const inset = useSafeAreaInsets();
-  return (
+    return (
         <View style={[styles.fixed, {paddingBottom: inset.bottom || 12}]}>
             <CustomButton 
                 label={label} 
@@ -18,7 +18,7 @@ function CommBottomButton({ label, onPress }: CommBottomButtonProps) {
                 style={styles.bottomStyle}
                 onPress={onPress}/>
         </View>
-  )
+    )
 }
 
 const styles = StyleSheet.create({
@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
         bottom              : 0,
         width               : "100%",
         paddingTop          : 12,
-        paddingHorizontal   : 10
+        paddingHorizontal   : 10,
+        backgroundColor     : "#FFFFFF",
     },
     bottomStyle: {
         height          : 52,

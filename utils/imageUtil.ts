@@ -1,7 +1,7 @@
 import { ImagePickerAsset } from "expo-image-picker";
 
 function getFormDataImages(key: string, images:ImagePickerAsset[]) {
-    const formData =new FormData();
+    const formData = new FormData();
 
     images.forEach(({uri, mimeType = "image/jpeg"}) => {
         const file = {

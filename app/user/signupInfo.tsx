@@ -8,8 +8,9 @@ import PasswordConfirmInput from "@/components/inputs/PasswordConfirmInput";
 import PasswordInput from "@/components/inputs/PasswordInput";
 import { useAuth } from "@/hooks/queries/useAuth";
 import { SignupInfo } from "@/types";
+import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function SignupInfoScreen() {
@@ -23,28 +24,27 @@ export default function SignupInfoScreen() {
     })
 
     const onSubmit = (formValues: SignupInfo) => {
-        console.log("formValues",formValues);
+        // console.log("formValues",formValues);
         const { login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest, mem_church_nm,  mem_church_tm_nm} = formValues;
         signupMutation.mutate({ login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest, mem_church_nm, mem_church_tm_nm });
     }
 
     return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={styles.container}>
-                <FormProvider {...signupForm}>
-                    <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-                        <ChurchNmInput/>
-                        <NameInput/>
-                        <IdInput/>
-                        <NickNameInput/>
-                        <ChurchTmNmInput/>
-                        <PasswordInput/>
-                        <PasswordConfirmInput/>
-                    </KeyboardAwareScrollView>
-                    <CommBottomButton label="다음" onPress={signupForm.handleSubmit(onSubmit)}/>
-                </FormProvider>
-            </View>
-        </TouchableWithoutFeedback>
+        <View style={styles.container}>
+            <FormProvider {...signupForm}>
+                <KeyboardAwareScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+                    <ChurchNmInput/>
+                    <NameInput/>
+                    <IdInput/>
+                    <NickNameInput/>
+                    <ChurchTmNmInput/>
+                    <PasswordInput/>
+                    <PasswordConfirmInput/>
+                </KeyboardAwareScrollView>
+                {/* <CommBottomButton label="다음" onPress={signupForm.handleSubmit(onSubmit)}/> */}
+            </FormProvider>
+            <CommBottomButton label="다음" onPress={() => router.navigate('/user/signupInterest')}/>
+        </View>
     )
 }
 

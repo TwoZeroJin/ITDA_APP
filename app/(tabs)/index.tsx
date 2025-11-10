@@ -4,7 +4,7 @@ import RadioGroup from '@/components/RadioGroup';
 import SelectboxModal from '@/components/SelectboxModal';
 import * as ImagePicker from 'expo-image-picker';
 import { COLOR } from '@/constants';
-import { ApiResult, CodeInfo } from '@/types';
+import { ApiResult, CodeInfo, FileInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -12,6 +12,7 @@ import { Alert, Dimensions, FlatList, Pressable, ScrollView, StyleSheet, Text, T
 import { getFormDataImages } from '@/utils/imageUtil';
 import { useImageUpload, useImagesUpload } from '@/hooks/queries/useImageUpload';
 import { useFormContext, useWatch } from 'react-hook-form';
+import ImageCarousel from '@/components/ImageCarousel';
 
 const { width } = Dimensions.get('window');
 
@@ -22,7 +23,7 @@ export default function HomeScreen() {
   const openDialog = () => setDialogVisible(true);
   const closeDialog = () => setDialogVisible(false);
 
-  const [imageUris, setImageUris] = useState<Array<{uri:string}>>([]);
+  const [imageUris, setImageUris] = useState<Array<string>>([]);
   const uploadImage = useImageUpload();
   const uploadImages = useImagesUpload();
   
@@ -75,19 +76,19 @@ export default function HomeScreen() {
       return;
     }
 
-    const formData = getFormDataImages("images", result.assets);
+    const formData = getFormDataImages("upfiles", result.assets);
     uploadImages.mutate(formData, {
-      onSuccess: (data: ApiResult<string[]>) => addImageUris(data?.data ?? []),
+      onSuccess: (data: ApiResult<FileInfo[]>) => addImageUris(data?.data ?? []),
     });
   };
 
-  const addImageUris = (uris: string[]) => {
+  const addImageUris = (uris: FileInfo[]) => {
     if (imageUris.length + uris.length > 5) {
       Alert.alert("이미지 개수 초과", "추가 가능한 이미지는 최대 5개입니다.");
       return;
     }
 
-    setImageUris([...imageUris, ...uris.map((uri) => ({ uri: uri }))]);
+    setImageUris([...imageUris, ...uris.map((file) => file.file_url)]);
   };
 
   // console.log('categoryList : ', categoryList);
@@ -147,11 +148,17 @@ export default function HomeScreen() {
           />
         </View>
 
+        {/* 이미지 캐러셀 테스트 */}
         <View style={{ marginBottom: 50, alignItems: 'center', justifyContent: 'center' }}>
           <TouchableOpacity onPress={handleOpenImagePicker}>
             <Text>이미지 선택</Text>
           </TouchableOpacity>
         </View>
+        <ImageCarousel
+          images={imageUris}
+          height={280}
+          onPressImage={(i) => console.log("pressed image", i)}
+        />
 
         {/* 다이얼로그 영역 */}
         <CustomDialog

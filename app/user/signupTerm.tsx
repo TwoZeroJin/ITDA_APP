@@ -14,19 +14,19 @@ export default function SignupTermScreen() {
             <View style={styles.imageContainer}>
                 <Logo width={97} height={80.6}/>
             </View>
-                <View style={styles.termContainer}>
-                    <CheckboxField 
-                        label='서비스 이용약관 동의' 
-                        value={serviceChecked} 
-                        onChange={() => setServiceChecked(!serviceChecked)}
-                        />
-                    <CheckboxField 
-                        label='개인정보 수집 및 이용 동의' 
-                        value={privacyChecked} 
-                        onChange={() => setPrivacyChecked(!privacyChecked)}
-                        />
-                </View>
-                <CommBottomButton label="다음" onPress={() => router.navigate('/user/signupInfo')}/>
+            <View style={styles.termContainer}>
+                <CheckboxField 
+                    label='서비스 이용약관 동의' 
+                    value={serviceChecked} 
+                    onChange={() => setServiceChecked(!serviceChecked)}
+                    />
+                <CheckboxField 
+                    label='개인정보 수집 및 이용 동의' 
+                    value={privacyChecked} 
+                    onChange={() => setPrivacyChecked(!privacyChecked)}
+                    />
+            </View>
+            <CommBottomButton label="다음" onPress={() => router.navigate('/user/signupInfo')}/>
         </View>
     )
 }

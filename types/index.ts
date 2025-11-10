@@ -81,11 +81,13 @@ interface MemberInfo {
  */
 interface FileInfo {
   file_id     : string;
+  file_url    : string;
   file_name   : string;
-  file_path   : string;
   file_order  : number;
   target_id   : number;
   target_type : string;
+  org_name    : string;
+  sav_name    : string;
 }
 
 /**
@@ -146,7 +148,7 @@ interface GroupInfo {
  */
 interface GroupMember {
   group_id    : number;
-  mem_id    : number;
+  mem_id      : number;
 }
 
 /**
