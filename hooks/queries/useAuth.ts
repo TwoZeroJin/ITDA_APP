@@ -36,7 +36,7 @@ function useSignup() {
             }
         },
         onError: (error: ResponseError) => {
-            Toast.show({
+            showToast({
                 type: 'error',
                 text1: error.response?.data.message || error.message || '회원가입 처리중 오류가 발생했습니다.'
             })
@@ -68,6 +68,10 @@ function useLogin() {
             }
         },
         onError: (error: ResponseError) => {
+            showToast({
+                type: 'error',
+                text1: error.response?.data.message || error.message || '로그인 처리중 오류가 발생했습니다.'
+            });
             console.log('error : ', error);
         },
         onSettled: () => {

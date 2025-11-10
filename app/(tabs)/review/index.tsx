@@ -1,15 +1,14 @@
 import CommHeader from "@/components/CommHeader";
 import React from "react";
-import { StyleSheet } from 'react-native';
-import { SafeAreaView } from "react-native-safe-area-context";
+import { StyleSheet, View } from 'react-native';
 
 export default function ReviewScreen() {
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* <CommHeader isLogo={false}/> */}
       <CommHeader/>
-    </SafeAreaView>
+    </View>
   );
 }
 

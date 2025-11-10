@@ -3,13 +3,13 @@ import InputField from '@/components/InputField';
 import { COLOR } from '@/constants';
 import { useChatInsert } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
+import { showToast } from '@/utils/commToast';
 import { getAccessToken } from '@/utils/commUtil';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function IndexScreen() {
   const chatInsert = useChatInsert();
@@ -32,10 +32,18 @@ export default function IndexScreen() {
     const fetchData = async () => {
       const accessTokon = await getAccessToken();
       if (accessTokon) {
-        mqttUtil.initMqtt(accessTokon, topic, msgReceiveCallback, msgSendCallback);
+        if (!mqttUtil.initMqtt(accessTokon, topic, msgReceiveCallback, msgSendCallback)) {
+          showToast({
+            text1: `채팅 연결에 실패하였습니다. 재시도해 주세요.`
+          });
+        router.back();
+        }
       }
       else {
         // 연결 안될 경우 back
+        showToast({
+            text1: `회원 정보를 찾지 못하였습니다.`
+        });
         router.back();
       }
     }
@@ -58,7 +66,7 @@ export default function IndexScreen() {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <CommHeader isLogo={false}/>
           <KeyboardAwareScrollView contentContainerStyle={styles.chatContainer}>
             {/* 채팅 메시지 목록 */}
@@ -82,7 +90,7 @@ export default function IndexScreen() {
               />
             </View>
           </KeyboardAwareScrollView>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }

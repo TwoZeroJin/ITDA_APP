@@ -4,14 +4,13 @@ import CommBottomButton from '@/components/CommBottomButton';
 import { router } from "expo-router";
 import { useState } from 'react';
 import { StyleSheet, View } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SignupTermScreen() {
     const [serviceChecked, setServiceChecked] = useState(false);
     const [privacyChecked, setPrivacyChecked] = useState(false);
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.imageContainer}>
                 <Logo width={97} height={80.6}/>
             </View>
@@ -28,7 +27,7 @@ export default function SignupTermScreen() {
                         />
                 </View>
                 <CommBottomButton label="다음" onPress={() => router.navigate('/user/signupInfo')}/>
-        </SafeAreaView>
+        </View>
     )
 }
 

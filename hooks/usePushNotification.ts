@@ -72,7 +72,7 @@ function usePushNotification() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log(response);
+        console.log("response : ", response);
       });
 
     return () => {

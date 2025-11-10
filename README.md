@@ -45,3 +45,18 @@ ITDA 사용자 앱
 # 4. npx expo install --check
 # 5. node_modules, package-lock.json 삭제후 npm install --legacy-peer-deps 실행
 # -- 안되서 결국 "@types/react": "^19.0.10" 으로 변경
+#
+#
+# EXPO 공용 계정 정보 : Notion 문서 참고
+#
+# npm start(서버 실행) 없이 Expo Go APP에서 실행하는 법 - Expo Publish (클라우드에 upload)
+# 1. eas update
+# 2. publish 진행
+# 3. Expo GO 앱 실행후 로그인 (EXPO 공용 계정으로 로그인 필요)
+# 4. 앱 실행
+#
+# 빌드 방법 (추후 개발자 계정 등록 후 진행 필요)
+# 1. npm install -g eas-cli
+# 2. eas login
+# 3. eas build:configure (빌드 초기화)
+# 4. eas build -p ios --profile dev (iOS 개발 빌드)

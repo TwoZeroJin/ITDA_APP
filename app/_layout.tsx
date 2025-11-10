@@ -9,7 +9,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
@@ -52,11 +52,13 @@ export default function RootLayout() {
         <LoadingProvider>
           <QueryClientProvider client={queryClient}>
             <AuthRoute>
-              <RootNavigator />
+              <SafeAreaView style={styles.container}>
+                <RootNavigator />
+              </SafeAreaView>
               <LoadingLayout/>
               <Toast config={{
                 customToast: ({text1, text2}) => (
-                  <View style={[styles.container, { marginTop: insets.top}]}>
+                  <View style={[styles.toastContainer, { marginTop: insets.top}]}>
                     <Text style={{ fontSize: 18, color: 'white' }}>{text1}</Text>
                     {text2 && <Text style={{ color: 'white' }}>{text2}</Text>}
                   </View>
@@ -82,25 +84,29 @@ function RootNavigator() {
   SplashScreen.hideAsync();
 
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)"   options={{ headerShown: false }} />
-      <Stack.Screen name="user"     options={{ headerShown: false }} />
-      <Stack.Screen name="chats"    options={{ headerShown: false }} />
-      {/* <Stack.Screen name="group"    options={{ headerShown: false }} />
-      <Stack.Screen name="meet"     options={{ headerShown: false }} />
-      <Stack.Screen name="review"   options={{ headerShown: false }} /> */}
-      <Stack.Screen name="+not-found" />
-    </Stack>
+      <Stack>
+        <Stack.Screen name="(tabs)"   options={{ headerShown: false }} />
+        <Stack.Screen name="user"     options={{ headerShown: false }} />
+        <Stack.Screen name="chats"    options={{ headerShown: false }} />
+        {/* <Stack.Screen name="group"    options={{ headerShown: false }} />
+        <Stack.Screen name="meet"     options={{ headerShown: false }} />
+        <Stack.Screen name="review"   options={{ headerShown: false }} /> */}
+        <Stack.Screen name="+not-found" />
+      </Stack>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { 
+  container: {
+    flex: 1,
+    backgroundColor: COLOR.COMM_WHITE,
+  },
+  toastContainer: { 
     backgroundColor : COLOR.APP_MAIN, 
     padding         : 16, 
     borderRadius    : 16,
   },
-  toast_text: {
+  toastText: {
     color       : 'white',
     fontSize    : 16, 
     fontWeight  : 'bold',

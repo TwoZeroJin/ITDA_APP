@@ -7,7 +7,6 @@ import { router } from 'expo-router';
 import { useRef, useState } from 'react';
 import { FormProvider, useForm } from "react-hook-form";
 import { FlatList, Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TestScreen() {
     // Paging Test

@@ -1,7 +1,6 @@
 import { groupList } from "@/api/group";
 import { QUERY_KEYS } from "@/constants";
 import { SearchParams } from "@/types";
-import { PrintInfoLog } from "@/utils/commUtil";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 function useGroupListPaging(searchParams: SearchParams) {

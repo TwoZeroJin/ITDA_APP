@@ -34,7 +34,7 @@ function CustomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
               key={route.key}
               onPress={onPress}
               style={styles.plusButtonWrapper}
-              activeOpacity={0.9}
+              activeOpacity={0.8}
             >
               <Meet/>
             </TouchableOpacity>
@@ -81,18 +81,16 @@ const styles = StyleSheet.create({
     flexDirection     : 'row',
     justifyContent    : 'space-between',
     alignItems        : 'center',
-    height            : 82,
-    paddingBottom     : Platform.OS === 'ios' ? 20 : 10,
+    height            : 60,
     paddingHorizontal : 10,
     elevation         : 10,
-    shadowOffset      : { width: 0, height: -10 },
+    shadowOffset      : { width: 0, height: -12 },
     shadowOpacity     : 0.2,
     shadowRadius      : 6,
     backgroundColor   : COLOR.COMM_WHITE,
     shadowColor       : COLOR.COMM_SHADOW,
   },
   iconContainer : {
-    marginBottom  : 5,
     alignItems    : 'center',
     gap: 6
   },
@@ -104,7 +102,7 @@ const styles = StyleSheet.create({
     //
   },
   plusButtonWrapper: {
-    top     : -12,
+    top     : -9,
     zIndex  : 10,
   },
 })

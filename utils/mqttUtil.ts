@@ -1,4 +1,5 @@
 import { Client, Message } from 'paho-mqtt';
+import { printErrorLog, printInfoLog } from './commUtil';
 
 let client: Client;
 
@@ -18,31 +19,33 @@ const initMqtt = (clientId: string, topic: string, msgReceiveCallback : (msg : s
 
         client.onConnectionLost = (response) => {
             if (response.errorCode !== 0) {
-                console.log('connection Lost : ', response.errorMessage);
+                printInfoLog('connection Lost : ', response.errorMessage);
             }
         }
 
         client.onMessageArrived = (message) => {
-            console.log(`MQTT Message Arrived : ${message.destinationName} : ${message.payloadString}`);
+            printInfoLog(`MQTT Message Arrived : ${message.destinationName} : ${message.payloadString}`);
             msgReceiveCallback(message.payloadString);
         }
 
         client.onMessageDelivered = (message) => {
-            console.log(`MQTT Message Delivered : , ${message.destinationName} : ${message.payloadString}`);
+            printInfoLog(`MQTT Message Delivered : , ${message.destinationName} : ${message.payloadString}`);
             msgSendCallback(message.payloadString);
         }
 
         client.connect({
             onSuccess: (success) => {
-                console.log('MQTT Connected : ', success);
+                printInfoLog(`MQTT Connected : ${success}`);
                 client.subscribe(topic);
             },
             onFailure: (error) => {
-                console.log('MQTT Connect Failed : ', error);
+                printErrorLog(`MQTT Connect Failed : ${error}`);
             },
             useSSL: false,
         });
     }
+
+    return true;
 };
 
 /**

@@ -43,16 +43,16 @@ function getMqttClientId() {
 /**
  * 공통 콘솔 로그
  * @param logType 
- * @param logMessage 
+ * @param logMessages
  */
-function printCommLog(logType: string = COMM_CONSTANTS.COMM_INFO, ...logMessage: string[]) {
-    let makeMessage = logMessage.join(" ");
+function printCommLog(logType: string = COMM_CONSTANTS.COMM_INFO, ...logMessages: string[]) {
+    let logMessage = logMessages.join(" ");
     switch (logType) {
-        case COMM_CONSTANTS.COMM_INFO : console.log(makeMessage);
+        case COMM_CONSTANTS.COMM_INFO : console.log(logMessage);
         break;
-        case COMM_CONSTANTS.COMM_DEBUG : console.debug(makeMessage);
+        case COMM_CONSTANTS.COMM_DEBUG : console.debug(logMessage);
         break;
-        case COMM_CONSTANTS.COMM_ERROR : console.error(makeMessage);
+        case COMM_CONSTANTS.COMM_ERROR : console.error(logMessage);
         break;
     }
 }
@@ -165,5 +165,5 @@ async function getCategoryList(): Promise<CodeInfo[]> {
     
 }
 
-export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog as PrintCommLog, printInfoLog as PrintInfoLog, printDebugLog as PrintDebugLog, printErrorLog as PrintErrorLog };
+export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog, printInfoLog, printDebugLog, printErrorLog };
 

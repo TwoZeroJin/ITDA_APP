@@ -1,5 +1,5 @@
 import { STORE_KEY } from "@/constants";
-import { getAccessToken, getClientId, getRefreshToken, PrintCommLog, PrintErrorLog, PrintInfoLog } from "@/utils/commUtil";
+import { getAccessToken, getClientId, getRefreshToken, printErrorLog, printInfoLog } from "@/utils/commUtil";
 import axios from "axios";
 
 /**
@@ -7,12 +7,16 @@ import axios from "axios";
  */
 const axiosInstance = axios.create({
     baseURL: `${process.env.EXPO_PUBLIC_API_KEY}`,
+    timeout: 30000, // 타임아웃 30초
     headers: {
         'x-client-id' : getClientId(),
     }
 });
 
-// Token 설정
+/**
+ * Request 인터셉터 설정
+ * Token 설정
+ */
 axiosInstance.interceptors.request.use(async (config) => {
     const access_token  = await getAccessToken();
     const refresh_token = await getRefreshToken();
@@ -21,8 +25,8 @@ axiosInstance.interceptors.request.use(async (config) => {
     config.headers[STORE_KEY.X_REFRESH_TOKEN] = refresh_token;
 
     if (config.data) {
-        PrintInfoLog('[API Request] :', JSON.stringify({
-          url   : config.url,
+        printInfoLog('[API Request] :', JSON.stringify({
+          url   : `${config.baseURL}${config.url}`,
           data  : config.data
         }));
     }
@@ -32,10 +36,13 @@ axiosInstance.interceptors.request.use(async (config) => {
     return Promise.reject(error);
 });
 
+/**
+ * Response 인터셉터 설정
+ */
 axiosInstance.interceptors.response.use(
     response => {
-        PrintInfoLog('[API Response] :', JSON.stringify({
-            url     : response.config.url,
+        printInfoLog('[API Response] :', JSON.stringify({
+            url     : `${response.config.baseURL}${response.config.url}`,
             status  : response.status,
             data    : response.data
         }));
@@ -44,12 +51,12 @@ axiosInstance.interceptors.response.use(
     error => {
       // 네트워크 에러
       if (!error.response) {
-        PrintErrorLog('[API Error - Network] :', JSON.stringify(error.message));
+        printErrorLog('[API Error - Network] :', JSON.stringify(error));
       } 
       // 서버 응답 에러
       else {
-        PrintErrorLog('[API Error - Response] :', JSON.stringify({
-            url     : error.config.url,
+        printErrorLog('[API Error - Response] :', JSON.stringify({
+            url     : `${error.config.baseURL}${error.config.url}`,
             status  : error.response.status,
             data    : error.response.data
         }));

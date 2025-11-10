@@ -9,9 +9,8 @@ import PasswordInput from "@/components/inputs/PasswordInput";
 import { useAuth } from "@/hooks/queries/useAuth";
 import { SignupInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { Keyboard, StyleSheet, TouchableWithoutFeedback, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignupInfoScreen() {
     const { signupMutation } = useAuth();
@@ -26,12 +25,12 @@ export default function SignupInfoScreen() {
     const onSubmit = (formValues: SignupInfo) => {
         console.log("formValues",formValues);
         const { login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest, mem_church_nm,  mem_church_tm_nm} = formValues;
-        signupMutation.mutate({ login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest, mem_church_nm,mem_church_tm_nm });
+        signupMutation.mutate({ login_id, login_pwd, login_type, mem_name, mem_nick, mem_gender, mem_team, mem_birth, mem_telno, mem_addr, mem_interest, mem_church_nm, mem_church_tm_nm });
     }
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <FormProvider {...signupForm}>
                     <KeyboardAwareScrollView contentContainerStyle={styles.container}>
                         <ChurchNmInput/>
@@ -44,7 +43,7 @@ export default function SignupInfoScreen() {
                     </KeyboardAwareScrollView>
                     <CommBottomButton label="다음" onPress={signupForm.handleSubmit(onSubmit)}/>
                 </FormProvider>
-            </SafeAreaView>
+            </View>
         </TouchableWithoutFeedback>
     )
 }

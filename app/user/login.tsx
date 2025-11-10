@@ -1,4 +1,5 @@
 import Logo from '@/assets/images/logo.svg';
+import LogoMain from '@/assets/images/logo_main.svg';
 import CustomButton from '@/components/CustomButton';
 import IdInput from "@/components/inputs/IdInput";
 import PasswordInput from "@/components/inputs/PasswordInput";
@@ -8,7 +9,6 @@ import { User } from '@/types';
 import { router } from 'expo-router';
 import { FormProvider, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
     const {loginMutation} = useAuth();
@@ -35,9 +35,10 @@ export default function LoginScreen() {
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <View style={styles.imageContainer}>
-                    <Logo width={97} height={80.6}/>
+                    {/* <Logo width={97} height={80.6}/> */}
+                    <LogoMain width={200} height={98}/>
                 </View>
                 <FormProvider {...loginForm}>
                     <View style={styles.inputContainer}>
@@ -61,7 +62,7 @@ export default function LoginScreen() {
                         <CustomButton label="애플로 시작하기" onPress={() => {}}/>
                     </View>
                 </FormProvider>
-            </SafeAreaView>
+            </View>
         </TouchableWithoutFeedback>
     )
 }
