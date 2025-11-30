@@ -7,15 +7,13 @@ import useMainEntry from '@/hooks/queries/useMain';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Stack } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Image } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import LoadingLayout from '@/components/LoadingLayout';
-
-SplashScreen.preventAutoHideAsync();
 
 // Notifications.setNotificationHandler({
 //   handleNotification: async () => ({
@@ -32,6 +30,7 @@ SplashScreen.preventAutoHideAsync();
 // });
 
 export default function RootLayout() {
+  const [appIsReady, setAppIsReady] = useState(false);
   const [loadedFonts] = useFonts({
     // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -40,12 +39,35 @@ export default function RootLayout() {
   useEffect(() => {
     if(loadedFonts) {
     }
+
+    async function prepare() {
+      // 최소 1.5초 강제 유지
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      // 준비 완료
+      setAppIsReady(true);
+    }
+
+    prepare();    
   }, [loadedFonts]);
 
   if (!loadedFonts) {
     return null; 
   }
-  
+
+  if (!appIsReady) {
+    // 앱 준비 전에는 splash 유지 (Expo Go에서는 app.json splash 이미지 표시)
+    return (
+      <View style={styles.splashContainer}>
+        <Image
+          source={require('../assets/images/splash_screen.png')}
+          style={styles.splashImage}
+          resizeMode="contain"
+        />
+      </View>
+    );
+  }
+
   return (
     <ActionSheetProvider>
       <SafeAreaProvider>
@@ -81,11 +103,10 @@ function RootNavigator() {
 
   // console.log('autoLogin : ', autoLogin)
 
-  SplashScreen.hideAsync();
 
   return (
       <Stack>
-        <Stack.Screen name="(tabs)"   options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)"   options={{ headerShown: false }} />         
         <Stack.Screen name="user"     options={{ headerShown: false }} />
         <Stack.Screen name="chats"    options={{ headerShown: false }} />
         {/* <Stack.Screen name="group"    options={{ headerShown: false }} />
@@ -110,5 +131,15 @@ const styles = StyleSheet.create({
     color       : 'white',
     fontSize    : 16, 
     fontWeight  : 'bold',
-  }
+  },
+  splashContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+  },
+  splashImage: {
+    width: '110%',
+    height: '110%',
+  },  
 });
