@@ -29,8 +29,9 @@ ITDA 사용자 앱
 # #################
 # Android 실행 방법
 # 1. 개발자 옵션 ON 및 노트북 Ctype 선 연결 (권한 물어볼시 승인)
-# 2. 's' 눌러 Using Expo Go 모드로 실행
-# 3. 'a' 눌러서 open Android 실행
+# 2. npm run start:dev 실행
+# 3. 's' 눌러 Using Expo Go 모드로 실행
+# 4. 'a' 눌러서 open Android 실행
 # #################
 # 
 # #################
