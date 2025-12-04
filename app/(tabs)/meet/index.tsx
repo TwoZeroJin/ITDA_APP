@@ -8,7 +8,7 @@ export default function MeetCreateScreen() {
 
   return (
     <>
-      <CommHeader isSearch={false} isNoti={false} isSetting={false} isLike={false}/>
+      <CommHeader isNoti={false} isSetting={false} isLike={false}/>
       <ScrollView
         contentContainerStyle={{
           padding: 16,          // 내부 여백

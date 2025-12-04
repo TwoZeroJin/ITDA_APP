@@ -9,7 +9,7 @@ export default function MyPageScreen() {
   return (
     <View style={styles.container}>
       {/* <CommHeader isLogo={false}/> */}
-      <CommHeader isSearch={false} isNoti={false} isSetting={true}/>
+      <CommHeader isNoti={false} isSetting={true}/>
       <View>
         <TouchableOpacity onPress={logout}>
           <Text style={styles.text}>로그아웃 하기</Text>

@@ -21,21 +21,21 @@ export default function TabLayout() {
         }),
       }}>
       <Tabs.Screen
+        name="meet"
+        options={{
+            title: '소모임',
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+            title: '커뮤니티',
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
             title: '메인',
-        }}
-      />
-      <Tabs.Screen
-        name="review"
-        options={{
-            title: '게시판',
-        }}
-      />
-      <Tabs.Screen
-        name="meet"
-        options={{
-            title: '소모임 만들기',
         }}
       />
       <Tabs.Screen

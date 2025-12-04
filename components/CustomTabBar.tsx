@@ -1,12 +1,12 @@
-import Chat from '@/assets/images/main_chat.svg';
-import Home from '@/assets/images/main_home.svg';
-import Meet from '@/assets/images/main_meet.svg';
-import My from '@/assets/images/main_my.svg';
-import Review from '@/assets/images/main_review.svg';
+import Chat from '@/assets/images/navi_chat.svg';
+import Community from '@/assets/images/navi_community.svg';
+import Main from '@/assets/images/navi_main.svg';
+import Meet from '@/assets/images/navi_meet.svg';
+import My from '@/assets/images/navi_my.svg';
 import { COLOR } from '@/constants';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 function CustomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
   return (
@@ -25,20 +25,6 @@ function CustomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
           if (!isFocused && !event.defaultPrevented) {
             navigation.navigate(name);
           }
-        }
-
-        // 소모임 생성 버튼
-        if (name === "meet") {
-          return (
-            <TouchableOpacity
-              key={route.key}
-              onPress={onPress}
-              style={styles.plusButtonWrapper}
-              activeOpacity={0.8}
-            >
-              <Meet/>
-            </TouchableOpacity>
-          )
         }
 
         return (
@@ -64,9 +50,11 @@ function CustomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
 const getIcon = (name: string) => {
   switch (name) {
     case 'index':
-      return <Home/>;
-    case 'review':
-      return <Review/>;
+      return <Main/>;
+    case 'community':
+      return <Community/>;
+    case 'meet':
+      return <Meet/>;
     case 'chat':
       return <Chat/>;
     case 'my':

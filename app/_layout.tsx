@@ -1,7 +1,8 @@
 import queryClient from '@/api/queryClient';
 import AuthRoute from '@/components/AuthRoute';
-import { LoadingProvider } from '@/contexts/LoadingContext';
+import LoadingLayout from '@/components/LoadingLayout';
 import { COLOR } from '@/constants';
+import { LoadingProvider } from '@/contexts/LoadingContext';
 import { useAutoLogin } from '@/hooks/queries/useAuth';
 import useMainEntry from '@/hooks/queries/useMain';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
@@ -9,11 +10,10 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import LoadingLayout from '@/components/LoadingLayout';
 
 // Notifications.setNotificationHandler({
 //   handleNotification: async () => ({
@@ -60,7 +60,7 @@ export default function RootLayout() {
     return (
       <View style={styles.splashContainer}>
         <Image
-          source={require('../assets/images/splash_screen.png')}
+          source={require('../assets/images/splash_screen2.png')}
           style={styles.splashImage}
           resizeMode="contain"
         />
