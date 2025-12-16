@@ -1,4 +1,4 @@
-import CustomTabBar from '@/components/CustomTabBar';
+import CustomBottomTabBar from '@/components/CustomBottomTabBar';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -7,7 +7,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      tabBar={(props) => <CustomTabBar {...props}/>}
+      tabBar={(props) => <CustomBottomTabBar {...props}/>}
       screenOptions={{
         headerShown: false,
         tabBarStyle: Platform.select({
@@ -35,7 +35,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-            title: '메인',
+            title: '홈',
         }}
       />
       <Tabs.Screen

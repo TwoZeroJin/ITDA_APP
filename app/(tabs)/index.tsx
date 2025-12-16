@@ -1,32 +1,20 @@
 import CommHeader from '@/components/CommHeader';
-import CustomDialog from '@/components/CustomDialog';
-import RadioGroup from '@/components/RadioGroup';
-import SelectboxModal from '@/components/SelectboxModal';
-import * as ImagePicker from 'expo-image-picker';
 import { COLOR } from '@/constants';
-import { ApiResult, CodeInfo, FileInfo } from '@/types';
+import { ApiResult, CodeInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Alert, Dimensions, FlatList, Pressable, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { getFormDataImages } from '@/utils/imageUtil';
-import { useImageUpload, useImagesUpload } from '@/hooks/queries/useImageUpload';
-import { useFormContext, useWatch } from 'react-hook-form';
-import ImageCarousel from '@/components/ImageCarousel';
+import { Dimensions, FlatList, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import Noti from '@/assets/images/navi_community.svg';
+import ArrowRight from '@/assets/images/arrow_right.svg';
+import SearchButton from '@/assets/images/search_button.svg';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
   const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
   const [value, setValue] = useState<string | number | null>(null);
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const openDialog = () => setDialogVisible(true);
-  const closeDialog = () => setDialogVisible(false);
 
-  const [imageUris, setImageUris] = useState<Array<string>>([]);
-  const uploadImage = useImageUpload();
-  const uploadImages = useImagesUpload();
-  
   useEffect(() => {
     const fetchData = async () => {
       // SecureStore에서 카테고리 코드 목록 가져오기
@@ -36,28 +24,23 @@ export default function HomeScreen() {
     fetchData();
   }, []);
 
-  // 테스트 코드
-  const items = [
-    { label: "사과", value: "apple" },
-    { label: "바나나", value: "banana" },
-    { label: "체리", value: "cherry", disabled: true },
-  ];
 
-  const PAGE_SIZE = 4;
-  const pages = [];
+   const PAGE_SIZE = 4;
+   const pages = [];
 
-  for (let i = 0; i < categoryList.length; i += PAGE_SIZE) {
-      pages.push(categoryList.slice(i, i + PAGE_SIZE));
-  }
+   for (let i = 0; i < categoryList.length; i += PAGE_SIZE) {
+       pages.push(categoryList.slice(i, i + PAGE_SIZE));
+   }
 
   // 카테고리 목록 Rendering 함수
-  const renderGrid = ({ item: pageItems = [] }: { item: CodeInfo[] }) => (
-      <View style={styles.page}>
+  const renderGridCategory = ({ item: pageItems = [] }: { item: CodeInfo[] }) => (
+      <View>
           {Array(2).fill(0).map((_, rowIdx) => (
               <View key={rowIdx} style={styles.row}>
                   {pageItems.slice(rowIdx * 2, rowIdx * 2 + 2).map((item, colIdx) => (
                       <View key={colIdx} style={styles.cell}>
-                          <Text>{JSON.stringify(item)}</Text>
+                          <Image source={{ uri: item.code_image_url }} style={{ width: 50, height: 50 }} />
+                          <Text>{item.code_value}</Text>
                       </View>
                   ))}
               </View>
@@ -65,111 +48,94 @@ export default function HomeScreen() {
       </View>
   );
 
-  // 이미지 업로드 테스트
-  const handleOpenImagePicker = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: "images",
-      allowsMultipleSelection: true,
-    });
+  const renderGridMeet = ({ item }: { item: CodeInfo }) => (
+      <View>
+          {Array(1).fill(0).map((_, rowIdx) => (
+              <View key={rowIdx} style={styles.meetCell}>
+                <Text>D-Day</Text>
+                <Text>매주 수요일은 보드...</Text>
+                <Text>양천구 - 신월 3동</Text>
+                <Text>7/10</Text>
+                <Text>하지예</Text>
+              </View>
+          ))}
+      </View>
+  );
 
-    if (result.canceled) {
-      return;
-    }
-
-    const formData = getFormDataImages("upfiles", result.assets);
-    uploadImages.mutate(formData, {
-      onSuccess: (data: ApiResult<FileInfo[]>) => addImageUris(data?.data ?? []),
-    });
-  };
-
-  const addImageUris = (uris: FileInfo[]) => {
-    if (imageUris.length + uris.length > 5) {
-      Alert.alert("이미지 개수 초과", "추가 가능한 이미지는 최대 5개입니다.");
-      return;
-    }
-
-    setImageUris([...imageUris, ...uris.map((file) => file.file_url)]);
-  };
-
-  // console.log('categoryList : ', categoryList);
+  console.log('categoryList : ', categoryList);
 
   return (
     <>
       <CommHeader/>
       <ScrollView 
-        style={styles.container} 
         showsVerticalScrollIndicator={false}
       >
-        {/* 라디오 버튼 UI 테스트*/}
-        <View style={{ padding: 20 }}>
-          {/* 세로형 */}
-          <RadioGroup items={items} value={value} onChange={setValue} />
-
-          {/* 가로형 */}
-          <RadioGroup
-            items={items}
-            value={value}
-            onChange={setValue}
-            direction="row"
-            spacing={20}
+        {/*  인사말 섹션  */}
+        <View style={styles.greetingContainer}>
+          <ImageBackground 
+            source={require('@/assets/images/home_morning.png')} 
+            style={styles.greetingImage}
+            imageStyle={{ resizeMode: 'cover' }}
           />
-        </View>
-        {/* 셀렉트박스 모달 테스트 */}
-        <View style={{ padding: 20 }}>
-          <SelectboxModal
-            options={items}
-            value={value}
-            onChange={setValue}
-            placeholder="과일을 선택하세요"
-          />
-        </View>
-        {/* 다이얼로그 테스트 */}
-        <View style={{ padding: 20 }}>
-          <TouchableOpacity onPress={openDialog}>
-            <Text>다이얼로그 열기</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={{ padding: 30 }}>
-          <TouchableOpacity 
-            style={{ borderColor : COLOR.COMM_BLACK, borderWidth : 2, width : 100 }} 
-            onPress={() => router.navigate('/test')}>
-            <Text>스크롤뷰 테스트 화면 이동</Text>
-          </TouchableOpacity>
+          <Text style={styles.greetingTitle}>송소희 님 좋은 아침이에요.</Text>
+          <Text style={styles.greetingMessage}>오늘 하루도 주님의 은혜가 가득하길</Text>
+
+          {/* Noti 알림판 */}
+          <View style={styles.notiContainer}>
+            <Noti width={12} height={13}/>
+            <Text style={styles.notiMessage}>잇다에서 공지사항을 등록했어요.</Text>
+          </View>
         </View>
 
-        <View style={{ padding: 3 }}>
-          <FlatList<CodeInfo[]>
-              data={pages}
-              renderItem={renderGrid}
-              keyExtractor={(_, idx) => String(idx)}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-          />
+        {/* 다가오는 모임 리스트 섹션 */}
+        <View style={styles.meetContainer}>
+
+          {/* 타이틀 */}
+          <View style={styles.meetTitleContainer}>
+            <Text style={styles.meetTitle}>다가오는 모임 리스트</Text>
+            <TouchableOpacity
+              style={{ height: '100%', justifyContent: 'center', paddingStart: 25}}
+              onPress={() => router.push('/meet')}>
+              <ArrowRight width={16} height={11}/>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.meetListContainer}>
+            <FlatList<CodeInfo>
+               data={categoryList}
+               renderItem={renderGridMeet}
+               keyExtractor={(_, idx) => String(idx)}
+               horizontal
+               decelerationRate='fast'
+               showsHorizontalScrollIndicator={false}
+            />
+          </View>
         </View>
 
-        {/* 이미지 캐러셀 테스트 */}
-        <View style={{ marginBottom: 50, alignItems: 'center', justifyContent: 'center' }}>
-          <TouchableOpacity onPress={handleOpenImagePicker}>
-            <Text>이미지 선택</Text>
-          </TouchableOpacity>
+        {/* 검색 조건 부분 */}
+        <View style={[styles.container, {marginTop: 30, flex : 1, paddingHorizontal: 16}]}>
+          <View style={styles.searchContainer}>
+            <Text style={styles.searchText}>참여하고 싶은 모임이나 클럽을 검색해 보세요.</Text>
+            <TouchableOpacity
+              // onPress={() => router.push('/search')}
+              >
+              <SearchButton width={20} height={20}/>
+            </TouchableOpacity>
+          </View>
         </View>
-        <ImageCarousel
-          images={imageUris}
-          height={280}
-          onPressImage={(i) => console.log("pressed image", i)}
-        />
 
-        {/* 다이얼로그 영역 */}
-        <CustomDialog
-          visible={dialogVisible}
-          title="다이얼로그 타이틀"
-          content="텍스트 내용"
-          onCancel={closeDialog}
-          onConfirm={() => {
-            closeDialog();
-          }}
-        />
+        {/*  카테고리 목록 */}
+        <View style={styles.container}>
+           <FlatList<CodeInfo[]>
+               data={pages}
+               renderItem={renderGridCategory}
+               keyExtractor={(_, idx) => String(idx)}
+               horizontal
+               decelerationRate='fast'
+               showsHorizontalScrollIndicator={false}
+            />
+         </View>
+         
       </ScrollView>
     </>
   );
@@ -177,25 +143,105 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: COLOR.COMM_WHITE,
   },
-  page: {
-    width,
-    flex: 1,
-    justifyContent: 'center',
+  greetingContainer: {
+    width: '100%',
+    height: 260,
+    marginBottom: 12,
+  },
+  greetingImage: {
+    width: '100%',
+    height: '100%',
+  },
+  greetingTitle: {
+    position: 'absolute',
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginTop: 12,
+    marginBottom: 2,
+    marginStart: 16,
+  },
+  greetingMessage: {
+    position: 'absolute',
+    fontSize: 16,
+    color: COLOR.TEXT_DEFAULT,
+    marginTop: 50,
+    marginStart: 16,
+  },
+  notiContainer: {
+    flexDirection: 'row',
+    position: 'absolute',
+    width: '80%',
+    height: 30,
+    bottom: 14,
+    backgroundColor: COLOR.COMM_WHITE,
+    borderRadius: 20,
     alignItems: 'center',
-    paddingVertical: 40,
+    alignSelf: 'center',
+    paddingHorizontal: 14,
+  },
+  notiMessage: {
+    fontSize: 12,
+    color: COLOR.TEXT_DEFAULT,
+    marginStart: 6,
+  },
+  meetContainer: {
+    height: 154,
+  },
+  meetTitleContainer: {
+    height : 32,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginBottom: 12,
+  }, 
+  meetTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  meetListContainer: {
+    height: '80%',
+    marginStart: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   row: {
     flexDirection: 'row',
-    marginBottom: 20,
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
   cell: {
+     width: width / 2 - 40,
+     height: 100,
+     marginHorizontal: 10,
+     backgroundColor: COLOR.COMM_WHITE,
+     justifyContent: 'center',
+     alignItems: 'center',
+     borderRadius: 12,
+   },
+  meetCell: {
     width: width / 2 - 40,
     height: 100,
-    marginHorizontal: 10,
-    backgroundColor: '#f0f0f0',
+    marginHorizontal: 6,
+    backgroundColor: COLOR.COMM_WHITE,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 12,
+  },
+  searchContainer: {
+    height: 50,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderColor: COLOR.APP_ACTIVE_3,
+    borderWidth: 2,
+    borderRadius: 25,
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+  },
+  searchText: {
+    fontSize: 14,
+    color: COLOR.COMM_GRAY_2,
   },
 });

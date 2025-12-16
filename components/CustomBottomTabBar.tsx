@@ -1,6 +1,7 @@
 import Chat from '@/assets/images/navi_chat.svg';
 import Community from '@/assets/images/navi_community.svg';
 import Main from '@/assets/images/navi_main.svg';
+import MainActive from '@/assets/images/navi_main_active.svg';
 import Meet from '@/assets/images/navi_meet.svg';
 import My from '@/assets/images/navi_my.svg';
 import { COLOR } from '@/constants';
@@ -8,7 +9,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-function CustomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
+function CustomBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
   return (
     <View style={styles.tabContainer}>
       {state.routes.map((route, index) => {
@@ -35,7 +36,7 @@ function CustomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
             activeOpacity={0.8}
           >
             <View style={styles.iconContainer}>
-              {getIcon(name)}
+              {getIcon(name, isFocused)}
               <Text style={[styles.tabButtonText, { color: isFocused ? COLOR.APP_MAIN : COLOR.TEXT_DEFAULT }]}>
                 {options.title}
               </Text>
@@ -47,18 +48,18 @@ function CustomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
   )
 }
 
-const getIcon = (name: string) => {
+const getIcon = (name: string, isFocused: boolean) => {
   switch (name) {
     case 'index':
-      return <Main/>;
+      return isFocused ? <MainActive /> : <Main />;
     case 'community':
-      return <Community/>;
+      return <Community />;
     case 'meet':
-      return <Meet/>;
+      return <Meet />;
     case 'chat':
-      return <Chat/>;
+      return <Chat />;
     case 'my':
-      return <My/>;
+      return <My />;
     default:
       return <></>;
   }
@@ -80,14 +81,12 @@ const styles = StyleSheet.create({
   },
   iconContainer : {
     alignItems    : 'center',
-    gap: 6
   },
   tabButton: {
     flex        : 1,
-    alignItems  : 'center',
   },
   tabButtonText: {
-    //
+    marginTop   : 6,
   },
   plusButtonWrapper: {
     top     : -9,
@@ -95,4 +94,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default CustomTabBar
+export default CustomBottomTabBar;

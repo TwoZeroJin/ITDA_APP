@@ -178,9 +178,10 @@ interface ChatData {
  * 앱에서 사용할 공통 코드 정보
  */
 interface CodeInfo {
-  code_id     : string;
-  code_value  : string;
-  sub_list?   : CodeInfo[];
+  code_id         : string;
+  code_value      : string;
+  code_image_url? : string;
+  sub_list?       : CodeInfo[];
 }
 
 export type { ApiResult, SearchParams, BoardData, ChatData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
