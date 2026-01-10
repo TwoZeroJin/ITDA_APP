@@ -9,6 +9,7 @@ const COLOR = {
     COMM_GRAY       : '#F2F2F2',
     COMM_GRAY_2     : '#A4A4A4',
     COMM_GRAY_3     : '#0E0E0E',
+    COMM_GRAY_4     : '#EDEDED',
     COMM_RED        : '#FF0000',
     COMM_SHADOW     : '#747474',
     APP_MAIN        : '#F58A78',
@@ -18,7 +19,14 @@ const COLOR = {
     TEXT_DEFAULT    : '#555555',
     TEXT_GRAY       : '#9B9B9B',
     TEXT_WARN       : '#FF0000',
+    TEXT_TITLE      : '#333',
+    TEXT_2F2F2F     : '#2F2F2F',
+    TEXT_31AD69     : '#31AD69',
+    TEXT_3C3C3C     : '#3C3C3C',
     BTN_BORDER      : '#DBDBDB',
+    BG_MEET         : '#F6554C',
+    BG_CLUB         : '#E2FBED',
+    BG_CATEGORY     : '#F3F3F3',
 };
 
 /**

@@ -56,7 +56,7 @@ ITDA 사용자 앱
 #
 # npm start(서버 실행) 없이 Expo Go APP에서 실행하는 법 - Expo Publish (클라우드에 upload)
 # 1. eas update
-# 2. publish 진행
+# 2. publish
 # 3. Expo GO 앱 실행후 로그인 (EXPO 공용 계정으로 로그인 필요)
 # 4. 앱 실행
 #

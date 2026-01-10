@@ -1,7 +1,6 @@
 import Chat from '@/assets/images/navi_chat.svg';
 import Community from '@/assets/images/navi_community.svg';
 import Main from '@/assets/images/navi_main.svg';
-import MainActive from '@/assets/images/navi_main_active.svg';
 import Meet from '@/assets/images/navi_meet.svg';
 import My from '@/assets/images/navi_my.svg';
 import { COLOR } from '@/constants';
@@ -51,15 +50,15 @@ function CustomBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)
 const getIcon = (name: string, isFocused: boolean) => {
   switch (name) {
     case 'index':
-      return isFocused ? <MainActive /> : <Main />;
+      return <Main color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW} />;
     case 'community':
-      return <Community />;
+      return <Community color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW} />;
     case 'meet':
-      return <Meet />;
+      return <Meet color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW}/>;
     case 'chat':
-      return <Chat />;
+      return <Chat color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW} />;
     case 'my':
-      return <My />;
+      return <My color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW} />;
     default:
       return <></>;
   }

@@ -6,8 +6,15 @@ import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import Noti from '@/assets/images/navi_community.svg';
+import BtnLikeDefault from '@/assets/images/btn_like_default.svg';
+import IconArrowRightMore from '@/assets/images/icon_arrow_right_more.svg';
 import ArrowRight from '@/assets/images/arrow_right.svg';
 import SearchButton from '@/assets/images/search_button.svg';
+import IconMarker from '@/assets/images/icon_marker.svg';
+import IconMembers from '@/assets/images/icon_members.svg';
+import MainMorning from '@/assets/images/main_morning.svg';
+import MainAfternoon from '@/assets/images/main_afternoon.svg';
+import MainEvening from '@/assets/images/main_evening.svg';
 
 const { width } = Dimensions.get('window');
 
@@ -24,13 +31,59 @@ export default function HomeScreen() {
     fetchData();
   }, []);
 
+  const getTimeOfDay = () => {
+    const h = new Date().getHours();
+    if (h >= 5 && h < 12) return 'morning';
+    if (h >= 12 && h < 18) return 'afternoon';
+    return 'evening';
+  };
 
-   const PAGE_SIZE = 4;
-   const pages = [];
+  const timeOfDay = getTimeOfDay();
+  // const BgSvgMap: Record<string, any> = {
+  //   morning: MainMorning,
+  //   afternoon: MainAfternoon,
+  //   evening: MainEvening,
+  // };
+  const greetingImages: Record<string, any> = {
+    morning: require('@/assets/images/main_morning.png'),
+    afternoon: require('@/assets/images/main_afternoon.png'),
+    evening: require('@/assets/images/main_evening.png'),
+  };
 
-   for (let i = 0; i < categoryList.length; i += PAGE_SIZE) {
-       pages.push(categoryList.slice(i, i + PAGE_SIZE));
-   }
+  const greetingBgSource = greetingImages[timeOfDay] ?? greetingImages.morning;
+  const greetingPhrase =
+    timeOfDay === 'morning' ? '송소희님, 좋은 아침이에요.' :
+    timeOfDay === 'afternoon' ? '송소희님, 좋은 오후예요.' :
+    '송소희님, 좋은 저녁이에요.';
+
+  const PAGE_SIZE = 4;
+  const pages = [];
+
+  const recommendPage = [];
+
+  for (let i = 0; i < categoryList.length; i += PAGE_SIZE) {
+    pages.push(categoryList.slice(i, i + PAGE_SIZE));
+  }
+
+  recommendPage.push({
+    title : "핫한 소셜링",
+    subTitle : "요즘 다 여기서 만나요 👀 지금 참여하기!",
+    data :  categoryList.slice(0, 3),
+  })
+
+  recommendPage.push({
+    title : "핫한 소셜링2",
+    subTitle : "요즘 다 여기서 만나요 👀 지금 참여하기!",
+    data :  categoryList.slice(0, 3),
+  })
+
+  recommendPage.push({
+    title : "핫한 소셜링3",
+    subTitle : "요즘 다 여기서 만나요 👀 지금 참여하기!",
+    data :  categoryList.slice(0, 3),
+  })
+
+  console.log('recommendPage : ', recommendPage);
 
   // 카테고리 목록 Rendering 함수
   const renderGridCategory = ({ item: pageItems = [] }: { item: CodeInfo[] }) => (
@@ -48,15 +101,83 @@ export default function HomeScreen() {
       </View>
   );
 
+  // 다가오는 모임 리스트 Rendering 함수
   const renderGridMeet = ({ item }: { item: CodeInfo }) => (
       <View>
           {Array(1).fill(0).map((_, rowIdx) => (
               <View key={rowIdx} style={styles.meetCell}>
-                <Text>D-Day</Text>
-                <Text>매주 수요일은 보드...</Text>
-                <Text>양천구 - 신월 3동</Text>
-                <Text>7/10</Text>
-                <Text>하지예</Text>
+                <Text style={styles.meetDay}>D-Day</Text>
+                <Text style={styles.meetSubTitle} numberOfLines={1} ellipsizeMode='tail'>매주 수요일은 보드게임 열심히 하자!</Text>
+                <View style={{ flexDirection: 'row', gap: 4 }}>
+                  <IconMarker width={12} height={12} />
+                  <Text style={styles.meetInfoText}>양천구 - 신월 3동</Text>
+                </View>
+                <View style={{ flexDirection: 'row', gap: 4}}>
+                  <IconMembers width={12} height={12} />
+                  <Text style={styles.meetInfoText}>7/10</Text>
+                </View>
+                <View style={{ flexDirection: 'row', gap: 4 }}>
+                  <Image source={require('@/assets/testImages/test_image_profile.png')} style={{ width: 20, height: 20, borderRadius: 10, marginEnd: 4 }} />
+                  <Text style={styles.meetHostText}>하지예</Text>
+                </View>
+              </View>
+          ))}
+      </View>
+  );
+
+  // 추천 소셜링 목록 Rendering 함수
+  const renderGridRecommend = ({ item: pageItems = { title : '', subTitle : '', data : [] } }: { item: { title : '', subTitle : '', data : [] } }) => (
+      <View>
+          {Array(1).fill(0).map((item, rowIdx) => (
+              <View key={rowIdx}>
+                  <View>
+                    {/* 추천 소셜링 타이틀 */}
+                    <View>
+                      <Text style={styles.recommendTitle}>{pageItems['title']}</Text>
+                      <Text style={styles.recommendSubTitle}>{pageItems['subTitle']}</Text>
+                    </View>
+                    {pageItems['data'].map((item2, colIdx) => (
+                      <View key={colIdx} style={styles.recommendListContainer}>
+                      {/* 추천 소셜링 리스트 (3개) */}
+                        <View style={styles.recommendItemContainer}>
+                          {/* 이미지, 좋아요 버튼 */}
+                          <View>
+                            <ImageBackground 
+                              source={require('@/assets/testImages/test_recommend_image2.png')}
+                              style={styles.recommendItemImage}
+                              imageStyle={styles.recommendImage}
+                            >
+                              <TouchableOpacity
+                                style={styles.recommendLikeBtnContainer}>
+                                <BtnLikeDefault/>
+                              </TouchableOpacity>
+                            </ImageBackground>
+                          </View>
+                          <View style={{ marginStart : 10 }}>
+                            <View style={styles.recommendTagContainer}>
+                              <Text style={styles.recommendTagMeet}>모임</Text>
+                              <Text style={styles.recommendTagClub}>클럽</Text>
+                              <Text style={styles.recommendTagCategory}>게임</Text>
+                            </View>
+                            <View style={styles.recommendContentContainer}>
+                              <Text style={styles.recommendContentTitle} numberOfLines={1} ellipsizeMode='tail'>환승연애 같이 봐요!</Text>
+                              <View style={styles.recommendContentInfoContainer}>
+                                <IconMarker width={12} height={12} />
+                                <Text style={styles.recommendContentText}>양천구 - 신월동</Text>
+                                <IconMembers width={12} height={12} />
+                                <Text style={styles.recommendContentText}>7/15</Text>
+                              </View>
+                              <View style={styles.recommendContentInfoContainer}>
+                                <Image source={require('@/assets/testImages/test_image_profile.png')} style={{ width: 20, height: 20, borderRadius: 10, marginEnd: 4 }} />
+                                <Text style={styles.recommendHostText}>하지예</Text>
+                              </View>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                  
               </View>
           ))}
       </View>
@@ -72,12 +193,16 @@ export default function HomeScreen() {
       >
         {/*  인사말 섹션  */}
         <View style={styles.greetingContainer}>
+          {/* {timeOfDay == 'morning' && <MainMorning />}
+          {timeOfDay == 'afternoon' && <MainAfternoon />}
+          {timeOfDay == 'evening' && <MainEvening />} */}
+
           <ImageBackground 
-            source={require('@/assets/images/home_morning.png')} 
-            style={styles.greetingImage}
-            imageStyle={{ resizeMode: 'cover' }}
-          />
-          <Text style={styles.greetingTitle}>송소희 님 좋은 아침이에요.</Text>
+            source={greetingBgSource}
+             style={styles.greetingImage}
+             imageStyle={{ resizeMode: 'cover' }}
+           />
+          <Text style={styles.greetingTitle}>{greetingPhrase}</Text>
           <Text style={styles.greetingMessage}>오늘 하루도 주님의 은혜가 가득하길</Text>
 
           {/* Noti 알림판 */}
@@ -112,8 +237,9 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* 검색 조건 부분 */}
-        <View style={[styles.container, {marginTop: 30, flex : 1, paddingHorizontal: 16}]}>
+        {/* 검색, 카테고리 섹션 */}
+        <View style={[styles.container, {marginTop: 30, paddingTop: 30, flex : 1, paddingHorizontal: 16}]}>
+          {/* 검색 조건 부분 */}
           <View style={styles.searchContainer}>
             <Text style={styles.searchText}>참여하고 싶은 모임이나 클럽을 검색해 보세요.</Text>
             <TouchableOpacity
@@ -122,20 +248,53 @@ export default function HomeScreen() {
               <SearchButton width={20} height={20}/>
             </TouchableOpacity>
           </View>
+          {/*  카테고리 목록 */}
+          <View>
+            <FlatList<CodeInfo[]>
+                data={pages}
+                renderItem={renderGridCategory}
+                keyExtractor={(_, idx) => String(idx)}
+                horizontal
+                decelerationRate='fast'
+                showsHorizontalScrollIndicator={false}
+              />
+          </View>
+
         </View>
 
-        {/*  카테고리 목록 */}
-        <View style={styles.container}>
-           <FlatList<CodeInfo[]>
-               data={pages}
-               renderItem={renderGridCategory}
-               keyExtractor={(_, idx) => String(idx)}
-               horizontal
-               decelerationRate='fast'
-               showsHorizontalScrollIndicator={false}
-            />
-         </View>
-         
+        <View style={{ height: 10, backgroundColor: COLOR.COMM_GRAY_4 }} />
+
+        {/* 추천 소셜링 섹션 */}
+        <View style={styles.recommendContainer}>
+          <FlatList<{ title : string, subTitle : string, data : [] }>
+                data={recommendPage}
+                renderItem={renderGridRecommend}
+                keyExtractor={(_, idx) => String(idx)}
+                horizontal
+                decelerationRate='fast'
+                showsHorizontalScrollIndicator={false}
+              />
+
+          {/* 더보기 버튼 */}
+          <View style={{ alignItems: 'center', marginBottom: 30 }}>
+            <TouchableOpacity
+              style={{
+                marginTop: 20,
+                backgroundColor: COLOR.COMM_WHITE,
+                flexDirection: 'row',
+                borderRadius: 25,
+                width : '100%',
+                height: 50,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Text style={{ fontSize: 16, fontWeight: 'bold', color: COLOR.COMM_GRAY_2, marginEnd : 5 }}>더보기</Text>
+              <IconArrowRightMore width={12} height={12}/>
+            </TouchableOpacity>
+          </View>
+        </View>
+
       </ScrollView>
     </>
   );
@@ -147,7 +306,7 @@ const styles = StyleSheet.create({
   },
   greetingContainer: {
     width: '100%',
-    height: 260,
+    height: 390,
     marginBottom: 12,
   },
   greetingImage: {
@@ -186,8 +345,9 @@ const styles = StyleSheet.create({
     color: COLOR.TEXT_DEFAULT,
     marginStart: 6,
   },
+  // 다가올 모임 리스트
   meetContainer: {
-    height: 154,
+    height: 170,
   },
   meetTitleContainer: {
     height : 32,
@@ -202,34 +362,56 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   meetListContainer: {
-    height: '80%',
     marginStart: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
+  meetDay: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: COLOR.BG_MEET,
+  },
+  meetSubTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLOR.TEXT_3C3C3C,
+    flexShrink: 1,
+  },
+  meetInfoText: {
+    fontSize: 12,
+    color: COLOR.COMM_SHADOW,
+  },
+  meetHostText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: COLOR.COMM_SHADOW,
+  },
+  meetCell: {
+    width: width / 2 - 40,
+    marginHorizontal: 6,
+    padding: 12,
+    backgroundColor: COLOR.COMM_WHITE,
+    justifyContent: 'center',
+    borderRadius: 12,
+    gap: 5,
+  },
+  // 카테고리 목록
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 12,
   },
   cell: {
-     width: width / 2 - 40,
-     height: 100,
-     marginHorizontal: 10,
-     backgroundColor: COLOR.COMM_WHITE,
-     justifyContent: 'center',
-     alignItems: 'center',
-     borderRadius: 12,
-   },
-  meetCell: {
     width: width / 2 - 40,
     height: 100,
-    marginHorizontal: 6,
+    marginHorizontal: 10,
     backgroundColor: COLOR.COMM_WHITE,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 12,
   },
+  
+  // 검색 섹션
   searchContainer: {
     height: 50,
     justifyContent: 'space-between',
@@ -243,5 +425,105 @@ const styles = StyleSheet.create({
   searchText: {
     fontSize: 14,
     color: COLOR.COMM_GRAY_2,
+  },
+  // 추천 소셜링 모임
+  recommendContainer: {
+    marginTop: 30,
+    paddingHorizontal: 16,
+  },
+  recommendTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: COLOR.TEXT_TITLE,
+  },
+  recommendSubTitle: {
+    fontSize: 14,
+    color: COLOR.TEXT_2F2F2F,
+    marginTop: 4,
+  },
+  recommendListContainer: {
+    marginTop: 16,
+  },
+  recommendItemContainer: {
+    width: '95%',
+    backgroundColor: COLOR.COMM_WHITE,
+    borderRadius: 12,
+    padding: 12,
+    flexDirection: 'row',
+    marginEnd: 30,
+  },
+  recommendItemImage: {
+    width: 96,
+    height: 96,
+    borderRadius: 12,
+  },
+  recommendImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  recommendLikeBtnContainer: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 35,
+    height: 35, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  },
+  recommendTagContainer: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 4,
+  },
+  recommendTagMeet: {
+    fontSize: 12,
+    borderRadius: 10,
+    fontWeight: 'bold',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    color: COLOR.COMM_WHITE,
+    backgroundColor: COLOR.BG_MEET,
+  },
+  recommendTagClub: {
+    fontSize: 12,
+    borderRadius: 10,
+    fontWeight: 'bold',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    color: COLOR.TEXT_31AD69,
+    backgroundColor: COLOR.BG_CLUB,
+  },
+  recommendTagCategory: {
+    fontSize: 12,
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    fontWeight: 'bold',
+    color: COLOR.COMM_SHADOW,
+    backgroundColor: COLOR.BG_CATEGORY,
+  },
+  recommendContentContainer: {
+    gap: 4,
+  },
+  recommendContentInfoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  recommendContentTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLOR.TEXT_3C3C3C,
+  },
+  recommendContentText: {
+    fontSize: 12,
+    marginStart: -8,
+    color: COLOR.COMM_SHADOW,
+  },
+  recommendHostText: {
+    fontSize: 14,
+    color: COLOR.COMM_SHADOW,
   },
 });
