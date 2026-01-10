@@ -55,8 +55,8 @@ ITDA 사용자 앱
 # EXPO 공용 계정 정보 : Notion 문서 참고
 #
 # npm start(서버 실행) 없이 Expo Go APP에서 실행하는 법 - Expo Publish (클라우드에 upload)
-# 1. eas update
-# 2. publish
+# 1. 명령어 창에서 eas update 실행
+# 2. publish 진행 (enter)
 # 3. Expo GO 앱 실행후 로그인 (EXPO 공용 계정으로 로그인 필요)
 # 4. 앱 실행
 #

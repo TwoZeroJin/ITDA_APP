@@ -12,6 +12,8 @@ import ArrowRight from '@/assets/images/arrow_right.svg';
 import SearchButton from '@/assets/images/search_button.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
+import IconClose from '@/assets/images/icon_close.svg';
+import IconCreate from '@/assets/images/icon_create.svg';
 import MainMorning from '@/assets/images/main_morning.svg';
 import MainAfternoon from '@/assets/images/main_afternoon.svg';
 import MainEvening from '@/assets/images/main_evening.svg';
@@ -39,11 +41,6 @@ export default function HomeScreen() {
   };
 
   const timeOfDay = getTimeOfDay();
-  // const BgSvgMap: Record<string, any> = {
-  //   morning: MainMorning,
-  //   afternoon: MainAfternoon,
-  //   evening: MainEvening,
-  // };
   const greetingImages: Record<string, any> = {
     morning: require('@/assets/images/main_morning.png'),
     afternoon: require('@/assets/images/main_afternoon.png'),
@@ -56,15 +53,16 @@ export default function HomeScreen() {
     timeOfDay === 'afternoon' ? '송소희님, 좋은 오후예요.' :
     '송소희님, 좋은 저녁이에요.';
 
+  // 카테고리 데이터
   const PAGE_SIZE = 4;
   const pages = [];
-
-  const recommendPage = [];
 
   for (let i = 0; i < categoryList.length; i += PAGE_SIZE) {
     pages.push(categoryList.slice(i, i + PAGE_SIZE));
   }
-
+  
+  // TEST 데이터
+  const recommendPage = [];
   recommendPage.push({
     title : "핫한 소셜링",
     subTitle : "요즘 다 여기서 만나요 👀 지금 참여하기!",
@@ -83,7 +81,7 @@ export default function HomeScreen() {
     data :  categoryList.slice(0, 3),
   })
 
-  console.log('recommendPage : ', recommendPage);
+  const recentSearches = ['보드게임', '등산', '독서', '영화', '요리'];
 
   // 카테고리 목록 Rendering 함수
   const renderGridCategory = ({ item: pageItems = [] }: { item: CodeInfo[] }) => (
@@ -91,9 +89,11 @@ export default function HomeScreen() {
           {Array(2).fill(0).map((_, rowIdx) => (
               <View key={rowIdx} style={styles.row}>
                   {pageItems.slice(rowIdx * 2, rowIdx * 2 + 2).map((item, colIdx) => (
-                      <View key={colIdx} style={styles.cell}>
-                          <Image source={{ uri: item.code_image_url }} style={{ width: 50, height: 50 }} />
-                          <Text>{item.code_value}</Text>
+                      <View key={colIdx} style={{ alignItems: 'center'}}>
+                        <View style={styles.cell}>
+                          <Image source={{ uri: item.code_image_url }} style={{ width: 32, height: 25 }} />
+                        </View>
+                          <Text style={{ marginTop: 6, fontSize: 14, fontWeight: '600', color: COLOR.COMM_BLACK }}>{item.code_value}</Text>
                       </View>
                   ))}
               </View>
@@ -108,15 +108,15 @@ export default function HomeScreen() {
               <View key={rowIdx} style={styles.meetCell}>
                 <Text style={styles.meetDay}>D-Day</Text>
                 <Text style={styles.meetSubTitle} numberOfLines={1} ellipsizeMode='tail'>매주 수요일은 보드게임 열심히 하자!</Text>
-                <View style={{ flexDirection: 'row', gap: 4 }}>
+                <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
                   <IconMarker width={12} height={12} />
                   <Text style={styles.meetInfoText}>양천구 - 신월 3동</Text>
                 </View>
-                <View style={{ flexDirection: 'row', gap: 4}}>
+                <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
                   <IconMembers width={12} height={12} />
                   <Text style={styles.meetInfoText}>7/10</Text>
                 </View>
-                <View style={{ flexDirection: 'row', gap: 4 }}>
+                <View style={{ flexDirection: 'row', gap: 4, alignItems: 'center' }}>
                   <Image source={require('@/assets/testImages/test_image_profile.png')} style={{ width: 20, height: 20, borderRadius: 10, marginEnd: 4 }} />
                   <Text style={styles.meetHostText}>하지예</Text>
                 </View>
@@ -186,7 +186,7 @@ export default function HomeScreen() {
   console.log('categoryList : ', categoryList);
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
       <CommHeader/>
       <ScrollView 
         showsVerticalScrollIndicator={false}
@@ -247,9 +247,34 @@ export default function HomeScreen() {
               >
               <SearchButton width={20} height={20}/>
             </TouchableOpacity>
+
+          </View>
+          {/* 최근 검색어 */}
+          <View style={styles.recentSearchContainer}>
+            <FlatList
+              data={recentSearches}
+              renderItem={({ item }) => (
+                <View style={styles.recentSearchItem}>
+                  <TouchableOpacity
+                    // onPress={() => handleSearch(item)}
+                  >
+                    <Text style={styles.recentSearchText}>{item}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    // onPress={() => handleRemoveRecentSearch(item)}
+                  >
+                    <IconClose width={12} height={12} style={{ marginStart: 4 }} />
+                  </TouchableOpacity>
+                </View>
+              )}
+              keyExtractor={(item) => item}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            />
           </View>
           {/*  카테고리 목록 */}
           <View>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 20, marginBottom: 12 }}>카테고리</Text>
             <FlatList<CodeInfo[]>
                 data={pages}
                 renderItem={renderGridCategory}
@@ -294,9 +319,16 @@ export default function HomeScreen() {
             </TouchableOpacity>
           </View>
         </View>
-
       </ScrollView>
-    </>
+      {/* Floating 버튼 (화면에 고정) */}
+      <TouchableOpacity
+        style={styles.floatingButton}
+        activeOpacity={0.85}
+        onPress={() => router.push('/meet')} // 원하는 동작으로 변경
+      >
+        <IconCreate width={54} height={54} />
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -402,15 +434,14 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   cell: {
-    width: width / 2 - 40,
-    height: 100,
+    width: 64,
+    height: 64,
     marginHorizontal: 10,
-    backgroundColor: COLOR.COMM_WHITE,
+    backgroundColor: COLOR.COMM_GRAY_5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 10,
   },
-  
   // 검색 섹션
   searchContainer: {
     height: 50,
@@ -425,6 +456,25 @@ const styles = StyleSheet.create({
   searchText: {
     fontSize: 14,
     color: COLOR.COMM_GRAY_2,
+  },
+  recentSearchContainer: {
+    marginTop: 10,
+    marginBottom: 10,
+    paddingHorizontal: 32,
+  },
+  recentSearchItem: {
+    backgroundColor: COLOR.COMM_GRAY,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    color: COLOR.TEXT_DEFAULT,
+    marginEnd: 6,
+    paddingVertical: 4,
+    flexDirection: 'row',
+  },
+  recentSearchText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: COLOR.COMM_SHADOW,
   },
   // 추천 소셜링 모임
   recommendContainer: {
@@ -524,6 +574,19 @@ const styles = StyleSheet.create({
   },
   recommendHostText: {
     fontSize: 14,
+    marginStart: -8,
+    fontWeight: 'bold',
     color: COLOR.COMM_SHADOW,
+  },
+  floatingButton: {
+    position: 'absolute',
+    right: 16,
+    bottom: 30,
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOpacity: 0.18,
+    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 6,
+    zIndex: 20,
   },
 });
