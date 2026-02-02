@@ -11,6 +11,7 @@ let client: Client;
  * @param msgSendCallback 
  */
 const initMqtt = (clientId: string, topic: string, msgReceiveCallback : (msg : string) => void, msgSendCallback : (msg : string) => void) => {
+    let result = true;
     if (client == null) {
         client = new Client(
             'ws://146.56.105.2:9001/mqtt',
@@ -35,17 +36,18 @@ const initMqtt = (clientId: string, topic: string, msgReceiveCallback : (msg : s
 
         client.connect({
             onSuccess: (success) => {
-                printInfoLog(`MQTT Connected : ${success}`);
+                printInfoLog(`MQTT Connected : ${JSON.stringify(success)}`);
                 client.subscribe(topic);
             },
             onFailure: (error) => {
-                printErrorLog(`MQTT Connect Failed : ${error}`);
+                printErrorLog(`MQTT Connect Failed : ${JSON.stringify(error)}`);
+                result = false;
             },
             useSSL: false,
         });
     }
 
-    return true;
+    return result;
 };
 
 /**

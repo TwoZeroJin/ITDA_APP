@@ -36,7 +36,7 @@ export default function IndexScreen() {
           showToast({
             text1: `채팅 연결에 실패하였습니다. 재시도해 주세요.`
           });
-        router.back();
+          router.back();
         }
       }
       else {

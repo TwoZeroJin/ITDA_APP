@@ -51,6 +51,11 @@ ITDA 사용자 앱
 # 5. node_modules, package-lock.json 삭제후 npm install --legacy-peer-deps 실행
 # -- 안되서 결국 "@types/react": "^19.0.10" 으로 변경
 #
+# 2026.02.02 node 버전 업 및 전체 버전 업
+# node Version 20.13.1 => 22.14.0
+# 1. nvm 설치
+# 2. nvm use 22.14.0
+# 3. npm install (안되면 npm audit -> npm audit fix)
 #
 # EXPO 공용 계정 정보 : Notion 문서 참고
 #

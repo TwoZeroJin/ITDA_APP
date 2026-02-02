@@ -1,4 +1,5 @@
 import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/CommHeader";
 import ChurchNmInput from "@/components/inputs/ChurchNmInput";
 import ChurchTmNmInput from "@/components/inputs/ChurchTmNmInput";
 import IdInput from "@/components/inputs/IdInput";
@@ -31,6 +32,7 @@ export default function SignupInfoScreen() {
 
     return (
         <View style={styles.container}>
+            <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
             <FormProvider {...signupForm}>
                 <KeyboardAwareScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
                     <ChurchNmInput/>
@@ -51,7 +53,7 @@ export default function SignupInfoScreen() {
 const styles = StyleSheet.create({
     container: {
         flex                : 1,
-        marginHorizontal    : 10,
+        marginHorizontal    : 20,
         gap                 : 16
     },
 })

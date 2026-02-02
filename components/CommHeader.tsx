@@ -6,7 +6,7 @@ import Logo from '@/assets/images/top_logo.svg';
 import { COLOR } from '@/constants';
 import { router } from 'expo-router';
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 
 interface CommHeaderProps {
   isLogo?    : boolean;
@@ -14,18 +14,22 @@ interface CommHeaderProps {
   isLike?    : boolean;
   isNoti?    : boolean;
   isSetting? : boolean;
+  title?     : string;
 }
 
-function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false}: CommHeaderProps) {
+function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, title}: CommHeaderProps) {
   return (
     <View style={styles.container}>
         <View style={styles.container}>
           {isLogo && <Logo width={101} height={50} style={{marginStart: 7}}/>}
           {!isLogo && 
             <TouchableOpacity onPress={() => {router.back()}}>
-              <Back width={54} height={44} style={{marginStart: 10}}/>
+              <Back width={54} height={44}/>
             </TouchableOpacity>
           }
+        </View>
+        <View style={styles.titleWrapper}>
+          {title && <Text style={styles.title}>{title}</Text>}
         </View>
         <View style={[styles.container, styles.rigtht]}>
           {isLike && 
@@ -53,11 +57,26 @@ const styles = StyleSheet.create({
     flexDirection   : "row",
     alignItems      : "center",
     gap             : 10,
-    backgroundColor : COLOR.COMM_WHITE,
+    backgroundColor : COLOR.COMM_WHITE
   },
   rigtht: {
     marginStart   : "auto",
     marginEnd     : 16,
+  },
+   titleWrapper: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 5,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    pointerEvents: 'none',
+  },
+  title: {
+    fontSize    : 18,
+    fontWeight  : "bold",
+    color       : COLOR.COMM_BLACK,
   }
 });
 

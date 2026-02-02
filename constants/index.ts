@@ -11,12 +11,14 @@ const COLOR = {
     COMM_GRAY_3     : '#0E0E0E',
     COMM_GRAY_4     : '#EDEDED',
     COMM_GRAY_5     : '#F4F4F4',
+    COMM_GRAY_6     : '#DBDBDB',
     COMM_RED        : '#FF0000',
     COMM_SHADOW     : '#747474',
     APP_MAIN        : '#F58A78',
     APP_ACTIVE_1    : '#FF826D',
     APP_ACTIVE_2    : '#71C6BC',
     APP_ACTIVE_3    : '#F38074',
+    APP_ACTIVE_4    : '#FF817C',
     TEXT_DEFAULT    : '#555555',
     TEXT_GRAY       : '#9B9B9B',
     TEXT_WARN       : '#FF0000',
@@ -28,6 +30,9 @@ const COLOR = {
     BG_MEET         : '#F6554C',
     BG_CLUB         : '#E2FBED',
     BG_CATEGORY     : '#F3F3F3',
+    COLOR_SOCIAL    : '#FF5047',
+    COLOR_CLUB      : '#6F5ADB',
+    COLOR_CLASS     : '#50C8D7',
 };
 
 /**

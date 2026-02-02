@@ -6,8 +6,6 @@ export default function ChatLayout() {
             screenOptions={
                 {
                     headerShown: false,
-                    contentStyle: {
-                    }
                 }
             }
         >

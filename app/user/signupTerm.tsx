@@ -1,6 +1,7 @@
 import Logo from '@/assets/images/logo.svg';
 import CheckboxField from '@/components/CheckboxField';
 import CommBottomButton from '@/components/CommBottomButton';
+import CommHeader from '@/components/CommHeader';
 import { router } from "expo-router";
 import { useState } from 'react';
 import { StyleSheet, View } from "react-native";
@@ -11,6 +12,7 @@ export default function SignupTermScreen() {
 
     return (
         <View style={styles.container}>
+            <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
             <View style={styles.imageContainer}>
                 <Logo width={97} height={80.6}/>
             </View>
@@ -34,7 +36,6 @@ export default function SignupTermScreen() {
 const styles = StyleSheet.create({
     container: {
         flex                : 1,
-        marginHorizontal    : 10,
     },
     imageContainer: {
         justifyContent  : "center",

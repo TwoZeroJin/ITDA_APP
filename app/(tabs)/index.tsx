@@ -14,9 +14,6 @@ import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
 import IconClose from '@/assets/images/icon_close.svg';
 import IconCreate from '@/assets/images/icon_create.svg';
-import MainMorning from '@/assets/images/main_morning.svg';
-import MainAfternoon from '@/assets/images/main_afternoon.svg';
-import MainEvening from '@/assets/images/main_evening.svg';
 
 const { width } = Dimensions.get('window');
 
@@ -324,7 +321,7 @@ export default function HomeScreen() {
       <TouchableOpacity
         style={styles.floatingButton}
         activeOpacity={0.85}
-        onPress={() => router.push('/meet')} // 원하는 동작으로 변경
+        onPress={() => router.push('/meets/createType')}
       >
         <IconCreate width={54} height={54} />
       </TouchableOpacity>

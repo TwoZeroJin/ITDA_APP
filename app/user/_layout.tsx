@@ -14,31 +14,27 @@ export default function UserLayout() {
                 options={{
                     title: "로그인",
                     headerShown: false,
-                    headerBackButtonDisplayMode: "default"
                 }}
             />
             <Stack.Screen 
                 name="signupTerm"
                 options={{
                     title: "회원 가입",
-                    headerShown: true,
-                    headerBackButtonDisplayMode: "minimal"
+                    headerShown: false,
                 }}
             />
             <Stack.Screen 
                 name="signupInfo"
                 options={{
                     title: "회원 가입",
-                    headerShown: true,
-                    headerBackButtonDisplayMode: "minimal"
+                    headerShown: false,
                 }}
             />
             <Stack.Screen 
                 name="signupInterest"
                 options={{
                     title: "회원 가입",
-                    headerShown: true,
-                    headerBackButtonDisplayMode: "minimal"
+                    headerShown: false,
                 }}
             />
         </Stack>

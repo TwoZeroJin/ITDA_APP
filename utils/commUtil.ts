@@ -3,6 +3,7 @@ import { CodeInfo, MemberInfo, Token } from "@/types";
 import { Platform } from "react-native";
 import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
+import { getAsyncStore, saveAsyncStore } from "./asyncStoreUtil";
 
 /**
  * OS 값 return
@@ -144,11 +145,11 @@ async function getMemberInfo(): Promise<MemberInfo> {
 
 async function setCategoryList(data?: any) {
     if (data) {
-        await saveSecureStore(STORE_KEY.CATEGORY_LIST,     JSON.stringify(data));
+        await saveAsyncStore(STORE_KEY.CATEGORY_LIST, JSON.stringify(data));
     }
 } 
 async function getCategoryList(): Promise<CodeInfo[]> {
-    const s_data = await getSecureStore(STORE_KEY.CATEGORY_LIST);
+    const s_data = await getAsyncStore(STORE_KEY.CATEGORY_LIST);
 
     if (!s_data) {
         return [];
