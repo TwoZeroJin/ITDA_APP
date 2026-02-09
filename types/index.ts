@@ -113,7 +113,9 @@ interface MeetInfo {
   place_type    : string;
   place_addr    : string;
   mem_id        : number;
+  mem_name      : string;
   group_id      : number;
+  meet_image_url   : string;
 }
 
 /**
@@ -162,7 +164,15 @@ interface BoardData {
  * 개선, 의견, 정보
  */
 interface FeedBackData {
-
+  feed_id     : number;
+  feed_subject: string;
+  feed_content: string;
+  feed_image_url: string;
+  mem_id      : number;
+  mem_name      : string;
+  reg_sdate   : string;
+  mod_sdate   : string;
+  use_stat    : string;
 }
 
 /**
