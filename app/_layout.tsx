@@ -1,5 +1,6 @@
 import queryClient from '@/api/queryClient';
 import AuthRoute from '@/components/AuthRoute';
+import CustomDialog from '@/components/CustomDialog';
 import LoadingLayout from '@/components/LoadingLayout';
 import { COLOR } from '@/constants';
 import { LoadingProvider } from '@/contexts/LoadingContext';
@@ -105,6 +106,7 @@ function RootNavigator() {
 
 
   return (
+    <>
       <Stack>
         <Stack.Screen name="(tabs)"   options={{ headerShown: false }} />         
         <Stack.Screen name="user"     options={{ headerShown: false }} />
@@ -114,6 +116,16 @@ function RootNavigator() {
         <Stack.Screen name="review"   options={{ headerShown: false }} /> */}
         <Stack.Screen name="+not-found" />
       </Stack>
+      <CustomDialog
+        visible={mainData.isErrorDialogVisible}
+        title="연결 실패"
+        content="메인 정보를 불러오지 못했어요."
+        cancelLabel="다시 시도"
+        confirmLabel="앱 재시작"
+        onCancel={mainData.handleRetryMainEntry}
+        onConfirm={mainData.handleRestartApp}
+      />
+    </>
   );
 }
 

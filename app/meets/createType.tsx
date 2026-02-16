@@ -9,8 +9,8 @@ import IconClub from '@/assets/images/icon_club.svg';
 import IconClass from '@/assets/images/icon_class.svg';
 
 export default function MeetCreateTypeScreen() {
-  const [selectedType, setSelectedType] = useState<string | null>(null);
-  
+  const [meetType, setMeetType] = useState<string | null>(null);
+
   return (
     <View style={styles.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
@@ -21,33 +21,37 @@ export default function MeetCreateTypeScreen() {
         </View>
 
         <View style={styles.meetTypeContainer}>
-          <TouchableOpacity style={[styles.meetContainer, selectedType === 'social' && styles.meetSelected]}
-            onPress={() => setSelectedType('social')}>
-            <IconSocial width={20} color={selectedType !== 'social' ? COLOR.COLOR_SOCIAL : COLOR.COMM_WHITE} />
+          <TouchableOpacity style={[styles.meetContainer, meetType === 'social' && styles.meetSelected]}
+            onPress={() => setMeetType('social')}>
+            <IconSocial width={20} color={meetType !== 'social' ? COLOR.COLOR_SOCIAL : COLOR.COMM_WHITE} />
             <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.meetTypeTitle, selectedType === 'social' && styles.meetSelectedText]}>소셜링</Text>
-              <Text style={[styles.meetTypeDesc, selectedType === 'social' && styles.meetSelectedText]}>일회성 모임으로 번개처럼 가볍게 만나봐요.</Text>
+              <Text style={[styles.meetTypeTitle, meetType === 'social' && styles.meetSelectedText]}>소셜링</Text>
+              <Text style={[styles.meetTypeDesc, meetType === 'social' && styles.meetSelectedText]}>일회성 모임으로 번개처럼 가볍게 만나봐요.</Text>
             </View>
           </TouchableOpacity >
-          <TouchableOpacity style={[styles.meetContainer, selectedType === 'club' && styles.meetSelected]}
-            onPress={() => setSelectedType('club')}>
-            <IconClub width={20} color={selectedType !== 'club' ? COLOR.COLOR_CLUB : COLOR.COMM_WHITE} />
+          <TouchableOpacity style={[styles.meetContainer, meetType === 'club' && styles.meetSelected]}
+            onPress={() => setMeetType('club')}>
+            <IconClub width={20} color={meetType !== 'club' ? COLOR.COLOR_CLUB : COLOR.COMM_WHITE} />
             <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.meetTypeTitle, selectedType === 'club' && styles.meetSelectedText]}>클럽</Text>
-              <Text style={[styles.meetTypeDesc, selectedType === 'club' && styles.meetSelectedText]}>정기적으로 만나면서 관계를 함께 만들어가요.</Text>
+              <Text style={[styles.meetTypeTitle, meetType === 'club' && styles.meetSelectedText]}>클럽</Text>
+              <Text style={[styles.meetTypeDesc, meetType === 'club' && styles.meetSelectedText]}>정기적으로 만나면서 관계를 함께 만들어가요.</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.meetContainer, selectedType === 'class' && styles.meetSelected]}
-            onPress={() => setSelectedType('class')}>
-            <IconClass width={20} color={selectedType !== 'class' ? COLOR.COLOR_CLASS : COLOR.COMM_WHITE} />
+          <TouchableOpacity style={[styles.meetContainer, meetType === 'class' && styles.meetSelected]}
+            onPress={() => setMeetType('class')}>
+            <IconClass width={20} color={meetType !== 'class' ? COLOR.COLOR_CLASS : COLOR.COMM_WHITE} />
             <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.meetTypeTitle, selectedType === 'class' && styles.meetSelectedText]}>클래스</Text>
-              <Text style={[styles.meetTypeDesc, selectedType === 'class' && styles.meetSelectedText]}>클래스를 열고, 함께 배우는 경험을 나눠보세요.</Text>
+              <Text style={[styles.meetTypeTitle, meetType === 'class' && styles.meetSelectedText]}>클래스</Text>
+              <Text style={[styles.meetTypeDesc, meetType === 'class' && styles.meetSelectedText]}>클래스를 열고, 함께 배우는 경험을 나눠보세요.</Text>
             </View>
           </TouchableOpacity>
         </View>
 
-        <CommBottomButton label="다음" onPress={() => router.navigate('/meets/createSubType')}/>
+        <CommBottomButton label="다음" onPress={() => meetType && router.push({
+            pathname: '/meets/createSubType',
+            params: { meetType: meetType }
+          })}
+          disabled={!meetType}/>
     </View>
   );
 }

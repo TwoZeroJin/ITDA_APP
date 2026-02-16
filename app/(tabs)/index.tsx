@@ -180,8 +180,6 @@ export default function HomeScreen() {
       </View>
   );
 
-  console.log('categoryList : ', categoryList);
-
   return (
     <View style={{ flex: 1 }}>
       <CommHeader/>

@@ -143,28 +143,46 @@ async function getMemberInfo(): Promise<MemberInfo> {
     };
 }
 
+// AsyncStore에서 데이터 가져올 때, parser 함수를 통해 원하는 타입으로 변환하여 반환하는 유틸 함수
+async function getAsyncData<T = string>(key: string, parser?: (raw: string) => T): Promise<T | null> {
+    const s_data = await getAsyncStore(key);
+
+    if (!s_data) {
+        return null;
+    }
+
+    if (!parser) {
+        return s_data as T;
+    }
+
+    try {
+        return parser(s_data);
+    }
+    catch (error) {
+        console.log('getAsyncData parse Error : ', error);
+        return null;
+    }
+}
+
+// 취미 카테고리 set/get 함수
 async function setCategoryList(data?: any) {
     if (data) {
         await saveAsyncStore(STORE_KEY.CATEGORY_LIST, JSON.stringify(data));
     }
-} 
+}
 async function getCategoryList(): Promise<CodeInfo[]> {
-    const s_data = await getAsyncStore(STORE_KEY.CATEGORY_LIST);
-
-    if (!s_data) {
-        return [];
-    }
-
-    try {
-        const category_list: CodeInfo[] = JSON.parse(s_data);
-        return category_list;
-    }
-    catch (error) {
-        console.log('getCategoryList Error : ', error);
-        return [];
-    }
-    
+    return await getAsyncData<CodeInfo[]>(STORE_KEY.CATEGORY_LIST, JSON.parse) ?? [];
 }
 
-export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog, printInfoLog, printDebugLog, printErrorLog };
+// 참가비 정보 set/get 함수
+async function setFeeList(data: any) {
+    if (data) {
+        await saveAsyncStore(STORE_KEY.FEE_LIST, JSON.stringify(data));
+    }
+}
+async function getFeeList(): Promise<CodeInfo[]> {
+    return await getAsyncData<CodeInfo[]>(STORE_KEY.FEE_LIST, JSON.parse) ?? [];
+}
+
+export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog, printInfoLog, printDebugLog, printErrorLog, setFeeList, getFeeList };
 

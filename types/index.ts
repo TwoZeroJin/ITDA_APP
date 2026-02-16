@@ -33,6 +33,7 @@ interface Token {
 interface MainData {
   app_ver_name  : string;
   category_list : CodeInfo[];
+  fee_list      : CodeInfo[];
 }
 
 /**

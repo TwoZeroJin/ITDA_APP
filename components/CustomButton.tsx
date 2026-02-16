@@ -16,7 +16,6 @@ function CustomButton({ label, size = "large", variant = "standard", style = nul
             styles.container, 
             styles[size], 
             styles[variant],
-            props.disabled && styles.disabled,
             pressed && styles.pressed,
             style
             ]}
@@ -57,9 +56,6 @@ const styles = StyleSheet.create({
     },
     pressed: {
         opacity : 0.6,
-    },
-    disabled: {
-        backgroundColor : COLOR.TEXT_GRAY
     },
     filledText: {
         fontSize    : 18,

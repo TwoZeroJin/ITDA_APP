@@ -1,4 +1,5 @@
 import CustomButton from "@/components/CustomButton";
+import { COLOR } from "@/constants";
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -6,17 +7,19 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 interface CommBottomButtonProps {
     label   : string;
     onPress : () => void;
+    disabled?: boolean;
 }
 
-function CommBottomButton({ label, onPress }: CommBottomButtonProps) {
+function CommBottomButton({ label, onPress, disabled = false }: CommBottomButtonProps) {
     const inset = useSafeAreaInsets();
     return (
         <View style={[styles.fixed, {paddingBottom: inset.bottom || 12}]}>
             <CustomButton 
                 label={label} 
-                variant="filled"
+                variant={!disabled ? "filled" : "standard"}
                 style={styles.bottomStyle}
-                onPress={onPress}/>
+                onPress={onPress}
+            />
         </View>
     )
 }

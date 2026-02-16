@@ -8,6 +8,11 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
+/**
+ * 
+ * @param param
+ * @returns 공통 바텀 고정 컴포넌트
+ */
 function CustomBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
   return (
     <View style={styles.tabContainer}>

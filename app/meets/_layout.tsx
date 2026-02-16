@@ -23,6 +23,27 @@ export default function MeetLayout() {
                     headerShown: false,
                 }}
             />
+            <Stack.Screen
+                name="createDetail"
+                options={{
+                    title: "모임 생성",
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="createFee"
+                options={{
+                    title: "모임 생성",
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="createPlace"
+                options={{
+                    title: "모임 생성",
+                    headerShown: false,
+                }}
+            />
         </Stack>
     )
 }
