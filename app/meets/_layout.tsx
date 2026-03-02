@@ -44,6 +44,20 @@ export default function MeetLayout() {
                     headerShown: false,
                 }}
             />
+            <Stack.Screen
+                name="createCategory"
+                options={{
+                    title: "모임 생성",
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="createDesc"
+                options={{
+                    title: "모임 생성",
+                    headerShown: false,
+                }}
+            />
         </Stack>
     )
 }

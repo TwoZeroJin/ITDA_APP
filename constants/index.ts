@@ -85,6 +85,7 @@ const API_URL = {
     USER_SIGNUP         : "/user/signup",
     USER_LOGIN          : "/user/login",
     USER_AUTO_LOGIN     : "/user/auto_login",
+    USER_REFRESH_TOKEN  : "/user/refresh_token",
     CHAT_INSERT         : "/chat/insert",
     MEET_LIST           : "/meet/list",
     MEET_VIEW           : "/meet/view",

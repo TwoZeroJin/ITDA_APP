@@ -1,12 +1,12 @@
 import { COLOR } from "@/constants";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
 import { useRoute } from "@react-navigation/native";
 import CustomRadioGroup from "@/components/CustomRadioGroup";
-import BottomSearchListModal, { BottomSearchListItem } from "@/components/BottomSearchListModal";
+import BottomPlaceSearchListModal, { BottomPlaceSearchListItem } from "@/components/BottomPlaceSearchListModal";
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
 import IconPlace from '@/assets/images/icon_place.svg';
 import IconTime from '@/assets/images/icon_time.svg';
@@ -31,14 +31,11 @@ export default function MeetCreatePlaceScreen() {
   const [placeModalVisible, setPlaceModalVisible] = useState(false);
   const [dateModalVisible, setDateModalVisible] = useState(false);
   const [timeModalVisible, setTimeModalVisible] = useState(false);
-  const [placeKeyword, setPlaceKeyword] = useState('');
   const [dateKeyword, setDateKeyword] = useState('');
   const [timeKeyword, setTimeKeyword] = useState('');
   const [selectedPlace, setSelectedPlace] = useState<PlaceItem | null>(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [placeList, setPlaceList] = useState<PlaceItem[]>(MOCK_PLACE_LIST);
-  const [isPlaceLoading, setIsPlaceLoading] = useState(false);
   const {
     meetType,
     meetSubType,
@@ -71,7 +68,7 @@ export default function MeetCreatePlaceScreen() {
     return !!selectedPlace && !!selectedDate && !!selectedTime;
   }, [placeType, selectedPlace, selectedDate, selectedTime]);
 
-  const dateItems: BottomSearchListItem[] = useMemo(() => {
+  const dateItems: BottomPlaceSearchListItem[] = useMemo(() => {
     return Array.from({ length: 14 }, (_, index) => {
       const date = new Date();
       date.setDate(date.getDate() + index);
@@ -88,8 +85,8 @@ export default function MeetCreatePlaceScreen() {
     });
   }, []);
 
-  const timeItems: BottomSearchListItem[] = useMemo(() => {
-    const items: BottomSearchListItem[] = [];
+  const timeItems: BottomPlaceSearchListItem[] = useMemo(() => {
+    const items: BottomPlaceSearchListItem[] = [];
 
     for (let hour = 6; hour <= 23; hour += 1) {
       for (const minute of [0, 30]) {
@@ -108,63 +105,8 @@ export default function MeetCreatePlaceScreen() {
     return items;
   }, []);
 
-  const searchPlaceByKeyword = async (keyword: string) => {
-    const trimmedKeyword = keyword.trim();
-
-    if (!trimmedKeyword) {
-      setPlaceList(MOCK_PLACE_LIST);
-      return;
-    }
-
-    setIsPlaceLoading(true);
-
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmedKeyword)}&limit=10&addressdetails=1`,
-        {
-          headers: {
-            Accept: 'application/json',
-          },
-        }
-      );
-
-      const data = await response.json();
-
-      const searchedPlaceList: PlaceItem[] = (Array.isArray(data) ? data : []).map((item: any, index: number) => ({
-        id: String(item?.place_id ?? `${index}`),
-        name: (item?.name || item?.display_name?.split(',')?.[0] || '장소명 없음') as string,
-        address: (item?.display_name || '').toString(),
-      }));
-
-      setPlaceList(searchedPlaceList.length > 0 ? searchedPlaceList : []);
-    } catch (error) {
-      const fallbackList = MOCK_PLACE_LIST.filter((item) => (
-        item.name.includes(trimmedKeyword) || item.address.includes(trimmedKeyword)
-      ));
-
-      setPlaceList(fallbackList);
-      console.log('장소 검색 실패', error);
-    } finally {
-      setIsPlaceLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!placeModalVisible) {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      searchPlaceByKeyword(placeKeyword);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [placeKeyword, placeModalVisible]);
-
   const openPlaceModal = () => {
     setPlaceModalVisible(true);
-    setPlaceKeyword('');
-    setPlaceList(MOCK_PLACE_LIST);
   };
 
   const openDateModal = () => {
@@ -182,7 +124,7 @@ export default function MeetCreatePlaceScreen() {
     setPlaceModalVisible(false);
   };
 
-  const modalItems: BottomSearchListItem[] = placeList.map((item) => ({
+  const modalItems: BottomPlaceSearchListItem[] = MOCK_PLACE_LIST.map((item) => ({
     id: item.id,
     title: item.name,
     description: item.address,
@@ -256,53 +198,19 @@ export default function MeetCreatePlaceScreen() {
         </View>
 
       </ScrollView>
-      <BottomSearchListModal
+
+      <BottomPlaceSearchListModal
         visible={placeModalVisible}
         title="장소 선택"
-        keyword={placeKeyword}
         placeholder="어디서 만날까요?"
-        loading={isPlaceLoading}
-        items={modalItems}
+        defaultItems={modalItems}
         onClose={() => setPlaceModalVisible(false)}
-        onChangeKeyword={setPlaceKeyword}
         onSelectItem={(item) => onSelectPlace({ id: item.id, name: item.title, address: item.description })}
         renderItemIcon={<IconPlace width={13} height={17} />}
       />
 
-      <BottomSearchListModal
-        visible={dateModalVisible}
-        title="날짜 선택"
-        keyword={dateKeyword}
-        placeholder="날짜를 검색해 주세요."
-        loading={false}
-        items={filteredDateItems}
-        onClose={() => setDateModalVisible(false)}
-        onChangeKeyword={setDateKeyword}
-        onSelectItem={(item) => {
-          setSelectedDate(item.title);
-          setDateModalVisible(false);
-        }}
-        renderItemIcon={<IconCalendar width={15} height={13} />}
-      />
-
-      <BottomSearchListModal
-        visible={timeModalVisible}
-        title="시간 선택"
-        keyword={timeKeyword}
-        placeholder="시간을 검색해 주세요."
-        loading={false}
-        items={filteredTimeItems}
-        onClose={() => setTimeModalVisible(false)}
-        onChangeKeyword={setTimeKeyword}
-        onSelectItem={(item) => {
-          setSelectedTime(item.title);
-          setTimeModalVisible(false);
-        }}
-        renderItemIcon={<IconTime width={14} height={14} />}
-      />
-
-      <CommBottomButton label="다음" onPress={() => placeType && router.push({
-            pathname: '/meets/createPlace',
+      <CommBottomButton label="다음" onPress={() => canMoveNext && router.push({
+            pathname: '/meets/createCategory',
             params: { 
               meetType: meetType, 
               meetSubType: meetSubType,
@@ -317,8 +225,8 @@ export default function MeetCreatePlaceScreen() {
               placeType : placeType,
               placeName : selectedPlace?.name,
               placeAddr : selectedPlace?.address,
-                meetDate : selectedDate,
-                meetTime : selectedTime,
+              meetDate : selectedDate,
+              meetTime : selectedTime,
              }
           })}
           disabled={!canMoveNext}/>
@@ -405,10 +313,13 @@ const styles = StyleSheet.create({
     color: COLOR.COLOR_323232,
   },
   infoDesc: {
-    fontSize: 12,
-    color: COLOR.TEXT_DEFAULT,
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: COLOR.COLOR_323232,
   },
   placeholderText: {
-    color: COLOR.TEXT_GRAY,
+    fontSize: 14,
+    fontWeight: 'normal',
+    color: COLOR.COMM_GRAY_7,
   },
 });
