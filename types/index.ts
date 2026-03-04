@@ -14,8 +14,10 @@ interface ApiResult<T> {
 
 interface SearchParams {
   page          : number;
+  page_no       : number;
   page_size     : number;
   search_type?  : string;
+  sch_condition? : string;
   search_text?  : string;
 }
 
@@ -130,7 +132,35 @@ interface MeetApply {
  * 소모임 후기 정보
  */
 interface MeetReview {
+  review_id?      : number;
+  content_type    : string;
+  review_content  : string;
+  tag             : string;
+  place_addr      : string;
+  meet_id         : number;
+  mem_name        : string;
+  mem_id          : number;
+  reg_sdate       : string;
+  mod_sdate       : string;
+  use_stat        : string;
 
+  // 중첩된 VO 객체 처리
+  memMeetListVO?: MyMeetInfo;
+
+  fileInfoVO? : FileInfo[];
+}
+/**
+ * 내가 신청한 모임 정보
+ * 후기작성가능한 모임 정보 조회
+ */
+interface MyMeetInfo {
+  meet_id?       : number;
+  meet_name     : string;
+  place_addr    : string;
+  mem_id        : number;
+  mem_name      : string;
+  apply_ratio   : string;
+  meet_image_url   : string;
 }
 
 /**
@@ -195,5 +225,5 @@ interface CodeInfo {
   sub_list?       : CodeInfo[];
 }
 
-export type { ApiResult, SearchParams, BoardData, ChatData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User };
+export type { ApiResult, SearchParams, BoardData, ChatData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo };
 

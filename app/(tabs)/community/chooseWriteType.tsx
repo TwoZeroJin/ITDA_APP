@@ -11,6 +11,8 @@ import {
 import { useRouter, Stack } from 'expo-router';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLOR } from '@/constants';
+import CommBottomButton from '@/components/CommBottomButton';
+import CommHeader from '@/components/CommHeader';
 
 type OptionKey = 'feed' | 'review';
 
@@ -55,106 +57,74 @@ export default function chooseWriteType() {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <Stack.Screen options={{ headerShown: false }} />
-
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={24} color="#222" />
-        </TouchableOpacity>
-        <Text style={styles.title}>커뮤니티 작성</Text>
-        <View style={{ width: 40 }} />
-      </View>
-
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.cardList}>
-          {OPTIONS.map(opt => {
-            const active = selected === opt.key;
-            return (
-              <TouchableOpacity
-                key={opt.key}
-                style={[styles.card, active && styles.cardActive]}
+    <View style={styles.container}>
+      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="커뮤니티 작성"/>
+        <View style={styles.meetTypeContainer}>
+           {OPTIONS.map(opt => {
+             const active = selected === opt.key;
+             return (
+              <TouchableOpacity style={[styles.meetContainer, active && styles.meetSelected]}
                 onPress={() => setSelected(opt.key)}
-                activeOpacity={0.85}
-              >
-                <View style={styles.cardLeft}>
-                  <View style={styles.iconBox}>{opt.icon}</View>
-                  <View style={styles.cardText}>
-                    <Text style={styles.cardTitle}>{opt.title}</Text>
-                    <Text style={styles.cardDesc}>{opt.desc}</Text>
-                  </View>
+                activeOpacity={0.85}>
+                  <View style={[styles.iconBox, active && { backgroundColor: 'rgb(255, 255, 255)' }]}>{opt.icon}</View>
+                <View style={styles.meetTypeSubContainer}>
+                  <Text style={[styles.meetTypeTitle, active && styles.meetSelectedText]}>{opt.title}</Text>
+                  <Text style={[styles.meetTypeDesc, active && styles.meetSelectedText]}>{opt.desc}</Text>
                 </View>
-
-                <View style={styles.cardRight}>
-                  {active ? (
-                    <View style={styles.checkBox}>
-                      <Ionicons name="checkmark" size={18} color="#fff" />
-                    </View>
-                  ) : (
-                    <View style={styles.unchecked} />
-                  )}
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+              </TouchableOpacity >
+              
+             );
+           })}
         </View>
-      </ScrollView>
+      <CommBottomButton label="다음" onPress={() => onNext()}
+        disabled={!selected}/>        
+    </View>
 
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={[styles.nextButton, !selected && styles.nextButtonDisabled]}
-          onPress={onNext}
-          disabled={!selected}
-        >
-          <Text style={[styles.nextText, !selected && styles.nextTextDisabled]}>다음</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#fff' },
-  header: {
-    height: 56,
+
+  container: {
+    flex: 1,
+    backgroundColor: COLOR.COMM_WHITE,
+  },
+  meetTypeContainer: {
+    marginHorizontal: 16,
+    marginBottom: 24,
+    marginTop: 24,
+    gap: 16,
+  },
+  meetContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#f2f2f2',
-  },
-  backButton: { width: 40, justifyContent: 'center', alignItems: 'flex-start' },
-  title: { fontSize: 16, fontWeight: '600', color: '#222' },
-
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    paddingBottom: Platform.OS === 'ios' ? 140 : 120,
-  },
-
-  cardList: {},
-
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    borderColor: COLOR.COMM_GRAY_6,
+    borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#eee',
-    justifyContent: 'space-between',
-    marginBottom: 12,
+    paddingStart: 18,
+    paddingVertical: 16,
+    gap: 6,
   },
-  cardActive: {
+  meetSelected: {
     borderColor: COLOR.APP_MAIN,
-    shadowColor: COLOR.APP_MAIN,
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    borderWidth: 1,
+    backgroundColor: COLOR.APP_ACTIVE_4,
   },
-  cardLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
+  meetSelectedText: {
+    color: COLOR.COMM_WHITE,
+  },
+  meetTypeSubContainer: {
+    marginStart: 0,
+  },
+  meetTypeTitle: {
+    fontSize: 16,
+    fontWeight: 'bold', 
+    marginBottom: 8,
+  },
+  meetTypeDesc: {
+    fontSize: 13,
+    color: COLOR.COMM_GRAY_2,
+  },
   iconBox: {
     width: 44,
     height: 44,
@@ -164,44 +134,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 12,
   },
-  cardText: { flex: 1 },
-  cardTitle: { fontSize: 15, fontWeight: '600', color: '#222', marginBottom: 4 },
-  cardDesc: { fontSize: 13, color: '#7a7a7a' },
-
-  cardRight: { width: 28, alignItems: 'center', justifyContent: 'center' },
-  checkBox: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: COLOR.APP_MAIN,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  unchecked: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-
-  footer: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 16,
-    paddingHorizontal: 20,
-  },
-  nextButton: {
-    height: 48,
-    borderRadius: 10,
-    backgroundColor: COLOR.APP_MAIN,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  nextButtonDisabled: {
-    backgroundColor: '#f2f2f2',
-  },
-  nextText: { color: '#fff', fontSize: 16, fontWeight: '600' },
-  nextTextDisabled: { color: '#999' },
 });

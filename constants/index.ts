@@ -47,7 +47,10 @@ const QUERY_KEYS = {
     MEET         : "meet",
     MEET_PAGING  : "meet_paging",
     GROUP        : "group",
-    GROUP_PAGING : "group_paging"
+    GROUP_PAGING : "group_paging",
+    COMMUNITY     : "community",
+    COMMUNITY_REVIEW_LIST  : "community_review_list",
+    MY_MEET_LIST_NO_REVIEW : "my_meet_list_no_review",
 };
 
 /**
@@ -94,6 +97,9 @@ const API_URL = {
     MEET_DELETE         : "/meet/delete",
     MEET_APPLY          : "/meet/apply",
     MEET_CONFIRM        : "/meet/confirm",
+    REVIEW_LIST         : "/review/list",
+    REVIEW_INSERT       : "/review/insert",
+    MY_MEET_LIST_NO_REVIEW : "/review/myMeetListNoReview",
     GROUP_LIST          : "/group/list",
     GROUP_VIEW          : "/group/view",
     GROUP_INSERT        : "/group/insert",

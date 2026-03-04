@@ -15,16 +15,23 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker'; // 라이브러리 임포트
 import CommunityMeet from '@/components/CommunityMeet';
-import { MeetInfo } from '@/types';
+import { FileInfo, MeetReview, MyMeetInfo } from '@/types';
 import { COLOR } from '@/constants';
+import { useImagesUpload } from "@/hooks/queries/useImageUpload";
+import { useReviewInsert } from '@/hooks/queries/useCommunity';
+import { getFormDataImages } from '@/utils/imageUtil';
+import CommHeader from '@/components/CommHeader';
 
 export default function writeFeedback() {
   const params = useLocalSearchParams(); // 전달받은 데이터 추출  
   const [content, setContent] = useState('');
   const [tag, setTag] = useState('');
   const [location, setLocation] = useState('');
-  const [images, setImages] = useState([]); // 선택된 이미지들을 저장할 상태
+  const [images, setImages] = useState<string[]>([]); // 선택된 이미지들을 저장할 상태
   const router = useRouter();
+  const imageMutation = useImagesUpload();
+  const reviewMutation = useReviewInsert(); // 텍스트 저장용 훅 추가
+  const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([]);
 
   // --- 추가된 저장 함수 ---
   const handleUpload = () => {
@@ -34,22 +41,57 @@ export default function writeFeedback() {
       return;
     }
 
-    // 실제로는 여기서 서버 API를 호출합니다. (예: axios.post...)
-    console.log('업로드 데이터:', { content, tag, location, images });
+    // 2. 리뷰 데이터 생성 (서버 API 규격에 맞게 조정하세요)
+    const reviewData = {
+      content_type: 'R', //Review 타입으로 고정, F:FeedBack 타입은 별도 API 필요할 수 있음
+      review_content: content,
+      tag: tag,
+      place_addr: location,
+      meet_id: meetData?.meet_id || 7,
+      mem_id: meetData?.mem_id || 3,
+      fileInfoVO: uploadedFiles, // 이미지 업로드 후 채워질 예정
+    };    
 
-    // 성공 메시지 띄우기
-    Alert.alert('성공', '저장했습니다.', [
+    console.log('업로드할 리뷰 데이터:', reviewData);
+    // 3. 먼저 텍스트 리뷰 저장 실행
+    reviewMutation.mutate(reviewData as MeetReview, {
+      onSuccess: (result) => {
+        console.log('리뷰 저장 성공:', result);
+        // result.data.review_id 등 서버에서 새로 생성된 게시글 ID가 온다고 가정합니다.
+        const newReviewId = result.data?.review_id; // 새로 생성된 리뷰 ID 추출 (문자열로 변환)
+
+        console.log('리뷰 저장 성공, 새 리뷰 ID:', newReviewId);
+        // ✅ ID가 없으면 에러 처리
+        if (!newReviewId) {
+          console.error("서버에서 review_id를 받지 못했습니다.", result);
+          Alert.alert('오류', '저장 중 문제가 발생했습니다.');
+          return; // 여기서 중단
+        }
+    
+//        finalSuccessAlert();
+
+      },
+      onError: (error) => {
+        console.error('리뷰 저장 실패:', error);
+        Alert.alert('오류', '저장 중 문제가 발생했습니다.');
+      }
+    });
+
+  };
+
+  // 공통 성공 알림 함수
+  const finalSuccessAlert = () => {
+    Alert.alert('성공', '작성이 완료되었습니다.', [
       {
         text: '확인',
         onPress: () => {
-          // 확인을 누르면 입력창을 초기화하거나 이전 화면으로 이동할 수 있습니다.
           setContent('');
           setImages([]);
-          setTag('');
-          setLocation('');
-        }
-      }
+          router.back();
+        },
+      },
     ]);
+    router.replace("/community"); // 이동할 경로 확인 필요
   };
 
 // 사진 업로드 버튼 클릭 시 실행될 함수
@@ -64,7 +106,7 @@ export default function writeFeedback() {
 
     // 이미지 선택기 열기
     let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images, // 수정: 열거형 사용 권장
+        mediaTypes: 'images', // 수정: 열거형 사용 권장
         allowsMultipleSelection: true,
         selectionLimit: 10 - images.length, // 남은 개수만큼만 선택 가능하게 제한
         quality: 1,
@@ -72,15 +114,42 @@ export default function writeFeedback() {
 
     // 취소하지 않았고, 자산(assets)이 존재하는 경우에만 처리
     if (!result.canceled && result.assets) {
-        // 1. 새로 선택된 URI들 추출
-        const pickedUris = result.assets.map(asset => asset.uri);
-        
-        // 2. 기존 이미지와 합치기
-        const combinedImages = [...images, ...pickedUris];
-        
-        // 3. 최대 10장까지만 자르기
-//        setImages(combinedImages.slice(0, 10));
+      // 1. 새로 선택된 URI들 추출
+      const pickedUris = result.assets.map(asset => asset.uri);
+      
+      setImages(prevImages => {
+        const newImages = [...prevImages, ...pickedUris];
+        return newImages.slice(0, 10); // 최대 10장 유지
+      });
     }
+
+    // 4. 선택된 이미지가 있다면 이미지 업로드 진행
+      if (!result.assets) {
+        return;
+      }
+      const formData = getFormDataImages('upfiles', result.assets); // 유틸 함수 사용/ 유틸 함수로 FormData 생성
+      
+      console.log('FormData에 담긴 이미지들:', formData.getAll('upfiles')); // FormData에 담긴 이미지 확인 로그
+      
+      // 이미지 업로드 실행
+      imageMutation.mutate(formData, {
+        onSuccess: (result) => {
+
+          result.data?.forEach((file: FileInfo, index: number) => {
+            console.log('업로드된 파일 정보:', file);
+            file.file_name = file.sav_name+'|'+file.org_name; // 파일 이름을 org_name으로 설정
+            setUploadedFiles(prev => [...prev, file]); // 상태로도 관리 (선택 사항)
+          });
+
+//            finalSuccessAlert();
+        },
+        onError: () => {
+          Alert.alert('경고', '글은 저장되었으나 이미지 업로드에 실패했습니다.');
+          return;
+        }
+      });
+    // } 
+
   };
 
   // 후기 작성할 모임의 정보 (전달받은 데이터)
@@ -94,7 +163,7 @@ export default function writeFeedback() {
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={28} color="black" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>피드 작성</Text>
+        <Text style={styles.headerTitle}>{headerTitle}</Text>
         <TouchableOpacity onPress={handleUpload}>
           <Text style={styles.uploadButton}>올리기</Text>
         </TouchableOpacity>
@@ -106,8 +175,8 @@ export default function writeFeedback() {
           {/* ✅ 피드 리스트 출력 부분 */}
           <FlatList 
           data={meetData ? [meetData] : []}
-          renderItem={({item}) => <CommunityMeet data={item as MeetInfo} />}
-          keyExtractor={(item) => item.meet_id.toString()}
+          renderItem={({item}) => <CommunityMeet data={item as MyMeetInfo} />}
+          keyExtractor={(item) => item.meet_id?.toString() || ''}
           />
       </View>
 
@@ -117,7 +186,7 @@ export default function writeFeedback() {
         <View style={styles.divider} />
         </>
       )}      
-      
+
       {/* 본문 입력창 */}
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.inputBox}>
@@ -139,7 +208,7 @@ export default function writeFeedback() {
 
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {images.map((uri, index) => (
-              <View key={index} style={styles.imageWrapper}>
+              <View key={`${uri}-${index}`} style={styles.imageWrapper}>
                 <Image source={{ uri }} style={styles.previewImage} />
                 <TouchableOpacity 
                   style={styles.deleteBadge}
@@ -196,8 +265,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,         // FlatList와의 간격    marginBottom: 20,
   },
   titleBig: {
-    fontSize: 22,
-    fontWeight: 'bold',
+    fontSize: 16,
+//    fontWeight: 'bold',
     color: COLOR.COMM_BLACK,
     marginBottom: 4,
   },
@@ -259,3 +328,5 @@ const styles = StyleSheet.create({
   previewImage: { width: 80, height: 80, borderRadius: 8 },
   deleteBadge: { position: 'absolute', top: -5, right: -5 },  
 });
+
+
