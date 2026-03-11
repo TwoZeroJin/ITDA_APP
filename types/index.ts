@@ -83,14 +83,15 @@ interface MemberInfo {
  * 파일 정보
  */
 interface FileInfo {
-  file_id     : string;
-  file_url    : string;
-  file_name   : string;
-  file_order  : number;
-  target_id   : number;
-  target_type : string;
-  org_name    : string;
-  sav_name    : string;
+  file_id       : string;
+  file_url      : string;
+  file_name     : string;
+  file_order    : number;
+  target_id     : number;
+  target_type   : string;
+  org_name      : string;
+  sav_name      : string;
+  new_file_name : string;
 }
 
 /**
@@ -114,11 +115,11 @@ interface MeetInfo {
   fee_info      : string;
   fee_entry     : number;
   place_type    : string;
+  place_name    : string;
   place_addr    : string;
   mem_id        : number;
   mem_name      : string;
   group_id      : number;
-  meet_image_url   : string;
 }
 
 /**

@@ -7,9 +7,12 @@ interface InputFieldProps extends TextInputProps {
     variant?    : "filled" | "standard" | "outlined";
     error?      : string;
     rightChild? : ReactNode;
+    textArea?   : boolean;
 }
 
-const InputField = ({label, variant = "filled", error, rightChild = null, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
+const InputField = ({label, variant = "filled", error, rightChild = null, textArea = false, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
+  const isTextArea = textArea || Boolean(props.multiline);
+
   return (
     <View>
         {label && <Text style={styles.label}>{label}</Text>}
@@ -17,13 +20,15 @@ const InputField = ({label, variant = "filled", error, rightChild = null, ...pro
                 styles.container
                 , styles[variant]
                 , Boolean(error) && styles.inputError
-                , props.multiline && styles.multiline
+                , isTextArea && styles.multiline
             ]}>
             <TextInput 
                 ref={ref} 
-                placeholderTextColor={COLOR.COMM_GRAY} 
-                style={[styles.input, styles[`${variant}Text`]]} 
                 {...props} 
+                placeholderTextColor={COLOR.TEXT_GRAY} 
+                style={[styles.input, styles[`${variant}Text`], isTextArea && styles.multilineInput]} 
+                multiline={isTextArea}
+                numberOfLines={isTextArea ? (props.numberOfLines ?? 5) : props.numberOfLines}
                 spellCheck={false} 
                 autoCorrect={false} />
             {rightChild}
@@ -39,7 +44,7 @@ const styles = StyleSheet.create({
         fontWeight      : 400,
         lineHeight      : 22,
         color           : COLOR.TEXT_DEFAULT,
-        marginStart     : 10,
+        marginStart     : 5,
         marginBottom    : 7,
     },
     container: {
@@ -48,16 +53,19 @@ const styles = StyleSheet.create({
         flexDirection   : "row",
         height          : 49,
         borderRadius    : 12,
-        padding         : 10,
+        paddingHorizontal: 16,
     },
     filled: {
-        backgroundColor: COLOR.COMM_GRAY
+        borderColor:COLOR.COMM_GRAY_6,
+        borderWidth: 1,
     },
     standard: {
-        borderColor:COLOR.COMM_GRAY
+        borderColor:COLOR.COMM_GRAY_6,
+        borderWidth: 1,
     },
     outlined: {
-        borderColor:COLOR.COMM_GRAY
+        borderColor:COLOR.COMM_GRAY_6,
+        borderWidth: 1,
     },
     filledText: {
         color: COLOR.TEXT_DEFAULT
@@ -85,6 +93,11 @@ const styles = StyleSheet.create({
         alignItems      : "flex-start",
         paddingVertical : 10,
         height          : 200
+    },
+    multilineInput: {
+        textAlignVertical   : 'top',
+        paddingVertical     : 5,
+        height              : 185
     }
 });
 

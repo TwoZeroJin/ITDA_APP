@@ -28,6 +28,7 @@ const COLOR = {
     TEXT_2F2F2F         : '#2F2F2F',
     TEXT_31AD69         : '#31AD69',
     TEXT_3C3C3C         : '#3C3C3C',
+    TEXT_1C1C1C         : '#1C1C1C',
     BTN_BORDER          : '#DBDBDB',
     BG_MEET             : '#F6554C',
     BG_CLUB             : '#E2FBED',
@@ -46,6 +47,8 @@ const QUERY_KEYS = {
     USER         : "user",
     MEET         : "meet",
     MEET_PAGING  : "meet_paging",
+    MEET_VIEW    : "meet_view",
+    MEET_CREATE  : "meet_create",
     GROUP        : "group",
     GROUP_PAGING : "group_paging",
     COMMUNITY     : "community",
@@ -75,9 +78,16 @@ const STORE_KEY = {
  * 공통 상수 값
  */
 const COMM_CONSTANTS = {
-    COMM_INFO       : "info",
-    COMM_ERROR      : "error",
-    COMM_DEBUG      : "debug"
+    COMM_INFO                   : "info",
+    COMM_ERROR                  : "error",
+    COMM_DEBUG                  : "debug",
+    MEET_SOCIAL                 : "social",
+    MEET_CLUB                   : "club",
+    MEET_CLASS                  : "class",
+    MEET_TYPE_NORMAL            : "N",
+    MEET_TYPE_GROUP             : "G",
+    MEET_APPLY_TYPE_FIRST       : "F",
+    MEET_APPLY_TYPE_APPROVE     : "A",
 }
 
 /**

@@ -4,20 +4,21 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
 import CustomRadioGroup from "@/components/CustomRadioGroup";
 import { CodeInfo } from "@/types";
 import { getFeeList } from "@/utils/commUtil";
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
+import { useRoute } from "@react-navigation/native";
+import { MeetInfo } from "@/types";
 
 export default function MeetCreateFeeScreen() {
   const params = useRoute();
+  const prevMeetInfo = (params.params ?? {}) as Partial<MeetInfo>;
   const [feeYn, setFeeYn] = useState<'N' | 'Y'>('N');
   const [feeEntry, setFeeEntry] = useState('');
   const [feeInfo, setFeeInfo] = useState('');
   const [feeInfoDesc, setFeeInfoDesc] = useState('');
   const [feeList, setFeeList] = useState<CodeInfo[]>([]);
-  const { meetType, meetSubType, applyType, ageMin, ageMax, genderRatio } = (params.params ?? {}) as { meetType?: string, meetSubType?: string, applyType?: string, ageMin?: number, ageMax?: number, genderRatio?: number };
 
   useEffect(() => {
     (async () => {
@@ -32,9 +33,8 @@ export default function MeetCreateFeeScreen() {
   };
 
   const canMoveNext =
-    !!meetType
-    && !!meetSubType
-    && !!applyType
+    !!prevMeetInfo.meet_type
+    && !!prevMeetInfo.apply_type
     && (feeYn === 'N' || (!!feeEntry && !!feeInfo));
 
   return (
@@ -119,18 +119,12 @@ export default function MeetCreateFeeScreen() {
 
       <CommBottomButton label="다음" onPress={() => canMoveNext && router.push({
             pathname: '/meets/createPlace',
-            params: { 
-              meetType: meetType, 
-              meetSubType: meetSubType,
-              applyType: applyType, 
-              ageMin : ageMin,
-              ageMax : ageMax,
-              genderRatio : genderRatio,
-              feeYn : feeYn,
-              feeEntry : feeEntry,
-              feeInfo : feeInfo,
-              feeInfoDesc : feeInfoDesc,
-             }
+            params: {
+              ...prevMeetInfo,
+              fee_yn: feeYn,
+              fee_entry: feeEntry ? Number(feeEntry) : undefined,
+              fee_info: feeInfoDesc ? `${feeInfo}:${feeInfoDesc}` : feeInfo,
+            } as Partial<MeetInfo>,
           })}
           disabled={!canMoveNext}/>
     </View>

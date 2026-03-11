@@ -1,42 +1,37 @@
 import { COLOR } from "@/constants";
-import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
 import { useRoute } from "@react-navigation/native";
+import { FormProvider, useForm } from "react-hook-form";
+import MeetNameInput from "@/components/inputs/MeetNameInput";
+import { FileInfo, MeetInfo } from "@/types";
+import MeetDescInput from "@/components/inputs/MeetDescInput";
+import CustomImagePicker from "@/components/CustomImagePicker";
+import TagInput from "@/components/inputs/TagInput";
+
+// 다음 화면에 데이터를 넘기기 위한 Params 타입 정의
+type MeetCreateRouteParams = {
+  [key: string]: string | number | (string | number)[] | undefined;
+  img_list_json?: string;
+};
 
 export default function MeetCreateDescScreen() {
   const params = useRoute();
-  const [meetName, setMeetName] = useState('');
-  const [meetDesc, setMeetDesc] = useState('');
-  const {
-    meetType,
-    meetSubType,
-    applyType,
-    ageMin,
-    ageMax,
-    genderRatio,
-    feeYn,
-    feeEntry,
-    feeInfoType,
-    feeInfoDesc,
-    category,
-  } = (params.params ?? {}) as {
-    meetType?: string,
-    meetSubType?: string,
-    applyType?: string,
-    ageMin?: number,
-    ageMax?: number,
-    genderRatio?: number,
-    feeYn?: string,
-    feeEntry?: string,
-    feeInfoType?: string,
-    feeInfoDesc?: string,
-    category?: string,
-  };
+  const prevMeetInfo = (params.params ?? {}) as MeetCreateRouteParams;
+  const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>([]);
 
-  const canMoveNext = !!category;
+  // 폼 관리를 위한 useForm 훅 초기화
+  const meetForm = useForm<MeetInfo>({
+    defaultValues: {
+      meet_name : '',
+      meet_desc : '',
+    }
+  });
+
+  const canMoveNext = !!meetForm.watch('meet_name') && !!meetForm.watch('meet_desc');
 
   return (
     <View style={styles.container}>
@@ -50,29 +45,26 @@ export default function MeetCreateDescScreen() {
           <Text style={styles.title}>{'나의 소셜링을 소개해주세요.'}</Text>
         </View>
 
-        {/* 참가비 설정 */}
+        {/* 소셜링 제목, 설명, 이미지 추가 */}
         <View style={styles.commContainer}>
-
+          <FormProvider {...meetForm}>
+            <MeetNameInput />
+            <MeetDescInput />
+            <CustomImagePicker onChangeImages={setUploadedImageList} />
+            <TagInput />
+          </FormProvider>
           
         </View>
 
       </ScrollView>
 
-      <CommBottomButton label="다음" onPress={() => canMoveNext && router.push({
-            pathname: '/meets/createPlace',
-            params: { 
-              meetType: meetType, 
-              meetSubType: meetSubType,
-              applyType: applyType, 
-              ageMin : ageMin,
-              ageMax : ageMax,
-              genderRatio : genderRatio,
-              feeYn : feeYn,
-              feeEntry : feeEntry,
-              feeInfoType : feeInfoType,
-              feeInfoDesc : feeInfoDesc,
-              category : category,
-             },
+      <CommBottomButton label="미리보기" onPress={() => canMoveNext && router.push({
+            pathname: '/meets/createPreView',
+            params: {
+              ...prevMeetInfo,
+              ...meetForm.getValues(),
+              img_list_json: JSON.stringify(uploadedImageList),
+            } as MeetCreateRouteParams,
           })}
           disabled={!canMoveNext}/>
     </View>
@@ -94,59 +86,9 @@ const styles = StyleSheet.create({
     color: COLOR.COMM_BLACK,
     marginBottom: 16,
   },
-  commContainerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold', 
-    marginBottom: 8,
-  },
   commContainer: {
-    marginTop: 30,
     marginHorizontal: 16,
     marginBottom: 30,
     gap: 16,
-  },
-  feeContainer: {
-    gap: 14,
-  },
-  commContainerSubTitle: {
-    fontSize: 14,
-    color: COLOR.TEXT_DEFAULT,
-  },
-  feeInput: {
-    height: 50,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLOR.COMM_GRAY_6,
-    paddingHorizontal: 16,
-    fontSize: 14,
-    color: COLOR.COMM_BLACK,
-  },
-  categoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: 10,
-  },
-  categoryBox: {
-    width: '30.5%',
-    height: 42,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLOR.COMM_GRAY_6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLOR.COMM_WHITE,
-  },
-  categoryBoxSelected: {
-    borderColor: COLOR.APP_ACTIVE_4,
-    backgroundColor: COLOR.COMM_WHITE,
-  },
-  categoryText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLOR.COLOR_323232,
-  },
-  categoryTextSelected: {
-    color: COLOR.APP_ACTIVE_5,
   },
 });

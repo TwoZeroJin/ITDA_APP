@@ -10,14 +10,14 @@ export default function MeetLayout() {
             },
         }}>
             <Stack.Screen
-                name="createType"
+                name="create"
                 options={{
                     title: "모임 생성",
                     headerShown: false,
                 }}
             />
             <Stack.Screen
-                name="createSubType"
+                name="createType"
                 options={{
                     title: "모임 생성",
                     headerShown: false,
@@ -53,6 +53,20 @@ export default function MeetLayout() {
             />
             <Stack.Screen
                 name="createDesc"
+                options={{
+                    title: "모임 생성",
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="createPreView"
+                options={{
+                    title: "미리 보기",
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name="createComplete"
                 options={{
                     title: "모임 생성",
                     headerShown: false,

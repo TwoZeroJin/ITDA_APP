@@ -1,4 +1,4 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_CONSTANTS } from "@/constants";
 import React, { useState } from "react";
 import { LayoutChangeEvent, PanResponder, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
@@ -7,9 +7,10 @@ import { router } from "expo-router";
 import IconApplyFirst from '@/assets/images/icon_apply_first.svg';
 import IconApplyApprove from '@/assets/images/icon_apply_approve.svg';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
-import { useRoute } from "@react-navigation/native";
 import DividingLine from "@/components/DividingLine";
 import CustomRadioGroup from "@/components/CustomRadioGroup";
+import { useRoute } from "@react-navigation/native";
+import { MeetInfo } from "@/types";
 
 export default function MeetCreateDetailScreen() {
   const [applyType, setApplyType] = useState<string | null>(null);
@@ -23,7 +24,7 @@ export default function MeetCreateDetailScreen() {
   const [ageMax, setAgeMax] = useState(45);
   const [ageSliderWidth, setAgeSliderWidth] = useState(0);
   const params = useRoute();
-  const { meetType, meetSubType } = (params.params ?? {}) as { meetType?: string, meetSubType?: string };
+  const prevMeetInfo = (params.params ?? {}) as MeetInfo;
 
   const onChangeMemberCnt = (value: string, isMin: boolean) => {
     const nextValue = value.replace(/[^0-9]/g, '').slice(0, 2);
@@ -95,7 +96,7 @@ export default function MeetCreateDetailScreen() {
         {/* 소모임 생성 타이틀 */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{'어떻게 모임원을 모을까요?'}</Text>
-          <Text style={styles.subtitle}>{`${meetSubType === 'social' ? '일반 소셜링' : '클럽 소셜링'}을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
+          <Text style={styles.subtitle}>{`${prevMeetInfo.meet_question === 'social' ? '일반 소셜링' : '클럽 소셜링'}을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
         </View>
 
         <DividingLine />
@@ -105,21 +106,21 @@ export default function MeetCreateDetailScreen() {
           <View>
             <Text style={styles.commContainerTitle}>신청방식</Text>
           </View>
-          <TouchableOpacity style={[styles.applyContainer, applyType === 'F' && styles.applySelected]}
-            onPress={() => setApplyType('F')}>
-            <IconApplyFirst width={20} color={applyType !== 'F' ? COLOR.COLOR_373737 : COLOR.APP_ACTIVE_5} />
+          <TouchableOpacity style={[styles.applyContainer, applyType === COMM_CONSTANTS.MEET_APPLY_TYPE_FIRST && styles.applySelected]}
+            onPress={() => setApplyType(COMM_CONSTANTS.MEET_APPLY_TYPE_FIRST)}>
+            <IconApplyFirst width={20} color={applyType !== COMM_CONSTANTS.MEET_APPLY_TYPE_FIRST ? COLOR.COLOR_373737 : COLOR.APP_ACTIVE_5} />
             <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.applyTypeTitle, applyType === 'F' && styles.applySelectedText]}>선착순</Text>
-              <Text style={[styles.applyTypeDesc, applyType === 'F' && styles.applySelectedText]}>일회성 모임으로 번개처럼 가볍게 만나봐요.</Text>
+              <Text style={[styles.applyTypeTitle, applyType === COMM_CONSTANTS.MEET_APPLY_TYPE_FIRST && styles.applySelectedText]}>선착순</Text>
+              <Text style={[styles.applyTypeDesc, applyType === COMM_CONSTANTS.MEET_APPLY_TYPE_FIRST && styles.applySelectedText]}>일회성 모임으로 번개처럼 가볍게 만나봐요.</Text>
             </View>
           </TouchableOpacity >
 
-          <TouchableOpacity style={[styles.applyContainer, applyType === 'A' && styles.applySelected]}
-            onPress={() => setApplyType('A')}>
-            <IconApplyApprove width={20} color={applyType !== 'A' ? COLOR.COLOR_373737 : COLOR.APP_ACTIVE_5} />
+          <TouchableOpacity style={[styles.applyContainer, applyType === COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE && styles.applySelected]}
+            onPress={() => setApplyType(COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE)}>
+            <IconApplyApprove width={20} color={applyType !== COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE ? COLOR.COLOR_373737 : COLOR.APP_ACTIVE_5} />
             <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.applyTypeTitle, applyType === 'A' && styles.applySelectedText]}>승인제</Text>
-              <Text style={[styles.applyTypeDesc, applyType === 'A' && styles.applySelectedText]}>일회성 모임으로 번개처럼 가볍게 만나봐요.</Text>
+              <Text style={[styles.applyTypeTitle, applyType === COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE && styles.applySelectedText]}>승인제</Text>
+              <Text style={[styles.applyTypeDesc, applyType === COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE && styles.applySelectedText]}>일회성 모임으로 번개처럼 가볍게 만나봐요.</Text>
             </View>
           </TouchableOpacity >
 
@@ -281,16 +282,15 @@ export default function MeetCreateDetailScreen() {
 
       <CommBottomButton label="다음" onPress={() => applyType && router.push({
             pathname: '/meets/createFee',
-            params: { 
-              meetType: meetType, 
-              meetSubType: meetSubType,
-              applyType: applyType, 
-              ageMin : ageMin,
-              ageMax : ageMax,
-              genderRatio : genderRatio,
-             }
+            params: {
+              ...prevMeetInfo,
+              apply_type: applyType,
+              age_min: ageMin,
+              age_max: ageMax,
+              gender_ratio: genderRatio,
+            },
           })}
-          disabled={!meetType || !meetSubType || !applyType}/>
+          disabled={!prevMeetInfo.meet_type || !applyType}/>
     </View>
   );
 }

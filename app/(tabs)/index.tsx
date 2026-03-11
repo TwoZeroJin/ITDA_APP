@@ -14,6 +14,7 @@ import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
 import IconClose from '@/assets/images/icon_close.svg';
 import IconCreate from '@/assets/images/icon_create.svg';
+import CommLabel from '@/components/CommLabel';
 
 const { width } = Dimensions.get('window');
 
@@ -152,9 +153,10 @@ export default function HomeScreen() {
                           </View>
                           <View style={{ marginStart : 10 }}>
                             <View style={styles.recommendTagContainer}>
-                              <Text style={styles.recommendTagMeet}>모임</Text>
-                              <Text style={styles.recommendTagClub}>클럽</Text>
-                              <Text style={styles.recommendTagCategory}>게임</Text>
+                              <CommLabel variant="social" />
+                              <CommLabel variant="club" />
+                              {/* 추후 넘긴 카테고리 값으로 세팅 */}
+                              <CommLabel variant="category" category="게임" />
                             </View>
                             <View style={styles.recommendContentContainer}>
                               <Text style={styles.recommendContentTitle} numberOfLines={1} ellipsizeMode='tail'>환승연애 같이 봐요!</Text>
@@ -319,7 +321,7 @@ export default function HomeScreen() {
       <TouchableOpacity
         style={styles.floatingButton}
         activeOpacity={0.85}
-        onPress={() => router.push('/meets/createType')}
+        onPress={() => router.push('/meets/create')}
       >
         <IconCreate width={54} height={54} />
       </TouchableOpacity>
@@ -521,33 +523,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 6,
     marginBottom: 4,
-  },
-  recommendTagMeet: {
-    fontSize: 12,
-    borderRadius: 10,
-    fontWeight: 'bold',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    color: COLOR.COMM_WHITE,
-    backgroundColor: COLOR.BG_MEET,
-  },
-  recommendTagClub: {
-    fontSize: 12,
-    borderRadius: 10,
-    fontWeight: 'bold',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    color: COLOR.TEXT_31AD69,
-    backgroundColor: COLOR.BG_CLUB,
-  },
-  recommendTagCategory: {
-    fontSize: 12,
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    fontWeight: 'bold',
-    color: COLOR.COMM_SHADOW,
-    backgroundColor: COLOR.BG_CATEGORY,
   },
   recommendContentContainer: {
     gap: 4,

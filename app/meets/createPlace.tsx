@@ -4,13 +4,14 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
 import CustomRadioGroup from "@/components/CustomRadioGroup";
 import BottomPlaceSearchListModal, { BottomPlaceSearchListItem } from "@/components/BottomPlaceSearchListModal";
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
 import IconPlace from '@/assets/images/icon_place.svg';
 import IconTime from '@/assets/images/icon_time.svg';
 import IconCalendar from '@/assets/images/icon_calendar.svg';
+import { useRoute } from "@react-navigation/native";
+import { MeetInfo } from "@/types";
 
 type PlaceItem = {
   id: string;
@@ -27,6 +28,7 @@ const MOCK_PLACE_LIST: PlaceItem[] = [
 
 export default function MeetCreatePlaceScreen() {
   const params = useRoute();
+  const prevMeetInfo = (params.params ?? {}) as Partial<MeetInfo>;
   const [placeType, setPlaceType] = useState<'F' | 'O'>('F');
   const [placeModalVisible, setPlaceModalVisible] = useState(false);
   const [dateModalVisible, setDateModalVisible] = useState(false);
@@ -36,36 +38,13 @@ export default function MeetCreatePlaceScreen() {
   const [selectedPlace, setSelectedPlace] = useState<PlaceItem | null>(null);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const {
-    meetType,
-    meetSubType,
-    applyType,
-    ageMin,
-    ageMax,
-    genderRatio,
-    feeYn,
-    feeEntry,
-    feeInfoType,
-    feeInfoDesc,
-  } = (params.params ?? {}) as {
-    meetType?: string,
-    meetSubType?: string,
-    applyType?: string,
-    ageMin?: number,
-    ageMax?: number,
-    genderRatio?: number,
-    feeYn?: string,
-    feeEntry?: string,
-    feeInfoType?: string,
-    feeInfoDesc?: string,
-  };
 
   const canMoveNext = useMemo(() => {
     if (placeType === 'O') {
       return true;
     }
 
-    return !!selectedPlace && !!selectedDate && !!selectedTime;
+    return !!(selectedPlace) && !!selectedDate && !!selectedTime;
   }, [placeType, selectedPlace, selectedDate, selectedTime]);
 
   const dateItems: BottomPlaceSearchListItem[] = useMemo(() => {
@@ -159,41 +138,42 @@ export default function MeetCreatePlaceScreen() {
           />
 
           {/* 장소 설정에 따른 상세 입력 폼 노출 */}
-          {placeType === 'F' && (
-            <View style={styles.placeContainer}>
-              
-              <Text style={styles.commContainerSubTitle}>모임 장소</Text>
-              <TouchableOpacity style={styles.placeInfoContainer} onPress={openPlaceModal}>
-                <IconPlace width={13} height={17}/>
-                <Text style={[styles.infoDesc, !selectedPlace && styles.placeholderText]}>
-                  {selectedPlace ? selectedPlace.name : '어디서 만날까요?'}
-                </Text>
-              </TouchableOpacity>
+          <View style={styles.placeContainer}>
+            {placeType === 'F' && (
+              <>
+                <Text style={styles.commContainerSubTitle}>모임 장소</Text>
+                <TouchableOpacity style={styles.placeInfoContainer} onPress={openPlaceModal}>
+                  <IconPlace width={13} height={17}/>
+                  <Text style={[styles.infoDesc, !selectedPlace && styles.placeholderText]}>
+                    {selectedPlace ? selectedPlace.name : '어디서 만날까요?'}
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )}
 
-              <Text style={[styles.commContainerSubTitle, { marginTop: 10 }]}>모임 날짜</Text>
-              <TouchableOpacity style={styles.placeInfoContainer} onPress={openDateModal}>
-                <IconCalendar width={15} height={13}/>
-                <Text style={[styles.infoDesc, !selectedDate && styles.placeholderText]}>
-                  {selectedDate || '언제 만날까요?'}
-                </Text>
-              </TouchableOpacity>
+            <Text style={[styles.commContainerSubTitle, { marginTop: 10 }]}>모임 날짜</Text>
+            <TouchableOpacity style={styles.placeInfoContainer} onPress={openDateModal}>
+              <IconCalendar width={15} height={13}/>
+              <Text style={[styles.infoDesc, !selectedDate && styles.placeholderText]}>
+                {selectedDate || '언제 만날까요?'}
+              </Text>
+            </TouchableOpacity>
 
-              <Text style={[styles.commContainerSubTitle, { marginTop: 10 }]}>모임 시간</Text>
-              <TouchableOpacity style={styles.placeInfoContainer} onPress={openTimeModal}>
-                <IconTime width={14} height={14}/>
-                <Text style={[styles.infoDesc, !selectedTime && styles.placeholderText]}>
-                  {selectedTime || '몇시에 만날까요?'}
-                </Text>
-              </TouchableOpacity>
+            <Text style={[styles.commContainerSubTitle, { marginTop: 10 }]}>모임 시간</Text>
+            <TouchableOpacity style={styles.placeInfoContainer} onPress={openTimeModal}>
+              <IconTime width={14} height={14}/>
+              <Text style={[styles.infoDesc, !selectedTime && styles.placeholderText]}>
+                {selectedTime || '몇시에 만날까요?'}
+              </Text>
+            </TouchableOpacity>
 
-              <View style={styles.infoContainer}>
-                <View style={styles.infoTitleRow}>
-                  <IconInfoMark />
-                  <Text style={styles.infoTitle}>모임시간 1시간 전, 자동으로 신청이 마감돼요.</Text>
-                </View>
+            <View style={styles.infoContainer}>
+              <View style={styles.infoTitleRow}>
+                <IconInfoMark />
+                <Text style={styles.infoTitle}>모임시간 1시간 전, 자동으로 신청이 마감돼요.</Text>
               </View>
             </View>
-          )}
+          </View>
           
         </View>
 
@@ -211,23 +191,13 @@ export default function MeetCreatePlaceScreen() {
 
       <CommBottomButton label="다음" onPress={() => canMoveNext && router.push({
             pathname: '/meets/createCategory',
-            params: { 
-              meetType: meetType, 
-              meetSubType: meetSubType,
-              applyType: applyType, 
-              ageMin : ageMin,
-              ageMax : ageMax,
-              genderRatio : genderRatio,
-              feeYn : feeYn,
-              feeEntry : feeEntry,
-              feeInfoType : feeInfoType,
-              feeInfoDesc : feeInfoDesc,
-              placeType : placeType,
-              placeName : selectedPlace?.name,
-              placeAddr : selectedPlace?.address,
-              meetDate : selectedDate,
-              meetTime : selectedTime,
-             }
+            params: {
+              ...prevMeetInfo,
+              place_type: placeType,
+              place_name: selectedPlace?.name ?? '',
+              place_addr: selectedPlace?.address ?? '',
+              meet_datetime: selectedDate && selectedTime ? `${selectedDate} ${selectedTime}` : '',
+            } as Partial<MeetInfo>,
           })}
           disabled={!canMoveNext}/>
     </View>

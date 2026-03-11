@@ -4,37 +4,16 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
 import { CodeInfo } from "@/types";
 import { getCategoryList } from "@/utils/commUtil";
+import { useRoute } from "@react-navigation/native";
+import { MeetInfo } from "@/types";
 
 export default function MeetCreateCategoryScreen() {
   const params = useRoute();
+  const prevMeetInfo = (params.params ?? {}) as Partial<MeetInfo>;
   const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
   const [category, setCategory] = useState<string>('');
-  const {
-    meetType,
-    meetSubType,
-    applyType,
-    ageMin,
-    ageMax,
-    genderRatio,
-    feeYn,
-    feeEntry,
-    feeInfoType,
-    feeInfoDesc,
-  } = (params.params ?? {}) as {
-    meetType?: string,
-    meetSubType?: string,
-    applyType?: string,
-    ageMin?: number,
-    ageMax?: number,
-    genderRatio?: number,
-    feeYn?: string,
-    feeEntry?: string,
-    feeInfoType?: string,
-    feeInfoDesc?: string,
-  };
 
   useEffect(() => {
     (async () => {
@@ -84,19 +63,10 @@ export default function MeetCreateCategoryScreen() {
 
       <CommBottomButton label="다음" onPress={() => canMoveNext && router.push({
             pathname: '/meets/createDesc',
-            params: { 
-              meetType: meetType, 
-              meetSubType: meetSubType,
-              applyType: applyType, 
-              ageMin : ageMin,
-              ageMax : ageMax,
-              genderRatio : genderRatio,
-              feeYn : feeYn,
-              feeEntry : feeEntry,
-              feeInfoType : feeInfoType,
-              feeInfoDesc : feeInfoDesc,
-              category : category,
-             },
+            params: {
+              ...prevMeetInfo,
+              meet_subj: category,
+            } as Partial<MeetInfo>,
           })}
           disabled={!canMoveNext}/>
     </View>
