@@ -38,6 +38,7 @@ const COLOR = {
     COLOR_CLASS         : '#50C8D7',
     COLOR_323232        : '#323232',
     COLOR_373737        : '#373737',
+    COLOR_5537CD        : '#5537CD',
 };
 
 /**

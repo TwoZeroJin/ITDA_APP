@@ -1,6 +1,6 @@
 import { COLOR, COMM_CONSTANTS } from "@/constants";
 import React, { useState } from "react";
-import { LayoutChangeEvent, PanResponder, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
@@ -9,20 +9,23 @@ import IconApplyApprove from '@/assets/images/icon_apply_approve.svg';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
 import DividingLine from "@/components/DividingLine";
 import CustomRadioGroup from "@/components/CustomRadioGroup";
+import GenderSlider from "@/components/GenderSlider";
+import AgeSlider from "@/components/AgeSlider";
 import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";
 
+/**
+ * 모임 생성 - 신청방식, 참여인원, 성비, 나이 설정 화면
+ */
 export default function MeetCreateDetailScreen() {
   const [applyType, setApplyType] = useState<string | null>(null);
   const [minMemberCnt, setMinMemberCnt] = useState('2');
   const [maxMemberCnt, setMaxMemberCnt] = useState('99');
   const [genderType, setGenderType] = useState<'none' | 'set'>('set');
   const [genderRatio, setGenderRatio] = useState(5);
-  const [sliderWidth, setSliderWidth] = useState(0);
   const [ageType, setAgeType] = useState<'none' | 'set'>('set');
-  const [ageMin, setAgeMin] = useState(10);
+  const ageMin = 10;
   const [ageMax, setAgeMax] = useState(45);
-  const [ageSliderWidth, setAgeSliderWidth] = useState(0);
   const params = useRoute();
   const prevMeetInfo = (params.params ?? {}) as MeetInfo;
 
@@ -36,55 +39,6 @@ export default function MeetCreateDetailScreen() {
 
     setMaxMemberCnt(nextValue);
   };
-
-  const onSliderLayout = (event: LayoutChangeEvent) => {
-    setSliderWidth(event.nativeEvent.layout.width);
-  };
-
-  const onChangeGenderRatio = (locationX: number) => {
-    if (sliderWidth <= 0) {
-      return;
-    }
-
-    const clampedX = Math.max(0, Math.min(locationX, sliderWidth));
-    const ratio = Math.round((clampedX / sliderWidth) * 10);
-    console.log('Calculated ratio:', ratio);
-    setGenderRatio(ratio);
-  };
-
-  const onAgeSliderLayout = (event: LayoutChangeEvent) => {
-    setAgeSliderWidth(event.nativeEvent.layout.width);
-  };
-
-  const onChangeAgeMax = (locationX: number) => {
-    if (ageSliderWidth <= 0) {
-      return;
-    }
-
-    const clampedX = Math.max(0, Math.min(locationX, ageSliderWidth));
-    const nextAge = Math.round((clampedX / ageSliderWidth) * 8) * 5 + 10;
-    setAgeMax(Math.max(10, Math.min(nextAge, 50)));
-  };
-
-  const sliderPanResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => genderType === 'set',
-    onMoveShouldSetPanResponder: () => genderType === 'set',
-    onPanResponderGrant: (event) => onChangeGenderRatio(event.nativeEvent.locationX),
-    onPanResponderMove: (event) => onChangeGenderRatio(event.nativeEvent.locationX),
-  });
-
-  const ageSliderPanResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => ageType === 'set',
-    onMoveShouldSetPanResponder: () => ageType === 'set',
-    onPanResponderGrant: (event) => onChangeAgeMax(event.nativeEvent.locationX),
-    onPanResponderMove: (event) => onChangeAgeMax(event.nativeEvent.locationX),
-  });
-
-  const femaleRatio = genderRatio;
-  const maleRatio = 10 - genderRatio;
-  const thumbLeftPercent = sliderWidth > 0 ? (genderRatio / 10) * 100 : 50;
-  const ageThumbLeftPercent = ageSliderWidth > 0 ? ((ageMax - 10) / 40) * 100 : 87.5;
-  const ageValues = [10, 15, 20, 25, 30, 35, 40, 45, 50];
 
   return (
     <View style={styles.container}>
@@ -187,27 +141,11 @@ export default function MeetCreateDetailScreen() {
             onChange={(value) => setGenderType(value as 'none' | 'set')}
           />
 
-          <View style={[styles.sliderContainer, genderType === 'none' && styles.sliderDisabled]}>
-            <View style={[styles.genderRatioBadge, { left: `${thumbLeftPercent}%` }]}>
-              <Text style={styles.genderRatioBadgeText}>{`${femaleRatio}:${maleRatio}`}</Text>
-            </View>
-
-            <View style={styles.genderLabelRow}>
-              <Text style={styles.genderLabelText}>여성</Text>
-              <Text style={styles.genderLabelText}>남성</Text>
-            </View>
-
-            <View
-              style={styles.genderTrackArea}
-              onLayout={onSliderLayout}
-              {...sliderPanResponder.panHandlers}
-            >
-              <View style={styles.genderTrackBase} />
-              <View style={[styles.genderTrackLeft, { width: `${thumbLeftPercent}%` }]} />
-              <View style={[styles.genderTrackRight, { left: `${thumbLeftPercent}%`, width: `${100 - thumbLeftPercent}%` }]} />
-              <View style={[styles.genderThumb, { left: `${thumbLeftPercent}%` }]} />
-            </View>
-          </View>
+          <GenderSlider
+            value={genderRatio}
+            onChange={setGenderRatio}
+            disabled={genderType === 'none'}
+          />
 
           <View style={styles.infoContainer}>
             <View style={styles.infoTitleRow}>
@@ -234,39 +172,11 @@ export default function MeetCreateDetailScreen() {
             onChange={(value) => setAgeType(value as 'none' | 'set')}
           />
 
-          <View style={[styles.sliderContainer, ageType === 'none' && styles.sliderDisabled]}>
-            <View
-              style={styles.ageTrackArea}
-              onLayout={onAgeSliderLayout}
-              {...ageSliderPanResponder.panHandlers}
-            >
-              <View style={styles.ageTrackBase} />
-              <View style={[styles.ageTrackActive, { width: `${ageThumbLeftPercent}%` }]} />
-
-              <View style={styles.ageTrackStartDot} />
-
-              {ageValues.slice(1, -2).map((value) => (
-                <View
-                  key={value}
-                  style={[
-                    styles.ageTrackTickDot,
-                    {
-                      left: `${((value - 10) / 40) * 100}%`,
-                      opacity: value < ageMax ? 1 : 0,
-                    },
-                  ]}
-                />
-              ))}
-
-              <View style={[styles.ageTrackThumb, { left: `${ageThumbLeftPercent}%` }]} />
-            </View>
-
-            <View style={styles.ageValueRow}>
-              {ageValues.map((value) => (
-                <Text key={value} style={styles.ageValueText}>{value === 50 ? '50+' : String(value)}</Text>
-              ))}
-            </View>
-          </View>
+          <AgeSlider
+            value={ageMax}
+            onChange={setAgeMax}
+            disabled={ageType === 'none'}
+          />
 
           <View style={styles.infoContainer}>
             <View style={styles.infoTitleRow}>
@@ -418,128 +328,5 @@ const styles = StyleSheet.create({
   infoDesc: {
     fontSize: 12,
     color: COLOR.TEXT_DEFAULT,
-  },
-  sliderContainer: {
-    marginTop: 6,
-  },
-  sliderDisabled: {
-    opacity: 0.45,
-  },
-  genderRatioBadge: {
-    position: 'absolute',
-    top: -2,
-    transform: [{ translateX: -25 }],
-    minWidth: 50,
-    height: 25,
-    borderRadius: 17,
-    backgroundColor: COLOR.APP_ACTIVE_5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 3,
-  },
-  genderRatioBadgeText: {
-    fontSize: 14,
-    color: COLOR.COMM_WHITE,
-  },
-  genderLabelRow: {
-    marginTop: 26,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  genderLabelText: {
-    fontSize: 14,
-    color: COLOR.TEXT_DEFAULT,
-  },
-  genderTrackArea: {
-    marginTop: 12,
-    marginHorizontal: 10,
-    height: 30,
-    justifyContent: 'center',
-  },
-  genderTrackBase: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLOR.COMM_GRAY_6,
-  },
-  genderTrackLeft: {
-    position: 'absolute',
-    left: 0,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLOR.APP_ACTIVE_4,
-  },
-  genderTrackRight: {
-    position: 'absolute',
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: COLOR.COMM_GRAY_4,
-  },
-  genderThumb: {
-    position: 'absolute',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: COLOR.COMM_WHITE,
-    borderColor: COLOR.COMM_GRAY_6,
-    borderWidth: 1,
-    transform: [{ translateX: -15 }],
-  },
-  ageTrackArea: {
-    marginTop: 8,
-    height: 26,
-    justifyContent: 'center',
-  },
-  ageTrackBase: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: COLOR.COMM_GRAY_4,
-  },
-  ageTrackActive: {
-    position: 'absolute',
-    left: 0,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: COLOR.APP_ACTIVE_5,
-  },
-  ageTrackStartDot: {
-    position: 'absolute',
-    left: 0,
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: COLOR.APP_ACTIVE_5,
-    transform: [{ translateX: -1 }],
-  },
-  ageTrackTickDot: {
-    position: 'absolute',
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: COLOR.COMM_WHITE,
-    top: 10,
-    transform: [{ translateX: -3 }],
-  },
-  ageTrackThumb: {
-    position: 'absolute',
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: COLOR.APP_ACTIVE_5,
-    transform: [{ translateX: -13 }],
-  },
-  ageValueRow: {
-    marginTop: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  ageValueText: {
-    fontSize: 16,
-    color: COLOR.TEXT_GRAY,
   },
 });
