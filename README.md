@@ -29,19 +29,9 @@ ITDA 사용자 앱
 # #################
 # Android 실행 방법
 # 1. 개발자 옵션 ON 및 노트북 Ctype 선 연결 (권한 물어볼시 승인)
-# 2. npm run start:dev 실행
-# 3. 's' 눌러 Using Expo Go 모드로 실행
-# 4. 'a' 눌러서 open Android 실행
-# #################
-# 
-# #################
-# iPhone 실행 방법
-# 1. npm run start:dev 명령어 실행
 # 2. 's' 눌러 Using Expo Go 모드로 실행
-# 3. Camera -> QR 스캔
-# 4. Expo Go 앱 실행
+# 3. 'a' 눌러서 open Android 실행
 # #################
-#
 #
 # 2025.09.13 Expo SDK 53.0.0 => 54.0.0 버전업 대응
 # 1. npm install expo@^54.0.0
@@ -51,17 +41,12 @@ ITDA 사용자 앱
 # 5. node_modules, package-lock.json 삭제후 npm install --legacy-peer-deps 실행
 # -- 안되서 결국 "@types/react": "^19.0.10" 으로 변경
 #
-# 2026.02.02 node 버전 업 및 전체 버전 업
-# node Version 20.13.1 => 22.14.0
-# 1. nvm 설치
-# 2. nvm use 22.14.0
-# 3. npm install (안되면 npm audit -> npm audit fix)
 #
 # EXPO 공용 계정 정보 : Notion 문서 참고
 #
 # npm start(서버 실행) 없이 Expo Go APP에서 실행하는 법 - Expo Publish (클라우드에 upload)
-# 1. 명령어 창에서 eas update 실행
-# 2. publish 진행 (enter)
+# 1. eas update
+# 2. publish 진행
 # 3. Expo GO 앱 실행후 로그인 (EXPO 공용 계정으로 로그인 필요)
 # 4. 앱 실행
 #
