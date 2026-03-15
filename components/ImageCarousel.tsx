@@ -89,16 +89,16 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
     marginHorizontal: 4,
     backgroundColor: COLOR.COMM_WHITE,
   },
   dotActive: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
 });
 

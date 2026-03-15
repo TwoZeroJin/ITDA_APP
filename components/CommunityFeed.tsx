@@ -1,14 +1,18 @@
 import { COLOR } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import {FeedBackData} from '@/types';
+import React, { useState } from 'react';
+import { MeetReview, MyMeetInfo} from '@/types';
+import CommunityMeet from './CommunityMeet';
 
 interface communityFeedProps {
-  data: FeedBackData;
+  data: MeetReview;
 }
 
 export default function CommunityFeed({data}: communityFeedProps) {
+  // ✅ 1. 펼침 상태 관리 (기본값: 닫힘)
+  const [isExpanded, setIsExpanded] = useState(false);
+    
   return (
     <View style={styles.feedContainer}>
       <View style={styles.feedCard}>
@@ -25,21 +29,42 @@ export default function CommunityFeed({data}: communityFeedProps) {
         <View style={styles.feedImageWrapper}>
           <Image
             source={{
-              uri: data.feed_image_url,
+              uri: "https://images.unsplash.com/photo-1600891964599-f61ba0e24092"//data.feed_image_url,
             }}
             style={styles.feedImage}
             resizeMode="cover"
           />
         </View>
+        
+        {/* 피드에 모임정보가  존재할 때만 컴포넌트를 렌더링 */}
+        {data.memMeetListVO && <CommunityMeet data={data.memMeetListVO} />}
 
         {/* 본문 영역 */}
         <View style={styles.feedContent}>
-            <Text style={styles.feedText} numberOfLines={2}>
-            {data.feed_content}
-            <TouchableOpacity onPress={() => {}}>
+          {/* ✅ 2. 조건부 numberOfLines 설정 */}
+          <Text 
+            style={styles.feedText} 
+            numberOfLines={isExpanded ? undefined : 2}
+          >
+            {data.review_content}
+          </Text>
+
+          {/* ✅ 3. '더보기' 버튼: 2줄 이상일 가능성이 있고 아직 펼쳐지지 않았을 때만 표시 */}
+          {!isExpanded && data.review_content.length > 40 && (
+            <TouchableOpacity 
+              onPress={() => setIsExpanded(true)}
+              style={styles.moreButton}
+            >
               <Text style={styles.moreText}>더보기</Text>
             </TouchableOpacity>
-            </Text>
+          )}
+
+          {/* (선택사항) '접기' 버튼이 필요하다면 아래 추가 */}
+          {isExpanded && (
+            <TouchableOpacity onPress={() => setIsExpanded(false)}>
+              <Text style={styles.moreText}>접기</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </View>    
@@ -47,6 +72,9 @@ export default function CommunityFeed({data}: communityFeedProps) {
 }
 
 const styles = StyleSheet.create({
+  moreButton: {
+    marginTop: 4, // 텍스트와 약간의 간격
+  },  
   feedContainer: {
     flexDirection: 'column',
     gap: 6,

@@ -24,6 +24,7 @@ ITDA 사용자 앱
 # npm run start:dev
 # npm run start:prod
 # ########################
+# 장소 검색(카카오 로컬 API) 사용 시 .env 파일에 EXPO_PUBLIC_KAKAO_REST_API_KEY 설정 필요
 #
 #
 # #################

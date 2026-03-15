@@ -28,6 +28,7 @@ const COLOR = {
     TEXT_2F2F2F         : '#2F2F2F',
     TEXT_31AD69         : '#31AD69',
     TEXT_3C3C3C         : '#3C3C3C',
+    TEXT_1C1C1C         : '#1C1C1C',
     BTN_BORDER          : '#DBDBDB',
     BG_MEET             : '#F6554C',
     BG_CLUB             : '#E2FBED',
@@ -37,6 +38,7 @@ const COLOR = {
     COLOR_CLASS         : '#50C8D7',
     COLOR_323232        : '#323232',
     COLOR_373737        : '#373737',
+    COLOR_5537CD        : '#5537CD',
 };
 
 /**
@@ -46,8 +48,13 @@ const QUERY_KEYS = {
     USER         : "user",
     MEET         : "meet",
     MEET_PAGING  : "meet_paging",
+    MEET_VIEW    : "meet_view",
+    MEET_CREATE  : "meet_create",
     GROUP        : "group",
-    GROUP_PAGING : "group_paging"
+    GROUP_PAGING : "group_paging",
+    COMMUNITY     : "community",
+    COMMUNITY_REVIEW_LIST  : "community_review_list",
+    MY_MEET_LIST_NO_REVIEW : "my_meet_list_no_review",
 };
 
 /**
@@ -72,9 +79,16 @@ const STORE_KEY = {
  * 공통 상수 값
  */
 const COMM_CONSTANTS = {
-    COMM_INFO       : "info",
-    COMM_ERROR      : "error",
-    COMM_DEBUG      : "debug"
+    COMM_INFO                   : "info",
+    COMM_ERROR                  : "error",
+    COMM_DEBUG                  : "debug",
+    MEET_SOCIAL                 : "social",
+    MEET_CLUB                   : "club",
+    MEET_CLASS                  : "class",
+    MEET_TYPE_NORMAL            : "N",
+    MEET_TYPE_GROUP             : "G",
+    MEET_APPLY_TYPE_FIRST       : "F",
+    MEET_APPLY_TYPE_APPROVE     : "A",
 }
 
 /**
@@ -85,6 +99,7 @@ const API_URL = {
     USER_SIGNUP         : "/user/signup",
     USER_LOGIN          : "/user/login",
     USER_AUTO_LOGIN     : "/user/auto_login",
+    USER_REFRESH_TOKEN  : "/user/refresh_token",
     CHAT_INSERT         : "/chat/insert",
     MEET_LIST           : "/meet/list",
     MEET_VIEW           : "/meet/view",
@@ -93,6 +108,9 @@ const API_URL = {
     MEET_DELETE         : "/meet/delete",
     MEET_APPLY          : "/meet/apply",
     MEET_CONFIRM        : "/meet/confirm",
+    REVIEW_LIST         : "/review/list",
+    REVIEW_INSERT       : "/review/insert",
+    MY_MEET_LIST_NO_REVIEW : "/review/myMeetListNoReview",
     GROUP_LIST          : "/group/list",
     GROUP_VIEW          : "/group/view",
     GROUP_INSERT        : "/group/insert",

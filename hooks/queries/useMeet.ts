@@ -1,8 +1,11 @@
-import { meetList } from "@/api/meet";
+import { meetInsert, meetList } from "@/api/meet";
+import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
-import { SearchParams } from "@/types";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useLoading } from "@/contexts/LoadingContext";
+import { MeetInfo, SearchParams } from "@/types";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 
+// 모임 목록 조회 (무한 스크롤)
 function useMeetListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
     queryFn: ({ pageParam }) => meetList({ ...searchParams, page: pageParam }),
@@ -22,4 +25,23 @@ function useMeetListPaging(searchParams: SearchParams) {
   return { ...query, results };
 }
 
-export default useMeetListPaging;
+// 모임 생성
+function useMeetCreate() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : MeetInfo) => {
+      setLoading(true);
+      return meetInsert(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CREATE],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+export { useMeetListPaging, useMeetCreate };

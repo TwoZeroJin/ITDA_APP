@@ -6,6 +6,9 @@ import { router } from "expo-router";
 import { useState } from 'react';
 import { StyleSheet, View } from "react-native";
 
+/**
+ * 회원 가입 - 약관 동의 화면
+ */
 export default function SignupTermScreen() {
     const [serviceChecked, setServiceChecked] = useState(false);
     const [privacyChecked, setPrivacyChecked] = useState(false);
@@ -28,7 +31,9 @@ export default function SignupTermScreen() {
                     onChange={() => setPrivacyChecked(!privacyChecked)}
                     />
             </View>
-            <CommBottomButton label="다음" onPress={() => router.navigate('/user/signupInfo')}/>
+            <CommBottomButton label="다음" onPress={() => (serviceChecked && privacyChecked) && router.navigate('/user/signupInfo')}
+                disabled={!(serviceChecked && privacyChecked)}
+                />
         </View>
     )
 }

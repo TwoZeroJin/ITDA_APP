@@ -34,12 +34,12 @@ export default function SignupInfoScreen() {
         <View style={styles.container}>
             <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
             <FormProvider {...signupForm}>
-                <KeyboardAwareScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+                <KeyboardAwareScrollView contentContainerStyle={styles.formContainer} keyboardShouldPersistTaps="handled">
                     <ChurchNmInput/>
+                    <ChurchTmNmInput/>
                     <NameInput/>
                     <IdInput/>
                     <NickNameInput/>
-                    <ChurchTmNmInput/>
                     <PasswordInput/>
                     <PasswordConfirmInput/>
                 </KeyboardAwareScrollView>
@@ -53,7 +53,10 @@ export default function SignupInfoScreen() {
 const styles = StyleSheet.create({
     container: {
         flex                : 1,
+    },
+    formContainer: {
         marginHorizontal    : 20,
-        gap                 : 16
+        gap                 : 16,
+        paddingBottom       : 130,
     },
 })

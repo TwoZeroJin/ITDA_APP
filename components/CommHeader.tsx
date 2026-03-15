@@ -14,15 +14,16 @@ interface CommHeaderProps {
   isLike?    : boolean;
   isNoti?    : boolean;
   isSetting? : boolean;
+  isBack?    : boolean;
   title?     : string;
 }
 
-function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, title}: CommHeaderProps) {
+function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, title}: CommHeaderProps) {
   return (
     <View style={styles.container}>
         <View style={styles.container}>
           {isLogo && <Logo width={101} height={50} style={{marginStart: 7}}/>}
-          {!isLogo && 
+          {!isLogo && isBack &&
             <TouchableOpacity onPress={() => {router.back()}}>
               <Back width={54} height={44}/>
             </TouchableOpacity>

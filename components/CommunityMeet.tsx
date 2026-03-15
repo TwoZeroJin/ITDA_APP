@@ -1,20 +1,16 @@
 import { COLOR } from '@/constants';
 import React from 'react';
-import {MeetInfo} from '@/types';
+import { MyMeetInfo} from '@/types';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Platform,
   ImageBackground,
   Image,
-  FlatList,
   Dimensions,
 } from 'react-native';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import BtnLikeDefault from '@/assets/images/btn_like_default.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
@@ -23,17 +19,30 @@ const { width } = Dimensions.get('window');
 
 
 interface communityMeetProps {
-  data: MeetInfo;
+  data: MyMeetInfo;
 }
 
 export default function CommunityMeet({data}: communityMeetProps) {
+  // ✅ 현재 경로를 가져옵니다.
+  const pathname = usePathname();  
+  // ✅ 클릭 핸들러 함수
+  const handlePress = () => {
+    // 현재 경로가 이미 'chooseMeet'을 포함하고 있다면 이동하지 않음
+    if (!pathname.includes('chooseMeet')) {
+      return; 
+    }
+
+    router.push({
+      pathname: '/community/writeFeedback',
+      params: { data: JSON.stringify(data) },
+    });
+  };
+
   return (
         <View style={styles.recommendContainer}>
-            <TouchableOpacity onPress={() => 
-              router.push({
-                  pathname: '/community/writeFeedback',
-                  params: { data: JSON.stringify(data)},
-            })}>
+            <TouchableOpacity onPress={handlePress}
+            activeOpacity={pathname.includes('writeFeedback') ? 1 : 0.7} // 이미 그 페이지면 클릭 피드백 제거
+            >
               <View style={styles.recommendListContainer}>
                 {/* 추천 소셜링 리스트 (3개) */}
                 <View style={styles.recommendItemContainer}>
@@ -62,7 +71,7 @@ export default function CommunityMeet({data}: communityMeetProps) {
                         <IconMarker width={12} height={12} />
                         <Text style={styles.recommendContentText}>{data.place_addr}</Text>
                         <IconMembers width={12} height={12} />
-                        <Text style={styles.recommendContentText}>{data.gender_ratio}</Text>
+                        <Text style={styles.recommendContentText}>{data.apply_ratio}</Text>
                       </View>
                       <View style={styles.recommendContentInfoContainer}>
                         <Image source={require('@/assets/testImages/test_image_profile.png')} style={{ width: 20, height: 20, borderRadius: 10, marginEnd: 4 }} />

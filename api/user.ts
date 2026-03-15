@@ -32,5 +32,14 @@ async function userAutoLogin(): Promise<ApiResult<MemberInfo & Token>> {
     return data;
 }
 
-export { userAutoLogin, userLogin, userSignup };
+/**
+ * 토큰 갱신
+ * @returns 새로운 토큰 정보
+ */
+async function userRefreshToken(): Promise<ApiResult<Token>> {
+    const { data } = await axiosInstance.post(API_URL.USER_REFRESH_TOKEN);
+    return data;
+}
+
+export { userAutoLogin, userLogin, userSignup, userRefreshToken };
 

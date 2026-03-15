@@ -5,20 +5,18 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  ScrollView,
-  Platform,
-  ImageBackground,
-  Image,
   FlatList,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
-import { CodeInfo } from '@/types';
+import { CodeInfo, MyMeetInfo, SearchParams } from '@/types';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { COLOR } from '@/constants';
 import { getCategoryList } from '@/utils/commUtil';
 import CommunityMeet from '@/components/CommunityMeet';
-import { MeetInfo } from '@/types';
+import { useMyMeetListNoReview } from '@/hooks/queries/useCommunity';
+import CommHeader from '@/components/CommHeader';
 const { width } = Dimensions.get('window');
 
 export default function chooseMeet() {
@@ -28,6 +26,14 @@ export default function chooseMeet() {
     data :  categoryList.slice(0, 3)
   })
 
+  // ✅ 1. API 호출 (페이징 없는 버전)
+  const { results, isLoading, isError } = useMyMeetListNoReview({
+    // 필요한 검색 파라미터 세팅
+    // 예: mem_id는 보통 서버 세션이나 전역 상태에서 처리하지만 
+    // 파라미터가 필요하다면 여기에 추가
+    sch_condition: '3', // API에서 요구하는 조건이 있다면 추가
+  } as SearchParams);  
+
   useEffect(() => {
     const fetchData = async () => {
       // SecureStore에서 카테고리 코드 목록 가져오기
@@ -36,40 +42,16 @@ export default function chooseMeet() {
 
     fetchData();
   }, []);
-
-  //나의 모임 후기 작성할수있는 목록 출력
-  const meetList = [
-    {
-      meet_id: 1,
-      meet_name: '등산 모임',
-      place_type: '야외',
-      place_addr: '서울시 관악구',
-      mem_id: 123,
-      mem_name: '김민지',
-      group_id: 10,
-      meet_image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRkDFH67uLDMYYsKb8b5m0lZzjlEl4adocQFA&s',
-    },
-    {
-      meet_id: 2,
-      meet_name: '독서 클럽',
-      place_type: '실내',
-      place_addr: '서울시 마포구',
-      mem_id: 123,
-      mem_name: '이민지',
-      group_id: 20,
-      meet_image_url: 'https://www.readersnews.com/news/photo/202209/106729_75354_5330.jpg',
-    },
-    {
-      meet_id: 3,
-      meet_name: '요가 클래스',
-      place_type: '실내',
-      place_addr: '서울시 강남구',
-      mem_id: 123,
-      mem_name: '박민수',
-      group_id: 30,
-      meet_image_url: 'https://img.kr.gcp-karroter.net/community/community/20250822/92f1a87f-b385-4419-ac9a-93fda5600b2b.png?q=80&s=480x480&t=inside',
-    }
-  ];
+  
+  // ✅ 2. 로딩 상태 처리
+  if (isLoading) {
+    return (
+      <View style={[styles.safe, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color={COLOR.APP_ACTIVE_3} />
+        <Text style={{ marginTop: 10, color: COLOR.COMM_GRAY_2 }}>모임 목록을 불러오고 있어요...</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -87,15 +69,42 @@ export default function chooseMeet() {
       {/* 추천 소셜링 섹션 */}
       {/* ✅ 피드 리스트 출력 부분 */}
       <FlatList 
-      data={meetList}
-      renderItem={({item}) => <CommunityMeet data={item as MeetInfo} />}
-      keyExtractor={(item) => item.meet_id.toString()}
-      />
+        data={results}
+        renderItem={({ item }) => (
+          <TouchableOpacity 
+            // 클릭 시 데이터를 가지고 작성 화면으로 이동
+            onPress={() => router.push({
+              pathname: '/(tabs)/community/writeFeedback',
+              params: { data: JSON.stringify(item) }
+            })}
+          >
+            <CommunityMeet data={item as MyMeetInfo} />
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item) => item.meet_id?.toString() || ''} // meet_id가 없을 경우 대비
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>후기를 작성할 수 있는 모임이 없습니다.</Text>
+          </View>
+        }
+        contentContainerStyle={{ paddingBottom: 20 }}
+
+/>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  emptyContainer: {
+    flex: 1,
+    marginTop: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: COLOR.COMM_GRAY_2,
+  },  
   safe: { flex: 1, backgroundColor: '#fff' },
   header: {
     height: 56,

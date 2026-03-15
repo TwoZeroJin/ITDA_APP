@@ -2,7 +2,7 @@ import queryClient from '@/api/queryClient';
 import { userAutoLogin, userLogin, userSignup } from '@/api/user';
 import { useLoading } from '@/contexts/LoadingContext';
 import { QUERY_KEYS, STORE_KEY } from '@/constants';
-import { ApiResult, MemberInfo, Token, User } from '@/types';
+import { ApiResult, MemberInfo, SignupInfo, Token, User } from '@/types';
 import { showToast } from '@/utils/commToast';
 import { saveMemberInfo } from '@/utils/commUtil';
 import { deleteSecureStore } from '@/utils/secureStoreUtil';
@@ -10,7 +10,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
-import Toast from 'react-native-toast-message';
 
 
 type ResponseError = AxiosError<{
@@ -20,8 +19,12 @@ type ResponseError = AxiosError<{
 }>
 
 function useSignup() {
+    const { setLoading } = useLoading();
     return useMutation({
-        mutationFn: userSignup,
+        mutationFn: async (body : SignupInfo) => {
+            setLoading(true);
+            return userSignup(body);
+        },
         onSuccess: async (result : ApiResult<null>) => {
             if (result.ret_code != 200) {
                 showToast({
@@ -41,7 +44,9 @@ function useSignup() {
                 text1: error.response?.data.message || error.message || '회원가입 처리중 오류가 발생했습니다.'
             })
         },
-        onSettled: () => {},
+        onSettled: () => {
+            setLoading(false);
+        },
     });
 }
 
