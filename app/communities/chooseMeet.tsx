@@ -55,13 +55,17 @@ export default function chooseMeet() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <View style={styles.header}>
+      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="커뮤니티 작성"/>
+
+
+      {/* <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={24} color="#222" />
         </TouchableOpacity>
         <Text style={styles.titleSmall}>커뮤니티 작성</Text>
         <View style={{ width: 40 }} />
-      </View>
+      </View> */}
+
       {/* 소모임 생성 타이틀 */}
       <View style={styles.titleContainer}>
         <Text style={styles.titleBig}>후기를 작성할 모임을 선택해주세요.</Text>
@@ -73,8 +77,8 @@ export default function chooseMeet() {
         renderItem={({ item }) => (
           <TouchableOpacity 
             // 클릭 시 데이터를 가지고 작성 화면으로 이동
-            onPress={() => router.push({
-              pathname: '/(tabs)/community/writeFeedback',
+            onPress={() => router.navigate({
+              pathname: '/communities/writeFeedback',
               params: { data: JSON.stringify(item) }
             })}
           >

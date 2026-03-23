@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import {
   View,
   Text,
@@ -9,33 +9,28 @@ import {
   Platform,
 } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLOR } from '@/constants';
+import IconFeed from '@/assets/images/navi_community.svg';
+import IconClub from '@/assets/images/icon_club.svg';
+
+import { COLOR, COMM_CONSTANTS } from '@/constants';
 import CommBottomButton from '@/components/CommBottomButton';
 import CommHeader from '@/components/CommHeader';
+import { SvgProps } from 'react-native-svg';
 
 type OptionKey = 'feed' | 'review';
 
-// NOTE:
-// If you have a shared color file (recommended), replace the next line with:
-//
-// import { ITDA_COLOR } from '@/constants/colors';
-//
-// and remove the fallback const below.
-const ITDA_COLOR = '#0b74de'; // <- 잇다 아이콘 색상으로 변경하세요
-
-const OPTIONS: { key: OptionKey; title: string; desc: string; icon: React.ReactNode }[] = [
+const OPTIONS: { key: OptionKey; title: string; desc: string; icon: React.FC<SvgProps> }[] = [
   {
     key: 'feed',
     title: '피드 작성',
     desc: '잇다 멤버들에게 커뮤니티에 공개할 글을 작성해요.',
-    icon: <Ionicons name="document-text-outline" size={22} color="#6B6B6B" />,
+    icon: IconFeed,
   },
   {
     key: 'review',
     title: '모임 후기',
     desc: '잇다에서 참여한 모임 후기를 작성해요.',
-    icon: <MaterialCommunityIcons name="account-group-outline" size={22} color="#6B6B6B" />,
+    icon: IconClub,
   },
 ];
 
@@ -49,12 +44,13 @@ export default function chooseWriteType() {
     if (selected === 'feed') {
       // 파일 구조가 app/community/writeFeedback.tsx 인 경우 아래와 같이 경로를 지정합니다.
       // 실제 프로젝트의 폴더 경로에 맞춰 수정해 주세요.
-      router.navigate('/community/writeFeedback'); 
+      router.navigate('/communities/writeFeedback'); 
     } else if (selected === 'review') {
       // 모임 후기 클릭 시 이동할 경로가 있다면 여기에 추가
-      router.navigate('/community/chooseMeet'); 
+      router.navigate('/communities/chooseMeet'); 
     }    
   };
+
 
   return (
     <View style={styles.container}>
@@ -66,7 +62,7 @@ export default function chooseWriteType() {
               <TouchableOpacity style={[styles.meetContainer, active && styles.meetSelected]}
                 onPress={() => setSelected(opt.key)}
                 activeOpacity={0.85}>
-                  <View style={[styles.iconBox, active && { backgroundColor: 'rgb(255, 255, 255)' }]}>{opt.icon}</View>
+                  <View style={[styles.iconBox]}><opt.icon width={20} color={active ? COLOR.COMM_WHITE : COLOR.COMM_GRAY_7}/></View>
                 <View style={styles.meetTypeSubContainer}>
                   <Text style={[styles.meetTypeTitle, active && styles.meetSelectedText]}>{opt.title}</Text>
                   <Text style={[styles.meetTypeDesc, active && styles.meetSelectedText]}>{opt.desc}</Text>
@@ -129,7 +125,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 8,
-    backgroundColor: '#fafafa',
+//    backgroundColor: '#fafafa',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,

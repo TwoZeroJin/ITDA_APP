@@ -100,7 +100,8 @@ function RootNavigator() {
   const mainData = useMainEntry();
   const autoLogin = useAutoLogin({
     enabled : mainData.data?.ret_code === 200 // API 순차처리를 위한 enabled 처리
-  });
+  }); 
+  
 
   // console.log('autoLogin : ', autoLogin)
 
@@ -112,8 +113,8 @@ function RootNavigator() {
         <Stack.Screen name="user"     options={{ headerShown: false }} />
         <Stack.Screen name="chats"    options={{ headerShown: false }} />
         <Stack.Screen name="meets"     options={{ headerShown: false }} />
-        {/* <Stack.Screen name="group"    options={{ headerShown: false }} />
-        <Stack.Screen name="review"   options={{ headerShown: false }} /> */}
+        {/* <Stack.Screen name="group"    options={{ headerShown: false }} />*/}
+        <Stack.Screen name="communities"   options={{ headerShown: false }} /> 
         <Stack.Screen name="+not-found" />
       </Stack>
       <CustomDialog

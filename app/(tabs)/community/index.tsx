@@ -87,11 +87,11 @@ export default function community() {
 
   return (
     <View style={{ flex: 1 }}>
-      <CommHeader />
+      <CommHeader isNoti={false} isSetting={false} isLike={false}/>
       {/* <ScrollView showsVerticalScrollIndicator={false}> */}
         <View style={styles.titleContainer}>
           <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 20, marginBottom: 12, color: COLOR.APP_ACTIVE_3}}>피드</Text>
-          <TouchableOpacity onPress={() => router.navigate('/(tabs)/community/chooseWriteType')}>
+          <TouchableOpacity onPress={() => router.navigate('/communities/chooseWriteType')}>
             <MaterialCommunityIcons name="pencil" size={24} color="black" />
           </TouchableOpacity>
         </View>

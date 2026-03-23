@@ -13,6 +13,8 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import IconCamera from '@/assets/images/icon_camera.svg';
+
 import * as ImagePicker from 'expo-image-picker'; // 라이브러리 임포트
 import CommunityMeet from '@/components/CommunityMeet';
 import { FileInfo, MeetReview, MyMeetInfo } from '@/types';
@@ -43,12 +45,12 @@ export default function writeFeedback() {
 
     // 2. 리뷰 데이터 생성 (서버 API 규격에 맞게 조정하세요)
     const reviewData = {
-      content_type: 'R', //Review 타입으로 고정, F:FeedBack 타입은 별도 API 필요할 수 있음
+      content_type: meetData?.meet_id ? 'R' : 'F', //Review 타입으로 고정, F:FeedBack 타입은 별도 API 필요할 수 있음
       review_content: content,
       tag: tag,
       place_addr: location,
-      meet_id: meetData?.meet_id || 7,
-      mem_id: meetData?.mem_id || 3,
+      meet_id: meetData?.meet_id || null,
+      mem_id: meetData?.mem_id || 3,// 실제 mem_id는 로그인 세션에서 가져와야 합니다. 여기서는 예시로 3을 사용합니다.
       fileInfoVO: uploadedFiles, // 이미지 업로드 후 채워질 예정
     };    
 
@@ -57,16 +59,7 @@ export default function writeFeedback() {
     reviewMutation.mutate(reviewData as MeetReview, {
       onSuccess: (result) => {
         console.log('리뷰 저장 성공:', result);
-        // result.data.review_id 등 서버에서 새로 생성된 게시글 ID가 온다고 가정합니다.
-        const newReviewId = result.data?.review_id; // 새로 생성된 리뷰 ID 추출 (문자열로 변환)
 
-        console.log('리뷰 저장 성공, 새 리뷰 ID:', newReviewId);
-        // ✅ ID가 없으면 에러 처리
-        if (!newReviewId) {
-          console.error("서버에서 review_id를 받지 못했습니다.", result);
-          Alert.alert('오류', '저장 중 문제가 발생했습니다.');
-          return; // 여기서 중단
-        }
     
 //        finalSuccessAlert();
 
@@ -160,11 +153,13 @@ export default function writeFeedback() {
     <SafeAreaView style={styles.container}>
       {/* 헤더 영역 */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="커뮤니티 작성"/>
+
+        {/* <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Ionicons name="chevron-back" size={28} color="black" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{headerTitle}</Text>
-        <TouchableOpacity onPress={handleUpload}>
+        <Text style={styles.headerTitle}>{headerTitle}</Text> */}
+        <TouchableOpacity style={styles.absoluteUploadButton} onPress={handleUpload}>
           <Text style={styles.uploadButton}>올리기</Text>
         </TouchableOpacity>
       </View>
@@ -202,7 +197,7 @@ export default function writeFeedback() {
         {/* 사진 영역: 선택된 사진 미리보기와 업로드 버튼 */}
         <View style={styles.photoContainer}>
           <TouchableOpacity style={styles.photoButton} onPress={pickImage}>
-            <Ionicons name="camera-outline" size={32} color="#888" />
+            <IconCamera />
             <Text style={styles.photoCount}>({images.length}/10)</Text>
           </TouchableOpacity>
 
@@ -272,13 +267,19 @@ const styles = StyleSheet.create({
   },
   backButton: { width: 40, justifyContent: 'center', alignItems: 'flex-start' },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
     height: 56,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  absoluteUploadButton: {
+    position: 'absolute',
+    right: 16,               // 우측 여백
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center', // 세로 중앙 정렬
+    zIndex: 10,              // 제목보다 위에 오도록 설정
   },
   headerTitle: {
     fontSize: 16,
