@@ -22,7 +22,7 @@ export default function MeetCreateDetailScreen() {
   const [minMemberCnt, setMinMemberCnt] = useState('2');
   const [maxMemberCnt, setMaxMemberCnt] = useState('99');
   const [genderType, setGenderType] = useState<'none' | 'set'>('set');
-  const [genderRatio, setGenderRatio] = useState(5);
+  const [genderRatio, setGenderRatio] = useState(0.5);
   const [ageType, setAgeType] = useState<'none' | 'set'>('set');
   const ageMin = 10;
   const [ageMax, setAgeMax] = useState(45);
@@ -194,9 +194,11 @@ export default function MeetCreateDetailScreen() {
             pathname: '/meets/createFee',
             params: {
               ...prevMeetInfo,
-              apply_type: applyType,
-              age_min: ageMin,
-              age_max: ageMax,
+              meet_min    : Number(minMemberCnt),
+              meet_max    : Number(maxMemberCnt),
+              apply_type  : applyType,
+              age_min     : ageMin,
+              age_max     : ageMax,
               gender_ratio: genderRatio,
             },
           })}

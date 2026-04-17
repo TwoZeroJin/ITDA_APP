@@ -10,16 +10,19 @@ type GenderSliderProps = {
 };
 
 function GenderSlider({ value, onChange, disabled = false }: GenderSliderProps) {
-  const normalizedValue = useMemo(() => Math.max(0, Math.min(Math.round(value), 10)), [value]);
+  const normalizedValue = useMemo(() => {
+    const roundedValue = Math.round(value * 10) / 10;
+    return Math.max(0, Math.min(roundedValue, 1));
+  }, [value]);
   const THUMB_LEFT_PERCENT_OFFSET = 3;
 
   const thumbLeftPercent = useMemo(() => {
-    const linearPercent = (normalizedValue / 10) * 100;
+    const linearPercent = normalizedValue * 100;
     return Math.max(0, Math.min(linearPercent + (linearPercent > 50 ? -THUMB_LEFT_PERCENT_OFFSET : linearPercent === 50 ? 0 : THUMB_LEFT_PERCENT_OFFSET), 100));
   }, [THUMB_LEFT_PERCENT_OFFSET, normalizedValue]);
 
-  const femaleRatio = normalizedValue;
-  const maleRatio = 10 - normalizedValue;
+  const femaleRatio = normalizedValue.toFixed(1);
+  const maleRatio = (1 - normalizedValue).toFixed(1);
 
   return (
     <View style={[styles.sliderContainer, disabled && styles.sliderDisabled]}>
@@ -35,10 +38,10 @@ function GenderSlider({ value, onChange, disabled = false }: GenderSliderProps) 
       <View style={styles.sliderRow}>
         <Slider
           value={normalizedValue}
-          onValueChange={(nextValue) => onChange(Math.round(nextValue))}
+          onValueChange={(nextValue) => onChange(Math.round(nextValue * 10) / 10)}
           minimumValue={0}
-          maximumValue={10}
-          step={1}
+          maximumValue={1}
+          step={0.1}
           disabled={disabled}
           minimumTrackTintColor={COLOR.APP_ACTIVE_4}
           maximumTrackTintColor={COLOR.COLOR_5537CD}

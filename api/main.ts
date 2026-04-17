@@ -7,7 +7,7 @@ import { API_URL } from '@/constants';
  * @returns 메인 정보
  */
 async function mainEntry(): Promise<ApiResult<MainData>> {
-    const {data} = await axiosInstance.post(API_URL.MAIN_ENTRY);
+    const { data } = await axiosInstance.post(API_URL.MAIN_ENTRY);
     return data;
 }
 

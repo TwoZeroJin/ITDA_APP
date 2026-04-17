@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/queries/useAuth";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CommHeader from "@/components/CommHeader";
 
 type FormValues = {
     email: string;
@@ -61,6 +62,7 @@ export default function SignupInterestScreen() {
 
   return (
     <View style={styles.container}>
+      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
       <FormProvider {...signupForm}>
         <Text style={styles.title}>관심분야</Text>
         <Text style={styles.subtitle}>

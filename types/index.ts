@@ -13,7 +13,6 @@ interface ApiResult<T> {
 }
 
 interface SearchParams {
-  page          : number;
   page_no       : number;
   page_size     : number;
   search_type?  : string;
@@ -209,6 +208,21 @@ interface FeedBackData {
 }
 
 /**
+ * 채팅방 정보
+ */
+interface RoomData {
+  room_id     : string;
+  room_name   : string;
+  room_type   : string;
+  mem_id      : number;
+  reg_sdate   : string;
+  mod_sdate   : string;
+  room_image_url? : string;
+  last_msg?       : string;
+  last_chat_msg?  : string;
+  last_msg_sdate? : string;
+}
+/**
  * 채팅 정보
  */
 interface ChatData {
@@ -227,5 +241,4 @@ interface CodeInfo {
   sub_list?       : CodeInfo[];
 }
 
-export type { ApiResult, SearchParams, BoardData, ChatData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo };
-
+export type { ApiResult, SearchParams, BoardData, ChatData, RoomData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo };

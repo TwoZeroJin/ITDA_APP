@@ -3,9 +3,9 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start:local": "env-cmd -f .env.local expo start --tunnel",
-    "start:dev": "env-cmd -f .env.dev expo start --tunnel",
-    "start:prod": "env-cmd -f .env.prod expo start --tunnel",
+    "start:local": "env-cmd -f .env.local expo start --clear --tunnel",
+    "start:dev": "env-cmd -f .env.dev expo start --clear --tunnel",
+    "start:prod": "env-cmd -f .env.prod expo start --clear --tunnel",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "expo start --ios",

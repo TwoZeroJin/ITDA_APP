@@ -46,6 +46,9 @@ const COLOR = {
  */
 const QUERY_KEYS = {
     USER         : "user",
+    CHAT         : "chat",
+    CHAT_LIST    : "chat_list",
+    CHAT_PAGING  : "chat_paging",
     MEET         : "meet",
     MEET_PAGING  : "meet_paging",
     MEET_VIEW    : "meet_view",
@@ -100,6 +103,8 @@ const API_URL = {
     USER_LOGIN          : "/user/login",
     USER_AUTO_LOGIN     : "/user/auto_login",
     USER_REFRESH_TOKEN  : "/user/refresh_token",
+    CHAT_LIST           : "/chat/list",
+    CHAT_VIEW           : "/chat/view",
     CHAT_INSERT         : "/chat/insert",
     MEET_LIST           : "/meet/list",
     MEET_VIEW           : "/meet/view",
