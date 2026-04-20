@@ -67,21 +67,12 @@ export default function IndexScreen() {
 
   // 내 mem_id 정보 조회
   useEffect(() => {
-    let mounted = true;
-
     const fetchMyMemberInfo = async () => {
       const memberInfo = await commUtil.getMemberInfo();
-
-      if (mounted) {
-        setMyMemId(memberInfo.mem_id ?? 0);
-      }
+      setMyMemId(memberInfo.mem_id ?? 0);
     };
 
     fetchMyMemberInfo();
-
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   const messages = useMemo(() => {
