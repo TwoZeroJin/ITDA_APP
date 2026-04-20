@@ -68,6 +68,7 @@ const STORE_KEY = {
     X_REFRESH_TOKEN : "x-refresh-token",
     CATEGORY_LIST   : "category_list",
     FEE_LIST        : "fee_list",
+    MEM_ID          : "mem_id",
     MEM_NAME        : "mem_name",
     MEM_NICK        : "mem_nick",
     MEM_TEAM        : "mem_team",

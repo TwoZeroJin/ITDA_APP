@@ -8,15 +8,6 @@ import { FlatList, Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacit
 
 type ChatCategory = "all" | "social" | "club" | "class";
 
-interface ChatRoomItem {
-  id: string;
-  category: ChatCategory;
-  roomTitle: string;
-  updatedText: string;
-  messagePreview: string;
-  roomImage: ImageSourcePropType;
-}
-
 const CATEGORY_TABS: { key: ChatCategory; label: string }[] = [
   { key: "all", label: "전체" },
   { key: "social", label: "소셜링" },
@@ -83,19 +74,6 @@ function formatUpdatedText(dateText?: string): string {
   return `${days}일전`;
 }
 
-function toChatRoomItem(room: RoomData): ChatRoomItem {
-  const category = mapRoomTypeToCategory(room.room_type);
-
-  return {
-    id: String(room.room_id),
-    category,
-    roomTitle: room.room_name,
-    updatedText: formatUpdatedText(room.last_msg_sdate || room.mod_sdate || room.reg_sdate),
-    messagePreview: room.last_msg || room.last_chat_msg || "대화를 시작해 보세요.",
-    roomImage: getRoomImageByCategory(category),
-  };
-}
-
 export default function ChatListScreen() {
   const [activeCategory, setActiveCategory] = useState<ChatCategory>("all");
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatRoomListPaging({
@@ -116,17 +94,13 @@ export default function ChatListScreen() {
     }
   };
 
-  const chatRooms = useMemo(() => {
-    return results.map(toChatRoomItem);
-  }, [results]);
-
   const filteredChatRooms = useMemo(() => {
     if (activeCategory === "all") {
-      return chatRooms;
+      return results;
     }
 
-    return chatRooms.filter((room) => room.category === activeCategory);
-  }, [activeCategory, chatRooms]);
+    return results.filter((room) => mapRoomTypeToCategory(room.room_type) === activeCategory);
+  }, [activeCategory, results]);
 
   const renderCategoryTab = (category: { key: ChatCategory; label: string }) => {
     const isActive = activeCategory === category.key;
@@ -146,36 +120,44 @@ export default function ChatListScreen() {
     );
   };
 
-  const renderChatRoom = ({ item }: { item: ChatRoomItem }) => (
+  const renderChatRoom = ({ item }: { item: RoomData }) => {
+    const roomCategory = mapRoomTypeToCategory(item.room_type);
+    const roomImage = getRoomImageByCategory(roomCategory);
+    const updatedText = formatUpdatedText(item.last_msg_sdate || item.mod_sdate || item.reg_sdate);
+    const messagePreview = item.last_msg || item.last_chat_msg || "대화를 시작해 보세요.";
+
+    return (
     <TouchableOpacity
       style={styles.chatRow}
       onPress={() =>
         router.push({
           pathname: "/chats",
           params: {
-            room_id   : item.id,
-            room_name : item.roomTitle,
+            room_id   : item.room_id,
+            room_name : item.room_name,
+            room_type : item.room_type,
           },
         })
       }
     > 
       <View style={styles.roomImageWrapper}>
-        <Image source={item.roomImage} style={styles.roomImage} />
+        <Image source={roomImage} style={styles.roomImage} />
       </View>
 
       <View style={styles.chatTextContainer}>
         <View style={styles.titleRow}>
           <Text numberOfLines={1} style={styles.roomTitle}>
-            {item.roomTitle}
+            {item.room_name}
           </Text>
-          <Text style={styles.updatedText}>{item.updatedText}</Text>
+          <Text style={styles.updatedText}>{updatedText}</Text>
         </View>
         <Text numberOfLines={1} style={styles.previewText}>
-          {item.messagePreview}
+          {messagePreview}
         </Text>
       </View>
     </TouchableOpacity>
   );
+  };
 
   return (
     <View style={styles.container}>
@@ -186,7 +168,7 @@ export default function ChatListScreen() {
 
       <FlatList
         data={filteredChatRooms}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.room_id)}
         renderItem={renderChatRoom}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
         contentContainerStyle={[

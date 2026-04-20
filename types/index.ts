@@ -64,6 +64,7 @@ interface SignupInfo extends User {
  * 회원 정보
  */
 interface MemberInfo {
+  mem_id        : number;
   mem_name      : string;
   mem_nick?     : string;
   mem_gender    : string;
@@ -229,6 +230,8 @@ interface ChatData {
   chat_id     : number;
   chat_type   : 'MEMBER' | 'MEET' | 'GROUP';
   chat_msg    : string;
+  room_id     : string;
+  sender_id?  : number;
   mem_name?   : string;
   reg_sdate?  : string;
 }

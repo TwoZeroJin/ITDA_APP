@@ -4,22 +4,10 @@ import { COLOR } from '@/constants';
 import { useChatInsert, useChatListPaging } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
+import * as commUtil from '@/utils/commUtil';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useEffect, useRef, useState } from 'react';
-import {
-  Keyboard,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  ActivityIndicator,
-} from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, NativeSyntheticEvent, NativeScrollEvent, ActivityIndicator } from 'react-native';
 
 const formatTimeText = (sourceDate?: string) => {
   if (!sourceDate) {
@@ -55,41 +43,49 @@ const parseIncomingPayload = (raw: string): Partial<ChatData> => {
 
 const getMessageText = (item: ChatData) => item.chat_msg || '';
 const getSenderText = (item: ChatData) => item.mem_name || '상대방';
-const getMessageTimeValue = (item: ChatData) => {
-  if (!item.reg_sdate) {
-    return item.chat_id ?? 0;
-  }
-
-  const time = new Date(item.reg_sdate).getTime();
-  return Number.isNaN(time) ? item.chat_id ?? 0 : time;
-};
 
 export default function IndexScreen() {
-  const { room_id, room_name } = useLocalSearchParams<{ room_id: string; room_name: string }>();
+  const { room_id, room_name, room_type } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string }>();
   const chatInsert = useChatInsert();
   const { results, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatListPaging({
-    page_no: 1,
+    page_no: 0,
     page_size: 20,
-    room_id: room_id ?? '',
+    room_id: room_id ,
   });
   const [chatMsg, setChatMsg] = useState("");
   const [realtimeMessages, setRealtimeMessages] = useState<ChatData[]>([]);
   const [isConnected, setIsConnected] = useState(true);
+  const [myMemId, setMyMemId] = useState<number>(0);
   const topic = room_id ?? "testTopic";
   const mqttUtil = MqttUtil;
   const flatListRef = useRef<FlatList<ChatData>>(null);
   const hasScrolledInitial = useRef(false);
   const topLoadReadyRef = useRef(true);
 
-  const messages = useMemo(() => {
-    return [...(results ?? []), ...realtimeMessages].sort((a, b) => {
-      const timeDiff = getMessageTimeValue(a) - getMessageTimeValue(b);
-      if (timeDiff !== 0) {
-        return timeDiff;
-      }
+  const chat_id = Number(room_id.substring(room_id.lastIndexOf("_") + 1));
+  const chat_type: ChatData['chat_type'] = room_type === "MEET" ? 'MEET' : room_type === 'GROUP' ? 'GROUP' : 'MEMBER';
 
-      return (a.chat_id ?? 0) - (b.chat_id ?? 0);
-    });
+  // 내 mem_id 정보 조회
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchMyMemberInfo = async () => {
+      const memberInfo = await commUtil.getMemberInfo();
+
+      if (mounted) {
+        setMyMemId(memberInfo.mem_id ?? 0);
+      }
+    };
+
+    fetchMyMemberInfo();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const messages = useMemo(() => {
+    return [...realtimeMessages, ...(results ?? [])];
   }, [results, realtimeMessages]);
 
   useEffect(() => {
@@ -98,7 +94,7 @@ export default function IndexScreen() {
     }
 
     requestAnimationFrame(() => {
-      flatListRef.current?.scrollToEnd({ animated: false });
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
       hasScrolledInitial.current = true;
     });
   }, [messages.length]);
@@ -109,41 +105,35 @@ export default function IndexScreen() {
     }
 
     requestAnimationFrame(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
+      flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
     });
   }, [realtimeMessages.length]);
-
-  useEffect(() => {
-    const showSub = Keyboard.addListener('keyboardDidShow', () => {
-      requestAnimationFrame(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      });
-    });
-
-    return () => {
-      showSub.remove();
-    };
-  }, []);
 
   const msgReceiveCallback = (msg:string) => {
     const payload = parseIncomingPayload(msg);
 
+    if (payload.sender_id && Number(payload.sender_id) === myMemId) {
+      // 내 메시지는 이미 실시간으로 반영되어 있으므로 별도 처리하지 않음
+      return;
+    }
     setRealtimeMessages((prev) => [
-      ...prev,
       {
         chat_id: payload.chat_id ?? Date.now(),
-        chat_type: payload.chat_type ?? 'GROUP',
+        chat_type: payload.chat_type ?? 'MEET',
         chat_msg: payload.chat_msg ?? msg,
+        room_id: payload.room_id ?? room_id,
         mem_name: payload.mem_name,
         reg_sdate: payload.reg_sdate,
       },
+      ...prev,
     ]);
   }
 
+  // MQTT 메시지 발송 콜백 (현재는 별도 처리 없이 로그만 출력)
   const msgSendCallback = () => {}
 
+  // MQTT 연결 및 메시지 수신 설정
   useEffect(() => {
-    // MQTT 연결
     const fetchData = async () => {
       if (await mqttUtil.initMqtt(topic, msgReceiveCallback, msgSendCallback)) {
         setIsConnected(true);
@@ -159,38 +149,41 @@ export default function IndexScreen() {
     };
   }, [topic])
 
+  // 메시지 전송 핸들러
   const handleSubmitChat = () => {
     const trimMsg = chatMsg.trim();
     if (!trimMsg) {
       return;
     }
 
+    const nowIso = new Date().toISOString();
+
     const chatData : ChatData = {
-      chat_id : 1,
-      chat_type : "MEMBER",
-      chat_msg  : trimMsg
+      chat_id   : chat_id,
+      chat_type : chat_type,
+      chat_msg  : trimMsg,
+      room_id   : room_id,
     };
 
     setRealtimeMessages((prev) => [
-      ...prev,
       {
-        chat_id: Date.now(),
-        chat_type: 'MEMBER',
-        chat_msg: trimMsg,
-        mem_name: '나',
-        reg_sdate: new Date().toISOString(),
+        ...chatData,
+        sender_id: myMemId,
+        reg_sdate: nowIso,
       },
+      ...prev,
     ]);
+
     setChatMsg('');
 
     // Mongo DB Insert
     chatInsert.mutate({...chatData});
     // MQTT SendMessage
-    mqttUtil.sendMessage(topic, trimMsg);
+    mqttUtil.sendMessage(topic, {...chatData, sender_id: myMemId, reg_sdate: nowIso});
   }
 
   const renderMessage = ({ item }: { item: ChatData }) => {
-    const isMine = item.chat_type === 'MEMBER';
+    const isMine = Number(item.sender_id) === myMemId;
 
     if (isMine) {
       return (
@@ -251,6 +244,7 @@ export default function IndexScreen() {
           <FlatList
             ref={flatListRef}
             data={messages}
+            inverted
             keyExtractor={(item, index) => `${item.chat_id}-${index}`}
             renderItem={renderMessage}
             contentContainerStyle={styles.messageListContent}
@@ -280,7 +274,7 @@ export default function IndexScreen() {
                 onSubmitEditing={handleSubmitChat}
                 onFocus={() => {
                   requestAnimationFrame(() => {
-                    flatListRef.current?.scrollToEnd({ animated: true });
+                    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
                   });
                 }}
               />
@@ -312,7 +306,7 @@ const styles = StyleSheet.create({
   },
   meetInfoWrap: {
     marginHorizontal: 20,
-    backgroundColor: COLOR.COMM_GRAY_4,
+    backgroundColor: COLOR.COMM_GRAY_5,
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: 'center',
@@ -336,6 +330,8 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   messageListContent: {
+    flexGrow: 1,
+    justifyContent: 'flex-end',
     paddingTop: 18,
     paddingHorizontal: 18,
     paddingBottom: 10,

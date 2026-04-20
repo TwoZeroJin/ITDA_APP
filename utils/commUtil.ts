@@ -136,6 +136,7 @@ async function saveMemberInfo(data?: MemberInfo & Token) {
     if (data) {
         await saveSecureStore(STORE_KEY.X_ACCESS_TOKEN,     data.access_token);
         await saveSecureStore(STORE_KEY.X_REFRESH_TOKEN,    data.refresh_token);
+        await saveSecureStore(STORE_KEY.MEM_ID,             String(data.mem_id));
         await saveSecureStore(STORE_KEY.MEM_NAME,           data.mem_name);
         await saveSecureStore(STORE_KEY.MEM_NICK,           data.mem_nick);
         await saveSecureStore(STORE_KEY.MEM_TEAM,           data.mem_team);
@@ -151,6 +152,7 @@ async function saveMemberInfo(data?: MemberInfo & Token) {
  * @returns 회원 정보
  */
 async function getMemberInfo(): Promise<MemberInfo> {
+    const mem_id        = await getSecureStore(STORE_KEY.MEM_ID);
     const mem_name      = await getSecureStore(STORE_KEY.MEM_NAME);
     const mem_nick      = await getSecureStore(STORE_KEY.MEM_NICK);
     const mem_team      = await getSecureStore(STORE_KEY.MEM_TEAM);
@@ -161,6 +163,7 @@ async function getMemberInfo(): Promise<MemberInfo> {
     const mem_interest  = await getSecureStore(STORE_KEY.MEM_INTEREST);
     
     return {
+        mem_id          : Number(mem_id) || 0,
         mem_name        : mem_name      || "",
         mem_nick        : mem_nick      || "",
         mem_team        : mem_team      || "",
