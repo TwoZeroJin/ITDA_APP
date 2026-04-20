@@ -2,6 +2,7 @@ import Back from '@/assets/images/arrow_left.svg';
 import Like from '@/assets/images/header_like.svg';
 import Noti from '@/assets/images/header_noti.svg';
 import Setting from '@/assets/images/header_setting.svg';
+import Detail from '@/assets/images/header_detail.svg';
 import Logo from '@/assets/images/top_logo.svg';
 import { COLOR } from '@/constants';
 import { router } from 'expo-router';
@@ -15,10 +16,11 @@ interface CommHeaderProps {
   isNoti?    : boolean;
   isSetting? : boolean;
   isBack?    : boolean;
+  isDetail?  : boolean;
   title?     : string;
 }
 
-function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, title}: CommHeaderProps) {
+function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, isDetail = false, title}: CommHeaderProps) {
   return (
     <View style={styles.container}>
         <View style={styles.container}>
@@ -46,6 +48,11 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
           {isSetting && 
             <TouchableOpacity onPress={() => {}}>
               <Setting/>
+            </TouchableOpacity>
+          }
+          {isDetail && 
+            <TouchableOpacity onPress={() => {}}>
+              <Detail/>
             </TouchableOpacity>
           }
         </View>

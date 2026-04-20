@@ -76,6 +76,7 @@ const STORE_KEY = {
     MEM_TELNO       : "mem_telno",
     MEM_ADDR        : "mem_addr",
     MEM_INTEREST    : "mem_interest",
+    DEVICE_UID      : "device_uid",
 }
 
 /**

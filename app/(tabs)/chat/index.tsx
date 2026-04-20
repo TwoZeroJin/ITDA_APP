@@ -1,6 +1,6 @@
 import CommHeader from "@/components/CommHeader";
 import { COLOR } from "@/constants";
-import { useChatListPaging } from "@/hooks/queries/useChat";
+import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
 import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
@@ -98,7 +98,7 @@ function toChatRoomItem(room: RoomData): ChatRoomItem {
 
 export default function ChatListScreen() {
   const [activeCategory, setActiveCategory] = useState<ChatCategory>("all");
-  const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatListPaging({
+  const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatRoomListPaging({
     page_no: 0,
     page_size: 20,
   });
@@ -147,7 +147,18 @@ export default function ChatListScreen() {
   };
 
   const renderChatRoom = ({ item }: { item: ChatRoomItem }) => (
-    <TouchableOpacity style={styles.chatRow} onPress={() => router.push("/chats")}> 
+    <TouchableOpacity
+      style={styles.chatRow}
+      onPress={() =>
+        router.push({
+          pathname: "/chats",
+          params: {
+            room_id   : item.id,
+            room_name : item.roomTitle,
+          },
+        })
+      }
+    > 
       <View style={styles.roomImageWrapper}>
         <Image source={item.roomImage} style={styles.roomImage} />
       </View>

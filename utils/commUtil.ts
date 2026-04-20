@@ -37,8 +37,39 @@ function getClientId(appVersion?: string) {
     return base64.encode(JSON.stringify(jsonObject));
 }
 
-function getMqttClientId() {
-    //
+/**
+ * 
+ * @returns DEVICE UID 생성
+ */
+async function getDeviceUid(): Promise<string> {
+    const savedUid = await getSecureStore(STORE_KEY.DEVICE_UID);
+
+    if (savedUid) {
+        return savedUid;
+    }
+
+    let deviceUid = "";
+
+    try {
+        const Application = require("expo-application");
+
+        if (Platform.OS === "android") {
+            deviceUid = Application.androidId ?? "";
+        }
+        else if (Platform.OS === "ios" && Application.getIosIdForVendorAsync) {
+            deviceUid = (await Application.getIosIdForVendorAsync()) ?? "";
+        }
+    }
+    catch {
+        // expo-application 미설치/미지원 환경에서는 fallback UID 사용
+    }
+
+    if (!deviceUid) {
+        deviceUid = `${Platform.OS}-${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
+    }
+
+    await saveSecureStore(STORE_KEY.DEVICE_UID, deviceUid);
+    return deviceUid;
 }
 
 /**
@@ -184,5 +215,5 @@ async function getFeeList(): Promise<CodeInfo[]> {
     return await getAsyncData<CodeInfo[]>(STORE_KEY.FEE_LIST, JSON.parse) ?? [];
 }
 
-export { getAccessToken, getCategoryList, getClientId, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog, printInfoLog, printDebugLog, printErrorLog, setFeeList, getFeeList };
+export { getAccessToken, getCategoryList, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog, printInfoLog, printDebugLog, printErrorLog, setFeeList, getFeeList };
 

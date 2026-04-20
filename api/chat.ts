@@ -6,18 +6,18 @@ import { API_URL } from '@/constants';
  * 채팅룸 목록 조회
  * @returns 채팅룸 목록 조회
  */
-async function chatList(searchParams: SearchParams): Promise<ApiResult<RoomData[]>> {
+async function chatRoomList(searchParams: SearchParams): Promise<ApiResult<RoomData[]>> {
     const { data } = await axiosInstance.post(API_URL.CHAT_LIST, searchParams);
     return data;
 }
 
 /**
  * 채팅 조회
- * @param body room_id
+ * @param searchParams room_id 포함 검색 파라미터
  * @returns 채팅룸 목록 조회
  */
-async function chatView(body: RoomData): Promise<ApiResult<ChatData[]>> {
-    const { data } = await axiosInstance.post(API_URL.CHAT_VIEW, body);
+async function chatList(searchParams: SearchParams & { room_id: string }): Promise<ApiResult<ChatData[]>> {
+    const { data } = await axiosInstance.post(API_URL.CHAT_VIEW, searchParams);
     return data;
 }
 
@@ -31,5 +31,5 @@ async function chatInsert(body: ChatData): Promise<ApiResult<null>> {
     return data;
 }
 
-export { chatList, chatView, chatInsert };
+export { chatRoomList, chatList, chatInsert };
 

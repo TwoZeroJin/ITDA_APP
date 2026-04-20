@@ -72,7 +72,7 @@ export default function MeetCreatePreViewScreen() {
           <ImageCarousel
             images={imageList.map((file) => file.file_url)}
             height={280}
-            onPressImage={(i) => console.log("pressed image", i)}
+            // onPressImage={(i) => console.log("pressed image", i)} // 추후 이미지 수정 기능 추가 시 활용
           />
         </View>
 

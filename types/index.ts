@@ -229,6 +229,8 @@ interface ChatData {
   chat_id     : number;
   chat_type   : 'MEMBER' | 'MEET' | 'GROUP';
   chat_msg    : string;
+  mem_name?   : string;
+  reg_sdate?  : string;
 }
 
 /**

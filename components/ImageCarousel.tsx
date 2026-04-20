@@ -14,6 +14,7 @@ interface ImageCarouselProps  {
 function ImageCarousel({ images, height = 300, showIndicator = true, onPressImage }: ImageCarouselProps) {
   const [index, setIndex] = useState(0);
   const ref = useRef<FlatList<string> | null>(null);
+  const canSwipe = images.length > 1;
 
   const onMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
     const newIndex = Math.round(e.nativeEvent.contentOffset.x / width);
@@ -22,12 +23,13 @@ function ImageCarousel({ images, height = 300, showIndicator = true, onPressImag
 
   return (
     <View style={[styles.container, { height }]}>
-      {images.length > 1 && (
+      {images.length > 0 && (
       <FlatList
         ref={ref}
         data={images}
         horizontal
-        pagingEnabled
+        pagingEnabled={canSwipe}
+        scrollEnabled={canSwipe}
         showsHorizontalScrollIndicator={false}
         keyExtractor={(_, i) => String(i)}
         onMomentumScrollEnd={onMomentumScrollEnd}
@@ -46,7 +48,7 @@ function ImageCarousel({ images, height = 300, showIndicator = true, onPressImag
           <Text style={styles.noImageText}>이미지가 없습니다.</Text>
         </View>
       )}
-
+  
       {showIndicator && images.length > 1 && (
         <View style={styles.indicatorContainer}>
           {images.map((_, i) => (
