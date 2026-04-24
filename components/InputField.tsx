@@ -48,12 +48,12 @@ const styles = StyleSheet.create({
         marginBottom    : 7,
     },
     container: {
-        justifyContent  : "center",
-        alignItems      : "center",
-        flexDirection   : "row",
-        height          : 49,
-        borderRadius    : 12,
-        paddingHorizontal: 16,
+        justifyContent      : "center",
+        alignItems          : "center",
+        flexDirection       : "row",
+        height              : 49,
+        borderRadius        : 12,
+        paddingHorizontal   : 16,
     },
     filled: {
         borderColor:COLOR.COMM_GRAY_6,

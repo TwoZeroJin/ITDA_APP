@@ -1,6 +1,6 @@
 import { COLOR, COMM_CONSTANTS } from "@/constants";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
@@ -13,6 +13,7 @@ import GenderSlider from "@/components/GenderSlider";
 import AgeSlider from "@/components/AgeSlider";
 import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 /**
  * 모임 생성 - 신청방식, 참여인원, 성비, 나이 설정 화면
@@ -43,9 +44,11 @@ export default function MeetCreateDetailScreen() {
   return (
     <View style={styles.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
-      <ScrollView 
+      <KeyboardAwareScrollView 
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 80 }}
+        contentContainerStyle={{ paddingBottom: 60 }}
+        enableOnAndroid={true}
+        extraScrollHeight={24}
       >
         {/* 소모임 생성 타이틀 */}
         <View style={styles.titleContainer}>
@@ -188,7 +191,7 @@ export default function MeetCreateDetailScreen() {
 
         <DividingLine />
 
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <CommBottomButton label="다음" onPress={() => applyType && router.push({
             pathname: '/meets/createFee',
@@ -275,6 +278,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 14,
     color: COLOR.TEXT_DEFAULT,
+    marginStart: 8,
   },
   memberInputRow: {
     flexDirection: 'row',

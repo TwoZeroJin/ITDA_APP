@@ -9,6 +9,9 @@ import { getCategoryList } from "@/utils/commUtil";
 import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";
 
+/**
+ * 모임 생성 - 카테고리 선택 화면
+ */
 export default function MeetCreateCategoryScreen() {
   const params = useRoute();
   const prevMeetInfo = (params.params ?? {}) as Partial<MeetInfo>;
@@ -21,7 +24,6 @@ export default function MeetCreateCategoryScreen() {
       setCategoryList(categoryList);
     })();
   }, []);
-
 
   const canMoveNext = !!category;
 
@@ -75,76 +77,76 @@ export default function MeetCreateCategoryScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex          : 1,
   },
   titleContainer: {
-    marginTop: 12,
-    marginBottom: 5,
-    paddingStart: 16,
+    marginTop     : 12,
+    marginBottom  : 5,
+    paddingStart  : 16,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-    marginBottom: 16,
+    fontSize      : 22,
+    fontWeight    : 'bold',
+    color         : COLOR.COMM_BLACK,
+    marginBottom  : 16,
   },
   subtitle: {
-    fontSize: 16,
-    color: COLOR.COMM_GRAY_2,
+    fontSize      : 16,
+    color         : COLOR.COMM_GRAY_2,
   },
   commContainerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold', 
-    marginBottom: 8,
+    fontSize      : 20,
+    fontWeight    : 'bold', 
+    marginBottom  : 8,
   },
   commContainer: {
-    marginTop: 30,
-    marginHorizontal: 16,
-    marginBottom: 30,
-    gap: 16,
+    marginTop         : 30,
+    marginHorizontal  : 16,
+    marginBottom      : 30,
+    gap               : 16,
   },
   feeContainer: {
-    gap: 14,
+    gap               : 14,
   },
   commContainerSubTitle: {
-    fontSize: 14,
-    color: COLOR.TEXT_DEFAULT,
+    fontSize      : 14,
+    color         : COLOR.TEXT_DEFAULT,
   },
   feeInput: {
-    height: 50,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLOR.COMM_GRAY_6,
-    paddingHorizontal: 16,
-    fontSize: 14,
-    color: COLOR.COMM_BLACK,
+    height              : 50,
+    borderRadius        : 12,
+    borderWidth         : 1,
+    borderColor         : COLOR.COMM_GRAY_6,
+    paddingHorizontal   : 16,
+    fontSize            : 14,
+    color               : COLOR.COMM_BLACK,
   },
   categoryContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: 10,
+    flexDirection   : 'row',
+    flexWrap        : 'wrap',
+    alignItems      : 'center',
+    gap             : 10,
   },
   categoryBox: {
-    width: '30.5%',
-    height: 42,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLOR.COMM_GRAY_6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLOR.COMM_WHITE,
+    width           : '30.5%',
+    height          : 42,
+    borderRadius    : 12,
+    borderWidth     : 1,
+    borderColor     : COLOR.COMM_GRAY_6,
+    justifyContent  : 'center',
+    alignItems      : 'center',
+    backgroundColor : COLOR.COMM_WHITE,
   },
   categoryBoxSelected: {
-    borderColor: COLOR.APP_ACTIVE_4,
-    backgroundColor: COLOR.COMM_WHITE,
+    borderColor     : COLOR.APP_ACTIVE_4,
+    backgroundColor : COLOR.COMM_WHITE,
   },
   categoryText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: COLOR.COLOR_323232,
+    fontSize        : 16,
+    fontWeight      : '600',
+    color           : COLOR.COLOR_323232,
   },
   categoryTextSelected: {
-    color: COLOR.APP_ACTIVE_5,
+    color           : COLOR.APP_ACTIVE_5,
   },
 });

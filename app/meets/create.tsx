@@ -8,6 +8,9 @@ import IconSocial from '@/assets/images/icon_social.svg';
 import IconClub from '@/assets/images/icon_club.svg';
 import IconClass from '@/assets/images/icon_class.svg';
 
+/**
+ * 모임 생성 - 모임 유형 선택 화면(소셜링/클럽/클래스)
+ */
 export default function MeetCreateScreen() {
   const [meet, setMeet] = useState<string | null>(null);
 

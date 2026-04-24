@@ -31,8 +31,9 @@ const styles = StyleSheet.create({
         alignItems : "center"
     },
     labelText: {
-        fontSize: 20,
-        color: COLOR.COMM_BLACK
+        fontSize: 16,
+        color: COLOR.TEXT_DEFAULT,
+        marginStart: 8,
     }
 });
 

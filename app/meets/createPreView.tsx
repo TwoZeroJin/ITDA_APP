@@ -5,31 +5,19 @@ import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { useRoute } from "@react-navigation/native";
 import { useMeetCreate } from "@/hooks/queries/useMeet";
-import { FileInfo, MeetInfo } from "@/types";
+import { MeetInfo } from "@/types";
 import { router } from "expo-router";
 import ImageCarousel from "@/components/ImageCarousel";
 import CommLabel from "@/components/CommLabel";
 import IconCalendar from '@/assets/images/icon_calendar.svg';
 import CustomDialog from "@/components/CustomDialog";
+import { parseImageList } from "@/utils/commUtil";
 
 // 이전 화면에서 받은 데이터 타입 정의
 type MeetCreateRouteParams = {
   [key: string]: string | number | (string | number)[] | undefined;
   img_list_json?: string;
 };
-
-// 이전 화면에서 받은 img_list_json을 FileInfo 배열로 변환하는 함수
-function parseImageList(imgListJson?: string): FileInfo[] {
-  if (!imgListJson) {
-    return [];
-  }
-  try {
-    const parsed = JSON.parse(imgListJson);
-    return Array.isArray(parsed) ? (parsed as FileInfo[]) : [];
-  } catch {
-    return [];
-  }
-}
 
 export default function MeetCreatePreViewScreen() {
   const params = useRoute();

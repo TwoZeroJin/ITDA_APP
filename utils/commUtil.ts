@@ -1,5 +1,5 @@
 import { COMM_CONSTANTS, STORE_KEY } from "@/constants";
-import { CodeInfo, MemberInfo, Token } from "@/types";
+import { CodeInfo, FileInfo, MemberInfo, Token } from "@/types";
 import { Platform } from "react-native";
 import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
@@ -16,7 +16,7 @@ function getOsId() {
         return 'AOS';
     }
     else {
-        '';
+        return '';
     }
 }
 
@@ -218,5 +218,73 @@ async function getFeeList(): Promise<CodeInfo[]> {
     return await getAsyncData<CodeInfo[]>(STORE_KEY.FEE_LIST, JSON.parse) ?? [];
 }
 
-export { getAccessToken, getCategoryList, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog, printInfoLog, printDebugLog, printErrorLog, setFeeList, getFeeList };
+// 날짜 관련 함수 (AI Generated - 2024.06.11)
+function formatYmdDate(date: Date) {
+    return formatYmdDateFromParts(date.getFullYear(), date.getMonth() + 1, date.getDate());
+}
+function formatYmdDateFromParts(year: number, month: number, day: number) {
+    const pad2 = (value: number) => `${value}`.padStart(2, '0');
+    return `${year}-${pad2(month)}-${pad2(day)}`;
+}
+function parseYmdDate(value?: string) {
+    if (!value) {
+        return null;
+    }
+
+    const matched = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+    if (!matched) {
+        return null;
+    }
+
+    const [, rawYear, rawMonth, rawDay] = matched;
+    const year = Number(rawYear);
+    const month = Number(rawMonth);
+    const day = Number(rawDay);
+    const date = new Date(year, month - 1, day);
+
+    if (
+        date.getFullYear() !== year
+        || date.getMonth() !== month - 1
+        || date.getDate() !== day
+    ) {
+        return null;
+    }
+
+    return { year, month, day, date,};
+}
+function getDaysInMonth(year: number, month: number) {
+    return new Date(year, month, 0).getDate();
+}
+function getDefaultBirthDate() {
+    const now = new Date();
+    const defaultDate = new Date(now.getFullYear() - 20, now.getMonth(), now.getDate());
+    return formatYmdDate(defaultDate);
+}
+function formatDisplayBirthDate(value?: string) {
+    const parsed = parseYmdDate(value);
+
+    if (!parsed) {
+        return '';
+    }
+
+    return formatYmdDateFromParts(parsed.year, parsed.month, parsed.day);
+}
+
+// 이미지 리스트 JSON 문자열을 FileInfo[] 타입으로 파싱하는 함수
+function parseImageList(imgListJson?: string): FileInfo[] {
+    if (!imgListJson) {
+        return [];
+    }
+
+    try {
+        const parsed = JSON.parse(imgListJson);
+        return Array.isArray(parsed) ? parsed as FileInfo[] : [];
+    }
+    catch {
+        return [];
+    }
+}
+
+export { getAccessToken, getCategoryList, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog, printInfoLog, printDebugLog, printErrorLog, setFeeList, getFeeList, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList };
 

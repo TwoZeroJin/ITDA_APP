@@ -58,6 +58,8 @@ interface SignupInfo extends User {
   mem_telno     : string;
   mem_addr?     : string;
   mem_interest? : string;
+  mem_church_nm? : string;
+  mem_church_tm_nm? : string;
 }
 
 /**

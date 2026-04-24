@@ -11,6 +11,9 @@ import IconInfoMark from '@/assets/images/icon_info_mark.svg';
 import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";
 
+/**
+ * 모임 생성 - 참가비 설정 화면
+ */
 export default function MeetCreateFeeScreen() {
   const params = useRoute();
   const prevMeetInfo = (params.params ?? {}) as Partial<MeetInfo>;
