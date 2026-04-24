@@ -36,12 +36,11 @@ function WheelColumnItem({ options, selectedValue, onChange }: WheelColumnConfig
       return;
     }
 
-    requestAnimationFrame(() => {
-      listRef.current?.scrollToOffset({
-        offset: selectedIndex * WHEEL_ITEM_HEIGHT,
-        animated: false,
-      });
+    listRef.current?.scrollToOffset({
+      offset: selectedIndex * WHEEL_ITEM_HEIGHT,
+      animated: false,
     });
+
   }, [options, selectedValue]);
 
   const handleScrollFinish = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -56,12 +55,12 @@ function WheelColumnItem({ options, selectedValue, onChange }: WheelColumnConfig
     onChange(nextOption.value);
   };
 
+  // 스크롤이 완전히 멈췄을 때 선택된 아이템을 확정
+  const handleMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    handleScrollFinish(event);
+  };
   const handleScrollEndDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const velocityY = Math.abs(event.nativeEvent.velocity?.y ?? 0);
-
-    if (velocityY < 0.05) {
-      handleScrollFinish(event);
-    }
+    handleScrollFinish(event);
   };
 
   return (
@@ -72,11 +71,11 @@ function WheelColumnItem({ options, selectedValue, onChange }: WheelColumnConfig
           data={options}
           keyExtractor={(item) => item.value}
           showsVerticalScrollIndicator={false}
-          decelerationRate={0.992}
+          decelerationRate={0.980}
           snapToInterval={WHEEL_ITEM_HEIGHT}
           snapToAlignment="center"
           bounces={false}
-          onMomentumScrollEnd={handleScrollFinish}
+          onMomentumScrollEnd={handleMomentumScrollEnd}
           onScrollEndDrag={handleScrollEndDrag}
           scrollEventThrottle={16}
           overScrollMode="never"

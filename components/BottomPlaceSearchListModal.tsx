@@ -150,9 +150,6 @@ function BottomPlaceSearchListModal({
       setIsModalVisible(true);
       setKeyword('');
       setItems(defaultItems);
-      requestAnimationFrame(() => {
-        animateOpen();
-      });
       return;
     }
 

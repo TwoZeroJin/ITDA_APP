@@ -42,7 +42,7 @@ export default function MeetCreatePlaceScreen() {
   const [selectedDateValue, setSelectedDateValue] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [timeMeridiem, setTimeMeridiem] = useState('');
+  const [timeMeridiem, setTimeMeridiem] = useState('오전');
   const [timeHour, setTimeHour] = useState('01');
   const [timeMinute, setTimeMinute] = useState('00');
 

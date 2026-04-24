@@ -84,10 +84,6 @@ export default function IndexScreen() {
       return;
     }
 
-    requestAnimationFrame(() => {
-      flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
-      hasScrolledInitial.current = true;
-    });
   }, [messages.length]);
 
   useEffect(() => {
@@ -95,9 +91,6 @@ export default function IndexScreen() {
       return;
     }
 
-    requestAnimationFrame(() => {
-      flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-    });
   }, [realtimeMessages.length]);
 
   const msgReceiveCallback = (msg:string) => {
@@ -263,11 +256,6 @@ export default function IndexScreen() {
                 style={styles.inputBox}
                 returnKeyType="send"
                 onSubmitEditing={handleSubmitChat}
-                onFocus={() => {
-                  requestAnimationFrame(() => {
-                    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-                  });
-                }}
               />
             </View>
 

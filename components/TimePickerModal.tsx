@@ -22,6 +22,7 @@ const HOUR_WHEEL_OPTIONS = HOUR_OPTIONS.map((value) => ({ label: `${value}시`, 
 const MINUTE_WHEEL_OPTIONS = MINUTE_OPTIONS.map((value) => ({ label: `${value}분`, value: `${value}`.padStart(2, '0') }));
 
 function TimePickerModal({ visible, meridiem, hour, minute, onChangeMeridiem, onChangeHour, onChangeMinute, onClose, onConfirm }: TimePickerModalProps) {
+  console.log('TimePickerModal rendered with:', { visible, meridiem, hour, minute });
   return (
     <WheelPickerModal
       visible={visible}
