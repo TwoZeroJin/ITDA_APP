@@ -18,6 +18,7 @@ interface SearchParams {
   search_type?  : string;
   sch_condition? : string;
   search_text?  : string;
+  mem_id        : number;
 }
 
 /**

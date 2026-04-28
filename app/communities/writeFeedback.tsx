@@ -14,7 +14,7 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import IconCamera from '@/assets/images/icon_camera.svg';
-
+import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker'; // 라이브러리 임포트
 import CommunityMeet from '@/components/CommunityMeet';
 import { FileInfo, MeetReview, MyMeetInfo } from '@/types';
@@ -34,6 +34,20 @@ export default function writeFeedback() {
   const imageMutation = useImagesUpload();
   const reviewMutation = useReviewInsert(); // 텍스트 저장용 훅 추가
   const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([]);
+
+  //사진파일 압축 함수
+const compressImage = async (uri: string) => {
+  const result = await ImageManipulator.manipulateAsync(
+    uri,
+    [{ resize: { width: 1024 } }],
+    {
+      compress: 0.7,
+      format: ImageManipulator.SaveFormat.JPEG,
+    }
+  );
+
+  return result;
+};
 
   // --- 추가된 저장 함수 ---
   const handleUpload = () => {
@@ -91,7 +105,7 @@ export default function writeFeedback() {
   const pickImage = async () => {
     // 갤러리 접근 권한 요청
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
+
     if (status !== 'granted') {
       Alert.alert('권한 거부', '사진에 접근하려면 권한이 필요합니다.');
       return;
@@ -105,10 +119,27 @@ export default function writeFeedback() {
         quality: 1,
     });
 
+    // 4. 선택된 이미지가 있다면 이미지 업로드 진행
+    if (!result.assets) {
+      return;
+    }
+
     // 취소하지 않았고, 자산(assets)이 존재하는 경우에만 처리
+    const compressedAssets = [];
     if (!result.canceled && result.assets) {
+      // 🔥 여기서 압축 적용
+      for (const asset of result.assets) {
+        const compressed = await compressImage(asset.uri);
+
+        compressedAssets.push({
+          ...asset,
+          uri: compressed.uri,
+        });
+
+      }
+
       // 1. 새로 선택된 URI들 추출
-      const pickedUris = result.assets.map(asset => asset.uri);
+      const pickedUris = compressedAssets.map(asset => asset.uri);
       
       setImages(prevImages => {
         const newImages = [...prevImages, ...pickedUris];
@@ -116,11 +147,7 @@ export default function writeFeedback() {
       });
     }
 
-    // 4. 선택된 이미지가 있다면 이미지 업로드 진행
-      if (!result.assets) {
-        return;
-      }
-      const formData = getFormDataImages('upfiles', result.assets); // 유틸 함수 사용/ 유틸 함수로 FormData 생성
+      const formData = getFormDataImages('upfiles', compressedAssets); // 유틸 함수 사용/ 유틸 함수로 FormData 생성
       
       console.log('FormData에 담긴 이미지들:', formData.getAll('upfiles')); // FormData에 담긴 이미지 확인 로그
       

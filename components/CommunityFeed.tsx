@@ -1,9 +1,11 @@
 import { COLOR } from '@/constants';
-import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, NativeSyntheticEvent, NativeScrollEvent, FlatList } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, NativeSyntheticEvent, NativeScrollEvent, FlatList, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { MeetReview, MyMeetInfo} from '@/types';
 import CommunityMeet from './CommunityMeet';
+import { useReviewDelete } from '@/hooks/queries/useCommunity';
+import queryClient from '@/api/queryClient';
 
 interface communityFeedProps {
   data: MeetReview;
@@ -13,30 +15,83 @@ interface communityFeedProps {
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function CommunityFeed({data}: communityFeedProps) {
+  // ✅ 1. 메뉴 팝업 상태 관리
+  const [menuVisible, setMenuVisible] = useState(false);
+  // ✅ 1. 가시성 상태 관리 추가 (삭제 시 false로 변경하여 화면에서 숨김)
+  const [isVisible, setIsVisible] = useState(true);
   // ✅ 1. 펼침 상태 관리 (기본값: 닫힘)
   const [isExpanded, setIsExpanded] = useState(false);
-    
-// ✅ 2. 현재 보고 있는 이미지의 인덱스 상태 (0부터 시작)
+  // ✅ 2. 현재 보고 있는 이미지의 인덱스 상태 (0부터 시작)
   const [activeIndex, setActiveIndex] = useState(0);
-
   // 이미지 리스트가 비어있을 경우를 대비한 방어 코드
   const imageList = data.fileInfoVO || [];
+  const reviewMutation = useReviewDelete(); // 텍스트 저장용 훅 추가
 
-  console.log('이미지 리스트:', imageList);
+// ✅ 2. 수정/삭제 핸들러.
+  const handleEdit = () => {
+    setMenuVisible(false);
+    console.log('수정 페이지로 이동');
+//    navigation.navigate('EditScreen', { id: data.review_id }); // 실제 이동 코드 예시
+  };
+
+  const handleDelete = () => {
+    setMenuVisible(false);
+
+    Alert.alert(
+      "삭제 확인",
+      "정말로 이 게시글을 삭제하시겠습니까?",
+      [
+        {
+          text: "취소",
+          style: "cancel",
+          onPress: () => console.log("취소됨"),
+        },
+        { 
+          text: "삭제", 
+          style: "destructive",
+          onPress: () => {
+            console.log("삭제 로직 실행");
+            
+            // ✅ TanStack Query(React Query) 뮤테이션 호출
+            reviewMutation.mutate(data as MeetReview, {
+              onSuccess: (result) => {
+                console.log('리뷰 삭제 성공:', result);
+                // data헤당하는 피드 안보이게 처리
+//                setIsVisible(false);
+              },
+              onError: (error) => {
+                console.error('리뷰 삭제 실패:', error);
+                // 실패하면 다시 보이게 처리
+                // 실패 시에는 다시 보이게 하거나 알림 처리
+//                setIsVisible(true);                
+                Alert.alert('오류', '삭제 중 문제가 발생했습니다.');
+              }
+            });
+          } 
+        }
+      ],
+      { cancelable: true }
+    );
+  };
+
 
   // ✅ 3. 스크롤 위치를 계산하여 activeIndex를 업데이트하는 함수
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     // 현재 스크롤된 X축 위치
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    
     // 현재 위치를 이미지 너비로 나누어 반올림하면 현재 인덱스가 나옵니다.
     const currentIndex = Math.round(contentOffsetX / SCREEN_WIDTH);
-    
+
+    //console.log('이미지 리스트:', imageList);
+
     // 인덱스가 바뀌었을 때만 상태를 업데이트 (성능 최적화)
     if (currentIndex !== activeIndex) {
       setActiveIndex(currentIndex);
     }
   };
+
+  // ✅ 3. 삭제된 피드라면 아무것도 렌더링하지 않음 (스크롤 유지의 핵심)
+//  if (!isVisible) return null;  
 
   return (
     <View style={styles.feedContainer}>
@@ -48,7 +103,33 @@ export default function CommunityFeed({data}: communityFeedProps) {
             <Text style={styles.userName}>{data.mem_name}</Text>
             <Text style={styles.feedTime}>{data.reg_sdate}</Text>
           </View>
+
+          {/* ✅ 3. 더보기 버튼 추가 */}
+          {data.mem_id === 3 && (
+            <>
+            <TouchableOpacity 
+              style={styles.menuTrigger} 
+              onPress={() => setMenuVisible(!menuVisible)}
+            >
+              <Ionicons name="ellipsis-vertical" size={24} color={COLOR.COMM_BLACK} />
+            </TouchableOpacity>
+          
+            {/* ✅ 4. 수정/삭제 메뉴 팝업 (버튼 클릭 시 노출) */}
+            {menuVisible && (
+              <View style={styles.menuPopup}>
+                <TouchableOpacity style={styles.menuItem} onPress={handleEdit}>
+                  <Text style={styles.menuText}>수정</Text>
+                </TouchableOpacity>
+                <View style={styles.menuDivider} />
+                <TouchableOpacity style={styles.menuItem} onPress={handleDelete}>
+                  <Text style={[styles.menuText, { color: 'red' }]}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+            )}   
+          </>         
+          )}
         </View>
+
         {/* 이미지 슬라이더 영역 */}
         {imageList.length > 0 && (
           <View style={styles.imageSliderContainer}>
@@ -62,8 +143,8 @@ export default function CommunityFeed({data}: communityFeedProps) {
               keyExtractor={(_, index) => index.toString()}
               renderItem={({ item, index }) => {
                 // 여기서 로그가 찍히지 않는다면 imageList 자체가 빈 배열인 것입니다.
-                console.log(`[디버깅] ${index}번 아이템 전체:`, item);
-                console.log(`[디버깅] 경로값 확인:`, item?.file_path);
+//                console.log(`[디버깅] ${index}번 아이템 전체:`, item);
+//                console.log(`[디버깅] 경로값 확인:`, item?.file_path);
 
                 return (
                   <Image
@@ -263,5 +344,42 @@ userInfo: {
     fontSize: 13,
     color: COLOR.COMM_GRAY_2,
     marginTop: 0,
+  },  
+// ✅ 메뉴 트리거 버튼 (우측 끝 배치)
+  menuTrigger: {
+    marginLeft: 'auto',
+    padding: 4,
+  },
+  // ✅ 수정/삭제 팝업 스타일
+  menuPopup: {
+    position: 'absolute',
+    top: 45,
+    right: 16,
+    backgroundColor: COLOR.COMM_WHITE,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLOR.COMM_GRAY_4,
+    width: 80,
+    elevation: 5, // 안드로이드 그림자
+    shadowColor: '#000', // iOS 그림자
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    zIndex: 100,
+  },
+  menuItem: {
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  menuText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: COLOR.COMM_BLACK,
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: COLOR.COMM_GRAY_4,
+    marginHorizontal: 8,
   },  
 }); 

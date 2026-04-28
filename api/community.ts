@@ -17,5 +17,9 @@ async function myMeetListNoReview(searchParams: SearchParams): Promise<ApiResult
     const {data} = await axiosInstance.post(API_URL.MY_MEET_LIST_NO_REVIEW, searchParams);
     return data;
 } 
-
-export {reviewList, reviewInsert, myMeetListNoReview};
+//후기 삭제 (추가)
+async function reviewDelete(body: MeetReview): Promise<ApiResult<MeetReview>> {
+    const {data} = await axiosInstance.post(API_URL.REVIEW_DELETE, body);
+    return data;
+}
+export {reviewList, reviewInsert, myMeetListNoReview, reviewDelete};
