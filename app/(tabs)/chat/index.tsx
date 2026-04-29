@@ -1,9 +1,10 @@
 import CommHeader from "@/components/CommHeader";
 import { COLOR } from "@/constants";
+import { useLoading } from "@/contexts/LoadingContext";
 import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
 import { router } from "expo-router";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type ChatCategory = "all" | "social" | "club" | "class";
@@ -76,11 +77,33 @@ function formatUpdatedText(dateText?: string): string {
 
 export default function ChatListScreen() {
   const [activeCategory, setActiveCategory] = useState<ChatCategory>("all");
+  const { setLoading } = useLoading();
+  const hasHandledInitialLoadingRef = useRef(false);
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatRoomListPaging({
     page_no: 0,
-    page_size: 20,
+    page_size: 20
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useEffect(() => {
+    if (hasHandledInitialLoadingRef.current) {
+      return;
+    }
+
+    if (isLoading) {
+      setLoading(true);
+      return;
+    }
+
+    setLoading(false);
+    hasHandledInitialLoadingRef.current = true;
+  }, [isLoading, setLoading]);
+
+  useEffect(() => {
+    return () => {
+      setLoading(false);
+    };
+  }, [setLoading]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -195,93 +218,93 @@ export default function ChatListScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: COLOR.COMM_WHITE,
+    flex            : 1,
+    backgroundColor : COLOR.COMM_WHITE,
   },
   categoryRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 18,
+    flexDirection     : "row",
+    alignItems        : "center",
+    gap               : 8,
+    paddingHorizontal : 20,
+    paddingTop        : 20,
+    paddingBottom     : 18,
   },
   categoryChip: {
-    borderRadius: 18,
-    backgroundColor: COLOR.COMM_GRAY,
-    paddingHorizontal: 14,
-    paddingVertical: 7,
+    borderRadius      : 18,
+    backgroundColor   : COLOR.COMM_GRAY,
+    paddingHorizontal : 14,
+    paddingVertical   : 7,
   },
   categoryChipActive: {
-    backgroundColor: COLOR.APP_MAIN,
+    backgroundColor   : COLOR.APP_MAIN,
   },
   categoryChipText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: COLOR.TEXT_GRAY,
+    fontSize          : 16,
+    fontWeight        : 600,
+    color             : COLOR.TEXT_GRAY,
   },
   categoryChipTextActive: {
-    color: COLOR.COMM_WHITE,
+    color             : COLOR.COMM_WHITE,
   },
   listContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingHorizontal : 20,
+    paddingBottom     : 24,
   },
   listContainerEmpty: {
-    flexGrow: 1,
+    flexGrow          : 1,
   },
   chatRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 16,
+    flexDirection     : "row",
+    alignItems        : "center",
+    paddingVertical   : 16,
   },
   roomImageWrapper: {
-    width: 72,
-    height: 72,
-    marginRight: 14,
+    width             : 72,
+    height            : 72,
+    marginRight       : 14,
   },
   roomImage: {
-    width: 72,
-    height: 72,
-    borderRadius: 14,
+    width             : 72,
+    height            : 72,
+    borderRadius      : 14,
   },
   chatTextContainer: {
-    flex: 1,
-    gap: 6,
+    flex              : 1,
+    gap               : 6,
   },
   titleRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection     : "row",
+    alignItems        : "center",
   },
   roomTitle: {
-    maxWidth: "72%",
-    fontSize: 20,
-    color: COLOR.TEXT_2F2F2F,
-    fontWeight: "700",
-    marginRight: 6,
+    maxWidth          : "72%",
+    fontSize          : 20,
+    color             : COLOR.TEXT_2F2F2F,
+    fontWeight        : 700,
+    marginRight       : 6,
   },
   updatedText: {
-    marginTop: 4,
-    fontSize: 15,
-    color: COLOR.TEXT_DEFAULT,
-    fontWeight: "500",
+    marginTop         : 4,
+    fontSize          : 15,
+    color             : COLOR.TEXT_DEFAULT,
+    fontWeight        : 500,
   },
   previewText: {
-    fontSize: 16,
-    color: COLOR.TEXT_DEFAULT,
+    fontSize          : 16,
+    color             : COLOR.TEXT_DEFAULT,
   },
   divider: {
-    height: 1,
-    backgroundColor: COLOR.COMM_GRAY_6,
+    height            : 1,
+    backgroundColor   : COLOR.COMM_GRAY_6,
   },
   emptyContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingBottom: 80,
+    flex              : 1,
+    justifyContent    : "center",
+    alignItems        : "center",
+    paddingBottom     : 80,
   },
   emptyText: {
-    color: COLOR.TEXT_GRAY,
-    fontSize: 14,
+    color             : COLOR.TEXT_GRAY,
+    fontSize          : 14,
   },
 });

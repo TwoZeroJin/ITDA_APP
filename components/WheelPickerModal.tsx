@@ -26,6 +26,9 @@ const WHEEL_ITEM_HEIGHT = 42;
 const WHEEL_VISIBLE_ROWS = 5;
 const WHEEL_CONTAINER_HEIGHT = WHEEL_ITEM_HEIGHT * WHEEL_VISIBLE_ROWS;
 
+/**
+ * 휠 형태의 선택 UI를 모달로 띄워주는 컴포넌트
+ */
 function WheelColumnItem({ options, selectedValue, onChange }: WheelColumnConfig) {
   const listRef = useRef<FlatList<WheelOption>>(null);
 
@@ -35,11 +38,6 @@ function WheelColumnItem({ options, selectedValue, onChange }: WheelColumnConfig
     if (selectedIndex < 0) {
       return;
     }
-
-    listRef.current?.scrollToOffset({
-      offset: selectedIndex * WHEEL_ITEM_HEIGHT,
-      animated: false,
-    });
 
   }, [options, selectedValue]);
 

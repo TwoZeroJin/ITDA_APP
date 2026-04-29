@@ -1,5 +1,5 @@
 import { COMM_CONSTANTS, STORE_KEY } from "@/constants";
-import { CodeInfo, FileInfo, MemberInfo, Token } from "@/types";
+import { BannerData, CodeInfo, FileInfo, MemberInfo, Token } from "@/types";
 import { Platform } from "react-native";
 import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
@@ -114,14 +114,12 @@ function printErrorLog(...logMessage: string[]) {
 }
 
 /**
- * 
  * @returns AccessToken 저장
  */
 function getAccessToken() {
     return getSecureStore(STORE_KEY.X_ACCESS_TOKEN);
 }
 /**
- * 
  * @returns RefreshToken 저장
  */
 function getRefreshToken() {
@@ -129,7 +127,6 @@ function getRefreshToken() {
 }
 
 /**
- * 
  * @param data 회원 정보 SecureStore에 저장
  */
 async function saveMemberInfo(data?: MemberInfo & Token) {
@@ -148,7 +145,6 @@ async function saveMemberInfo(data?: MemberInfo & Token) {
     }
 }
 /**
- * 
  * @returns 회원 정보
  */
 async function getMemberInfo(): Promise<MemberInfo> {
@@ -180,25 +176,24 @@ async function getMemberInfo(): Promise<MemberInfo> {
 // AsyncStore에서 데이터 가져올 때, parser 함수를 통해 원하는 타입으로 변환하여 반환하는 유틸 함수
 async function getAsyncData<T = string>(key: string, parser?: (raw: string) => T): Promise<T | null> {
     const s_data = await getAsyncStore(key);
-
     if (!s_data) {
         return null;
     }
-
     if (!parser) {
         return s_data as T;
     }
-
     try {
         return parser(s_data);
     }
     catch (error) {
-        console.log('getAsyncData parse Error : ', error);
+        printErrorLog('getAsyncData parse Error : ', JSON.stringify(error));
         return null;
     }
 }
 
-// 취미 카테고리 set/get 함수
+// ===== AsyncStore에 저장할 데이터 get/set 함수 =====
+// ================================================
+// 취미 카테고리
 async function setCategoryList(data?: any) {
     if (data) {
         await saveAsyncStore(STORE_KEY.CATEGORY_LIST, JSON.stringify(data));
@@ -207,8 +202,7 @@ async function setCategoryList(data?: any) {
 async function getCategoryList(): Promise<CodeInfo[]> {
     return await getAsyncData<CodeInfo[]>(STORE_KEY.CATEGORY_LIST, JSON.parse) ?? [];
 }
-
-// 참가비 정보 set/get 함수
+// 참가비 정보
 async function setFeeList(data: any) {
     if (data) {
         await saveAsyncStore(STORE_KEY.FEE_LIST, JSON.stringify(data));
@@ -216,6 +210,15 @@ async function setFeeList(data: any) {
 }
 async function getFeeList(): Promise<CodeInfo[]> {
     return await getAsyncData<CodeInfo[]>(STORE_KEY.FEE_LIST, JSON.parse) ?? [];
+}
+// 메인 배너 리스트
+async function setMainBannerList(data: any) {
+    if (data) {
+        await saveAsyncStore(STORE_KEY.MAIN_BANNER_LIST, JSON.stringify(data));
+    }
+}
+async function getMainBannerList(): Promise<BannerData[]> {
+    return await getAsyncData<BannerData[]>(STORE_KEY.MAIN_BANNER_LIST, JSON.parse) ?? [];
 }
 
 // 날짜 관련 함수 (AI Generated - 2024.06.11)
@@ -230,19 +233,15 @@ function parseYmdDate(value?: string) {
     if (!value) {
         return null;
     }
-
     const matched = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-
     if (!matched) {
         return null;
     }
-
     const [, rawYear, rawMonth, rawDay] = matched;
     const year = Number(rawYear);
     const month = Number(rawMonth);
     const day = Number(rawDay);
     const date = new Date(year, month - 1, day);
-
     if (
         date.getFullYear() !== year
         || date.getMonth() !== month - 1
@@ -250,7 +249,6 @@ function parseYmdDate(value?: string) {
     ) {
         return null;
     }
-
     return { year, month, day, date,};
 }
 function getDaysInMonth(year: number, month: number) {
@@ -276,8 +274,7 @@ function parseImageList(imgListJson?: string): FileInfo[] {
     if (!imgListJson) {
         return [];
     }
-
-    try {
+        try {
         const parsed = JSON.parse(imgListJson);
         return Array.isArray(parsed) ? parsed as FileInfo[] : [];
     }
@@ -286,5 +283,5 @@ function parseImageList(imgListJson?: string): FileInfo[] {
     }
 }
 
-export { getAccessToken, getCategoryList, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, printCommLog, printInfoLog, printDebugLog, printErrorLog, setFeeList, getFeeList, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList };
 

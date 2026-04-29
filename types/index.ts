@@ -13,12 +13,12 @@ interface ApiResult<T> {
 }
 
 interface SearchParams {
-  page_no       : number;
-  page_size     : number;
-  search_type?  : string;
-  sch_condition? : string;
-  search_text?  : string;
-  mem_id        : number;
+  page_no         : number;
+  page_size       : number;
+  search_type?    : string;
+  sch_condition?  : string;
+  search_text?    : string;
+  mem_id?         : number;
 }
 
 /**
@@ -36,6 +36,7 @@ interface MainData {
   app_ver_name  : string;
   category_list : CodeInfo[];
   fee_list      : CodeInfo[];
+  banner_list?  : BannerData[];
 }
 
 /**
@@ -199,7 +200,7 @@ interface BoardData {
 /**
  * 개선, 의견, 정보
  */
-interface FeedBackData {
+interface FeedbackData {
   feed_id     : number;
   feed_subject: string;
   feed_content: string;
@@ -215,12 +216,12 @@ interface FeedBackData {
  * 채팅방 정보
  */
 interface RoomData {
-  room_id     : string;
-  room_name   : string;
-  room_type   : string;
-  mem_id      : number;
-  reg_sdate   : string;
-  mod_sdate   : string;
+  room_id         : string;
+  room_name       : string;
+  room_type       : string;
+  mem_id          : number;
+  reg_sdate       : string;
+  mod_sdate       : string;
   room_image_url? : string;
   last_msg?       : string;
   last_chat_msg?  : string;
@@ -249,4 +250,9 @@ interface CodeInfo {
   sub_list?       : CodeInfo[];
 }
 
-export type { ApiResult, SearchParams, BoardData, ChatData, RoomData, CodeInfo, FeedBackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo };
+interface BannerData {
+  banner_image_url : string;
+  banner_link_url? : string;
+}
+
+export type { ApiResult, SearchParams, BoardData, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo, BannerData };
