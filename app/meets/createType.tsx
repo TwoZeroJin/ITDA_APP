@@ -9,6 +9,9 @@ import IconClub from '@/assets/images/icon_club.svg';
 import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";
 
+/**
+ * 모임 생성 - 모임 유형 세부 선택 화면(소셜링 - 일반, 클럽 - 일반/클럽 클래스 - 일반)
+ */
 export default function MeetCreateSubTypeScreen() {
   const params = useRoute();
   const { meet } = (params.params ?? {}) as { meet?: string };

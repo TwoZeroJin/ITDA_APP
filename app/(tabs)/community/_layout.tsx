@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 
-export default function ReviewLayout() {
+export default function CommunityLayout() {
   return (
     <Stack screenOptions={
       {
@@ -13,38 +13,12 @@ export default function ReviewLayout() {
         name="index"
         options={
           {
-            title:"게시글 후기",
+            title:"커뮤니티",
             headerShown: false
           }
         }
       />
-      <Stack.Screen
-        name="chooseWriteMeet"
-        options={
-          {
-            title:"커뮤니티 작성",
-            headerShown: false
-          }
-        }
-      />
-      <Stack.Screen
-        name="chooseMeet"
-        options={
-          {
-            title:"커뮤니티 작성",
-            headerShown: false
-          }
-        }
-      />
-      <Stack.Screen
-        name="writeFeedback"
-        options={
-          {
-            title:"커뮤니티/피드 작성",
-            headerShown: false
-          }
-        }
-      />
+
     </Stack>
   )
 }

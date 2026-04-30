@@ -8,7 +8,7 @@ import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 // 모임 목록 조회 (무한 스크롤)
 function useMeetListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: ({ pageParam }) => meetList({ ...searchParams, page: pageParam }),
+    queryFn: () => meetList({ ...searchParams }),
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, searchParams],
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {

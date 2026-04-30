@@ -1,7 +1,7 @@
 import CommHeader from '@/components/CommHeader';
 import { COLOR } from '@/constants';
-import { ApiResult, CodeInfo } from '@/types';
-import { getCategoryList } from '@/utils/commUtil';
+import { ApiResult, BannerData, CodeInfo } from '@/types';
+import { getCategoryList, getMainBannerList } from '@/utils/commUtil';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, FlatList, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
@@ -15,41 +15,24 @@ import IconMembers from '@/assets/images/icon_members.svg';
 import IconClose from '@/assets/images/icon_close.svg';
 import IconCreate from '@/assets/images/icon_create.svg';
 import CommLabel from '@/components/CommLabel';
+import ImageCarousel from "@/components/ImageCarousel";
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen() {
-  const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
+  const [categoryList, setCategoryList]   = useState<CodeInfo[]>([]);
+  const [bannerList, setBannerList]       = useState<BannerData[]>([]);
   const [value, setValue] = useState<string | number | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       // SecureStore에서 카테고리 코드 목록 가져오기
       setCategoryList(await getCategoryList());
+      setBannerList(await getMainBannerList());
     }
 
     fetchData();
   }, []);
-
-  const getTimeOfDay = () => {
-    const h = new Date().getHours();
-    if (h >= 5 && h < 12) return 'morning';
-    if (h >= 12 && h < 18) return 'afternoon';
-    return 'evening';
-  };
-
-  const timeOfDay = getTimeOfDay();
-  const greetingImages: Record<string, any> = {
-    morning: require('@/assets/images/main_morning.png'),
-    afternoon: require('@/assets/images/main_afternoon.png'),
-    evening: require('@/assets/images/main_evening.png'),
-  };
-
-  const greetingBgSource = greetingImages[timeOfDay] ?? greetingImages.morning;
-  const greetingPhrase =
-    timeOfDay === 'morning' ? '송소희님, 좋은 아침이에요.' :
-    timeOfDay === 'afternoon' ? '송소희님, 좋은 오후예요.' :
-    '송소희님, 좋은 저녁이에요.';
 
   // 카테고리 데이터
   const PAGE_SIZE = 4;
@@ -187,55 +170,10 @@ export default function HomeScreen() {
       <CommHeader/>
       <ScrollView 
         showsVerticalScrollIndicator={false}
+        bounces={false}
+        overScrollMode="never"
       >
-        {/*  인사말 섹션  */}
-        <View style={styles.greetingContainer}>
-          {/* {timeOfDay == 'morning' && <MainMorning />}
-          {timeOfDay == 'afternoon' && <MainAfternoon />}
-          {timeOfDay == 'evening' && <MainEvening />} */}
-
-          <ImageBackground 
-            source={greetingBgSource}
-             style={styles.greetingImage}
-             imageStyle={{ resizeMode: 'cover' }}
-           />
-          <Text style={styles.greetingTitle}>{greetingPhrase}</Text>
-          <Text style={styles.greetingMessage}>오늘 하루도 주님의 은혜가 가득하길</Text>
-
-          {/* Noti 알림판 */}
-          <View style={styles.notiContainer}>
-            <Noti width={12} height={13}/>
-            <Text style={styles.notiMessage}>잇다에서 공지사항을 등록했어요.</Text>
-          </View>
-        </View>
-
-        {/* 다가오는 모임 리스트 섹션 */}
-        <View style={styles.meetContainer}>
-
-          {/* 타이틀 */}
-          <View style={styles.meetTitleContainer}>
-            <Text style={styles.meetTitle}>다가오는 모임 리스트</Text>
-            <TouchableOpacity
-              style={{ height: '100%', justifyContent: 'center', paddingStart: 25}}
-              onPress={() => router.push('/meet')}>
-              <ArrowRight width={16} height={11}/>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.meetListContainer}>
-            <FlatList<CodeInfo>
-               data={categoryList}
-               renderItem={renderGridMeet}
-               keyExtractor={(_, idx) => String(idx)}
-               horizontal
-               decelerationRate='fast'
-               showsHorizontalScrollIndicator={false}
-            />
-          </View>
-        </View>
-
-        {/* 검색, 카테고리 섹션 */}
-        <View style={[styles.container, {marginTop: 30, paddingTop: 30, flex : 1, paddingHorizontal: 16}]}>
+        <View style={[styles.container, { flex : 1, paddingHorizontal: 16}]}>
           {/* 검색 조건 부분 */}
           <View style={styles.searchContainer}>
             <Text style={styles.searchText}>참여하고 싶은 모임이나 클럽을 검색해 보세요.</Text>
@@ -244,7 +182,6 @@ export default function HomeScreen() {
               >
               <SearchButton width={20} height={20}/>
             </TouchableOpacity>
-
           </View>
           {/* 최근 검색어 */}
           <View style={styles.recentSearchContainer}>
@@ -269,9 +206,52 @@ export default function HomeScreen() {
               showsHorizontalScrollIndicator={false}
             />
           </View>
-          {/*  카테고리 목록 */}
+
+          {/* 공지사항 섹션 */}
+          {/* <View style={styles.notiContainer}>
+            <Noti width={12} height={13}/>
+            <Text style={styles.notiMessage}>잇다에서 공지사항을 등록했어요.</Text>
+          </View> */}
+        </View>
+
+        {/* 메인 배너 리스트 */}
+        <View style={styles.bannerContainer}>
+          <ImageCarousel
+            images={bannerList.map((banner) => banner.banner_image_url)}
+            height={250}
+            imageRadius={12}
+            // onPressImage={(i) => console.log("pressed image", i)} // 추후 배너 클릭 시 상세 페이지 이동 기능 추가 시 활용
+          />
+        </View>
+
+        {/* 다가오는 모임 리스트 섹션 */}
+        <View style={styles.meetContainer}>
+          {/* 타이틀 */}
+          <View style={styles.meetTitleContainer}>
+            <Text style={styles.meetTitle}>다가오는 모임 리스트</Text>
+            <TouchableOpacity
+              style={{ height: '100%', justifyContent: 'center', paddingStart: 25}}
+              onPress={() => router.push('/meet')}>
+              <ArrowRight width={16} height={11}/>
+            </TouchableOpacity>
+          </View>
+          {/* 다가오는 모임 목록 데이터 */}
+          <View style={styles.meetListContainer}>
+            <FlatList<CodeInfo>
+               data={categoryList}
+               renderItem={renderGridMeet}
+               keyExtractor={(_, idx) => String(idx)}
+               horizontal
+               decelerationRate='fast'
+               showsHorizontalScrollIndicator={false}
+            />
+          </View>
+        </View>
+
+        {/* 카테고리 섹션 */}
+        <View style={[styles.container, {marginTop: 8, paddingTop: 16,paddingBottom: 8, flex : 1, paddingHorizontal: 16}]}>
           <View>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 20, marginBottom: 12 }}>카테고리</Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 12 }}>카테고리</Text>
             <FlatList<CodeInfo[]>
                 data={pages}
                 renderItem={renderGridCategory}
@@ -281,7 +261,6 @@ export default function HomeScreen() {
                 showsHorizontalScrollIndicator={false}
               />
           </View>
-
         </View>
 
         <View style={{ height: 10, backgroundColor: COLOR.COMM_GRAY_4 }} />
@@ -317,7 +296,7 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
-      {/* Floating 버튼 (화면에 고정) */}
+      {/* Floating 버튼, 소셜링/클럽 생성 버튼 (화면에 고정) */}
       <TouchableOpacity
         style={styles.floatingButton}
         activeOpacity={0.85}
@@ -333,33 +312,12 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: COLOR.COMM_WHITE,
   },
-  greetingContainer: {
-    width: '100%',
-    height: 390,
-    marginBottom: 12,
-  },
-  greetingImage: {
-    width: '100%',
-    height: '100%',
-  },
-  greetingTitle: {
-    position: 'absolute',
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginTop: 12,
-    marginBottom: 2,
-    marginStart: 16,
-  },
-  greetingMessage: {
-    position: 'absolute',
-    fontSize: 16,
-    color: COLOR.TEXT_DEFAULT,
-    marginTop: 50,
-    marginStart: 16,
+  bannerContainer: {
+    padding           : 16,
+    backgroundColor   : COLOR.COMM_WHITE,
   },
   notiContainer: {
     flexDirection: 'row',
-    position: 'absolute',
     width: '80%',
     height: 30,
     bottom: 14,
@@ -376,14 +334,13 @@ const styles = StyleSheet.create({
   },
   // 다가올 모임 리스트
   meetContainer: {
-    height: 170,
+    padding : 16,
   },
   meetTitleContainer: {
     height : 32,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginHorizontal: 16,
     marginBottom: 12,
   }, 
   meetTitle: {
@@ -391,7 +348,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   meetListContainer: {
-    marginStart: 16,
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -441,6 +397,7 @@ const styles = StyleSheet.create({
   },
   // 검색 섹션
   searchContainer: {
+    marginTop: 16,
     height: 50,
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -457,7 +414,6 @@ const styles = StyleSheet.create({
   recentSearchContainer: {
     marginTop: 10,
     marginBottom: 10,
-    paddingHorizontal: 32,
   },
   recentSearchItem: {
     backgroundColor: COLOR.COMM_GRAY,

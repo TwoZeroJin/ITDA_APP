@@ -232,6 +232,9 @@ export default function MyPageScreen() {
             <View style={styles.nameRow}>
               <Text style={styles.name}>송소희</Text>
               <Text style={styles.pencil}>✎</Text>
+              <Pressable onPress={() => logout()} style={styles.editBtn}>
+                <Text style={styles.pencil}>로그아웃</Text>
+              </Pressable>
             </View>
 
             <View style={styles.introRow}>

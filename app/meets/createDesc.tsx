@@ -18,6 +18,9 @@ type MeetCreateRouteParams = {
   img_list_json?: string;
 };
 
+/**
+ * 모임 생성 - 모임 설명 및 이미지 등록 화면
+ */
 export default function MeetCreateDescScreen() {
   const params = useRoute();
   const prevMeetInfo = (params.params ?? {}) as MeetCreateRouteParams;

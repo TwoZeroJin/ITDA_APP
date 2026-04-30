@@ -6,8 +6,8 @@ import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
 import CustomRadioGroup from "@/components/CustomRadioGroup";
 import BottomPlaceSearchListModal, { BottomPlaceSearchListItem } from "@/components/BottomPlaceSearchListModal";
-import DatePickerModal from "@/components/DatePickerModal";
-import TimePickerModal, { TimeMeridiem } from "@/components/TimePickerModal";
+import CalendarModal from "@/components/CalendarModal";
+import TimePickerModal from "@/components/TimePickerModal";
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
 import IconPlace from '@/assets/images/icon_place.svg';
 import IconTime from '@/assets/images/icon_time.svg';
@@ -42,7 +42,7 @@ export default function MeetCreatePlaceScreen() {
   const [selectedDateValue, setSelectedDateValue] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
-  const [timeMeridiem, setTimeMeridiem] = useState<TimeMeridiem>('오전');
+  const [timeMeridiem, setTimeMeridiem] = useState('오전');
   const [timeHour, setTimeHour] = useState('01');
   const [timeMinute, setTimeMinute] = useState('00');
 
@@ -66,7 +66,7 @@ export default function MeetCreatePlaceScreen() {
     const parsedTime = selectedTime.match(/^(오전|오후)\s(\d{1,2}):(\d{2})$/);
 
     if (parsedTime) {
-      setTimeMeridiem(parsedTime[1] as TimeMeridiem);
+      setTimeMeridiem(parsedTime[1]);
       setTimeHour(parsedTime[2].padStart(2, '0'));
       setTimeMinute(parsedTime[3].padStart(2, '0'));
     }
@@ -187,7 +187,7 @@ export default function MeetCreatePlaceScreen() {
         onConfirm={onConfirmTime}
       />
 
-      <DatePickerModal
+      <CalendarModal
         visible={dateModalVisible}
         selectedValue={selectedDateValue}
         onChangeValue={setSelectedDateValue}

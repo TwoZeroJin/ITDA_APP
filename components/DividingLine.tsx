@@ -14,8 +14,8 @@ function DividingLine() {
 
 const styles = StyleSheet.create({
     line: {
-        height: 8,
-        backgroundColor: COLOR.COMM_GRAY_4
+        height          : 8,
+        backgroundColor : COLOR.COMM_GRAY_4
     },
 });
 

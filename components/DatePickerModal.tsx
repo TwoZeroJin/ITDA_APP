@@ -1,369 +1,110 @@
-import { COLOR } from "@/constants";
-import React, { useEffect, useMemo, useState } from "react";
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-
-/**
- * 날짜 선택 모달
- */
-type DateOption = {
-  value: string;
-  label: string;
-};
+import { formatYmdDateFromParts, getDaysInMonth, parseYmdDate } from "@/utils/commUtil";
+import WheelPickerModal, { WheelOption } from "@/components/WheelPickerModal";
+import React, { useEffect, useMemo } from "react";
 
 type DatePickerModalProps = {
   visible: boolean;
-  selectedValue: string;
+  selectedValue?: string;
   onChangeValue: (value: string) => void;
   onClose: () => void;
-  onConfirm: (item: DateOption) => void;
-  title?: string;
+  onConfirm: (value: string) => void;
 };
 
-const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
+function DatePickerModal({ visible, selectedValue, onChangeValue, onClose, onConfirm, }: DatePickerModalProps) {
+  const today = useMemo(() => new Date(), []);
+  const maxYear = today.getFullYear();
+  const minYear = 1900;
+  const fallbackDate = useMemo(() => {
+    const year = maxYear - 20;
+    const month = today.getMonth() + 1;
+    const day = today.getDate();
+    return formatYmdDateFromParts(year, month, day);
+  }, [maxYear, today]);
 
-function formatDateValue(date: Date) {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, '0');
-  const day = `${date.getDate()}`.padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
+  const parsedDate = useMemo(() => {
+    const parsed = parseYmdDate(selectedValue);
+    return parsed ?? parseYmdDate(fallbackDate);
+  }, [fallbackDate, selectedValue]);
 
-function formatDateLabel(date: Date) {
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const dayOfWeek = WEEKDAY_LABELS[date.getDay()];
-  return `${month}월 ${day}일 (${dayOfWeek})`;
-}
+  const selectedYear = parsedDate?.year ?? maxYear - 20;
+  const selectedMonth = parsedDate?.month ?? 1;
+  const selectedDay = parsedDate?.day ?? 1;
 
-function parseDateValue(value: string) {
-  const matched = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  const yearOptions = useMemo<WheelOption[]>(
+    () => Array.from({ length: maxYear - minYear + 1 }, (_, index) => {
+      const year = minYear + index;
+      return { label: `${year}`, value: `${year}` };
+    }),
+    [maxYear],
+  );
 
-  if (!matched) {
-    return null;
-  }
+  const monthOptions = useMemo<WheelOption[]>(
+    () => Array.from({ length: 12 }, (_, index) => {
+      const month = index + 1;
+      return { label: `${`${month}`.padStart(2, "0")}`, value: `${`${month}`.padStart(2, "0")}` };
+    }),
+    [],
+  );
 
-  const year = Number(matched[1]);
-  const month = Number(matched[2]);
-  const day = Number(matched[3]);
-  const parsed = new Date(year, month - 1, day);
+  const dayOptions = useMemo<WheelOption[]>(() => {
+    const daysInMonth = getDaysInMonth(selectedYear, selectedMonth);
 
-  if (
-    parsed.getFullYear() !== year
-    || parsed.getMonth() !== month - 1
-    || parsed.getDate() !== day
-  ) {
-    return null;
-  }
-
-  return parsed;
-}
-
-function getMonthCells(viewDate: Date) {
-  const year = viewDate.getFullYear();
-  const month = viewDate.getMonth();
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-
-  return Array.from({ length: 42 }, (_, index) => {
-    const day = index - firstDay + 1;
-
-    if (day < 1 || day > daysInMonth) {
-      return null;
-    }
-
-    return day;
-  });
-}
-
-function DatePickerModal({
-  visible,
-  selectedValue,
-  onChangeValue,
-  onClose,
-  onConfirm,
-  title,
-}: DatePickerModalProps) {
-  const today = useMemo(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  }, []);
-
-  const [displayMonth, setDisplayMonth] = useState(() => {
-    const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  });
-
-  const selectedDate = useMemo(() => {
-    const parsed = parseDateValue(selectedValue);
-    return parsed ?? null;
-  }, [selectedValue]);
-
-  const monthCells = useMemo(() => getMonthCells(displayMonth), [displayMonth]);
+    return Array.from({ length: daysInMonth }, (_, index) => {
+      const day = index + 1;
+      return { label: `${`${day}`.padStart(2, "0")}`, value: `${`${day}`.padStart(2, "0")}` };
+    });
+  }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
     if (!visible) {
       return;
     }
 
-    const baseDate = selectedDate && selectedDate >= today ? selectedDate : today;
-    setDisplayMonth(new Date(baseDate.getFullYear(), baseDate.getMonth(), 1));
+    const parsed = parseYmdDate(selectedValue);
 
-    if (!selectedDate || selectedDate < today) {
-      onChangeValue(formatDateValue(baseDate));
-    }
-  }, [onChangeValue, selectedDate, today, visible]);
-
-  const handleConfirm = () => {
-    const date = selectedDate && selectedDate >= today ? selectedDate : today;
-    onConfirm({
-      value: formatDateValue(date),
-      label: formatDateLabel(date),
-    });
-  };
-
-  const moveMonth = (diff: number) => {
-    setDisplayMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + diff, 1));
-  };
-
-  const isPrevMonthDisabled = useMemo(() => {
-    const currentMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    return displayMonth <= currentMonthStart;
-  }, [displayMonth, today]);
-
-  const isSelectedDate = (day: number) => {
-    if (!selectedDate) {
-      return false;
-    }
-
-    return (
-      selectedDate.getFullYear() === displayMonth.getFullYear()
-      && selectedDate.getMonth() === displayMonth.getMonth()
-      && selectedDate.getDate() === day
-    );
-  };
-
-  const isPastDate = (day: number) => {
-    const targetDate = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), day);
-    return targetDate < today;
-  };
-
-  const handleSelectDay = (day: number) => {
-    const pickedDate = new Date(displayMonth.getFullYear(), displayMonth.getMonth(), day);
-
-    if (pickedDate < today) {
+    if (!parsed) {
+      onChangeValue(fallbackDate);
       return;
     }
 
-    onChangeValue(formatDateValue(pickedDate));
+    const maxDay = getDaysInMonth(parsed.year, parsed.month);
+
+    if (parsed.day > maxDay) {
+      onChangeValue(formatYmdDateFromParts(parsed.year, parsed.month, maxDay));
+    }
+  }, [fallbackDate, onChangeValue, selectedValue, visible]);
+
+  const updateDate = (nextYear: number, nextMonth: number, nextDay: number) => {
+    const normalizedDay = Math.min(nextDay, getDaysInMonth(nextYear, nextMonth));
+    onChangeValue(formatYmdDateFromParts(nextYear, nextMonth, normalizedDay));
   };
 
   return (
-    <Modal
+    <WheelPickerModal
       visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
-      <View style={styles.modalOverlay}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={onClose} />
-        <View style={styles.modalContainer}>
-          {!!title && <Text style={styles.modalTitle}>{title}</Text>}
-
-          <View style={styles.calendarHeader}>
-            <Text style={styles.monthTitle}>{`${displayMonth.getFullYear()}년 ${displayMonth.getMonth() + 1}월`}</Text>
-            <View style={styles.monthNavRow}>
-              <TouchableOpacity
-                style={styles.monthNavButton}
-                onPress={() => moveMonth(-1)}
-                disabled={isPrevMonthDisabled}
-              >
-                <Text style={[styles.monthNavText, isPrevMonthDisabled && styles.monthNavTextDisabled]}>‹</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.monthNavButton} onPress={() => moveMonth(1)}>
-                <Text style={styles.monthNavText}>›</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.weekdayRow}>
-            {WEEKDAY_LABELS.map((weekday) => (
-              <View key={weekday} style={styles.weekdayCell}>
-                <Text style={styles.weekdayText}>{weekday}</Text>
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.calendarGrid}>
-            {monthCells.map((day, index) => {
-              if (day === null) {
-                return <View key={`empty-${index}`} style={styles.dayCell} />;
-              }
-
-              const selected = isSelectedDate(day);
-              const isDisabled = isPastDate(day);
-
-              return (
-                <View key={`day-${day}`} style={styles.dayCell}>
-                  <TouchableOpacity
-                    style={[styles.dayButton, selected && styles.dayButtonSelected]}
-                    onPress={() => handleSelectDay(day)}
-                    activeOpacity={0.8}
-                    disabled={isDisabled}
-                  >
-                    <Text style={[styles.dayText, isDisabled && styles.dayTextDisabled, selected && styles.dayTextSelected]}>{day}</Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-          </View>
-
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>취소</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
-              <Text style={styles.confirmButtonText}>확인</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </Modal>
+      cancelLabel="취소"
+      confirmLabel="선택완료"
+      columns={[
+        {
+          options: yearOptions,
+          selectedValue: `${selectedYear}`,
+          onChange: (value) => updateDate(Number(value), selectedMonth, selectedDay),
+        },
+        {
+          options: monthOptions,
+          selectedValue: `${selectedMonth}`.padStart(2, "0"),
+          onChange: (value) => updateDate(selectedYear, Number(value), selectedDay),
+        },
+        {
+          options: dayOptions,
+          selectedValue: `${selectedDay}`.padStart(2, "0"),
+          onChange: (value) => updateDate(selectedYear, selectedMonth, Number(value)),
+        },
+      ]}
+      onClose={onClose}
+      onConfirm={() => onConfirm(formatYmdDateFromParts(selectedYear, selectedMonth, selectedDay))}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 16,
-  },
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-  },
-  modalContainer: {
-    borderRadius: 16,
-    backgroundColor: COLOR.COMM_WHITE,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-  modalTitle: {
-    fontSize: 14,
-    color: COLOR.TEXT_DEFAULT,
-    marginBottom: 8,
-  },
-  calendarHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  monthTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLOR.COLOR_323232,
-  },
-  monthNavRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  monthNavButton: {
-    width: 28,
-    height: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 14,
-  },
-  monthNavText: {
-    fontSize: 28,
-    color: COLOR.TEXT_DEFAULT,
-    lineHeight: 28,
-  },
-  monthNavTextDisabled: {
-    color: COLOR.COMM_GRAY_6,
-  },
-  weekdayRow: {
-    flexDirection: 'row',
-    marginBottom: 4,
-  },
-  weekdayCell: {
-    width: '14.2857%',
-    height: 35,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  weekdayText: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: COLOR.TEXT_DEFAULT,
-  },
-  calendarGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 6,
-  },
-  dayCell: {
-    width: '14.2857%',
-    height: 55,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dayButtonSelected: {
-    backgroundColor: COLOR.APP_ACTIVE_5,
-  },
-  dayText: {
-    fontSize: 16,
-    color: COLOR.TEXT_DEFAULT,
-    lineHeight: 18,
-  },
-  dayTextDisabled: {
-    color: COLOR.COMM_GRAY_6,
-  },
-  dayTextSelected: {
-    color: COLOR.COMM_WHITE,
-  },
-  buttonRow: {
-    marginTop: 4,
-    flexDirection: 'row',
-    gap: 8,
-  },
-  cancelButton: {
-    flex: 1,
-    height: 44,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLOR.COMM_GRAY_6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLOR.COMM_WHITE,
-  },
-  cancelButtonText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: COLOR.TEXT_DEFAULT,
-  },
-  confirmButton: {
-    flex: 1,
-    height: 44,
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLOR.APP_MAIN,
-  },
-  confirmButtonText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: COLOR.COMM_WHITE,
-  },
-});
 
 export default DatePickerModal;

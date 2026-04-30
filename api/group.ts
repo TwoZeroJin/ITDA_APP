@@ -3,7 +3,7 @@ import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
 async function groupList(searchParams: SearchParams): Promise<ApiResult<GroupInfo[]>> {
-    const {data} = await axiosInstance.post(API_URL.GROUP_LIST, searchParams);
+    const { data } = await axiosInstance.post(API_URL.GROUP_LIST, searchParams);
     return data;
 }
 

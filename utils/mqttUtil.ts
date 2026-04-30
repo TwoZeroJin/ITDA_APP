@@ -1,7 +1,9 @@
 import { Client, Message } from 'paho-mqtt';
-import { printErrorLog, printInfoLog } from './commUtil';
+import { getDeviceUid, printErrorLog, printInfoLog } from './commUtil';
 
-let client: Client;
+let client: Client | null = null;
+
+const MQTT_URL = 'ws://146.56.105.2:9001';
 
 /**
  * MQTT INIT
@@ -10,53 +12,75 @@ let client: Client;
  * @param msgReceiveCallback 
  * @param msgSendCallback 
  */
-const initMqtt = (clientId: string, topic: string, msgReceiveCallback : (msg : string) => void, msgSendCallback : (msg : string) => void) => {
-    let result = true;
+const initMqtt = async (topic: string, msgReceiveCallback : (msg : string) => void, msgSendCallback : (msg : string) => void): Promise<boolean> => {
     if (client == null) {
         client = new Client(
-            'ws://146.56.105.2:9001/mqtt',
-            clientId
+            "146.56.105.2", // host
+            9001,           // port
+            "/mqtt",        // path
+            await getDeviceUid()
         );
-
-        client.onConnectionLost = (response) => {
-            if (response.errorCode !== 0) {
-                printInfoLog('connection Lost : ', response.errorMessage);
-            }
-        }
-
-        client.onMessageArrived = (message) => {
-            printInfoLog(`MQTT Message Arrived : ${message.destinationName} : ${message.payloadString}`);
-            msgReceiveCallback(message.payloadString);
-        }
-
-        client.onMessageDelivered = (message) => {
-            printInfoLog(`MQTT Message Delivered : , ${message.destinationName} : ${message.payloadString}`);
-            msgSendCallback(message.payloadString);
-        }
-
-        client.connect({
-            onSuccess: (success) => {
-                printInfoLog(`MQTT Connected : ${JSON.stringify(success)}`);
-                client.subscribe(topic);
-            },
-            onFailure: (error) => {
-                printErrorLog(`MQTT Connect Failed : ${JSON.stringify(error)}`);
-                result = false;
-            },
-            useSSL: false,
-        });
     }
 
-    return result;
+    const mqttClient = client;
+
+    mqttClient.onConnectionLost = (response) => {
+        if (response.errorCode !== 0) {
+            printInfoLog('connection Lost : ', response.errorMessage);
+        }
+    }
+
+    mqttClient.onMessageArrived = (message) => {
+        printInfoLog(`MQTT Message Arrived TOPIC :${message.destinationName} MSG : ${message.payloadString}`);
+        msgReceiveCallback(message.payloadString);
+    }
+
+    mqttClient.onMessageDelivered = (message) => {
+        printInfoLog(`MQTT Message Delivered TOPIC :${message.destinationName} MSG : ${message.payloadString}`);
+        msgSendCallback(message.payloadString);
+    }
+
+    return new Promise<boolean>((resolve) => {
+        try {
+            if (mqttClient.isConnected()) {
+                mqttClient.subscribe(topic);
+                resolve(true);
+                return;
+            }
+
+            mqttClient.connect({
+                onSuccess: (success) => {
+                    printInfoLog(`MQTT Connected : ${JSON.stringify(success)}`);
+                    mqttClient.subscribe(topic);
+                    resolve(true);
+                },
+                onFailure: (error) => {
+                    printInfoLog(`MQTT Connect Failed : ${JSON.stringify(error)}`);
+                    resolve(false);
+                },
+                useSSL: false,
+            });
+        }
+        catch (e) {
+            printInfoLog(`MQTT Connect Exception : ${JSON.stringify(e)}`);
+            resolve(false);
+        }
+    });
 };
 
 /**
- * 메시지 전달
+ * 메시지 전달 (JSON/String)
  * @param topic 
  * @param payload 
  */
-const sendMessage = (topic : string, payload: string) => {
-    const message = new Message(payload);
+const sendMessage = (topic : string, payload: string | object) => {
+    if (!client || !client.isConnected()) {
+        printInfoLog('MQTT send failed : client is not connected');
+        return;
+    }
+
+    const messagePayload = typeof payload === 'string' ? payload : JSON.stringify(payload);
+    const message = new Message(messagePayload);
     message.destinationName = topic;
     message.qos = 1; // QoS 설정
     client.send(message);
@@ -65,14 +89,15 @@ const sendMessage = (topic : string, payload: string) => {
 /**
  * 연결 해제
  */
-const diconnect = () => {
+const disconnect = () => {
     if (client != null) {
         client.disconnect();
+        client = null;
     }
 }
 
 export const MqttUtil = {
     initMqtt    : initMqtt,
     sendMessage : sendMessage,
-    diconnect   : diconnect
+    disconnect  : disconnect
 }

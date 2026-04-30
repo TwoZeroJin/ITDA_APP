@@ -13,6 +13,8 @@ const COLOR = {
     COMM_GRAY_5         : '#F4F4F4',
     COMM_GRAY_6         : '#DBDBDB',
     COMM_GRAY_7         : '#9D9D9D',
+    COMM_GRAY_8         : '#F1F1F1',
+    COMM_GRAY_9         : '#8A8A8A',
     COMM_RED            : '#FF0000',
     COMM_SHADOW         : '#747474',
     APP_MAIN            : '#F58A78',
@@ -46,6 +48,9 @@ const COLOR = {
  */
 const QUERY_KEYS = {
     USER         : "user",
+    CHAT         : "chat",
+    CHAT_LIST    : "chat_list",
+    CHAT_PAGING  : "chat_paging",
     MEET         : "meet",
     MEET_PAGING  : "meet_paging",
     MEET_VIEW    : "meet_view",
@@ -58,21 +63,24 @@ const QUERY_KEYS = {
 };
 
 /**
- * SecureStore Key 값
+ * SecureStore/AsyncStore Key 값
  */
 const STORE_KEY = {
-    X_ACCESS_TOKEN  : "x-access-token",
-    X_REFRESH_TOKEN : "x-refresh-token",
-    CATEGORY_LIST   : "category_list",
-    FEE_LIST        : "fee_list",
-    MEM_NAME        : "mem_name",
-    MEM_NICK        : "mem_nick",
-    MEM_TEAM        : "mem_team",
-    MEM_GENDER      : "mem_gender",
-    MEM_BIRTH       : "mem_birth",
-    MEM_TELNO       : "mem_telno",
-    MEM_ADDR        : "mem_addr",
-    MEM_INTEREST    : "mem_interest",
+    X_ACCESS_TOKEN      : "x-access-token",
+    X_REFRESH_TOKEN     : "x-refresh-token",
+    CATEGORY_LIST       : "category_list",
+    FEE_LIST            : "fee_list",
+    MAIN_BANNER_LIST    : "main_banner_list",
+    MEM_ID              : "mem_id",
+    MEM_NAME            : "mem_name",
+    MEM_NICK            : "mem_nick",
+    MEM_TEAM            : "mem_team",
+    MEM_GENDER          : "mem_gender",
+    MEM_BIRTH           : "mem_birth",
+    MEM_TELNO           : "mem_telno",
+    MEM_ADDR            : "mem_addr",
+    MEM_INTEREST        : "mem_interest",
+    DEVICE_UID          : "device_uid",
 }
 
 /**
@@ -100,6 +108,8 @@ const API_URL = {
     USER_LOGIN          : "/user/login",
     USER_AUTO_LOGIN     : "/user/auto_login",
     USER_REFRESH_TOKEN  : "/user/refresh_token",
+    CHAT_LIST           : "/chat/list",
+    CHAT_VIEW           : "/chat/view",
     CHAT_INSERT         : "/chat/insert",
     MEET_LIST           : "/meet/list",
     MEET_VIEW           : "/meet/view",
@@ -111,6 +121,7 @@ const API_URL = {
     REVIEW_LIST         : "/review/list",
     REVIEW_INSERT       : "/review/insert",
     MY_MEET_LIST_NO_REVIEW : "/review/myMeetListNoReview",
+    REVIEW_DELETE       : "/review/delete", // 추가된 후기 삭제 API
     GROUP_LIST          : "/group/list",
     GROUP_VIEW          : "/group/view",
     GROUP_INSERT        : "/group/insert",

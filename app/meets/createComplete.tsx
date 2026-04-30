@@ -8,6 +8,9 @@ import IconSocialCompl from '@/assets/images/icon_social_compl.svg';
 import IconClubCompl from '@/assets/images/icon_club_compl.svg';
 import { useRoute } from "@react-navigation/native";
 
+/**
+ * 모임 생성 - 완료 화면
+ */
 export default function MeetCreateCompleteScreen() {
   const params = useRoute();
   const { meet_type } = (params.params ?? {}) as { meet_type?: string };
@@ -40,17 +43,17 @@ export default function MeetCreateCompleteScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex        : 1,
   },
   titleText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: COLOR.TEXT_1C1C1C,
-    marginTop: 30,
+    fontSize    : 24,
+    fontWeight  : 'bold',
+    color       : COLOR.TEXT_1C1C1C,
+    marginTop   : 30,
   },
   descText: {
-    fontSize: 16,
-    marginTop: 12,
-    color: COLOR.TEXT_DEFAULT,
+    fontSize    : 16,
+    marginTop   : 12,
+    color       : COLOR.TEXT_DEFAULT,
   },
 });

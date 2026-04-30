@@ -1,7 +1,9 @@
 import CommBottomButton from "@/components/CommBottomButton";
 import CommHeader from "@/components/CommHeader";
+import BirthInput from "@/components/inputs/BirthInput";
 import ChurchNmInput from "@/components/inputs/ChurchNmInput";
 import ChurchTmNmInput from "@/components/inputs/ChurchTmNmInput";
+import GenderInput from "@/components/inputs/GenderInput";
 import IdInput from "@/components/inputs/IdInput";
 import NameInput from "@/components/inputs/NameInput";
 import NickNameInput from "@/components/inputs/NickNameInput";
@@ -38,6 +40,8 @@ export default function SignupInfoScreen() {
                     <ChurchNmInput/>
                     <ChurchTmNmInput/>
                     <NameInput/>
+                    <GenderInput/>
+                    <BirthInput/>
                     <IdInput/>
                     <NickNameInput/>
                     <PasswordInput/>

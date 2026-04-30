@@ -3,7 +3,7 @@ import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
 async function meetList(searchParams: SearchParams): Promise<ApiResult<MeetInfo[]>> {
-    const {data} = await axiosInstance.post(API_URL.MEET_LIST, searchParams);
+    const { data } = await axiosInstance.post(API_URL.MEET_LIST, searchParams);
     return data;
 }
 

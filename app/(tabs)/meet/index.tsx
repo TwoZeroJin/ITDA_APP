@@ -11,8 +11,8 @@ export default function MeetCreateScreen() {
       <CommHeader isNoti={false} isSetting={false} isLike={false}/>
       <ScrollView
         contentContainerStyle={{
-          padding: 16,          // 내부 여백
-          paddingBottom: 40,    // 하단 safe area 여유
+          padding         : 16,          // 내부 여백
+          paddingBottom   : 40,    // 하단 safe area 여유
         }}
         showsVerticalScrollIndicator={false}
         style={styles.container}

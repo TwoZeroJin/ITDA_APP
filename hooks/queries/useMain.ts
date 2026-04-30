@@ -2,17 +2,15 @@ import { mainEntry } from '@/api/main';
 import { userRefreshToken } from '@/api/user';
 import { STORE_KEY } from '@/constants';
 import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
-import { setCategoryList, setFeeList } from '@/utils/commUtil';
+import { setCategoryList, setFeeList, setMainBannerList } from '@/utils/commUtil';
 import { useQuery } from '@tanstack/react-query';
 import * as Updates from 'expo-updates';
 import { useEffect, useState } from 'react';
-import { DevSettings } from 'react-native';
+import { DevSettings, Image } from 'react-native';
 import { AxiosError } from 'axios';
 
 function useMainEntry() {
     const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
-
-    //
     const { data, isError, isSuccess, error, refetch } = useQuery({
         queryFn: mainEntry,
         queryKey: ["main" , "entry"],
@@ -21,9 +19,15 @@ function useMainEntry() {
     //
     useEffect(() => {
         if (isSuccess) {
+            const bannerList = data?.data?.banner_list ;
+            const normalizedBannerList = bannerList && bannerList.length > 0
+                ? bannerList
+                : [{ banner_image_url: Image.resolveAssetSource(require('@/assets/images/temp_main_banner.png')).uri }];
+
             // App에 필요한 정보 SecureStore(중요정보) 및 AsyncStore(비중요정보)에 세팅
             setCategoryList(data?.data?.category_list);
             setFeeList(data?.data?.fee_list);
+            setMainBannerList(normalizedBannerList);
         }
     }, [isSuccess, data])
 
@@ -36,7 +40,6 @@ function useMainEntry() {
 
         // Main 호출시 401 에러 발생 -> 토큰 갱신 시도 -> 갱신 성공 시 Main 재호출
         if (status === 401) {
-
             (async () => {
                 try {
                     const refreshResult = await userRefreshToken();

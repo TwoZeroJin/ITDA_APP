@@ -2,16 +2,18 @@ import CommHeader from '@/components/CommHeader';
 import CommunityFeed from '@/components/CommunityFeed';
 import { COLOR } from '@/constants';
 import { StyleSheet, Text, FlatList, TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useReviewList } from "@/hooks/queries/useCommunity";
 import { SearchParams } from '@/types';
+import * as commUtil from '@/utils/commUtil';
 
 export default function community() {
   // ✅ 기본 선택: 'latest'
-  const [activeType, setActiveType] = useState<'latest' | 'popular' | 'review'>('latest');
+  const [activeType, setActiveType] = useState<'latest' | 'mypost' | 'review'>('latest');
   const [refreshing, setRefreshing] = useState(false); // 새로고침 상태 관리
+  const [myMemId, setMyMemId] = useState<number>(0);
 
   // ✅ 1. API 호출: 현재 선택된 탭(activeType)에 따라 조회가 필요하다면 body에 담아 보냅니다.
   // 여기서는 초기 진입 시 기본 조회를 수행합니다.
@@ -26,8 +28,19 @@ export default function community() {
     // 서버에서 요구하는 기본 검색 파라미터 (예시)
     page_no : 0,
     page_size : 5,
-    sch_condition: activeType, // 'latest', 'popular', 'review' 중 하나
+    sch_condition: activeType, // 'latest', 'mypost', 'review' 중 하나
+    mem_id: 3 //myMemId, // 실제 mem_id는 로그인 정보에서 가져와야 함
   } as SearchParams);
+
+  // 내 mem_id 정보 조회. 한번 조회해서 상태에 저장해두면 이후 API 호출 시 활용 가능
+  useEffect(() => {
+    const fetchMyMemberInfo = async () => {
+      const memberInfo = await commUtil.getMemberInfo();
+      setMyMemId(memberInfo.mem_id ?? 0);
+    };
+
+    fetchMyMemberInfo();
+  }, []);
 
   //화면 진입할때마다 새로고침하여 재조회
   useFocusEffect(
@@ -55,7 +68,7 @@ export default function community() {
     }
   };
   // 피드 종류 버튼 렌더링 함수
-  const renderButton = (label: string, type: 'latest' | 'popular' | 'review') => {
+  const renderButton = (label: string, type: 'latest' | 'mypost' | 'review') => {
     const isActive = activeType === type;
     //피드 종류 버튼 : 최신, 인기, 모임 후기
     return (
@@ -87,19 +100,19 @@ export default function community() {
 
   return (
     <View style={{ flex: 1 }}>
-      <CommHeader />
+      <CommHeader isNoti={false} isSetting={false} isLike={false}/>
       {/* <ScrollView showsVerticalScrollIndicator={false}> */}
         <View style={styles.titleContainer}>
           <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 20, marginBottom: 12, color: COLOR.APP_ACTIVE_3}}>피드</Text>
-          <TouchableOpacity onPress={() => router.navigate('/(tabs)/community/chooseWriteType')}>
+          <TouchableOpacity onPress={() => router.navigate('/communities/chooseWriteType')}>
             <MaterialCommunityIcons name="pencil" size={24} color="black" />
           </TouchableOpacity>
         </View>
 
         <View style={styles.feedTypeContainer}>
           {renderButton('최신', 'latest')}
-          {renderButton('인기', 'popular')}
           {renderButton('모임 후기', 'review')}
+          {renderButton('내가 쓴 글', 'mypost')}
         </View>
         {/* ✅ 피드 리스트 출력 부분 */}
         <FlatList 

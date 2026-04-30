@@ -33,7 +33,7 @@ export default function CommunityMeet({data}: communityMeetProps) {
     }
 
     router.push({
-      pathname: '/community/writeFeedback',
+      pathname: '/communities/writeFeedback',
       params: { data: JSON.stringify(data) },
     });
   };
@@ -89,7 +89,7 @@ export default function CommunityMeet({data}: communityMeetProps) {
 const styles = StyleSheet.create({
   // 추천 소셜링 모임
   recommendContainer: {
-    marginTop: 10,
+    marginTop: 5,
     alignItems: 'center',
   },
   recommendListContainer: {
