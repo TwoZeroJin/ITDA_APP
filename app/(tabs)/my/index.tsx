@@ -1,6 +1,7 @@
 import React from "react";
 import CommHeader from "@/components/CommHeader";
 import { useAuth } from "@/hooks/queries/useAuth";
+import { useRouter } from "expo-router";
 import {
   StyleSheet,
   Text,
@@ -13,8 +14,8 @@ import {
 } from "react-native";
 
 /** =========================
- *  팝업(모달) 컴포넌트 - 같은 파일 안에 포함
- *  ========================= */
+ * 팝업(모달) 컴포넌트 - 같은 파일 안에 포함
+ * ========================= */
 type ActivityTagModalProps = {
   visible: boolean;
   onClose: () => void;
@@ -169,8 +170,8 @@ const modalStyles = StyleSheet.create({
 });
 
 /** =========================
- *  MyPage Screen
- *  ========================= */
+ * MyPage Screen
+ * ========================= */
 function MeetCard({
   status = "모집",
   badge = "D-day 1",
@@ -205,10 +206,22 @@ function MeetCard({
 export default function MyPageScreen() {
   const { logout } = useAuth(); // 필요하면 유지
   const [tagModalOpen, setTagModalOpen] = React.useState(false);
+  
+  const router = useRouter(); // 라우터 객체 생성
+
+  // 설정 페이지로 이동하는 함수
+  const goToSettings = () => {
+    router.push("/my/settings"); 
+  };
 
   return (
     <View style={styles.container}>
-      <CommHeader isNoti={false} isSetting={true} />
+      {/* CommHeader 컴포넌트에 onPressSetting prop을 넘겨줍니다. */}
+      <CommHeader 
+        isNoti={false} 
+        isSetting={true} 
+        onPressSetting={goToSettings} 
+      />
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* 프로필 */}
@@ -285,8 +298,8 @@ export default function MyPageScreen() {
 }
 
 /** =========================
- *  Styles
- *  ========================= */
+ * Styles
+ * ========================= */
 const styles = StyleSheet.create({
   container: {
     flex: 1,
