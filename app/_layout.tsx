@@ -109,12 +109,13 @@ function RootNavigator() {
   return (
     <>
       <Stack>
-        <Stack.Screen name="(tabs)"   options={{ headerShown: false }} />         
-        <Stack.Screen name="user"     options={{ headerShown: false }} />
-        <Stack.Screen name="chats"    options={{ headerShown: false }} />
-        <Stack.Screen name="meets"     options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)"       options={{ headerShown: false }} />         
+        <Stack.Screen name="user"         options={{ headerShown: false }} />
+        <Stack.Screen name="chats"        options={{ headerShown: false }} />
+        <Stack.Screen name="meets"        options={{ headerShown: false }} />
         {/* <Stack.Screen name="group"    options={{ headerShown: false }} />*/}
-        <Stack.Screen name="communities"   options={{ headerShown: false }} /> 
+        <Stack.Screen name="communities"  options={{ headerShown: false }} /> 
+        <Stack.Screen name="mypage"       options={{ headerShown: false }} /> 
         <Stack.Screen name="+not-found" />
       </Stack>
       <CustomDialog

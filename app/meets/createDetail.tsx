@@ -193,7 +193,7 @@ export default function MeetCreateDetailScreen() {
 
       </KeyboardAwareScrollView>
 
-      <CommBottomButton label="다음" onPress={() => applyType && router.push({
+      <CommBottomButton label="다음" onPress={() => applyType && router.navigate({
             pathname: '/meets/createFee',
             params: {
               ...prevMeetInfo,

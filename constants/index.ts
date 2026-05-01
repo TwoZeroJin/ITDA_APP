@@ -4,6 +4,7 @@
  * 컬러 값
  */
 const COLOR = {
+    COMM_MODAL_BG       : 'rgba(0, 0, 0, 0.4)',
     COMM_BLACK          : '#000000',
     COMM_WHITE          : '#FFFFFF',
     COMM_GRAY           : '#F2F2F2',
@@ -31,7 +32,6 @@ const COLOR = {
     TEXT_31AD69         : '#31AD69',
     TEXT_3C3C3C         : '#3C3C3C',
     TEXT_1C1C1C         : '#1C1C1C',
-    BTN_BORDER          : '#DBDBDB',
     BG_MEET             : '#F6554C',
     BG_CLUB             : '#E2FBED',
     BG_CATEGORY         : '#F3F3F3',
@@ -71,6 +71,7 @@ const STORE_KEY = {
     CATEGORY_LIST       : "category_list",
     FEE_LIST            : "fee_list",
     MAIN_BANNER_LIST    : "main_banner_list",
+    CHURCH_LIST         : "church_list",
     MEM_ID              : "mem_id",
     MEM_NAME            : "mem_name",
     MEM_NICK            : "mem_nick",

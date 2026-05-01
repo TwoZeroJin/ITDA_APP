@@ -18,12 +18,12 @@ function NameInput() {
         render={({field: {onChange, value}, fieldState: {error}}) => (
             <InputField
                 label="이름" 
-                placeholder="이름를 입력하세요."
+                placeholder="이름을 입력하세요."
                 inputMode='text'
                 autoCapitalize='none'
                 returnKeyType='next'
                 submitBehavior='submit'
-                // onSubmitEditing={() => setFocus("login_pwd")}
+                onSubmitEditing={() => setFocus("login_id")}
                 value={value}
                 onChangeText={onChange}
                 error={error?.message}

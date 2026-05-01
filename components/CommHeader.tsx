@@ -46,7 +46,7 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
             </TouchableOpacity>
           }
           {isSetting && 
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => {router.navigate("/mypage/settings");}}>
               <Setting/>
             </TouchableOpacity>
           }

@@ -11,11 +11,10 @@ import { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 
-
 type ResponseError = AxiosError<{
-    statusCode: number;
-    message:string;
-    error:string;
+    statusCode  : number;
+    message     : string;
+    error       : string;
 }>
 
 function useSignup() {

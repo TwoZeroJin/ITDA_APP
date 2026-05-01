@@ -199,7 +199,7 @@ export default function MeetCreatePlaceScreen() {
         }}
       />
 
-      <CommBottomButton label="다음" onPress={() => canMoveNext && router.push({
+      <CommBottomButton label="다음" onPress={() => canMoveNext && router.navigate({
             pathname: '/meets/createCategory',
             params: {
               ...prevMeetInfo,

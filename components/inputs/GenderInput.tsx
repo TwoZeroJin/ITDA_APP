@@ -68,12 +68,15 @@ const styles = StyleSheet.create({
     flex            : 1,
     height          : 40,
     borderRadius    : 6,
-    backgroundColor : COLOR.COMM_GRAY,
+    backgroundColor : COLOR.COMM_WHITE,
+    borderWidth     : 1,
+    borderColor     : COLOR.COMM_GRAY_6,
     justifyContent  : 'center',
     alignItems      : 'center',
   },
   optionButtonActive: {
     backgroundColor : COLOR.APP_MAIN,
+    borderColor     : COLOR.APP_MAIN,
   },
   optionText: {
     fontSize        : 14,

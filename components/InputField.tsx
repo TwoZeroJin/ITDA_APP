@@ -83,11 +83,14 @@ const styles = StyleSheet.create({
     },
     error: {
         marginTop   : 5,
+        marginStart : 5,
         fontSize    : 12,
         color       : COLOR.COMM_RED,
     },
     inputError: {
-        backgroundColor: COLOR.COMM_GRAY
+        borderWidth     : 1,
+        borderColor     : COLOR.COMM_RED,
+        backgroundColor : COLOR.COMM_GRAY
     },
     multiline: {
         alignItems      : "flex-start",

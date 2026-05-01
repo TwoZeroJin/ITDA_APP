@@ -11,7 +11,7 @@ function PasswordConfirmInput() {
         control={control}
         rules={{
           validate: (data: string) => {
-            if (data !== login_pwd ) {
+            if (!data || data !== login_pwd ) {
               return '동일한 비밀번호를 입력해주세요.';
             }
           }

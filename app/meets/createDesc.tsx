@@ -61,7 +61,7 @@ export default function MeetCreateDescScreen() {
 
       </ScrollView>
 
-      <CommBottomButton label="미리보기" onPress={() => canMoveNext && router.push({
+      <CommBottomButton label="미리보기" onPress={() => canMoveNext && router.navigate({
             pathname: '/meets/createPreView',
             params: {
               ...prevMeetInfo,

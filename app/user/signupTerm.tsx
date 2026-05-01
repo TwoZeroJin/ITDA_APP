@@ -9,11 +9,6 @@ import { StyleSheet, TouchableOpacity, View, Text, Modal } from "react-native";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
-const TERMS_URL = {
-    service: 'http://146.56.105.2:6538/extern/terms/view?term_id=TERMS_SERVICE',
-    privacy: 'http://146.56.105.2:6538/extern/terms/view?term_id=TERMS_PRIVACY',
-};
-
 /**
  * 회원 가입 - 약관 동의 화면
  */
@@ -21,7 +16,7 @@ export default function SignupTermScreen() {
     const [serviceChecked, setServiceChecked] = useState(false);
     const [privacyChecked, setPrivacyChecked] = useState(false);
     const [isWebViewVisible, setIsWebViewVisible] = useState(false);
-    const [termUrl, setTermUrl] = useState<string>(TERMS_URL.service);
+    const [termUrl, setTermUrl] = useState<string>('');
 
     const openTermWebView = (url: string) => {
         setTermUrl(url);
@@ -41,7 +36,7 @@ export default function SignupTermScreen() {
                         value={serviceChecked} 
                         onChange={() => setServiceChecked(!serviceChecked)}
                     />
-                    <TouchableOpacity onPress={() => openTermWebView(TERMS_URL.service)}>
+                    <TouchableOpacity onPress={() => openTermWebView(process.env.EXPO_PUBLIC_TERMS_SERVICE_URL ?? '')}>
                         <Text style={styles.termViewText}>내용보기</Text>
                     </TouchableOpacity>
                 </View>
@@ -51,7 +46,7 @@ export default function SignupTermScreen() {
                         value={privacyChecked} 
                         onChange={() => setPrivacyChecked(!privacyChecked)}
                     />
-                    <TouchableOpacity onPress={() => openTermWebView(TERMS_URL.privacy)}>
+                    <TouchableOpacity onPress={() => openTermWebView(process.env.EXPO_PUBLIC_TERMS_PRIVACY_URL ?? '')}>
                         <Text style={styles.termViewText}>내용보기</Text>
                     </TouchableOpacity>
                 </View>
@@ -60,6 +55,7 @@ export default function SignupTermScreen() {
                 disabled={!(serviceChecked && privacyChecked)}
                 />
 
+            {/* 웹뷰 */}
             <Modal
                 visible={isWebViewVisible}
                 animationType="slide"

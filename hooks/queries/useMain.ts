@@ -2,7 +2,7 @@ import { mainEntry } from '@/api/main';
 import { userRefreshToken } from '@/api/user';
 import { STORE_KEY } from '@/constants';
 import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
-import { setCategoryList, setFeeList, setMainBannerList } from '@/utils/commUtil';
+import { setCategoryList, setChurchList, setFeeList, setMainBannerList } from '@/utils/commUtil';
 import { useQuery } from '@tanstack/react-query';
 import * as Updates from 'expo-updates';
 import { useEffect, useState } from 'react';
@@ -28,6 +28,7 @@ function useMainEntry() {
             setCategoryList(data?.data?.category_list);
             setFeeList(data?.data?.fee_list);
             setMainBannerList(normalizedBannerList);
+            setChurchList(data?.data?.church_list);
         }
     }, [isSuccess, data])
 

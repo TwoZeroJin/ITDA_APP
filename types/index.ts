@@ -37,6 +37,7 @@ interface MainData {
   category_list : CodeInfo[];
   fee_list      : CodeInfo[];
   banner_list?  : BannerData[];
+  church_list   : ChurchData[];
 }
 
 /**
@@ -49,18 +50,27 @@ interface User {
 }
 
 /**
+ * 교회 정보
+ */
+interface ChurchData {
+  church_id       : number;
+  church_name     : string;
+  church_addr?     : string;
+}
+
+/**
  * 회원가입 정보
  */
 interface SignupInfo extends User {
-  mem_name      : string;
-  mem_nick?     : string;
-  mem_gender    : string;
-  mem_team      : string;
-  mem_birth     : string;
-  mem_telno     : string;
-  mem_addr?     : string;
-  mem_interest? : string;
-  mem_church_nm? : string;
+  mem_name          : string;
+  mem_nick?         : string;
+  mem_gender        : string;
+  mem_team          : string;
+  mem_birth         : string;
+  mem_telno         : string;
+  mem_addr?         : string;
+  mem_interest?     : string;
+  mem_church_id?    : number;
   mem_church_tm_nm? : string;
 }
 
@@ -255,4 +265,4 @@ interface BannerData {
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardData, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo, BannerData };
+export type { ApiResult, SearchParams, BoardData, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData };

@@ -37,7 +37,7 @@ export default function MeetCreatePreViewScreen() {
 
     meetCreate.mutate(requestBody, {
       onSuccess: () => {
-        router.push({
+        router.navigate({
           pathname: '/meets/createComplete', 
           params: { meet_type: meetInfo.meet_type}});
       },

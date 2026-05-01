@@ -50,7 +50,7 @@ export default function MeetCreateScreen() {
           </TouchableOpacity>
         </View>
 
-        <CommBottomButton label="다음" onPress={() => meet && router.push({
+        <CommBottomButton label="다음" onPress={() => meet && router.navigate({
             pathname: '/meets/createType',
             params: { meet: meet },
           })}

@@ -120,7 +120,7 @@ export default function MeetCreateFeeScreen() {
 
       </ScrollView>
 
-      <CommBottomButton label="다음" onPress={() => canMoveNext && router.push({
+      <CommBottomButton label="다음" onPress={() => canMoveNext && router.navigate({
             pathname: '/meets/createPlace',
             params: {
               ...prevMeetInfo,

@@ -1,25 +1,29 @@
 import { COLOR } from "@/constants";
 import React, { useEffect, useRef } from "react";
-import { FlatList, Modal, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, InteractionManager, Modal, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export type WheelOption = {
-  label: string;
-  value: string;
+  label     : string;
+  value     : string;
 };
 export type WheelColumnConfig = {
-  options: WheelOption[];
-  selectedValue: string;
-  onChange: (value: string) => void;
+  options           : WheelOption[];
+  selectedValue     : string;
+  onChange          : (value: string) => void;
 };
 type WheelPickerModalProps = {
-  visible: boolean;
+  visible       : boolean;
   /** 각 휠 컬럼 설정을 배열로 전달 */
-  columns: WheelColumnConfig[];
-  onClose: () => void;
-  onConfirm: () => void;
-  title?: string;
-  cancelLabel?: string;
-  confirmLabel?: string;
+  columns       : WheelColumnConfig[];
+  onClose       : () => void;
+  onConfirm     : () => void;
+  title?        : string;
+  cancelLabel?  : string;
+  confirmLabel? : string;
+};
+
+type WheelColumnItemProps = WheelColumnConfig & {
+  visible: boolean;
 };
 
 const WHEEL_ITEM_HEIGHT = 42;
@@ -29,17 +33,31 @@ const WHEEL_CONTAINER_HEIGHT = WHEEL_ITEM_HEIGHT * WHEEL_VISIBLE_ROWS;
 /**
  * 휠 형태의 선택 UI를 모달로 띄워주는 컴포넌트
  */
-function WheelColumnItem({ options, selectedValue, onChange }: WheelColumnConfig) {
+function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelColumnItemProps) {
   const listRef = useRef<FlatList<WheelOption>>(null);
 
   useEffect(() => {
+    if (!visible) {
+      return;
+    }
     const selectedIndex = options.findIndex((item) => item.value === selectedValue);
 
     if (selectedIndex < 0) {
       return;
     }
 
-  }, [options, selectedValue]);
+    const interactionTask = InteractionManager.runAfterInteractions(() => {
+      listRef.current?.scrollToOffset({
+        offset: selectedIndex * WHEEL_ITEM_HEIGHT,
+        animated: true,
+      });
+    });
+
+    return () => {
+      interactionTask.cancel();
+    };
+
+  }, [options, selectedValue, visible]);
 
   const handleScrollFinish = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const rawIndex = Math.round(event.nativeEvent.contentOffset.y / WHEEL_ITEM_HEIGHT);
@@ -114,7 +132,7 @@ function WheelPickerModal({ visible, columns, onClose, onConfirm, cancelLabel = 
           <View style={styles.pickerWrapper}>
             <View pointerEvents="none" style={styles.highlight} />
             {columns.map((col, index) => (
-              <WheelColumnItem key={index} {...col} />
+              <WheelColumnItem key={index} {...col} visible={visible} />
             ))}
           </View>
 
@@ -140,7 +158,7 @@ const styles = StyleSheet.create({
   },
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor     : "rgba(0,0,0,0.35)",
+    backgroundColor     : COLOR.COMM_MODAL_BG,
   },
   container: {
     borderRadius        : 12,
@@ -172,11 +190,11 @@ const styles = StyleSheet.create({
     fontWeight: 500,
   },
   highlight: {
-    position                : "absolute",
-    top                     : 16 + (WHEEL_CONTAINER_HEIGHT - WHEEL_ITEM_HEIGHT) / 2,
-    height                  : WHEEL_ITEM_HEIGHT,
-    width                   : "100%",
-    backgroundColor         : COLOR.COMM_GRAY_8,
+    position            : "absolute",
+    top                 : 16 + (WHEEL_CONTAINER_HEIGHT - WHEEL_ITEM_HEIGHT) / 2,
+    height              : WHEEL_ITEM_HEIGHT,
+    width               : "100%",
+    backgroundColor     : COLOR.COMM_GRAY_8,
   },
   pickerWrapper: {
     flexDirection   : "row",

@@ -3,19 +3,22 @@ import WheelPickerModal, { WheelOption } from "@/components/WheelPickerModal";
 import React, { useEffect, useMemo } from "react";
 
 type DatePickerModalProps = {
-  visible: boolean;
-  selectedValue?: string;
-  onChangeValue: (value: string) => void;
-  onClose: () => void;
-  onConfirm: (value: string) => void;
+  visible         : boolean;
+  selectedValue?  : string;
+  onChangeValue   : (value: string) => void;
+  onClose         : () => void;
+  onConfirm       : (value: string) => void;
 };
 
+/**
+ * YYYY-MM-DD 형식의 날짜 선택 모달 컴포넌트
+ */
 function DatePickerModal({ visible, selectedValue, onChangeValue, onClose, onConfirm, }: DatePickerModalProps) {
   const today = useMemo(() => new Date(), []);
   const maxYear = today.getFullYear();
-  const minYear = 1900;
+  const minYear = maxYear - 80;
   const fallbackDate = useMemo(() => {
-    const year = maxYear - 20;
+    const year = maxYear;
     const month = today.getMonth() + 1;
     const day = today.getDate();
     return formatYmdDateFromParts(year, month, day);
@@ -26,9 +29,9 @@ function DatePickerModal({ visible, selectedValue, onChangeValue, onClose, onCon
     return parsed ?? parseYmdDate(fallbackDate);
   }, [fallbackDate, selectedValue]);
 
-  const selectedYear = parsedDate?.year ?? maxYear - 20;
-  const selectedMonth = parsedDate?.month ?? 1;
-  const selectedDay = parsedDate?.day ?? 1;
+  const selectedYear = parsedDate?.year ?? today.getFullYear();
+  const selectedMonth = parsedDate?.month ?? today.getMonth() + 1;
+  const selectedDay = parsedDate?.day ?? today.getDate();
 
   const yearOptions = useMemo<WheelOption[]>(
     () => Array.from({ length: maxYear - minYear + 1 }, (_, index) => {

@@ -178,7 +178,7 @@ export default function HomeScreen() {
           <View style={styles.searchContainer}>
             <Text style={styles.searchText}>참여하고 싶은 모임이나 클럽을 검색해 보세요.</Text>
             <TouchableOpacity
-              // onPress={() => router.push('/search')}
+              // onPress={() => router.navigate('/search')}
               >
               <SearchButton width={20} height={20}/>
             </TouchableOpacity>
@@ -231,7 +231,7 @@ export default function HomeScreen() {
             <Text style={styles.meetTitle}>다가오는 모임 리스트</Text>
             <TouchableOpacity
               style={{ height: '100%', justifyContent: 'center', paddingStart: 25}}
-              onPress={() => router.push('/meet')}>
+              onPress={() => router.navigate('/meet')}>
               <ArrowRight width={16} height={11}/>
             </TouchableOpacity>
           </View>
@@ -300,7 +300,7 @@ export default function HomeScreen() {
       <TouchableOpacity
         style={styles.floatingButton}
         activeOpacity={0.85}
-        onPress={() => router.push('/meets/create')}
+        onPress={() => router.navigate('/meets/create')}
       >
         <IconCreate width={54} height={54} />
       </TouchableOpacity>

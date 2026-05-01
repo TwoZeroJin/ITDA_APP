@@ -15,7 +15,6 @@ export default function LoginScreen() {
         defaultValues: {
             login_id    : "ghong",
             login_pwd   : "1111",
-            login_type  : "D", // 테스트 값
         }
     });
     //const {expoPushToken} = usePushNotification();

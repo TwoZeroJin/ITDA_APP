@@ -16,7 +16,7 @@ function NickNameInput() {
                 autoCapitalize='none'
                 returnKeyType='next'
                 submitBehavior='submit'
-                // onSubmitEditing={() => setFocus("login_pwd")}
+                onSubmitEditing={() => setFocus("login_pwd")}
                 value={value}
                 onChangeText={onChange}
             />

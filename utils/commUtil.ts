@@ -1,5 +1,5 @@
 import { COMM_CONSTANTS, STORE_KEY } from "@/constants";
-import { BannerData, CodeInfo, FileInfo, MemberInfo, Token } from "@/types";
+import { BannerData, ChurchData, CodeInfo, FileInfo, MemberInfo, Token } from "@/types";
 import { Platform } from "react-native";
 import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
@@ -220,6 +220,15 @@ async function setMainBannerList(data: any) {
 async function getMainBannerList(): Promise<BannerData[]> {
     return await getAsyncData<BannerData[]>(STORE_KEY.MAIN_BANNER_LIST, JSON.parse) ?? [];
 }
+// 교회 리스트
+async function setChurchList(data: any) {
+    if (data) {
+        await saveAsyncStore(STORE_KEY.CHURCH_LIST, JSON.stringify(data));
+    }
+}
+async function getChurchList(): Promise<ChurchData[]> {
+    return await getAsyncData<ChurchData[]>(STORE_KEY.CHURCH_LIST, JSON.parse) ?? [];
+}
 
 // 날짜 관련 함수 (AI Generated - 2024.06.11)
 function formatYmdDate(date: Date) {
@@ -256,7 +265,7 @@ function getDaysInMonth(year: number, month: number) {
 }
 function getDefaultBirthDate() {
     const now = new Date();
-    const defaultDate = new Date(now.getFullYear() - 20, now.getMonth(), now.getDate());
+    const defaultDate = new Date(now.getFullYear() - 20, 0, 1);
     return formatYmdDate(defaultDate);
 }
 function formatDisplayBirthDate(value?: string) {
@@ -283,5 +292,5 @@ function parseImageList(imgListJson?: string): FileInfo[] {
     }
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, setChurchList, getChurchList };
 

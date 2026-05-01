@@ -1,3 +1,4 @@
+import { COLOR } from '@/constants';
 import React, { useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -28,7 +29,6 @@ function SelectboxModal({ options, value, onChange, placeholder = "선택하세�
         <Text style={[styles.triggerText, !selected && styles.placeholder]}>
           {selected ? selected.label : placeholder}
         </Text>
-        <Text style={styles.chevron}>▾</Text>
       </TouchableOpacity>
 
       {/* 모달 */}
@@ -64,55 +64,50 @@ function SelectboxModal({ options, value, onChange, placeholder = "선택하세�
 
 const styles = StyleSheet.create({
   trigger: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    borderWidth       : 1,
+    borderColor       : COLOR.COMM_GRAY_6,
+    borderRadius      : 12,
+    paddingVertical   : 12,
+    paddingHorizontal : 16,
+    height            : 49,
+    flexDirection     : "row",
+    justifyContent    : "space-between",
+    alignItems        : "center",
   },
   triggerText: {
-    fontSize: 16,
-    color: "#111",
+    fontSize    : 16,
+    color       : COLOR.TEXT_DEFAULT,
   },
   placeholder: {
-    color: "#888",
-  },
-  chevron: {
-    fontSize: 16,
-    color: "#888",
+    color       : COLOR.TEXT_GRAY,
   },
   backdrop: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    flex            : 1,
+    backgroundColor : COLOR.COMM_MODAL_BG,
   },
   sheet: {
-    position: "absolute",
-    left: 20,
-    right: 20,
-    top: "30%",
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    paddingVertical: 8,
-    maxHeight: 300,
+    position        : "absolute",
+    left            : 20,
+    right           : 20,
+    top             : "30%",
+    backgroundColor : COLOR.COMM_WHITE,
+    borderRadius    : 12,
+    paddingVertical : 8,
+    maxHeight       : 300,
   },
   option: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
+    flexDirection     : "row",
+    justifyContent    : "space-between",
+    paddingVertical   : 14,
+    paddingHorizontal : 16,
   },
   optionText: {
-    fontSize: 16,
-    color: "#111",
+    fontSize    : 16,
+    color       : COLOR.TEXT_DEFAULT,
   },
   check: {
-    fontSize: 16,
-    color: "#2563eb",
+    fontSize    : 16,
+    color       : COLOR.APP_MAIN,
   },
 });
 

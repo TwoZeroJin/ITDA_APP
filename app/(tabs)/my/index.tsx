@@ -9,9 +9,8 @@ import {
   ScrollView,
   Modal,
   Pressable,
-  Image,
-  TouchableOpacity,
 } from "react-native";
+import { COLOR } from "@/constants";
 
 /** =========================
  * 팝업(모달) 컴포넌트 - 같은 파일 안에 포함
@@ -102,7 +101,7 @@ function ActivityTagModal({ visible, onClose, onDone }: ActivityTagModalProps) {
 const modalStyles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.35)",
+    backgroundColor: COLOR.COMM_MODAL_BG,
   },
   centerWrap: {
     flex: 1,
@@ -209,18 +208,10 @@ export default function MyPageScreen() {
   
   const router = useRouter(); // 라우터 객체 생성
 
-  // 설정 페이지로 이동하는 함수
-  const goToSettings = () => {
-    router.push("/my/settings"); 
-  };
-
   return (
     <View style={styles.container}>
       {/* CommHeader 컴포넌트에 onPressSetting prop을 넘겨줍니다. */}
-      <CommHeader 
-        isNoti={false} 
-        isSetting={true} 
-        onPressSetting={goToSettings} 
+      <CommHeader isNoti={false} isSetting={true} isLike={false}
       />
 
       <ScrollView contentContainerStyle={styles.content}>

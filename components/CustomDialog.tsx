@@ -4,7 +4,7 @@ import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface CustomDialogProps {
     visible       : boolean;
-    title         : string;
+    title?        : string;
     content       : string;
     onConfirm     : () => void;
     onCancel      : () => void;
@@ -14,9 +14,7 @@ interface CustomDialogProps {
 }
 
 /**
- * 
- * @param param
- * @returns  공통 커스텀 다이얼로그 컴포넌트
+ * 공통 커스텀 다이얼로그 컴포넌트
  */
 function CustomDialog({
   visible,
@@ -29,22 +27,22 @@ function CustomDialog({
 }: CustomDialogProps) {
   return (
     <Modal transparent visible={visible} animationType='fade' onRequestClose={onCancel}>
-        <View style={styles.background}>
-            <View style={styles.container}>
-                <View style={{ padding: 20 }}>
-                  <Text style={styles.titleText}>{title}</Text>
-                  <Text style={styles.contentText}>{content}</Text>
-                </View>
-                <View style={styles.buttonContainer}>
-                    <TouchableOpacity onPress={onCancel} style={[styles.button, { backgroundColor: COLOR.COMM_GRAY_6, borderBottomStartRadius: 10 }]}>
-                      <Text style={styles.cancelText}>{cancelLabel}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onConfirm} style={[styles.button, { backgroundColor: COLOR.APP_MAIN, borderBottomEndRadius: 10 }]}>
-                      <Text style={styles.confirmText}>{confirmLabel}</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+      <View style={styles.background}>
+        <View style={styles.container}>
+          <View style={{ padding: 20 }}>
+            {title && <Text style={styles.titleText}>{title}</Text>}
+            <Text style={styles.contentText}>{content}</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity onPress={onCancel} style={[styles.button, { backgroundColor: COLOR.COMM_GRAY_6, borderBottomStartRadius: 10 }]}>
+              <Text style={styles.cancelText}>{cancelLabel}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onConfirm} style={[styles.button, { backgroundColor: COLOR.APP_MAIN, borderBottomEndRadius: 10 }]}>
+              <Text style={styles.confirmText}>{confirmLabel}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
+      </View>
     </Modal>
   )
 }
@@ -52,23 +50,27 @@ function CustomDialog({
 const styles = StyleSheet.create({
   background: {
     flex            : 1,
-    backgroundColor : "rgba(0,0,0,0.5)",
+    backgroundColor : COLOR.COMM_MODAL_BG,
     justifyContent  : "center",
     alignItems      : "center",
   },
   container: {
-    width           : "80%",
-    backgroundColor : "#fff",
-    borderRadius    : 10,
+    backgroundColor   : COLOR.COMM_WHITE,
+    borderRadius      : 10,
+    marginHorizontal  : 16,
   },
   titleText: {
-    fontSize        : 18,
-    fontWeight      : "bold",
+    fontSize        : 14,
+    fontWeight      : "light",
     marginBottom    : 10,
+    alignSelf       : "center",
+    color           : COLOR.TEXT_DEFAULT,
   },
   contentText: {
-    fontSize        : 14,
-    marginBottom    : 20,
+    fontSize        : 24,
+    marginBottom    : 8,
+    alignSelf       : "center",
+    fontWeight      : "bold",
   },
   buttonContainer: {
     flexDirection   : "row",
@@ -76,17 +78,21 @@ const styles = StyleSheet.create({
   },
   button: {
     flex            : 1,
-    padding         : 15,
+    height          : 55,
+    justifyContent  : "center",
+    alignItems      : "center",
   },
   cancelText: {
-    color       : COLOR.COMM_BLACK,
-    fontWeight  : "bold",
-    alignSelf  : "center",
+    fontSize        : 16,
+    color           : COLOR.TEXT_DEFAULT,
+    fontWeight      : "medium",
+    alignSelf       : "center",
   },
   confirmText: {
-    color       : COLOR.COMM_WHITE,
-    fontWeight  : "bold",
-    alignSelf  : "center",
+    fontSize        : 16,
+    color           : COLOR.COMM_WHITE,
+    fontWeight      : "medium",
+    alignSelf       : "center",
   },
 });
 
