@@ -104,8 +104,6 @@ export default function IndexScreen() {
     const payload = parseIncomingPayload(msg);
     const currentMyMemId = myMemIdRef.current;
 
-    console.log("Received own MQTT message, ignoring:", payload.sender_id && Number(payload.sender_id) === currentMyMemId);
-    console.log("mtMemberId:", currentMyMemId);
     if (payload.sender_id && Number(payload.sender_id) === currentMyMemId) {
       // 내 메시지는 이미 실시간으로 반영되어 있으므로 별도 처리하지 않음
       return;
