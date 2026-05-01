@@ -1,190 +1,221 @@
-import CommHeader from "@/components/CommHeader";
-import { COLOR } from "@/constants";
-import React from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import MeetApply from '@/assets/images/meet_apply.svg';
+import CommHeader from '@/components/CommHeader';
+// CommunityFeed 대신 사진과 유사한 리스트 아이템 컴포넌트를 사용한다고 가정합니다.
+import CommunityMeet from '@/components/CommunityMeet';
+import SearchInput from '@/components/SearchInput';
+import { COLOR } from '@/constants';
+import { StyleSheet, Text, FlatList, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useMeetListPaging } from "@/hooks/queries/useMeet";
+import { SearchParams, MeetInfo } from '@/types';
+import CategoryListLayout from '@/components/CategoryListLayout';
 
-export default function MeetCreateScreen() {
+export default function Community() {
+  const [activeType, setActiveType] = useState<'social' | 'club' | 'class'>('social');
+  const [refreshing, setRefreshing] = useState(false);
+  const [myMemId, setMyMemId] = useState<number>(0);
+
+  const { 
+    results, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage, 
+    isLoading, 
+    refetch 
+  } = useMeetListPaging({
+    page_no : 0,
+    page_size : 5,
+    sch_condition: activeType,
+  } as SearchParams);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
+
+  const loadMore = () => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  };
+
+  const renderButton = (label: string, type: 'social' | 'club' | 'class') => {
+    const isActive = activeType === type;
+    return (
+      <TouchableOpacity onPress={() => setActiveType(type)} style={styles.tabButton}>
+        <Text style={[styles.tabText, isActive && styles.activeTabText]}>
+          {label}
+        </Text>
+        {isActive && <View style={styles.activeIndicator} />}
+      </TouchableOpacity>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color={COLOR.APP_ACTIVE_3} />
+      </View>
+    );
+  }
 
   return (
-    <>
-      <CommHeader isNoti={false} isSetting={false} isLike={false}/>
-      <ScrollView
-        contentContainerStyle={{
-          padding         : 16,          // 내부 여백
-          paddingBottom   : 40,    // 하단 safe area 여유
-        }}
-        showsVerticalScrollIndicator={false}
-        style={styles.container}
+    <View style={styles.container}>
+      <CommHeader isNoti={true} isSetting={false} isLike={true} />
+      {/* 사진 상단의 탭 바 (소셜링, 클럽, 클래스 느낌) */}
+      <View style={styles.tabContainer}>
+        {renderButton('소셜링', 'social')}
+        {renderButton('클럽', 'club')}
+        {renderButton('클래스', 'class')}
+      </View>
+
+      {/* 검색 입력 */}
+      {/* <SearchInput /> */}
+
+      {/* 카테고리 목록 출력 */}
+      {/* <CategoryListLayout /> */}
+
+        <FlatList 
+          data={results}
+          // CommunityListItem은 사진의 카드 레이아웃을 구현한 컴포넌트여야 합니다.
+          renderItem={({ item }) => (
+            // <TouchableOpacity 
+            //   // 클릭 시 데이터를 가지고 작성 화면으로 이동
+            //   onPress={() => router.navigate({
+            //     console.log('아이템 클릭:상세 화면으로 이동', item), // 클릭된 아이템 로그
+            //     pathname: '/communities/writeFeedback',
+            //     params: { data: JSON.stringify(item) }
+            //   })}
+            // >
+              <CommunityMeet data={item as MeetInfo} type='MEET'/>
+            // </TouchableOpacity>
+          )}
+          keyExtractor={(item) => item.meet_id.toString()} // meet_id를 고유 키로 사용
+          onRefresh={onRefresh}
+          refreshing={refreshing}
+          // onEndReached={loadMore}
+          onEndReachedThreshold={0.5}
+          ListHeaderComponent={
+            <View style={styles.headerGroup}>
+              <SearchInput />
+              <CategoryListLayout />
+              <View style={{ height: 10, backgroundColor: COLOR.COMM_GRAY_4 }} />
+              <View style={styles.titleWrapper}>
+                <Text style={styles.listTitle}>BEST 10 소셜링</Text>
+              </View>
+            </View>
+          }
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <ActivityIndicator size="small" color={COLOR.APP_ACTIVE_3} style={{ marginVertical: 20 }} />
+            ) : <View style={{ height: 100 }} />
+          }    
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>후기를 작성할 수 있는 모임이 없습니다.</Text>
+            </View>
+          } 
+        />
+      {/* 사진 우측 하단의 플로팅 글쓰기 버튼 */}
+      <TouchableOpacity 
+        style={styles.floatingButton}
+        activeOpacity={0.85}
+        onPress={() => router.navigate('/meets/create')}
       >
-        {/* 소모임 생성 타이틀 */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>설레는 모임 만들기</Text>
-          <Text style={styles.subtitle}>어떤 유형의 모임인가요?</Text>
-        </View>
-        {/* 소모임 유형 선택 */}
-        <View style={styles.meetTypeContainer}>
-          <View style={styles.meetType}>
-            <Text style={styles.meetTypeTitle}>모임형</Text>
-            <Text style={styles.meetTypeDesc}>관심사와 취향으로 멤버들과 만나요. 멤버들과 함께 특별한 일상을 만들어 보세요.</Text>
-          </View>
-          <View style={styles.meetType}>
-            <Text style={styles.meetTypeTitle}>클래스형</Text>
-            <Text style={styles.meetTypeDesc}>나의 재능과 노하우를 멤버들에게 공유해요. 다양한 주제로 소셜링을 열어보세요.</Text>
-          </View>
-        </View>
-        {/* 신청 방식 선택 */}
-        <View style={styles.meetApplyContainer}>
-          <View style={styles.sectionTitleRow}>
-            <MeetApply width={19} height={14} />
-            <Text style={styles.sectionTitle}>신청방식</Text>
-          </View>
-          <View style={styles.meetApplyContainer}>
-            <View style={[styles.meetApply, styles.meetApplyActive]}>
-              <Text style={styles.meetApplyTitle}>선착순</Text>
-              <Text style={styles.meetApplyDesc}>멤버들의 신청과 동시에 참여가 완료돼요. 누구나 참여할 수 있어서 신청률이 높아요.</Text>
-            </View>
-            <View style={styles.meetApply}>
-              <Text style={styles.meetApplyTitle}>승인제</Text>
-              <Text style={styles.meetApplyDesc}>호스트가 직접 멤버를 수락하거나 거절할 수 있어요. 질문을 통해 취향이 통하는 사람들과 만날 수 있어요.</Text>
-            </View>
-          </View>
-        </View>
-        {/* 참여 인원 */}
-        <View style={styles.meetApplyContainer}>
-          <View style={styles.sectionTitleRow}>
-            <MeetApply width={19} height={14} />
-            <Text style={styles.sectionTitle}>참여 인원 (호스트 포함)</Text>
-          </View>
-          <View style={styles.memberInputRow}>
-            <View style={styles.memberInputBox}>
-              <Text style={styles.memberInputLabel}>최소</Text>
-              <TextInput style={styles.memberInput} placeholder="명" keyboardType="numeric" />
-            </View>
-            <Text style={{marginHorizontal: 8}}>~</Text>
-            <View style={styles.memberInputBox}>
-              <Text style={styles.memberInputLabel}>최대</Text>
-              <TextInput style={styles.memberInput} placeholder="명" keyboardType="numeric" />
-            </View>
-          </View>
-        </View>
-        {/* 성비 */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>성비</Text>
-        </View>
-      </ScrollView>
-    </>
+        <MaterialCommunityIcons name="plus" size={32} color={COLOR.COMM_WHITE} />
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  headerGroup: {
+    backgroundColor: COLOR.COMM_WHITE, // 카테고리까지는 흰색 배경 유지
+//    paddingBottom: 10,
+  },
+  titleWrapper: {
+    backgroundColor: '#F5F5F5', // 제목부터는 리스트 배경색과 동일하게
+    paddingTop: 10,
+  },
+  emptyContainer: {
     flex: 1,
-    backgroundColor: COLOR.COMM_WHITE,
-  },
-  titleContainer: {
-    marginBottom: 20,
+    marginTop: 100,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-    marginBottom: 4,
-  },
-  subtitle: {
+  emptyText: {
     fontSize: 16,
     color: COLOR.COMM_GRAY_2,
-  },
-  meetTypeContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  // 모임 유형 CSS
-  meetType: {
+  },  
+  container: {
     flex: 1,
-    backgroundColor: COLOR.COMM_GRAY,
-    borderRadius: 12,
-    padding: 16,
-    marginHorizontal: 4,
+    backgroundColor: '#F5F5F5', // 사진처럼 약간 밝은 회색 배경
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  meetTypeActive: {
-    backgroundColor: COLOR.APP_ACTIVE_1,
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: COLOR.COMM_WHITE,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EEEEEE',
+    justifyContent: 'flex-start', 
+    paddingHorizontal: 16, // 전체적인 왼쪽 여백    
   },
-  meetTypeTitle: {
+  tabButton: {
+// ✅ flex: 1을 제거해야 왼쪽으로 정렬됩니다.
+    alignItems: 'center',
+    paddingVertical: 15,
+    // ✅ 메뉴 사이의 간격을 조절 (사진처럼 촘촘하게)
+    marginRight: 50,
+  },
+  tabText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#999999',
+  },
+  activeTabText: {
+    color: COLOR.APP_ACTIVE_3, // 사진의 포인트 컬러 (주홍/분홍 계열)
+  },
+  activeIndicator: {
+    position: 'absolute',
+    bottom: 0,
+// ✅ 텍스트 길이에 맞춰 인디케이터 너비 조절
+    width: '100%', 
+    height: 3,
+    backgroundColor: '#FF5A5F',
+    borderRadius: 2,
+  },
+  listTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-    marginBottom: 8,
-  },
-  meetTypeDesc: {
-    fontSize: 12,
-    color: COLOR.COMM_GRAY_3,
-    textAlign: 'center',
-  },
-  // 신청 방식 CSS
-  meetApplyContainer: {
-    marginBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  section: {
-    marginBottom: 16,
-  },
-  sectionTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-  },
-  meetApply: {
-    flex: 1,
-    backgroundColor: COLOR.COMM_GRAY,
-    borderRadius: 12,
     padding: 16,
-    marginHorizontal: 4,
+    color: '#333333',
   },
-  meetApplyActive: {
-    backgroundColor: COLOR.APP_ACTIVE_1,
-  },
-  meetApplyTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-    marginBottom: 8,
-  },
-  meetApplyDesc: {
-    fontSize: 13,
-    color: COLOR.COMM_BLACK,
-  },
-  // 참여 인원 CSS
-  memberInputRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  memberInputBox: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  memberInputLabel: {
-    fontSize: 13,
-    color: COLOR.COMM_BLACK,
-    marginBottom: 4,
-  },
-  memberInput: {
+  floatingButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 30,
     width: 60,
-    height: 32,
-    borderWidth: 1,
-    borderColor: COLOR.BTN_BORDER,
-    borderRadius: 8,
-    textAlign: 'center',
-    backgroundColor: COLOR.COMM_GRAY,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#FF7A7A', // 사진의 플러스 버튼 색상
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
 });

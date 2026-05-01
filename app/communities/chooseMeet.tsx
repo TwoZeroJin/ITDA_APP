@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     fontWeight: 'bold',
     color: COLOR.COMM_SHADOW,
-    backgroundColor: COLOR.BTN_BORDER,
+    backgroundColor: COLOR.COMM_GRAY,
   },
   recommendContentContainer: {
     gap: 4,

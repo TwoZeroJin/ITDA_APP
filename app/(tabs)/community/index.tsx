@@ -100,10 +100,16 @@ export default function community() {
 
   return (
     <View style={{ flex: 1 }}>
-      <CommHeader isNoti={false} isSetting={false} isLike={false}/>
+      <CommHeader isNoti={true} isSetting={false} isLike={true} />
       {/* <ScrollView showsVerticalScrollIndicator={false}> */}
         <View style={styles.titleContainer}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 20, marginBottom: 12, color: COLOR.APP_ACTIVE_3}}>피드</Text>
+          {/* ✅ '피드' 텍스트와 밑줄을 감싸는 View 추가 */}
+          <View style={styles.activeTabWrapper}>
+            <Text style={styles.titleText}>피드</Text>
+            {/* ✅ 여기에 실제 색상 줄이 들어갑니다. */}
+            <View style={styles.activeIndicator} />
+          </View>          
+          {/* <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 20, marginBottom: 12, color: COLOR.APP_ACTIVE_3}}>피드</Text> */}
           <TouchableOpacity onPress={() => router.navigate('/communities/chooseWriteType')}>
             <MaterialCommunityIcons name="pencil" size={24} color="black" />
           </TouchableOpacity>
@@ -145,12 +151,36 @@ export default function community() {
 const styles = StyleSheet.create({
   titleContainer: {
     width: '100%',
-    marginBottom: 4,
+    // ✅ 밑줄이 잘 보이도록 하단 마진과 패딩을 조정합니다.
+    paddingTop: 16,
     backgroundColor: COLOR.COMM_WHITE,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
+    borderBottomWidth: 3,
+    borderBottomColor: '#EEEEEE', // 전체적인 경계선
+  },
+  // ✅ '피드' 글자와 밑줄을 묶어주는 스타일
+  activeTabWrapper: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    paddingBottom: 12, // 글자와 줄 사이의 간격
+  },
+  titleText: {
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    color: COLOR.APP_ACTIVE_3
+  },
+  // ✅ 핵심: 메뉴 아래에 뜨는 색상 줄 스타일
+  activeIndicator: {
+    position: 'absolute',
+    bottom: 0, // 컨테이너 바닥에 붙임
+    width: '100%', // 글자 너비만큼 꽉 차게
+    height: 3, // 줄 두께
+    backgroundColor: COLOR.APP_ACTIVE_3, // '피드' 글자색과 동일한 포인트 컬러
+    borderRadius: 2,
   },
   feedTypeContainer: {
     flexDirection: 'row',

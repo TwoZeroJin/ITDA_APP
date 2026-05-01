@@ -1,6 +1,6 @@
 import { COLOR } from '@/constants';
 import React from 'react';
-import { MyMeetInfo} from '@/types';
+import { MeetInfo, MyMeetInfo} from '@/types';
 import {
   View,
   Text,
@@ -19,12 +19,17 @@ const { width } = Dimensions.get('window');
 
 
 interface communityMeetProps {
-  data: MyMeetInfo;
+  data: MyMeetInfo | MeetInfo;
+  type?: 'MEET' | 'COMMUNITY'; // 명시적으로 타입을 받음
 }
 
-export default function CommunityMeet({data}: communityMeetProps) {
+export default function CommunityMeet({data, type}: communityMeetProps) {
   // ✅ 현재 경로를 가져옵니다.
   const pathname = usePathname();  
+
+  const isMyMeet = 'meet_id' in data; 
+  const dynamicBackgroundColor = type === 'MEET' ? COLOR.COMM_WHITE : COLOR.COMM_GRAY;
+
   // ✅ 클릭 핸들러 함수
   const handlePress = () => {
     // 현재 경로가 이미 'chooseMeet'을 포함하고 있다면 이동하지 않음
@@ -45,8 +50,7 @@ export default function CommunityMeet({data}: communityMeetProps) {
             >
               <View style={styles.recommendListContainer}>
                 {/* 추천 소셜링 리스트 (3개) */}
-                <View style={styles.recommendItemContainer}>
-                  {/* 이미지, 좋아요 버튼 */}
+                <View style={[styles.recommendItemContainer, { backgroundColor: dynamicBackgroundColor }]}>                  {/* 이미지, 좋아요 버튼 */}
                   <View>
                     <ImageBackground
                       source={data.meet_image_url? { uri: data.meet_image_url } : require('@/assets/testImages/test_recommend_image2.png')}
@@ -152,7 +156,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     fontWeight: 'bold',
     color: COLOR.COMM_SHADOW,
-    backgroundColor: COLOR.BTN_BORDER,
+    backgroundColor: COLOR.COMM_GRAY,
   },
   recommendContentContainer: {
     gap: 4,

@@ -21,19 +21,27 @@ import { FileInfo, MeetReview, MyMeetInfo } from '@/types';
 import { COLOR } from '@/constants';
 import { useImagesUpload } from "@/hooks/queries/useImageUpload";
 import { useReviewInsert } from '@/hooks/queries/useCommunity';
+import { useReviewUpdate } from '@/hooks/queries/useCommunity';
 import { getFormDataImages } from '@/utils/imageUtil';
 import CommHeader from '@/components/CommHeader';
 
 export default function writeFeedback() {
   const params = useLocalSearchParams(); // 전달받은 데이터 추출  
-  const [content, setContent] = useState('');
-  const [tag, setTag] = useState('');
-  const [location, setLocation] = useState('');
-  const [images, setImages] = useState<string[]>([]); // 선택된 이미지들을 저장할 상태
+  // 후기 작성할 모임의 정보 (전달받은 데이터)
+  const meetData = params.data ? JSON.parse(params.data as string) : null;
+  //이전화면에서 수정을 클릭시 피드 내용과 사진데이터를 updFeedData에 담겨져서 전달됨.
+  //이걸 활용해서 작성화면에서 기존 데이터 보여주고 수정할 수 있게 처리할 예정
+  const updFeedData = params.updFeedData ? JSON.parse(params.updFeedData as string) : null;
+  const headerTitle = meetData ? '후기 작성' : '피드 작성';
+  const [content, setContent] = useState(updFeedData?.review_content || '');
+  const [tag, setTag] = useState(updFeedData?.tag || '');
+  const [location, setLocation] = useState(updFeedData?.place_addr || '');
+  const [images, setImages] = useState<string[]>(updFeedData?.fileInfoVO?.map((file: FileInfo) => file.file_path) || []); // 선택된 이미지들을 저장할 상태
   const router = useRouter();
   const imageMutation = useImagesUpload();
   const reviewMutation = useReviewInsert(); // 텍스트 저장용 훅 추가
-  const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([]);
+  const reviewUpdate = useReviewUpdate(); // 텍스트 저장용 훅 추가
+  const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>(updFeedData?.fileInfoVO || []);
 
   //사진파일 압축 함수
 const compressImage = async (uri: string) => {
@@ -59,46 +67,42 @@ const compressImage = async (uri: string) => {
 
     // 2. 리뷰 데이터 생성 (서버 API 규격에 맞게 조정하세요)
     const reviewData = {
+      review_id: updFeedData?.review_id || null, // 수정인 경우 기존 review_id 포함
       content_type: meetData?.meet_id ? 'R' : 'F', //Review 타입으로 고정, F:FeedBack 타입은 별도 API 필요할 수 있음
       review_content: content,
       tag: tag,
       place_addr: location,
       meet_id: meetData?.meet_id || null,
       mem_id: meetData?.mem_id || 3,// 실제 mem_id는 로그인 세션에서 가져와야 합니다. 여기서는 예시로 3을 사용합니다.
-      fileInfoVO: uploadedFiles, // 이미지 업로드 후 채워질 예정
+      fileInfoVO: uploadedImageList, // 이미지 업로드 후 채워질 예정
     };    
 
     console.log('업로드할 리뷰 데이터:', reviewData);
-    // 3. 먼저 텍스트 리뷰 저장 실행
-    reviewMutation.mutate(reviewData as MeetReview, {
-      onSuccess: (result) => {
-        console.log('리뷰 저장 성공:', result);
 
-    
-//        finalSuccessAlert();
-
-      },
-      onError: (error) => {
-        console.error('리뷰 저장 실패:', error);
-        Alert.alert('오류', '저장 중 문제가 발생했습니다.');
-      }
-    });
-
-  };
-
-  // 공통 성공 알림 함수
-  const finalSuccessAlert = () => {
-    Alert.alert('성공', '작성이 완료되었습니다.', [
-      {
-        text: '확인',
-        onPress: () => {
-          setContent('');
-          setImages([]);
-          router.back();
+    if(updFeedData == null){
+      // 3. 먼저 텍스트 리뷰 저장 실행
+      reviewMutation.mutate(reviewData as MeetReview, {
+        onSuccess: (result) => {
+          console.log('리뷰 저장 성공:', result);
+          //        finalSuccessAlert();
         },
-      },
-    ]);
-    router.replace("/community"); // 이동할 경로 확인 필요
+        onError: (error) => {
+          console.error('리뷰 저장 실패:', error);
+          Alert.alert('오류', '저장 중 문제가 발생했습니다.');
+        }
+      });
+    }  else{
+      // 3. 먼저 텍스트 리뷰 저장 실행
+      reviewUpdate.mutate(reviewData as MeetReview, {
+        onSuccess: (result) => {
+          console.log('리뷰 수정 성공:', result);
+        },
+        onError: (error) => {
+          console.error('리뷰 수정 실패:', error);
+          Alert.alert('오류', '수정 중 문제가 발생했습니다.');
+        }
+      });
+    }
   };
 
 // 사진 업로드 버튼 클릭 시 실행될 함수
@@ -158,10 +162,9 @@ const compressImage = async (uri: string) => {
           result.data?.forEach((file: FileInfo, index: number) => {
             console.log('업로드된 파일 정보:', file);
             file.file_name = file.sav_name+'|'+file.org_name; // 파일 이름을 org_name으로 설정
-            setUploadedFiles(prev => [...prev, file]); // 상태로도 관리 (선택 사항)
+            setUploadedImageList(prev => [...prev, file]); // 상태로도 관리 (선택 사항)
           });
 
-//            finalSuccessAlert();
         },
         onError: () => {
           Alert.alert('경고', '글은 저장되었으나 이미지 업로드에 실패했습니다.');
@@ -172,20 +175,23 @@ const compressImage = async (uri: string) => {
 
   };
 
-  // 후기 작성할 모임의 정보 (전달받은 데이터)
-  const meetData = params.data ? JSON.parse(params.data as string) : null;
-  const headerTitle = meetData ? '후기 작성' : '피드 작성';
-
+  /**
+   * 이미지 삭제
+   */
+  const handleDeleteImage = (index: number) => {
+    console.log(`삭제할 이미지 인덱스: ${index}, 파일 경로: ${images[index]}`);
+    // 1. 화면 미리보기에서 제거
+    setImages(prev => prev.filter((_, i) => i !== index));    
+    // 2. 서버 전송용 목록에서도 반드시 동일한 순서의 데이터를 제거해야 함!
+    setUploadedImageList(prev => prev.filter((_, i) => i !== index));    
+  };
+  
   return (
     <SafeAreaView style={styles.container}>
       {/* 헤더 영역 */}
       <View style={styles.header}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="커뮤니티 작성"/>
 
-        {/* <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{headerTitle}</Text> */}
         <TouchableOpacity style={styles.absoluteUploadButton} onPress={handleUpload}>
           <Text style={styles.uploadButton}>올리기</Text>
         </TouchableOpacity>
@@ -234,7 +240,7 @@ const compressImage = async (uri: string) => {
                 <Image source={{ uri }} style={styles.previewImage} />
                 <TouchableOpacity 
                   style={styles.deleteBadge}
-                  onPress={() => setImages(images.filter((_, i) => i !== index))}
+                  onPress={() => handleDeleteImage(index)}
                 >
                   <Ionicons name="close-circle" size={20} color="rgba(0,0,0,0.6)" />
                 </TouchableOpacity>

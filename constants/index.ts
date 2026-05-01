@@ -123,6 +123,7 @@ const API_URL = {
     REVIEW_INSERT       : "/review/insert",
     MY_MEET_LIST_NO_REVIEW : "/review/myMeetListNoReview",
     REVIEW_DELETE       : "/review/delete", // 추가된 후기 삭제 API
+    REVIEW_UPDATE       : "/review/update", // 추가된 후기 수정 API
     GROUP_LIST          : "/group/list",
     GROUP_VIEW          : "/group/view",
     GROUP_INSERT        : "/group/insert",

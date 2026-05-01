@@ -6,6 +6,7 @@ import { MeetReview, MyMeetInfo} from '@/types';
 import CommunityMeet from './CommunityMeet';
 import { useReviewDelete } from '@/hooks/queries/useCommunity';
 import queryClient from '@/api/queryClient';
+import { router } from 'expo-router';
 
 interface communityFeedProps {
   data: MeetReview;
@@ -28,10 +29,18 @@ export default function CommunityFeed({data}: communityFeedProps) {
   const reviewMutation = useReviewDelete(); // 텍스트 저장용 훅 추가
 
 // ✅ 2. 수정/삭제 핸들러.
-  const handleEdit = () => {
+  const handleUpdate = () => {
     setMenuVisible(false);
     console.log('수정 페이지로 이동');
-//    navigation.navigate('EditScreen', { id: data.review_id }); // 실제 이동 코드 예시
+
+
+    
+    router.navigate({
+                  pathname: '/communities/writeFeedback',
+                  params: { data: JSON.stringify(data.memMeetListVO),
+                    updFeedData: JSON.stringify(data)
+                  }
+                })
   };
 
   const handleDelete = () => {
@@ -57,13 +66,13 @@ export default function CommunityFeed({data}: communityFeedProps) {
               onSuccess: (result) => {
                 console.log('리뷰 삭제 성공:', result);
                 // data헤당하는 피드 안보이게 처리
-//                setIsVisible(false);
+                setIsVisible(false);
               },
               onError: (error) => {
                 console.error('리뷰 삭제 실패:', error);
                 // 실패하면 다시 보이게 처리
                 // 실패 시에는 다시 보이게 하거나 알림 처리
-//                setIsVisible(true);                
+                setIsVisible(true);                
                 Alert.alert('오류', '삭제 중 문제가 발생했습니다.');
               }
             });
@@ -91,7 +100,7 @@ export default function CommunityFeed({data}: communityFeedProps) {
   };
 
   // ✅ 3. 삭제된 피드라면 아무것도 렌더링하지 않음 (스크롤 유지의 핵심)
-//  if (!isVisible) return null;  
+  if (!isVisible) return null;  
 
   return (
     <View style={styles.feedContainer}>
@@ -117,7 +126,7 @@ export default function CommunityFeed({data}: communityFeedProps) {
             {/* ✅ 4. 수정/삭제 메뉴 팝업 (버튼 클릭 시 노출) */}
             {menuVisible && (
               <View style={styles.menuPopup}>
-                <TouchableOpacity style={styles.menuItem} onPress={handleEdit}>
+                <TouchableOpacity style={styles.menuItem} onPress={handleUpdate}>
                   <Text style={styles.menuText}>수정</Text>
                 </TouchableOpacity>
                 <View style={styles.menuDivider} />
@@ -261,8 +270,8 @@ const styles = StyleSheet.create({
   },  
   feedContainer: {
     flexDirection: 'column',
-    gap: 6,
-    marginBottom: 4,
+    gap: 4,
+    marginBottom: 3,
     backgroundColor: COLOR.COMM_WHITE,
   },
   feedTypeContainer: {

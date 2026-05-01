@@ -1,4 +1,4 @@
-import { myMeetListNoReview, reviewInsert, reviewList,reviewDelete } from "@/api/community"; // API 함수 임포트 경로 확인 필요
+import { myMeetListNoReview, reviewInsert, reviewList,reviewDelete,reviewUpdate } from "@/api/community"; // API 함수 임포트 경로 확인 필요
 import { QUERY_KEYS } from "@/constants";
 import { ApiResult, MeetReview, SearchParams } from "@/types";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"; // ✅ useMutation 추가
@@ -91,7 +91,7 @@ function useReviewDelete() {
           text1: '리뷰가 삭제되었습니다.'
         });
         // ✅ 성공 시 리스트 화면으로 이동
-        router.replace("/community"); // 이동할 경로 확인 필요
+        //router.replace("/community"); // 이동할 경로 확인 필요
       }
     },
     onError: (error: any) => {
@@ -103,5 +103,31 @@ function useReviewDelete() {
   });
 }
 
+//4. 후기 삭제 (추가)
+function useReviewUpdate() {
+  const router = useRouter(); // Hook 내부에서 선언
 
-export { useReviewList, useReviewInsert,useMyMeetListNoReview, useReviewDelete };
+  return useMutation({
+    mutationFn: reviewUpdate,
+    onSuccess: (result: ApiResult<MeetReview>) => { // ✅ API 정의에 맞게 타입 수정
+      if (result.ret_code !== 200) {
+        showToast({
+          text1: result.ret_msg || '수정에 실패했습니다.'
+        });
+      } else {
+        showToast({
+          text1: '리뷰가 수정되었습니다.'
+        });
+        // ✅ 성공 시 리스트 화면으로 이동
+        router.replace("/community"); // 이동할 경로 확인 필요
+      }
+    },
+    onError: (error: any) => {
+      showToast({
+        type: 'error',
+        text1: error.response?.data?.message || error.message || '처리 중 오류가 발생했습니다.'
+      });
+    },
+  });
+}
+export { useReviewList, useReviewInsert,useMyMeetListNoReview, useReviewDelete, useReviewUpdate };

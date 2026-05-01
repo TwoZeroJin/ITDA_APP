@@ -135,6 +135,8 @@ interface MeetInfo {
   mem_id        : number;
   mem_name      : string;
   group_id      : number;
+  apply_ratio   : string;
+  meet_image_url   : string;
 }
 
 /**
