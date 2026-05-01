@@ -56,6 +56,7 @@ export default function IndexScreen() {
   const [realtimeMessages, setRealtimeMessages] = useState<ChatData[]>([]);
   const [isConnected, setIsConnected] = useState(true);
   const [myMemId, setMyMemId] = useState<number>(0);
+  const myMemIdRef = useRef<number>(0);
   const topic = room_id ?? "testTopic";
   const mqttUtil = MqttUtil;
   const flatListRef = useRef<FlatList<ChatData>>(null);
@@ -69,11 +70,17 @@ export default function IndexScreen() {
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
       const memberInfo = await commUtil.getMemberInfo();
+      console.log("Fetched member info:", memberInfo);
       setMyMemId(memberInfo.mem_id ?? 0);
+      myMemIdRef.current = memberInfo.mem_id ?? 0;
     };
 
     fetchMyMemberInfo();
   }, []);
+
+  useEffect(() => {
+    myMemIdRef.current = myMemId;
+  }, [myMemId]);
 
   const messages = useMemo(() => {
     return [...realtimeMessages, ...(results ?? [])];
@@ -95,17 +102,22 @@ export default function IndexScreen() {
 
   const msgReceiveCallback = (msg:string) => {
     const payload = parseIncomingPayload(msg);
+    const currentMyMemId = myMemIdRef.current;
 
-    if (payload.sender_id && Number(payload.sender_id) === myMemId) {
+    console.log("Received own MQTT message, ignoring:", payload.sender_id && Number(payload.sender_id) === currentMyMemId);
+    console.log("mtMemberId:", currentMyMemId);
+    if (payload.sender_id && Number(payload.sender_id) === currentMyMemId) {
       // 내 메시지는 이미 실시간으로 반영되어 있으므로 별도 처리하지 않음
       return;
     }
+
     setRealtimeMessages((prev) => [
       {
         chat_id: payload.chat_id ?? Date.now(),
         chat_type: payload.chat_type ?? 'MEET',
         chat_msg: payload.chat_msg ?? msg,
         room_id: payload.room_id ?? room_id,
+        sender_id: payload.sender_id ? Number(payload.sender_id) : undefined,
         mem_name: payload.mem_name,
         reg_sdate: payload.reg_sdate,
       },
@@ -113,7 +125,7 @@ export default function IndexScreen() {
     ]);
   }
 
-  // MQTT 메시지 발송 콜백 (현재는 별도 처리 없이 로그만 출력)
+  // MQTT 메시지 발송 콜백 (현재는 별도 처리 없음)
   const msgSendCallback = () => {}
 
   // MQTT 연결 및 메시지 수신 설정
