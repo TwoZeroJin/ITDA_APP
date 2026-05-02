@@ -13,6 +13,7 @@ export default function LoginScreen() {
     const {loginMutation} = useAuth();
     const loginForm = useForm<User>({
         defaultValues: {
+            // 테스트 고정 값
             login_id    : "ghong",
             login_pwd   : "1111",
         }
@@ -25,8 +26,11 @@ export default function LoginScreen() {
 
     // 기본 로그인, ID / PASSWORD 입력
     const defaultLogin = (formValues: User) => {
-        loginForm.setValue('login_type', "D");
-        onSubmit(formValues);
+        onSubmit({
+            ...formValues,
+            login_type: "D", // 일반 로그인 값, 추후 소셜 로그인 추가 시 해당 값으로 구분
+            // push_token: expoPushToken || "", // 푸시 토큰 추가
+        });
     }
 
     // 카카오 / 구글 / 애플 등 추후에 추가 작업 필요

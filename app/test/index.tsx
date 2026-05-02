@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     line: {
         height          : 1,
         flex            : 2,
-        backgroundColor : COLOR.BTN_BORDER
+        backgroundColor : COLOR.COMM_GRAY_6
     },
     snsLoginTextContainer: {
         flexDirection   : "row",

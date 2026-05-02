@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     standard: {
         backgroundColor : COLOR.COMM_WHITE,
         borderWidth     : 1,
-        borderColor     : COLOR.BTN_BORDER
+        borderColor     : COLOR.COMM_GRAY_6
     },
     outlined: {
         backgroundColor : COLOR.COMM_WHITE,
