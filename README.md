@@ -42,6 +42,9 @@ ITDA 사용자 앱
 # 5. node_modules, package-lock.json 삭제후 npm install --legacy-peer-deps 실행
 # -- 안되서 결국 "@types/react": "^19.0.10" 으로 변경
 #
+# 2026.05.02 Expo SDK 54.0.0 => 55.0.0 버전업 대응
+# 1. eas update만 문제였으나 npm install -g eas-cli 재 실행 후 재시도, 현재 확인 완료
+# 2. Expo Go 앱이 현재 SDK 54버전만 지원하여(App Store) 55로 업그레이드는 추후 고민 필요
 #
 # EXPO 공용 계정 정보 : Notion 문서 참고
 #
