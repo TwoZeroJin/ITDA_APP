@@ -12,6 +12,9 @@ interface InputFieldProps extends TextInputProps {
 
 const InputField = ({label, variant = "filled", error, rightChild = null, textArea = false, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
   const isTextArea = textArea || Boolean(props.multiline);
+    const multilineLines = isTextArea ? (props.numberOfLines ?? 5) : 1;
+    const multilineInputHeight = multilineLines * 24;
+    const multilineContainerHeight = multilineInputHeight + 20;
 
   return (
     <View>
@@ -21,14 +24,20 @@ const InputField = ({label, variant = "filled", error, rightChild = null, textAr
                 , styles[variant]
                 , Boolean(error) && styles.inputError
                 , isTextArea && styles.multiline
+                , isTextArea && { height: multilineContainerHeight }
             ]}>
             <TextInput 
                 ref={ref} 
                 {...props} 
                 placeholderTextColor={COLOR.TEXT_GRAY} 
-                style={[styles.input, styles[`${variant}Text`], isTextArea && styles.multilineInput]} 
+                style={[
+                    styles.input,
+                    styles[`${variant}Text`],
+                    isTextArea && styles.multilineInput,
+                    isTextArea && { height: multilineInputHeight }
+                ]} 
                 multiline={isTextArea}
-                numberOfLines={isTextArea ? (props.numberOfLines ?? 5) : props.numberOfLines}
+                numberOfLines={isTextArea ? multilineLines : props.numberOfLines}
                 spellCheck={false} 
                 autoCorrect={false} />
             {rightChild}
@@ -95,12 +104,9 @@ const styles = StyleSheet.create({
     multiline: {
         alignItems      : "flex-start",
         paddingVertical : 10,
-        height          : 200
     },
     multilineInput: {
         textAlignVertical   : 'top',
-        paddingVertical     : 5,
-        height              : 185
     }
 });
 

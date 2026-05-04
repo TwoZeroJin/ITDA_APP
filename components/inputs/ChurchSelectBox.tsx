@@ -7,7 +7,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 
 function ChurchSelectBox() {
-  const {control, setFocus} = useFormContext();
+  const {control} = useFormContext();
   const [churchList, setChurchList] = useState<ChurchData[]>([]);
 
   useEffect(() => {
@@ -32,13 +32,13 @@ function ChurchSelectBox() {
         rules={{
           validate: (data: number | string) => {
             if (!data) {
-              return '교회이름을 선택해주세요.';
+              return '교회를 선택해주세요.';
             }
           }
         }}
         render={({field: {onChange, value}, fieldState: {error}}) => (
       <View>
-        <Text style={styles.label}>교회이름</Text>
+        <Text style={styles.label}>교회</Text>
         <SelectboxModal
           options={churchOptions}
           value={value ?? null}
@@ -50,7 +50,7 @@ function ChurchSelectBox() {
 
             onChange(selectedChurch?.church_id ?? Number(selectedValue));
           }}
-          placeholder="교회 이름을 선택하세요."
+          placeholder="교회를 선택하세요."
         />
         {Boolean(error?.message) && <Text style={styles.error}>{error?.message}</Text>}
       </View>

@@ -46,7 +46,7 @@ export default function MeetCreateSubTypeScreen() {
 
         </View>
 
-        <CommBottomButton label="다음" onPress={() => meetType && router.pusnavigateh({
+        <CommBottomButton label="다음" onPress={() => meetType && router.navigate({
             pathname: '/meets/createDetail',
             params: {
               meet_type : meetType

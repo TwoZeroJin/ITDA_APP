@@ -54,12 +54,19 @@ const QUERY_KEYS = {
     MEET         : "meet",
     MEET_PAGING  : "meet_paging",
     MEET_VIEW    : "meet_view",
-    MEET_CREATE  : "meet_create",
+    MEET_INSERT  : "meet_insert",
     GROUP        : "group",
     GROUP_PAGING : "group_paging",
-    COMMUNITY     : "community",
+    COMMUNITY    : "community",
     COMMUNITY_REVIEW_LIST  : "community_review_list",
     MY_MEET_LIST_NO_REVIEW : "my_meet_list_no_review",
+    FEEDBACK        : "feedback",
+    FEEDBACK_PAGING : "feedback_paging",
+    FEEDBACK_VIEW   : "feedback_view",
+    FEEDBACK_INSERT : "feedback_insert",
+    NOTICE          : "notice",
+    NOTICE_PAGING   : "notice_paging",
+    NOTICE_VIEW     : "notice_view",
 };
 
 /**
@@ -133,6 +140,11 @@ const API_URL = {
     GROUP_CONFIRM       : "/group/confirm",
     FILE_UPLOAD         : "/file/file_upload",
     FILES_UPLOAD        : "/file/files_upload",
+    NOTICE_LIST         : "/notice/list",
+    NOTICE_VIEW         : "/notice/view",
+    FEEDBACK_LIST       : "/feedback/list",
+    FEEDBACK_VIEW       : "/feedback/view",
+    FEEDBACK_INSERT     : "/feedback/insert",
 }
 
 export { COLOR, QUERY_KEYS, STORE_KEY, COMM_CONSTANTS, API_URL };

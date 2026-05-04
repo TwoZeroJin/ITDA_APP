@@ -2,6 +2,7 @@ import Logo from '@/assets/images/logo.svg';
 import CheckboxField from '@/components/CheckboxField';
 import CommBottomButton from '@/components/CommBottomButton';
 import CommHeader from '@/components/CommHeader';
+import CustomButton from '@/components/CustomButton';
 import { COLOR } from '@/constants';
 import { router } from "expo-router";
 import { useState } from 'react';
@@ -62,9 +63,14 @@ export default function SignupTermScreen() {
                 onRequestClose={() => setIsWebViewVisible(false)}
             >
                 <SafeAreaView style={styles.webViewContainer}>
-                    <WebView source={{ uri: termUrl }} startInLoadingState />
-                    <View>
-                        <CommBottomButton label="닫기" onPress={() => setIsWebViewVisible(false)}/>
+                    <WebView style={styles.webView} source={{ uri: termUrl }} startInLoadingState />
+                    <View style={styles.webViewFooter}>
+                        <CustomButton
+                            label="닫기"
+                            variant="filled"
+                            style={styles.webViewCloseButton}
+                            onPress={() => setIsWebViewVisible(false)}
+                        />
                     </View>
                 </SafeAreaView>
             </Modal>
@@ -104,5 +110,18 @@ const styles = StyleSheet.create({
     },
     webViewContainer: {
         flex                : 1,
+    },
+    webView: {
+        flex                : 1,
+    },
+    webViewFooter: {
+        paddingTop          : 12,
+        paddingHorizontal   : 20,
+        paddingBottom       : 12,
+        backgroundColor     : COLOR.COMM_WHITE,
+    },
+    webViewCloseButton: {
+        height              : 52,
+        borderRadius        : 12,
     },
 })

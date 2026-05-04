@@ -10,7 +10,7 @@ function useMeetListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
     queryFn: () => meetList({ ...searchParams }),
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, searchParams],
-    initialPageParam: 1,
+    initialPageParam: searchParams.page_no,
     getNextPageParam: (lastPage) => {
       if (!lastPage.paging) return undefined;
       const { page_no, page_size, total_count } = lastPage.paging;
@@ -26,7 +26,7 @@ function useMeetListPaging(searchParams: SearchParams) {
 }
 
 // 모임 생성
-function useMeetCreate() {
+function useMeetInsert() {
   const { setLoading } = useLoading();
   return useMutation({
     mutationFn: async (body : MeetInfo) => {
@@ -35,7 +35,7 @@ function useMeetCreate() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CREATE],
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_INSERT],
       });
     },
     onSettled: () => {
@@ -44,4 +44,4 @@ function useMeetCreate() {
   });
 }
 
-export { useMeetListPaging, useMeetCreate };
+export { useMeetListPaging, useMeetInsert };

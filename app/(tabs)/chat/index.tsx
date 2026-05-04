@@ -80,8 +80,8 @@ export default function ChatListScreen() {
   const { setLoading } = useLoading();
   const hasHandledInitialLoadingRef = useRef(false);
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatRoomListPaging({
-    page_no: 0,
-    page_size: 20
+    page_no   : 0,
+    page_size : 20
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
 

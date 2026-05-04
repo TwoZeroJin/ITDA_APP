@@ -205,23 +205,22 @@ interface GroupMember {
 /**
  * 공지사항 / FAQ 정보
  */
-interface BoardData {
-
+interface BoardNotice {
+  noti_id       : number;
+  noti_subject  : string;
+  noti_content  : string;
+  noti_top_yn   : string;
+  reg_sdate     : string;
 }
 
 /**
- * 개선, 의견, 정보
+ * 개선, 의견 정보
  */
 interface FeedbackData {
-  feed_id     : number;
-  feed_subject: string;
-  feed_content: string;
-  feed_image_url: string;
-  mem_id      : number;
-  mem_name      : string;
-  reg_sdate   : string;
-  mod_sdate   : string;
-  use_stat    : string;
+  feed_id         : number;
+  feed_subject    : string;
+  feed_content    : string;
+  reg_sdate       : string;
 }
 
 /**
@@ -267,4 +266,4 @@ interface BannerData {
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardData, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData };
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData };

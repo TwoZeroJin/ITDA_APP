@@ -108,13 +108,12 @@ function useAutoLogin(options = {enabled : false}) {
 
     useEffect(() => {
         if (isError) {
-            console.log('error');
+            // console.log('error');
         }
     }, [isError])
 
     return { data };
 }
-
 
 function useAuth() {
     const loginMutation     = useLogin();

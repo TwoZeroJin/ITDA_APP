@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { useRoute } from "@react-navigation/native";
-import { useMeetCreate } from "@/hooks/queries/useMeet";
+import { useMeetInsert } from "@/hooks/queries/useMeet";
 import { MeetInfo } from "@/types";
 import { router } from "expo-router";
 import ImageCarousel from "@/components/ImageCarousel";
@@ -25,7 +25,7 @@ export default function MeetCreatePreViewScreen() {
   const imageList = parseImageList(routeParams.img_list_json);
   const { img_list_json, ...restParams } = routeParams;
   const meetInfo = restParams as unknown as MeetInfo;
-  const meetCreate = useMeetCreate();
+  const meetInsert = useMeetInsert();
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -35,7 +35,7 @@ export default function MeetCreatePreViewScreen() {
       img_list: imageList,
     } as MeetInfo;
 
-    meetCreate.mutate(requestBody, {
+    meetInsert.mutate(requestBody, {
       onSuccess: () => {
         router.navigate({
           pathname: '/meets/createComplete', 

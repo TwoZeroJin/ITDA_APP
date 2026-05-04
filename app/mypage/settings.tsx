@@ -1,17 +1,19 @@
 import { COLOR } from "@/constants";
 import React, { useState } from "react";
-import { Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
+import CustomButton from "@/components/CustomButton";
 import CustomDialog from "@/components/CustomDialog";
 import { useAuth } from "@/hooks/queries/useAuth";
 import IconMore from '@/assets/images/arrow_right.svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import WebView from "react-native-webview";
+import { router } from "expo-router";
 
 type SettingsMenuItem = {
-  label: string;
-  onPress: () => void;
+  label   : string;
+  onPress : () => void;
 };
 
 /**
@@ -24,10 +26,10 @@ export default function SettingsScreen() {
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
   const [termUrl, setTermUrl] = useState<string>('');
 
-    const openTermWebView = (url: string) => {
-        setTermUrl(url);
-        setIsWebViewVisible(true);
-    };
+  const openTermWebView = (url: string) => {
+    setTermUrl(url);
+    setIsWebViewVisible(true);
+  };
 
   const handleConfirmLogout = () => {
     setIsLogoutDialogVisible(false);
@@ -37,20 +39,20 @@ export default function SettingsScreen() {
   const SETTINGS_MENU: SettingsMenuItem[] = [
     {
       label: '공지사항',
-      onPress: () => {},
+      onPress: () => router.navigate('/mypage/notice'),
     },
     // {
     //   label: '상세 설정',
     //   onPress: () => {},
     // },
-    {
-      label: '자주 묻는 질문',
-      onPress: () => {},
-    },
     // {
-    //   label: '개선 및 의견 남기기',
+    //   label: '자주 묻는 질문',
     //   onPress: () => {},
     // },
+    {
+      label: '개선 및 의견 남기기',
+      onPress: () => router.navigate('/mypage/feedbackCreate'),
+    },
     // {
     //   label: '호스트 가이드',
     //   onPress: () => {},
@@ -113,12 +115,17 @@ export default function SettingsScreen() {
         onRequestClose={() => setIsWebViewVisible(false)}
       >
         <SafeAreaView style={styles.webViewContainer}>
-            <WebView source={{ uri: termUrl }} startInLoadingState />
-            <View>
-                <CommBottomButton label="닫기" onPress={() => setIsWebViewVisible(false)}/>
+            <WebView style={styles.webView} source={{ uri: termUrl }} startInLoadingState />
+            <View style={styles.webViewFooter}>
+                <CustomButton
+                  label="닫기"
+                  variant="filled"
+                  style={styles.webViewCloseButton}
+                  onPress={() => setIsWebViewVisible(false)}
+                />
             </View>
         </SafeAreaView>
-    </Modal>
+      </Modal>
     </View>
   );
 }
@@ -157,5 +164,18 @@ const styles = StyleSheet.create({
   },
   webViewContainer: {
     flex              : 1,
+  },
+  webView: {
+    flex              : 1,
+  },
+  webViewFooter: {
+    paddingTop        : 12,
+    paddingHorizontal : 20,
+    paddingBottom     : 12,
+    backgroundColor   : COLOR.COMM_WHITE,
+  },
+  webViewCloseButton: {
+    height            : 52,
+    borderRadius      : 12,
   },
 });

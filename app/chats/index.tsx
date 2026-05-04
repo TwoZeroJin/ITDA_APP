@@ -70,7 +70,6 @@ export default function IndexScreen() {
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
       const memberInfo = await commUtil.getMemberInfo();
-      console.log("Fetched member info:", memberInfo);
       setMyMemId(memberInfo.mem_id ?? 0);
       myMemIdRef.current = memberInfo.mem_id ?? 0;
     };

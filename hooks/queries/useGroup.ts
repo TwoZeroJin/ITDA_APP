@@ -5,9 +5,9 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 function useGroupListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: ({ pageParam }) => groupList({ ...searchParams, page: pageParam }),
+    queryFn: () => groupList({ ...searchParams }),
     queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, searchParams],
-    initialPageParam: 1,
+    initialPageParam: searchParams.page_no,
     getNextPageParam: (lastPage) => {
       if (!lastPage.paging) return undefined;
       const { page_no, page_size, total_count } = lastPage.paging;

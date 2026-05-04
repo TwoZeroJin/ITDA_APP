@@ -2,15 +2,14 @@ import { ApiResult, FileInfo } from '@/types';
 import axiosInstance from './axios';
 
 const MULTIPART_FORM_HEADER = {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  }
+  headers: { 'Content-Type': 'multipart/form-data' },
+}
 
-  /**
-   * 단일 파일 업로드
-   */
+/**
+ * 단일 파일 업로드
+ */
 async function imageUpload(form: FormData, utype = '0', ukey = '0'): Promise<ApiResult<FileInfo>> {
   const { data } = await axiosInstance.post('/file/file_upload', form, MULTIPART_FORM_HEADER);
-
   return data;
 }
 
@@ -20,7 +19,6 @@ async function imageUpload(form: FormData, utype = '0', ukey = '0'): Promise<Api
  */
 async function imagesUpload(form: FormData, utype = '0', ukey = '0'): Promise<ApiResult<FileInfo[]>> {
   const { data } = await axiosInstance.post('/file/files_upload', form, MULTIPART_FORM_HEADER);
-
   return data;
 }
 
