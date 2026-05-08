@@ -22,9 +22,12 @@ function CustomDialog({
   content,
   onConfirm,
   onCancel,
-  confirmLabel = '확인',
-  cancelLabel = '취소',
+  confirmLabel,
+  cancelLabel,
 }: CustomDialogProps) {
+  const hasConfirmButton = Boolean(confirmLabel);
+  const hasCancelButton = Boolean(cancelLabel);
+
   return (
     <Modal transparent visible={visible} animationType='fade' onRequestClose={onCancel}>
       <View style={styles.background}>
@@ -33,14 +36,41 @@ function CustomDialog({
             {title && <Text style={styles.titleText}>{title}</Text>}
             <Text style={styles.contentText}>{content}</Text>
           </View>
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={onCancel} style={[styles.button, { backgroundColor: COLOR.COMM_GRAY_6, borderBottomStartRadius: 10 }]}>
-              <Text style={styles.cancelText}>{cancelLabel}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={onConfirm} style={[styles.button, { backgroundColor: COLOR.APP_MAIN, borderBottomEndRadius: 10 }]}>
-              <Text style={styles.confirmText}>{confirmLabel}</Text>
-            </TouchableOpacity>
-          </View>
+          {(hasCancelButton || hasConfirmButton) && (
+            <View style={styles.buttonContainer}>
+              {hasCancelButton && (
+                <TouchableOpacity
+                  onPress={onCancel}
+                  style={[
+                    styles.button,
+                    {
+                      backgroundColor: COLOR.COMM_GRAY_6,
+                      borderBottomStartRadius: 10,
+                      borderBottomEndRadius: hasConfirmButton ? 0 : 10,
+                    },
+                  ]}
+                >
+                  <Text style={styles.cancelText}>{cancelLabel}</Text>
+                </TouchableOpacity>
+              )}
+
+              {hasConfirmButton && (
+                <TouchableOpacity
+                  onPress={onConfirm}
+                  style={[
+                    styles.button,
+                    {
+                      backgroundColor: COLOR.APP_MAIN,
+                      borderBottomStartRadius: hasCancelButton ? 0 : 10,
+                      borderBottomEndRadius: 10,
+                    },
+                  ]}
+                >
+                  <Text style={styles.confirmText}>{confirmLabel}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
         </View>
       </View>
     </Modal>
@@ -68,7 +98,6 @@ const styles = StyleSheet.create({
   },
   contentText: {
     fontSize        : 24,
-    marginBottom    : 8,
     alignSelf       : "center",
     fontWeight      : "bold",
   },

@@ -1,7 +1,7 @@
-import { chatInsert, chatList, chatRoomList } from "@/api/chat";
+import { chatInsert, chatList, chatMemberList, chatRoomList } from "@/api/chat";
 import { QUERY_KEYS } from "@/constants";
 import { SearchParams } from "@/types";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 /**
  * 채팅방 룸 조회
@@ -56,6 +56,9 @@ function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
   return { ...query, results };
 }
 
+/**
+ * 채팅 메시지 입력
+ */
 function useChatInsert() {
     return useMutation({
         mutationFn : chatInsert,
@@ -63,4 +66,18 @@ function useChatInsert() {
     });
 }
 
-export { useChatInsert, useChatRoomListPaging, useChatListPaging };
+/**
+ * 채팅 멤버 조회
+ */
+function useChatMemberList({ room_id }: { room_id: string }) {
+  const query = useQuery({
+    queryFn: () => chatMemberList({ room_id }),
+    queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_MEMBER_LIST, { room_id }],
+  });
+
+  const results = query.data?.data ?? [];
+    
+  return { ...query, results };
+}
+
+export { useChatInsert, useChatRoomListPaging, useChatListPaging, useChatMemberList };

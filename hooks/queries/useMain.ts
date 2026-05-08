@@ -1,6 +1,6 @@
-import { mainEntry } from '@/api/main';
+import { mainData, mainEntry } from '@/api/main';
 import { userRefreshToken } from '@/api/user';
-import { STORE_KEY } from '@/constants';
+import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
 import { setCategoryList, setChurchList, setFeeList, setMainBannerList } from '@/utils/commUtil';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +13,7 @@ function useMainEntry() {
     const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
     const { data, isError, isSuccess, error, refetch } = useQuery({
         queryFn: mainEntry,
-        queryKey: ["main" , "entry"],
+        queryKey: [QUERY_KEYS.MAIN , QUERY_KEYS.MAIN_ENTRY],
         retry: 1,
     });
     //
@@ -22,7 +22,7 @@ function useMainEntry() {
             const bannerList = data?.data?.banner_list ;
             const normalizedBannerList = bannerList && bannerList.length > 0
                 ? bannerList
-                : [{ banner_image_url: Image.resolveAssetSource(require('@/assets/images/temp_main_banner.png')).uri }];
+                : [{ banner_image_url: Image.resolveAssetSource(require('@/assets/images/no_image.png')).uri }];
 
             // App에 필요한 정보 SecureStore(중요정보) 및 AsyncStore(비중요정보)에 세팅
             setCategoryList(data?.data?.category_list);
@@ -108,4 +108,25 @@ function useMainEntry() {
     };
 }
 
-export default useMainEntry;
+function useMainData() {
+    const query = useQuery({
+        queryFn: mainData,
+        queryKey: [QUERY_KEYS.MAIN , QUERY_KEYS.MAIN_DATA],
+    });
+
+    useEffect(() => {
+        if (query.isError) {
+            console.log('메인 데이터 조회 실패', query.error);
+        }
+    }, [query.isError, query.error]);
+
+    return {
+        ...query,
+        upcomingMeetList    : query.data?.data?.upcoming_meet_list ?? [],
+        hotMeetList         : query.data?.data?.hot_meet_list ?? [],
+        recommendMeetList   : query.data?.data?.recommend_meet_list ?? [],
+        newClassList        : query.data?.data?.new_class_list ?? [],
+        reviewList          : query.data?.data?.review_list ?? [],
+    };
+}
+export { useMainEntry, useMainData }

@@ -5,7 +5,7 @@ import LoadingLayout from '@/components/LoadingLayout';
 import { COLOR } from '@/constants';
 import { LoadingProvider } from '@/contexts/LoadingContext';
 import { useAutoLogin } from '@/hooks/queries/useAuth';
-import useMainEntry from '@/hooks/queries/useMain';
+import { useMainEntry } from '@/hooks/queries/useMain';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';

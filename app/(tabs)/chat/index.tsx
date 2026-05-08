@@ -146,8 +146,8 @@ export default function ChatListScreen() {
   const renderChatRoom = ({ item }: { item: RoomData }) => {
     const roomCategory = mapRoomTypeToCategory(item.room_type);
     const roomImage = getRoomImageByCategory(roomCategory);
-    const updatedText = formatUpdatedText(item.last_msg_sdate || item.mod_sdate || item.reg_sdate);
-    const messagePreview = item.last_msg || item.last_chat_msg || "대화를 시작해 보세요.";
+    const updatedText = formatUpdatedText(item.mod_sdate || item.reg_sdate);
+    const messagePreview = item.last_msg || "대화를 시작해 보세요.";
 
     return (
     <TouchableOpacity

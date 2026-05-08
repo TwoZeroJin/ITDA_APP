@@ -1,6 +1,6 @@
 import { COLOR } from "@/constants";
 import React, { useState } from "react";
-import { Modal, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import CustomButton from "@/components/CustomButton";

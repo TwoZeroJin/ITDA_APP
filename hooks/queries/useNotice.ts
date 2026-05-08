@@ -1,9 +1,9 @@
 import { noticeList, noticeView } from "@/api/notice";
-import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { SearchParams } from "@/types";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 // 공지 목록 조회 (무한 스크롤)
 function useNoticeListPaging(searchParams: SearchParams) {
@@ -23,22 +23,19 @@ function useNoticeListPaging(searchParams: SearchParams) {
 }
 
 // 공지 상세 조회
-function useNoticeView() {
+function useNoticeView(noticeId?: number) {
   const { setLoading } = useLoading();
-  return useMutation({
-    mutationFn: async (noticeId : number) => {
-      setLoading(true);
-      return noticeView(noticeId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.NOTICE, QUERY_KEYS.NOTICE_VIEW],
-      });
-    },
-    onSettled: () => {
-      setLoading(false);
-    },
+  const query = useQuery({
+    queryFn: () => noticeView(Number(noticeId)),
+    queryKey: [QUERY_KEYS.NOTICE, QUERY_KEYS.NOTICE_VIEW, noticeId],
+    enabled: typeof noticeId === "number",
   });
+
+  useEffect(() => {
+    setLoading(query.isFetching);
+  }, [query.isFetching, setLoading]);
+
+  return query;
 }
 
 export { useNoticeListPaging, useNoticeView };

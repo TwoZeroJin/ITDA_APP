@@ -22,6 +22,16 @@ async function chatList(searchParams: SearchParams & { room_id: string }): Promi
 }
 
 /**
+ * 채팅 멤버 조회
+ * @param searchParams room_id 포함 검색 파라미터
+ * @returns 채팅 멤버 목록 조회
+ */
+async function chatMemberList({ room_id }: { room_id: string }): Promise<ApiResult<ChatData[]>> {
+    const { data } = await axiosInstance.post(API_URL.CHAT_MEMBER_LIST, { room_id });
+    return data;
+}
+
+/**
  * 채팅 데이터 입력
  * @param body 채팅 데이터
  * @returns 채팅 데이터 입력 성공 여부
@@ -31,5 +41,5 @@ async function chatInsert(body: ChatData): Promise<ApiResult<null>> {
     return data;
 }
 
-export { chatRoomList, chatList, chatInsert };
+export { chatRoomList, chatList, chatInsert, chatMemberList };
 

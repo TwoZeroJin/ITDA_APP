@@ -30,14 +30,25 @@ interface Token {
 }
 
 /**
- * 메인 화면 정보
+ * 앱 초기 데이터
  */
-interface MainData {
+interface AppData {
   app_ver_name  : string;
   category_list : CodeInfo[];
   fee_list      : CodeInfo[];
   banner_list?  : BannerData[];
   church_list   : ChurchData[];
+}
+
+/**
+ * 메인 화면 데이터
+ */
+interface MainData {
+  upcoming_meet_list?   : MeetInfo[];
+  hot_meet_list?        : MeetInfo[];
+  recommend_meet_list?  : MeetInfo[];
+  new_class_list?       : MeetInfo[];
+  review_list?          : MeetReview[];
 }
 
 /**
@@ -136,7 +147,7 @@ interface MeetInfo {
   mem_name      : string;
   group_id      : number;
   apply_ratio   : string;
-  meet_image_url   : string;
+  thumb_url?    : string;
 }
 
 /**
@@ -161,6 +172,7 @@ interface MeetReview {
   reg_sdate       : string;
   mod_sdate       : string;
   use_stat        : string;
+  thumb_url?      : string;
 
   // 중첩된 VO 객체 처리
   memMeetListVO?: MyMeetInfo;
@@ -235,8 +247,6 @@ interface RoomData {
   mod_sdate       : string;
   room_image_url? : string;
   last_msg?       : string;
-  last_chat_msg?  : string;
-  last_msg_sdate? : string;
 }
 /**
  * 채팅 정보
@@ -248,7 +258,7 @@ interface ChatData {
   room_id     : string;
   sender_id?  : number;
   mem_name?   : string;
-  reg_sdate?  : string;
+  send_date   : string;
 }
 
 /**
@@ -266,4 +276,4 @@ interface BannerData {
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupMember, MainData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData };
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupMember, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData, MainData };

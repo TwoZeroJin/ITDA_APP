@@ -3,7 +3,8 @@ import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { FeedbackData, SearchParams } from "@/types";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 // 피드백 목록 조회 (무한 스크롤)
 function useFeedbackListPaging(searchParams: SearchParams) {
@@ -23,22 +24,19 @@ function useFeedbackListPaging(searchParams: SearchParams) {
 }
 
 // 피드백 상세 조회
-function useFeedbackView() {
+function useFeedbackView(feedbackId?: number) {
   const { setLoading } = useLoading();
-  return useMutation({
-    mutationFn: async (feedbackId : number) => {
-      setLoading(true);
-      return feedbackView(feedbackId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.FEEDBACK, QUERY_KEYS.FEEDBACK_VIEW],
-      });
-    },
-    onSettled: () => {
-      setLoading(false);
-    },
+  const query = useQuery({
+    queryFn: () => feedbackView(Number(feedbackId)),
+    queryKey: [QUERY_KEYS.FEEDBACK, QUERY_KEYS.FEEDBACK_VIEW, feedbackId],
+    enabled: typeof feedbackId === "number",
   });
+
+  useEffect(() => {
+    setLoading(query.isFetching);
+  }, [query.isFetching, setLoading]);
+
+  return query;
 }
 
 // 피드백 생성

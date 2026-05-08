@@ -57,7 +57,7 @@ export default function IndexScreen() {
   const [isConnected, setIsConnected] = useState(true);
   const [myMemId, setMyMemId] = useState<number>(0);
   const myMemIdRef = useRef<number>(0);
-  const topic = room_id ?? "testTopic";
+  const topic = room_id;
   const mqttUtil = MqttUtil;
   const flatListRef = useRef<FlatList<ChatData>>(null);
   const hasScrolledInitial = useRef(false);
@@ -110,13 +110,13 @@ export default function IndexScreen() {
 
     setRealtimeMessages((prev) => [
       {
-        chat_id: payload.chat_id ?? Date.now(),
-        chat_type: payload.chat_type ?? 'MEET',
-        chat_msg: payload.chat_msg ?? msg,
-        room_id: payload.room_id ?? room_id,
-        sender_id: payload.sender_id ? Number(payload.sender_id) : undefined,
-        mem_name: payload.mem_name,
-        reg_sdate: payload.reg_sdate,
+        chat_id     : payload.chat_id ?? Date.now(),
+        chat_type   : payload.chat_type ?? 'MEET',
+        chat_msg    : payload.chat_msg ?? msg,
+        room_id     : payload.room_id ?? room_id,
+        sender_id   : payload.sender_id ? Number(payload.sender_id) : undefined,
+        mem_name    : payload.mem_name,
+        send_date   : payload.send_date || new Date().toISOString(),
       },
       ...prev,
     ]);
@@ -152,17 +152,17 @@ export default function IndexScreen() {
     const nowIso = new Date().toISOString();
 
     const chatData : ChatData = {
-      chat_id   : chat_id,
-      chat_type : chat_type,
-      chat_msg  : trimMsg,
-      room_id   : room_id,
+      chat_id     : chat_id,
+      chat_type   : chat_type,
+      chat_msg    : trimMsg,
+      room_id     : room_id,
+      send_date  : nowIso,
     };
 
     setRealtimeMessages((prev) => [
       {
         ...chatData,
         sender_id: myMemId,
-        reg_sdate: nowIso,
       },
       ...prev,
     ]);
@@ -172,7 +172,7 @@ export default function IndexScreen() {
     // Mongo DB Insert
     chatInsert.mutate({...chatData});
     // MQTT SendMessage
-    mqttUtil.sendMessage(topic, {...chatData, sender_id: myMemId, reg_sdate: nowIso});
+    mqttUtil.sendMessage(topic, {...chatData, sender_id: myMemId, send_sdate: nowIso});
   }
 
   const renderMessage = ({ item }: { item: ChatData }) => {
@@ -181,7 +181,7 @@ export default function IndexScreen() {
     if (isMine) {
       return (
         <View style={styles.myMessageWrap}>
-          <Text style={styles.timeText}>{formatTimeText(item.reg_sdate)}</Text>
+          <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>
           <View style={[styles.bubble, styles.myBubble]}>
             <Text style={styles.myBubbleText}>{getMessageText(item)}</Text>
           </View>
@@ -197,7 +197,7 @@ export default function IndexScreen() {
           <View style={[styles.bubble, styles.otherBubble]}>
             <Text style={styles.otherBubbleText}>{getMessageText(item)}</Text>
           </View>
-          <Text style={styles.timeText}>{formatTimeText(item.reg_sdate)}</Text>
+          <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>
         </View>
       </View>
     );
