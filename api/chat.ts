@@ -7,8 +7,8 @@ import { API_URL } from '@/constants';
  * @returns 채팅룸 목록 조회
  */
 async function chatRoomList(searchParams: SearchParams): Promise<ApiResult<RoomData[]>> {
-    const { data } = await axiosInstance.post(API_URL.CHAT_LIST, searchParams);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.CHAT_LIST, searchParams);
+  return data;
 }
 
 /**
@@ -17,8 +17,8 @@ async function chatRoomList(searchParams: SearchParams): Promise<ApiResult<RoomD
  * @returns 채팅룸 목록 조회
  */
 async function chatList(searchParams: SearchParams & { room_id: string }): Promise<ApiResult<ChatData[]>> {
-    const { data } = await axiosInstance.post(API_URL.CHAT_VIEW, searchParams);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.CHAT_VIEW, searchParams);
+  return data;
 }
 
 /**
@@ -27,8 +27,8 @@ async function chatList(searchParams: SearchParams & { room_id: string }): Promi
  * @returns 채팅 멤버 목록 조회
  */
 async function chatMemberList({ room_id }: { room_id: string }): Promise<ApiResult<ChatData[]>> {
-    const { data } = await axiosInstance.post(API_URL.CHAT_MEMBER_LIST, { room_id });
-    return data;
+  const { data } = await axiosInstance.post(API_URL.CHAT_MEMBER_LIST, { room_id });
+  return data;
 }
 
 /**
@@ -37,9 +37,8 @@ async function chatMemberList({ room_id }: { room_id: string }): Promise<ApiResu
  * @returns 채팅 데이터 입력 성공 여부
  */
 async function chatInsert(body: ChatData): Promise<ApiResult<null>> {
-    const { data } = await axiosInstance.post(API_URL.CHAT_INSERT, body);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.CHAT_INSERT, body);
+  return data;
 }
 
 export { chatRoomList, chatList, chatInsert, chatMemberList };
-

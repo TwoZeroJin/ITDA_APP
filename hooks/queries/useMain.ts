@@ -2,7 +2,7 @@ import { mainData, mainEntry } from '@/api/main';
 import { userRefreshToken } from '@/api/user';
 import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
-import { setCategoryList, setChurchList, setFeeList, setMainBannerList } from '@/utils/commUtil';
+import { printDebugLog, setCategoryList, setChurchList, setFeeList, setMainBannerList } from '@/utils/commUtil';
 import { useQuery } from '@tanstack/react-query';
 import * as Updates from 'expo-updates';
 import { useEffect, useState } from 'react';
@@ -116,7 +116,7 @@ function useMainData() {
 
     useEffect(() => {
         if (query.isError) {
-            console.log('메인 데이터 조회 실패', query.error);
+            printDebugLog('메인 데이터 조회 실패', JSON.stringify(query.error));
         }
     }, [query.isError, query.error]);
 

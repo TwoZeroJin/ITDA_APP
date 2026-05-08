@@ -15,15 +15,7 @@ export default function Community() {
   const [activeType, setActiveType] = useState<'social' | 'club' | 'class'>('social');
   const [refreshing, setRefreshing] = useState(false);
   const [myMemId, setMyMemId] = useState<number>(0);
-
-  const { 
-    results, 
-    fetchNextPage, 
-    hasNextPage, 
-    isFetchingNextPage, 
-    isLoading, 
-    refetch 
-  } = useMeetListPaging({
+  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } = useMeetListPaging({
     page_no : 0,
     page_size : 5,
     sch_condition: activeType,

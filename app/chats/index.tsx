@@ -4,10 +4,10 @@ import { COLOR } from '@/constants';
 import { useChatInsert, useChatListPaging } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
-import * as commUtil from '@/utils/commUtil';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, NativeSyntheticEvent, NativeScrollEvent, ActivityIndicator } from 'react-native';
+import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
 
 const formatTimeText = (sourceDate?: string) => {
   if (!sourceDate) {
@@ -27,18 +27,31 @@ const formatTimeText = (sourceDate?: string) => {
   return `${period} ${displayHour}:${minute}`;
 };
 
-const parseIncomingPayload = (raw: string): Partial<ChatData> => {
-  try {
-    const parsed = JSON.parse(raw);
-    if (typeof parsed === 'object' && parsed !== null) {
-      return parsed as Partial<ChatData>;
-    }
-  }
-  catch {
-    // plain text payload
+const getDateGroupKey = (sourceDate?: string) => {
+  if (!sourceDate) {
+    return '';
   }
 
-  return { chat_msg: raw };
+  const date = new Date(sourceDate);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+};
+
+const formatDateBadgeText = (sourceDate?: string) => {
+  if (!sourceDate) {
+    return '';
+  }
+
+  const date = new Date(sourceDate);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${dayNames[date.getDay()]}`;
 };
 
 const getMessageText = (item: ChatData) => item.chat_msg || '';
@@ -69,7 +82,7 @@ export default function IndexScreen() {
   // 내 mem_id 정보 조회
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
-      const memberInfo = await commUtil.getMemberInfo();
+      const memberInfo = await getMemberInfo();
       setMyMemId(memberInfo.mem_id ?? 0);
       myMemIdRef.current = memberInfo.mem_id ?? 0;
     };
@@ -100,7 +113,7 @@ export default function IndexScreen() {
   }, [realtimeMessages.length]);
 
   const msgReceiveCallback = (msg:string) => {
-    const payload = parseIncomingPayload(msg);
+    const payload = parseChatPayload(msg);
     const currentMyMemId = myMemIdRef.current;
 
     if (payload.sender_id && Number(payload.sender_id) === currentMyMemId) {
@@ -175,21 +188,22 @@ export default function IndexScreen() {
     mqttUtil.sendMessage(topic, {...chatData, sender_id: myMemId, send_sdate: nowIso});
   }
 
-  const renderMessage = ({ item }: { item: ChatData }) => {
-    const isMine = Number(item.sender_id) === myMemId;
-
-    if (isMine) {
-      return (
-        <View style={styles.myMessageWrap}>
-          <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>
-          <View style={[styles.bubble, styles.myBubble]}>
-            <Text style={styles.myBubbleText}>{getMessageText(item)}</Text>
-          </View>
+  const renderMessage = ({ item, index }: { item: ChatData; index: number }) => {
+    // 이전 메시지와 날짜가 다르면 날짜 배지 표시
+    const prevItem = index > 0 ? messages[index - 1] : undefined;
+    const shouldShowDateBadge = index === 0 || getDateGroupKey(item.send_date) !== getDateGroupKey(prevItem?.send_date);
+    const dateBadgeText = formatDateBadgeText(prevItem?.send_date);
+    
+    const isMine = Number(item.sender_id) === myMemId; // 내 메시지 여부
+    // 메시지 표시
+    const messageContent = isMine ? (
+      <View style={styles.myMessageWrap}>
+        <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>
+        <View style={[styles.bubble, styles.myBubble]}>
+          <Text style={styles.myBubbleText}>{getMessageText(item)}</Text>
         </View>
-      );
-    }
-
-    return (
+      </View>
+    ) : (
       <View style={styles.otherMessageWrap}>
         <View style={[styles.avatar, { backgroundColor: '#1E88E5' }]} />
         <View style={styles.otherMessageContent}>
@@ -200,6 +214,18 @@ export default function IndexScreen() {
           <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>
         </View>
       </View>
+    );
+    
+    return (
+      <>
+        {/* 날짜 배지 표시 */}
+        {shouldShowDateBadge && !!dateBadgeText && (
+          <View style={styles.dateBadgeWrap}>
+            <Text style={styles.dateBadgeText}>{dateBadgeText}</Text>
+          </View>
+        )}
+        {messageContent}
+      </>
     );
   };
 
@@ -228,10 +254,6 @@ export default function IndexScreen() {
 
           <View style={styles.meetInfoWrap}>
             <Text style={styles.meetInfoText}>📅 한성교회 · 1.7(수) · 오후 8:30</Text>
-          </View>
-
-          <View style={styles.dateBadgeWrap}>
-            <Text style={styles.dateBadgeText}>2026년 1월 3일 토요일</Text>
           </View>
 
           <FlatList
@@ -289,148 +311,148 @@ export default function IndexScreen() {
 
 const styles = StyleSheet.create({
   container : {
-    flex : 1,
-    backgroundColor: COLOR.COMM_WHITE,
+    flex              : 1,
+    backgroundColor   : COLOR.COMM_WHITE,
   },
   meetInfoWrap: {
-    marginHorizontal: 20,
-    backgroundColor: COLOR.COMM_GRAY_5,
-    borderRadius: 10,
-    paddingVertical: 10,
-    alignItems: 'center',
-    marginTop: 8,
+    alignItems        : 'center',
+    marginTop         : 8,
+    marginHorizontal  : 20,
+    backgroundColor   : COLOR.COMM_GRAY_5,
+    borderRadius      : 10,
+    paddingVertical   : 10,
   },
   meetInfoText: {
-    color: COLOR.TEXT_2F2F2F,
-    fontSize: 18,
-    fontWeight: '600',
+    fontWeight        : 'bold',
+    color             : COLOR.TEXT_2F2F2F,
+    fontSize          : 18,
   },
   dateBadgeWrap: {
-    marginTop: 12,
-    alignItems: 'center',
+    alignItems        : 'center',
+    marginTop         : 12,
   },
   dateBadgeText: {
-    backgroundColor: COLOR.COMM_GRAY_5,
-    borderRadius: 14,
-    color: COLOR.TEXT_GRAY,
-    fontSize: 15,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor   : COLOR.COMM_GRAY_5,
+    borderRadius      : 14,
+    color             : COLOR.TEXT_GRAY,
+    fontSize          : 15,
+    paddingHorizontal : 12,
+    paddingVertical   : 6,
   },
   messageListContent: {
-    flexGrow: 1,
-    justifyContent: 'flex-end',
-    paddingTop: 18,
-    paddingHorizontal: 18,
-    paddingBottom: 10,
-    gap: 8,
+    justifyContent    : 'flex-end',
+    flexGrow          : 1,
+    paddingTop        : 18,
+    paddingHorizontal : 18,
+    paddingBottom     : 10,
+    gap               : 8,
   },
   otherMessageWrap: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 8,
+    flexDirection     : 'row',
+    alignItems        : 'flex-start',
+    marginBottom      : 8,
   },
   avatar: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    marginRight: 10,
-    marginTop: 4,
+    width             : 28,
+    height            : 28,
+    borderRadius      : 14,
+    marginRight       : 10,
+    marginTop         : 4,
   },
   otherMessageContent: {
-    maxWidth: '80%',
+    maxWidth          : '80%',
   },
   senderText: {
-    color: COLOR.TEXT_2F2F2F,
-    fontSize: 15,
-    marginBottom: 4,
-    fontWeight: '500',
+    color             : COLOR.TEXT_2F2F2F,
+    fontSize          : 15,
+    marginBottom      : 4,
+    fontWeight        : '500',
   },
   myMessageWrap: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-    marginBottom: 8,
+    flexDirection     : 'row',
+    justifyContent    : 'flex-end',
+    alignItems        : 'flex-end',
+    marginBottom      : 8,
   },
   bubble: {
-    borderRadius: 22,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
+    borderRadius      : 22,
+    paddingHorizontal : 14,
+    paddingVertical   : 11,
   },
   otherBubble: {
-    backgroundColor: COLOR.COMM_GRAY_5,
-    alignSelf: 'flex-start',
+    alignSelf         : 'flex-start',
+    backgroundColor   : COLOR.COMM_GRAY_5,
   },
   myBubble: {
-    backgroundColor: COLOR.APP_MAIN,
-    alignSelf: 'flex-end',
+    alignSelf         : 'flex-end',
+    backgroundColor   : COLOR.APP_MAIN,
   },
   otherBubbleText: {
-    color: COLOR.TEXT_2F2F2F,
-    fontSize: 17,
-    lineHeight: 23,
+    color             : COLOR.TEXT_2F2F2F,
+    fontSize          : 17,
+    lineHeight        : 23,
   },
   myBubbleText: {
-    color: COLOR.COMM_WHITE,
-    fontSize: 17,
-    lineHeight: 23,
+    color             : COLOR.COMM_WHITE,
+    fontSize          : 17,
+    lineHeight        : 23,
   },
   timeText: {
-    color: COLOR.TEXT_GRAY,
-    fontSize: 12,
-    marginTop: 6,
-    marginHorizontal: 6,
+    color             : COLOR.TEXT_GRAY,
+    fontSize          : 12,
+    marginTop         : 6,
+    marginHorizontal  : 6,
   },
   inputBarWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingTop: 10,
-    paddingBottom: 18,
-    borderTopWidth: 1,
-    borderTopColor: COLOR.COMM_GRAY_4,
-    gap: 10,
-    backgroundColor: COLOR.COMM_WHITE,
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    paddingHorizontal : 14,
+    paddingTop        : 10,
+    paddingBottom     : 18,
+    borderTopWidth    : 1,
+    borderTopColor    : COLOR.COMM_GRAY_4,
+    gap               : 10,
+    backgroundColor   : COLOR.COMM_WHITE,
   },
   addButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: COLOR.COMM_GRAY_4,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width             : 36,
+    height            : 36,
+    borderRadius      : 18,
+    backgroundColor   : COLOR.COMM_GRAY_4,
+    alignItems        : 'center',
+    justifyContent    : 'center',
   },
   addButtonText: {
-    color: COLOR.TEXT_DEFAULT,
-    fontSize: 24,
-    lineHeight: 24,
+    color             : COLOR.TEXT_DEFAULT,
+    fontSize          : 24,
+    lineHeight        : 24,
   },
   inputBoxWrap: {
-    flex: 1,
-    borderRadius: 16,
-    backgroundColor: COLOR.COMM_GRAY_5,
-    paddingHorizontal: 14,
-    justifyContent: 'center',
-    height: 46,
+    flex              : 1,
+    borderRadius      : 16,
+    backgroundColor   : COLOR.COMM_GRAY_5,
+    paddingHorizontal : 14,
+    justifyContent    : 'center',
+    height            : 46,
   },
   inputBox: {
-    color: COLOR.TEXT_2F2F2F,
-    fontSize: 16,
+    color             : COLOR.TEXT_2F2F2F,
+    fontSize          : 16,
   },
   sendButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: COLOR.APP_ACTIVE_5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width             : 36,
+    height            : 36,
+    borderRadius      : 18,
+    backgroundColor   : COLOR.APP_ACTIVE_5,
+    alignItems        : 'center',
+    justifyContent    : 'center',
   },
   sendButtonText: {
-    color: COLOR.COMM_WHITE,
-    fontSize: 18,
-    fontWeight: '700',
+    color             : COLOR.COMM_WHITE,
+    fontSize          : 18,
+    fontWeight        : '700',
   },
   topLoading: {
-    marginVertical: 10,
+    marginVertical    : 10,
   }
 });

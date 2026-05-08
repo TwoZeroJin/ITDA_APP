@@ -9,6 +9,7 @@ import NameInput from "@/components/inputs/NameInput";
 import NickNameInput from "@/components/inputs/NickNameInput";
 import PasswordConfirmInput from "@/components/inputs/PasswordConfirmInput";
 import PasswordInput from "@/components/inputs/PasswordInput";
+import ProfileImageInput from "@/components/inputs/ProfileImageInput";
 import { SignupInfo } from "@/types";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -40,10 +41,14 @@ export default function SignupInfoScreen() {
     })
 
     const onSubmit = (formValues: SignupInfo) => {
+        const submitValues = {
+            ...formValues,
+            new_image_name: formValues.new_image_name === 'DEL' ? '' : formValues.new_image_name, // DEL일 경우 빈 문자열로 변경하여 서버에 전달
+        };
         router.navigate({
             pathname: '/user/signupInterest',
             params: {
-                signupInfo: JSON.stringify(formValues),
+                signupInfo: JSON.stringify(submitValues),
             },
         });
     }
@@ -61,6 +66,7 @@ export default function SignupInfoScreen() {
                 extraScrollHeight={24}
             >
                 <FormProvider {...signupForm}>
+                    <ProfileImageInput/>
                     <ChurchSelectBox/>
                     <ChurchTmNmInput/>
                     <NameInput/>

@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import CommHeader from "@/components/CommHeader";
-import { StyleSheet, Text, View, ScrollView, Pressable } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from "react-native";
 import { COLOR } from "@/constants";
 import MemDefault from '@/assets/images/icon_mem_default.svg';
 import IconPencil from '@/assets/images/icon_pencil.svg';
-import * as commUtil from '@/utils/commUtil';
+import { getMemberInfo, getCategoryList } from '@/utils/commUtil';
 import { MemberInfo } from "@/types";
 import { useAuth } from "@/hooks/queries/useAuth";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import CustomDialog from "@/components/CustomDialog";
 import DividingLine from "@/components/DividingLine";
+import CommUpcomingMeetList from "@/components/CommUpcomingMeetList";
+import { useMemberDetail } from "@/hooks/queries/useMember";
+import CommReviewList from "@/components/CommReviewList";
 
 /**
  * 마이페이지 - 내 정보 화면
@@ -19,51 +22,40 @@ export default function MyPageScreen() {
   const [memberInfo, setMemberInfo] = useState<MemberInfo>();
   const [isAuthDialogVisible, setIsAuthDialogVisible] = useState(false);
   const [interestCategories, setInterestCategories] = useState<{ label: string; id: string }[]>([]);
+  const { upcomingMeetList, newClassList, reviewList } = useMemberDetail();
+  const profileImageUrl = memberInfo?.mem_image_url;
 
-  // 회원정보 조회 및 없을 경우 로그인 화면으로 이동
-  useEffect(() => {
-      const fetchMyMemberInfo = async () => {
-        const memberInfo = await commUtil.getMemberInfo();
+  const fetchMyMemberInfo = useCallback(async () => {
+    const memberInfo = await getMemberInfo();
 
-        if (!memberInfo) {
-          setIsAuthDialogVisible(true);
-          return;
-        }
-        setMemberInfo(memberInfo);
+    if (!memberInfo) {
+      setIsAuthDialogVisible(true);
+      return;
+    }
 
-        if (memberInfo.mem_interest) {
-          const interestIds = memberInfo.mem_interest.split('|').filter(Boolean);
-          const categoryList = await commUtil.getCategoryList();
-          const matched = interestIds
-            .map((id) => {
-              const found = categoryList.find((cat) => cat.code_id === id);
-              return found ? { label: found.code_value, id: found.code_id } : null;
-            })
-            .filter((item): item is { label: string; id: string } => item !== null);
-          setInterestCategories(matched);
-        }
-      };
-  
-      fetchMyMemberInfo();
-    }, []);
+    setMemberInfo(memberInfo);
 
-  const upcomingMeets = [
-    { id: 1, title: "D-Day", subtitle: "매주 수요일 오후...", tag: "D-3 (11.08)" },
-    { id: 2, title: "콜러스식여행단...", subtitle: "부산 · 진해", tag: "D-3 (11.08)" },
-  ];
+    if (memberInfo.mem_interest) {
+      const interestIds = memberInfo.mem_interest.split('|').filter(Boolean);
+      const categoryList = await getCategoryList();
+      const matched = interestIds
+        .map((id) => {
+          const found = categoryList.find((cat) => cat.code_id === id);
+          return found ? { label: found.code_value, id: found.code_id } : null;
+        })
+        .filter((item): item is { label: string; id: string } => item !== null);
+      setInterestCategories(matched);
+      return;
+    }
 
-  const posts = [
-    { id: 1, title: "하와이에서의 추억😍😍", meta: "여행" },
-    { id: 2, title: "맛있는 음식 먹으러 가자!", meta: "음식" },
-    { id: 3, title: "등산 가는 길", meta: "스포츠" },
-  ];
+    setInterestCategories([]);
+  }, []);
 
-  const feedImages = [
-    { id: 1, title: "하와이에서의 추억😍😍" },
-    { id: 2, title: "해변 일몰🌅" },
-    { id: 3, title: "서울야경" },
-    { id: 4, title: "보도독터 도움말" },
-  ];
+  useFocusEffect(
+    useCallback(() => {
+      void fetchMyMemberInfo();
+    }, [fetchMyMemberInfo])
+  );
 
   return (
     <View style={styles.container}>
@@ -77,14 +69,29 @@ export default function MyPageScreen() {
       >
         {/* 프로필 섹션 */}
         <View style={styles.profileContainer}>
-          <MemDefault width={40} height={40} />
+          <View style={styles.profileImageWrap}>
+            {profileImageUrl ? (
+              <Image source={{ uri: profileImageUrl }} style={styles.profileImage} />
+            ) : (
+              <MemDefault width={40} height={40} />
+            )}
+          </View>
           <View style={{ flex: 1, marginStart: 12 }}>
             <View style={styles.nameRow}>
               <Text style={styles.nameText}>{memberInfo?.mem_nick || memberInfo?.mem_name || ''}</Text>
-              <Pressable>
+              <TouchableOpacity style={styles.editBtnGroup} activeOpacity={0.7} onPress={() => router.navigate('/mypage/memUpdate')}>
                 <IconPencil width={20} height={20}/>
-              </Pressable>
+              </TouchableOpacity>
             </View>
+          </View>
+        </View>
+        {/* 교회 및 팀 정보 */}
+        <View style={styles.churchTeamRow}>
+          <View style={styles.churchTeamChip}>
+            <Text style={styles.churchTeamChipText}>{memberInfo?.mem_church_nm || '한성교회'}</Text>
+          </View>
+          <View style={styles.churchTeamChip}>
+            <Text style={styles.churchTeamChipText}>{memberInfo?.mem_church_tm_nm || '기회팀'}</Text>
           </View>
         </View>
 
@@ -100,9 +107,9 @@ export default function MyPageScreen() {
               contentContainerStyle={styles.interestScroll}
             >
               {interestCategories.map((cat) => (
-                <Pressable key={cat.id} style={styles.interestChip}>
+                <TouchableOpacity key={cat.id} style={styles.interestChip} activeOpacity={0.7}>
                   <Text style={styles.interestText}>{cat.label}</Text>
-                </Pressable>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           ) : (
@@ -112,56 +119,16 @@ export default function MyPageScreen() {
 
         <DividingLine />
 
-        {/* 모임 내역 탭 */}
-        <View style={styles.commContainer}>
-          <Text style={styles.sectionTitle}>모임 내역</Text>
-          <View style={styles.tabContainer}>
-          </View>
-        </View>
+        {/* 다가오는 모임 리스트 섹션 */}
+        <CommUpcomingMeetList upcomingMeetList={upcomingMeetList} />
 
-        {/* 게시 섹션 */}
-        <View style={styles.commContainer}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>게시</Text>
-            <Pressable>
-              <IconPencil />
-            </Pressable>
-          </View>
-          {posts.map((post) => (
-            <View key={post.id} style={styles.postCard}>
-              <View style={styles.postAvatar} />
-              <View style={{ flex: 1 }}>
-                <Text style={styles.postTitle}>{post.title}</Text>
-                <View style={styles.postMetaRow}>
-                  <Text style={styles.postMeta}>사진</Text>
-                  <Text style={styles.postMeta}>·</Text>
-                  <Text style={styles.postMeta}>{post.meta}</Text>
-                </View>
-              </View>
-              <Text style={styles.postDate}>6.28</Text>
-            </View>
-          ))}
-        </View>
+        <DividingLine />
 
-        {/* 피드 섹션 */}
-        <View style={styles.commContainer}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>피드</Text>
-            <Pressable>
-              <IconPencil />
-            </Pressable>
-          </View>
-          <View style={styles.feedGrid}>
-            {feedImages.map((item) => (
-              <View key={item.id} style={styles.feedItem}>
-                <View style={styles.feedThumbnail} />
-                <Text style={styles.feedTitle} numberOfLines={2}>
-                  {item.title}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
+        {/* 모임 내역 추후 작업 */}
+
+        {/* 내가 쓴글 섹션 */}
+        <CommReviewList reviewList={reviewList} />
+
       </ScrollView>
 
       <CustomDialog
@@ -179,9 +146,6 @@ export default function MyPageScreen() {
   );
 }
 
-/** =========================
- * Styles
- * ========================= */
 const styles = StyleSheet.create({
   container: {
     flex            : 1,
@@ -197,6 +161,41 @@ const styles = StyleSheet.create({
     alignContent      : "center",
     marginBottom      : 20,
     paddingHorizontal : 16,
+  },
+  profileImageWrap: {
+    width             : 40,
+    height            : 40,
+    borderRadius      : 20,
+    alignItems        : 'center',
+    justifyContent    : 'center',
+    position          : 'relative',
+  },
+  profileImage: {
+    width             : 40,
+    height            : 40,
+    borderRadius      : 20,
+  },
+  profileCameraBadge: {
+    position          : 'absolute',
+    right             : -4,
+    bottom            : -2,
+  },
+  churchTeamRow: {
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    gap               : 8,
+    marginBottom      : 20,
+    paddingHorizontal : 16,
+  },
+  churchTeamChip: {
+    backgroundColor   : COLOR.COMM_GRAY_5,
+    borderRadius      : 999,
+    padding           : 8
+  },
+  churchTeamChipText: {
+    color             : COLOR.COLOR_6B6B6B,
+    fontSize          : 12,
+    fontFamily        : 'Pretendard-Medium',
   },
   nameRow: {
     flexDirection : "row",

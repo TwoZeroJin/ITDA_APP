@@ -1,5 +1,5 @@
 import { COMM_CONSTANTS, STORE_KEY } from "@/constants";
-import { BannerData, ChurchData, CodeInfo, FileInfo, MemberInfo, Token } from "@/types";
+import { BannerData, ChatData, ChurchData, CodeInfo, FileInfo, MemberInfo, Token } from "@/types";
 import { Platform } from "react-native";
 import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
@@ -136,40 +136,67 @@ async function saveMemberInfo(data?: MemberInfo & Token) {
         await saveSecureStore(STORE_KEY.MEM_ID,             String(data.mem_id));
         await saveSecureStore(STORE_KEY.MEM_NAME,           data.mem_name);
         await saveSecureStore(STORE_KEY.MEM_NICK,           data.mem_nick);
-        await saveSecureStore(STORE_KEY.MEM_TEAM,           data.mem_team);
         await saveSecureStore(STORE_KEY.MEM_GENDER,         data.mem_gender);
         await saveSecureStore(STORE_KEY.MEM_BIRTH,          data.mem_birth);
         await saveSecureStore(STORE_KEY.MEM_TELNO,          data.mem_telno);
         await saveSecureStore(STORE_KEY.MEM_ADDR,           data.mem_addr);
         await saveSecureStore(STORE_KEY.MEM_INTEREST,       data.mem_interest);
+        await saveSecureStore(STORE_KEY.MEM_IMAGE_URL,      data.mem_image_url);
+        await saveSecureStore(STORE_KEY.MEM_CHURCH_NM,      data.mem_church_nm);
+        await saveSecureStore(STORE_KEY.MEM_CHURCH_TM_NM,   data.mem_church_tm_nm);
+        await saveSecureStore(STORE_KEY.PUSH_SEND_YN,       data.push_send_yn);
+        await saveSecureStore(STORE_KEY.PUSH_TOKEN,         data.push_token);
+    }
+}
+async function saveMemberInfoForUpdate(data?: MemberInfo) {
+    if (data) {
+        await saveSecureStore(STORE_KEY.MEM_ID,             String(data.mem_id));
+        await saveSecureStore(STORE_KEY.MEM_NAME,           data.mem_name);
+        await saveSecureStore(STORE_KEY.MEM_NICK,           data.mem_nick);
+        await saveSecureStore(STORE_KEY.MEM_GENDER,         data.mem_gender);
+        await saveSecureStore(STORE_KEY.MEM_BIRTH,          data.mem_birth);
+        await saveSecureStore(STORE_KEY.MEM_TELNO,          data.mem_telno);
+        await saveSecureStore(STORE_KEY.MEM_ADDR,           data.mem_addr);
+        await saveSecureStore(STORE_KEY.MEM_INTEREST,       data.mem_interest);
+        await saveSecureStore(STORE_KEY.MEM_IMAGE_URL,      data.mem_image_url);
+        await saveSecureStore(STORE_KEY.MEM_CHURCH_NM,      data.mem_church_nm);
+        await saveSecureStore(STORE_KEY.MEM_CHURCH_TM_NM,   data.mem_church_tm_nm);
+        await saveSecureStore(STORE_KEY.PUSH_SEND_YN,       data.push_send_yn);
+        await saveSecureStore(STORE_KEY.PUSH_TOKEN,         data.push_token);
     }
 }
 /**
  * @returns 회원 정보
  */
 async function getMemberInfo(): Promise<MemberInfo> {
-    const mem_id        = await getSecureStore(STORE_KEY.MEM_ID);
-    const mem_name      = await getSecureStore(STORE_KEY.MEM_NAME);
-    const mem_nick      = await getSecureStore(STORE_KEY.MEM_NICK);
-    const mem_team      = await getSecureStore(STORE_KEY.MEM_TEAM);
-    const mem_gender    = await getSecureStore(STORE_KEY.MEM_GENDER);
-    const mem_birth     = await getSecureStore(STORE_KEY.MEM_BIRTH);
-    const mem_telno     = await getSecureStore(STORE_KEY.MEM_TELNO);
-    const mem_addr      = await getSecureStore(STORE_KEY.MEM_ADDR);
-    const mem_interest  = await getSecureStore(STORE_KEY.MEM_INTEREST);
-    
+    const mem_id            = await getSecureStore(STORE_KEY.MEM_ID);
+    const mem_name          = await getSecureStore(STORE_KEY.MEM_NAME);
+    const mem_nick          = await getSecureStore(STORE_KEY.MEM_NICK);
+    const mem_gender        = await getSecureStore(STORE_KEY.MEM_GENDER);
+    const mem_birth         = await getSecureStore(STORE_KEY.MEM_BIRTH);
+    const mem_telno         = await getSecureStore(STORE_KEY.MEM_TELNO);
+    const mem_addr          = await getSecureStore(STORE_KEY.MEM_ADDR);
+    const mem_interest      = await getSecureStore(STORE_KEY.MEM_INTEREST);
+    const mem_image_url     = await getSecureStore(STORE_KEY.MEM_IMAGE_URL);
+    const mem_church_nm     = await getSecureStore(STORE_KEY.MEM_CHURCH_NM);
+    const mem_church_tm_nm  = await getSecureStore(STORE_KEY.MEM_CHURCH_TM_NM);
+    const push_send_yn      = await getSecureStore(STORE_KEY.PUSH_SEND_YN);
+    const push_token        = await getSecureStore(STORE_KEY.PUSH_TOKEN);
+
     return {
-        mem_id          : Number(mem_id) || 0,
-        mem_name        : mem_name      || "",
-        mem_nick        : mem_nick      || "",
-        mem_team        : mem_team      || "",
-        mem_gender      : mem_gender    || "",
-        mem_birth       : mem_birth     || "",
-        mem_telno       : mem_telno     || "",
-        mem_addr        : mem_addr      || "",
-        mem_interest    : mem_interest  || "",
-        church_name     : "",
-        push_send_yn    : "",
+        mem_id              : Number(mem_id)    || 0,
+        mem_name            : mem_name          || "",
+        mem_nick            : mem_nick          || "",
+        mem_gender          : mem_gender        || "",
+        mem_birth           : mem_birth         || "",
+        mem_telno           : mem_telno         || "",
+        mem_addr            : mem_addr          || "",
+        mem_interest        : mem_interest      || "",
+        mem_image_url       : mem_image_url     || "",
+        mem_church_nm       : mem_church_nm     || "",
+        mem_church_tm_nm    : mem_church_tm_nm  || "",
+        push_send_yn        : push_send_yn      || "",
+        push_token          : push_token        || "",
     };
 }
 
@@ -292,5 +319,20 @@ function parseImageList(imgListJson?: string): FileInfo[] {
     }
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, setChurchList, getChurchList };
+// 채팅 메시지 페이로드를 Partial<ChatData> 타입으로 파싱하는 함수
+function parseChatPayload(raw: string): Partial<ChatData> {
+    try {
+        const parsed = JSON.parse(raw);
+        if (typeof parsed === 'object' && parsed !== null) {
+            return parsed as Partial<ChatData>;
+        }
+    }
+    catch {
+        // plain text payload
+    }
+
+    return { chat_msg: raw };
+}
+
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, setChurchList, getChurchList, saveMemberInfoForUpdate };
 

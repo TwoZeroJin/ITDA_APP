@@ -8,8 +8,8 @@ import { API_URL } from '@/constants';
  * @returns 회원가입 성공 여부
  */
 async function userSignup(body: SignupInfo): Promise<ApiResult<null>> {
-    const {data} = await axiosInstance.post(API_URL.USER_SIGNUP, body);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.USER_SIGNUP, body);
+  return data;
 }
 
 /**
@@ -19,8 +19,8 @@ async function userSignup(body: SignupInfo): Promise<ApiResult<null>> {
  */
 // async function userLogin(body: User & {expoPushToken?: string}): Promise<{accessToken: string}> {
 async function userLogin(body: User): Promise<ApiResult<MemberInfo & Token>> {
-    const {data} = await axiosInstance.post(API_URL.USER_LOGIN, body);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.USER_LOGIN, body);
+  return data;
 }
 
 /**
@@ -28,8 +28,8 @@ async function userLogin(body: User): Promise<ApiResult<MemberInfo & Token>> {
  * @returns 회원 정보 및 토큰
  */
 async function userAutoLogin(): Promise<ApiResult<MemberInfo & Token>> {
-    const { data } = await axiosInstance.post(API_URL.USER_AUTO_LOGIN);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.USER_AUTO_LOGIN);
+  return data;
 }
 
 /**
@@ -37,9 +37,8 @@ async function userAutoLogin(): Promise<ApiResult<MemberInfo & Token>> {
  * @returns 새로운 토큰 정보
  */
 async function userRefreshToken(): Promise<ApiResult<Token>> {
-    const { data } = await axiosInstance.post(API_URL.USER_REFRESH_TOKEN);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.USER_REFRESH_TOKEN);
+  return data;
 }
 
 export { userAutoLogin, userLogin, userSignup, userRefreshToken };
-

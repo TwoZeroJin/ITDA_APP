@@ -3,6 +3,8 @@ import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { TextInputProps } from 'react-native';
 
+const removeWhitespace = (value: string) => value.replace(/\s+/g, '');
+
 interface Props {
   submitBehavior? : TextInputProps['submitBehavior'];
   returnKeyType?  : TextInputProps['returnKeyType'];
@@ -32,7 +34,7 @@ function PasswordInput({submitBehavior = 'blurAndSubmit', returnKeyType = 'defau
                 returnKeyType={returnKeyType}
                 onSubmitEditing={() => returnKeyType == 'next' ? setFocus("passwordConfirm") : null}
                 value={value}
-                onChangeText={onChange}
+                onChangeText={(text) => onChange(removeWhitespace(text))}
                 error={error?.message}
             />
         )}

@@ -16,29 +16,6 @@ interface CommUpcomingMeetListProps {
  * 다가오는 모임 리스트 컴포넌트
  */
 export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingMeetListProps) {
-  const renderGridMeet = ({ item }: { item: MeetInfo }) => (
-      <View style={styles.meetCell}>
-        <Text style={styles.meetDay}>D-Day</Text>
-        <Text style={styles.meetSubTitle} numberOfLines={1} ellipsizeMode="tail">
-          {item.meet_name}
-        </Text>
-        <View style={styles.meetInfoRow}>
-          <IconMarker width={12} height={12} />
-          <Text style={styles.meetInfoText}>{item.place_addr}</Text>
-        </View>
-        <View style={styles.meetInfoRow}>
-          <IconMembers width={12} height={12} />
-          <Text style={styles.meetInfoText}>{item.apply_ratio}</Text>
-        </View>
-        <View style={styles.meetInfoRow}>
-          <Image
-            source={require('@/assets/testImages/test_image_profile.png')}
-            style={{ width: 20, height: 20, borderRadius: 10, marginEnd: 4 }}
-          />
-          <Text style={styles.meetHostText}>{item.mem_name}</Text>
-        </View>
-      </View>
-  );
 
   return (
     <View style={styles.container}>
@@ -99,6 +76,7 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
 const styles = StyleSheet.create({
   container: {
     padding         : 16,
+    backgroundColor : COLOR.COMM_GRAY_5,
   },
   titleContainer: {
     flexDirection   : 'row',
@@ -110,6 +88,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize        : 20,
     fontWeight      : 'bold',
+    fontFamily      : 'Pretendard-SemiBold',
   },
   listContainer: {
     flexDirection   : 'row',

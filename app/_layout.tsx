@@ -33,7 +33,13 @@ import Toast from 'react-native-toast-message';
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [loadedFonts] = useFonts({
-    // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    'Pretendard-Black'     : require('@/assets/fonts/Pretendard-Black.ttf'),
+    'Pretendard-Bold'      : require('@/assets/fonts/Pretendard-Bold.ttf'),
+    'Pretendard-Light'     : require('@/assets/fonts/Pretendard-Light.ttf'),
+    'Pretendard-Medium'    : require('@/assets/fonts/Pretendard-Medium.ttf'),
+    'Pretendard-Regular'   : require('@/assets/fonts/Pretendard-Regular.ttf'),
+    'Pretendard-SemiBold'  : require('@/assets/fonts/Pretendard-SemiBold.ttf'),
+    'Pretendard-Thin'      : require('@/assets/fonts/Pretendard-Thin.ttf'),
   });
   const insets = useSafeAreaInsets();
 
@@ -102,10 +108,6 @@ function RootNavigator() {
     enabled : mainData.data?.ret_code === 200 // API 순차처리를 위한 enabled 처리
   }); 
   
-
-  // console.log('autoLogin : ', autoLogin)
-
-
   return (
     <>
       <Stack>
@@ -133,8 +135,8 @@ function RootNavigator() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: COLOR.COMM_WHITE,
+    flex            : 1,
+    backgroundColor : COLOR.COMM_WHITE,
   },
   toastContainer: { 
     backgroundColor : COLOR.APP_MAIN, 

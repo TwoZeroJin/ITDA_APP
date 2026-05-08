@@ -7,8 +7,8 @@ import { API_URL } from '@/constants';
  * @returns 앱 기본 정보
  */
 async function mainEntry(): Promise<ApiResult<AppData>> {
-    const { data } = await axiosInstance.post(API_URL.MAIN_ENTRY);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.MAIN_ENTRY);
+  return data;
 }
 
 /**
@@ -16,10 +16,8 @@ async function mainEntry(): Promise<ApiResult<AppData>> {
  * @returns 메인화면 정보
  */
 async function mainData(): Promise<ApiResult<MainData>> {
-    const { data } = await axiosInstance.post(API_URL.MAIN_DATA);
-    return data;
+  const { data } = await axiosInstance.post(API_URL.MAIN_DATA);
+  return data;
 }
 
-
 export { mainEntry, mainData };
-

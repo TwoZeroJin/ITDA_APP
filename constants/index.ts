@@ -41,6 +41,7 @@ const COLOR = {
     COLOR_323232        : '#323232',
     COLOR_373737        : '#373737',
     COLOR_5537CD        : '#5537CD',
+    COLOR_6B6B6B        : '#6B6B6B',
 };
 
 /**
@@ -51,6 +52,9 @@ const QUERY_KEYS = {
     MAIN                    : "main",
     MAIN_ENTRY              : "main_entry",
     MAIN_DATA               : "main_data",
+    MEMBER                  : "member",
+    MEMBER_DETAIL           : "member_detail",
+    MEMBER_UPDATE           : "member_update",
     CHAT                    : "chat",
     CHAT_LIST               : "chat_list",
     CHAT_PAGING             : "chat_paging",
@@ -92,6 +96,11 @@ const STORE_KEY = {
     MEM_TELNO           : "mem_telno",
     MEM_ADDR            : "mem_addr",
     MEM_INTEREST        : "mem_interest",
+    MEM_IMAGE_URL       : "mem_image_url",
+    MEM_CHURCH_NM       : "mem_church_nm",
+    MEM_CHURCH_TM_NM    : "mem_church_tm_nm",
+    PUSH_SEND_YN        : "push_send_yn",
+    PUSH_TOKEN          : "push_token",
     DEVICE_UID          : "device_uid",
 }
 
@@ -121,6 +130,8 @@ const API_URL = {
     USER_LOGIN          : "/user/login",
     USER_AUTO_LOGIN     : "/user/auto_login",
     USER_REFRESH_TOKEN  : "/user/refresh_token",
+    MEMBER_DETAIL       : "/member/detail",
+    MEMBER_UPDATE       : "/member/update",
     CHAT_LIST           : "/chat/list",
     CHAT_VIEW           : "/chat/view",
     CHAT_INSERT         : "/chat/insert",

@@ -61,8 +61,8 @@ export default function CommReviewList({ reviewList }: CommReviewListProps) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom       : 16,
-    paddingTop          : 16,
+    paddingVertical     : 16,
+    paddingHorizontal   : 8,
     backgroundColor     : COLOR.COMM_WHITE,
     alignItems          : 'center',
   },
@@ -91,14 +91,13 @@ const styles = StyleSheet.create({
     color               : COLOR.TEXT_2F2F2F,
   },
   row: {
-    justifyContent      : 'center',
+    justifyContent      : 'space-between',
     width               : '100%',
     height              : 250,
   },
   card: {
-    width               : '48%',
+    width               : '50%',
     height              : 150,
-    alignItems          : 'center',
   },
   image: {
     width               : '100%',

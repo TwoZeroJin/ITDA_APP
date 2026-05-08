@@ -38,8 +38,8 @@ export default function FeedbackCreateScreen() {
 
   const onSubmit = (formValues: FeedbackData) => {
     feedbackInsert.mutate(formValues, {
-      onSuccess: () => {
-          showToast({ text1: '피드백이 등록되었습니다.' });
+      onSuccess: (result) => {
+          showToast({ text1: result.ret_code === 200 ? '피드백이 등록되었습니다.' : '피드백 등록에 실패했습니다.' });
           router.back();
         },
         onError: () => {

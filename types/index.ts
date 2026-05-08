@@ -83,25 +83,39 @@ interface SignupInfo extends User {
   mem_interest?     : string;
   mem_church_id?    : number;
   mem_church_tm_nm? : string;
+  mem_image_id?     : string;
+  new_image_name?   : string;
 }
 
 /**
  * 회원 정보
  */
 interface MemberInfo {
-  mem_id        : number;
-  mem_name      : string;
-  mem_nick?     : string;
-  mem_gender    : string;
-  mem_team      : string;
-  mem_birth     : string;
-  mem_telno     : string;
-  mem_addr?     : string;
-  mem_interest? : string;
-  church_name   : string;
-  push_send_yn  : string;
-  push_token?   : string;
-  mem_image?    : string;
+  mem_id?           : number;
+  mem_name          : string;
+  mem_nick?         : string;
+  mem_gender        : string;
+  mem_birth?        : string;
+  mem_telno?        : string;
+  mem_addr?         : string;
+  mem_interest?     : string;
+  mem_church_id?    : number;
+  mem_church_nm?    : string;
+  mem_church_tm_nm? : string;
+  push_send_yn      : string;
+  push_token?       : string;
+  mem_image_url?    : string;
+  mem_image_id?     : string;
+  new_image_name?   : string;
+}
+
+/**
+ * 회원 상세 정보 (다가올 모임, 참여 내역, 후기 내역 등)
+ */
+interface MemberDetail extends MemberInfo {
+  upcoming_meet_list?   : MeetInfo[];
+  meet_history_list?    : MeetInfo[];
+  review_list?          : MeetReview[];
 }
 
 /**
@@ -154,7 +168,9 @@ interface MeetInfo {
  * 소모임 신청
  */
 interface MeetApply {
-
+  meet_id       : number;
+  meet_answer?  : string;
+  use_stat      : string;
 }
 
 /**
@@ -184,13 +200,13 @@ interface MeetReview {
  * 후기작성가능한 모임 정보 조회
  */
 interface MyMeetInfo {
-  meet_id?       : number;
-  meet_name     : string;
-  place_addr    : string;
-  mem_id        : number;
-  mem_name      : string;
-  apply_ratio   : string;
-  meet_image_url   : string;
+  meet_id?        : number;
+  meet_name       : string;
+  place_addr      : string;
+  mem_id          : number;
+  mem_name        : string;
+  apply_ratio     : string;
+  meet_image_url  : string;
 }
 
 /**
@@ -209,9 +225,10 @@ interface GroupInfo {
 /**
  * 공동체 회원 매핑
  */
-interface GroupMember {
-  group_id    : number;
-  mem_id      : number;
+interface GroupApply {
+  group_id      : number;
+  group_answer? : string;
+  use_stat      : string;
 }
 
 /**
@@ -276,4 +293,4 @@ interface BannerData {
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupMember, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData, MainData };
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData, MainData };

@@ -23,4 +23,3 @@ async function imagesUpload(form: FormData, utype = '0', ukey = '0'): Promise<Ap
 }
 
 export { imageUpload, imagesUpload };
-
