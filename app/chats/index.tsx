@@ -6,7 +6,7 @@ import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useEffect, useRef, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, NativeSyntheticEvent, NativeScrollEvent, ActivityIndicator } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
 
 const formatTimeText = (sourceDate?: string) => {
@@ -73,9 +73,8 @@ export default function IndexScreen() {
   const topic = room_id;
   const mqttUtil = MqttUtil;
   const flatListRef = useRef<FlatList<ChatData>>(null);
-  const hasScrolledInitial = useRef(false);
-  const topLoadReadyRef = useRef(true);
-
+  const hasUserDraggedRef = useRef(false);
+  const onEndReachedCalledDuringMomentum = useRef(true);
   const chat_id = Number(room_id.substring(room_id.lastIndexOf("_") + 1));
   const chat_type: ChatData['chat_type'] = room_type === "MEET" ? 'MEET' : room_type === 'GROUP' ? 'GROUP' : 'MEMBER';
 
@@ -99,18 +98,25 @@ export default function IndexScreen() {
   }, [results, realtimeMessages]);
 
   useEffect(() => {
-    if (!messages.length || hasScrolledInitial.current) {
-      return;
-    }
-
-  }, [messages.length]);
-
-  useEffect(() => {
     if (!messages.length) {
       return;
     }
 
   }, [realtimeMessages.length]);
+
+  // 채팅 메시지 맨위로 올릴 경우 추가 데이터 로드
+  const handleEndReached = () => {
+    if (!hasUserDraggedRef.current) {
+      return;
+    }
+    if (onEndReachedCalledDuringMomentum.current) {
+      return;
+    }
+    if (hasNextPage && !isFetchingNextPage) {
+      onEndReachedCalledDuringMomentum.current = true;
+      fetchNextPage();
+    }
+  };
 
   const msgReceiveCallback = (msg:string) => {
     const payload = parseChatPayload(msg);
@@ -229,19 +235,6 @@ export default function IndexScreen() {
     );
   };
 
-  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const offsetY = event.nativeEvent.contentOffset.y;
-
-    if (offsetY > 100) {
-      topLoadReadyRef.current = true;
-    }
-
-    if (offsetY <= 40 && topLoadReadyRef.current && hasNextPage && !isFetchingNextPage) {
-      topLoadReadyRef.current = false;
-      fetchNextPage();
-    }
-  };
-
   return (
     <>
       <KeyboardAvoidingView
@@ -264,8 +257,14 @@ export default function IndexScreen() {
             renderItem={renderMessage}
             contentContainerStyle={styles.messageListContent}
             showsVerticalScrollIndicator={false}
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
+            onScrollBeginDrag={() => {
+              hasUserDraggedRef.current = true;
+            }}
+            onMomentumScrollBegin={() => {
+              onEndReachedCalledDuringMomentum.current = false;
+            }}
+            onEndReached={handleEndReached}
+            onEndReachedThreshold={0.2}
             ListHeaderComponent={
               isFetchingNextPage ? (
                 <ActivityIndicator size="small" color={COLOR.APP_ACTIVE_3} style={styles.topLoading} />

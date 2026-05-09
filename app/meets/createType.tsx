@@ -6,16 +6,30 @@ import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
 import IconSocial from '@/assets/images/icon_social.svg';
 import IconClub from '@/assets/images/icon_club.svg';
-import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";
 
 /**
  * 모임 생성 - 모임 유형 세부 선택 화면(소셜링 - 일반, 클럽 - 일반/클럽 클래스 - 일반)
  */
-export default function MeetCreateSubTypeScreen() {
-  const params = useRoute();
-  const { meet } = (params.params ?? {}) as { meet?: string };
+export default function MeetCreateTypeScreen() {
   const [meetType, setMeetType] = useState<string | null>(null);
+
+  const MEET_TYPE_OPTIONS = [
+    {
+      value       : COMM_CONSTANTS.MEET_TYPE_NORMAL,
+      title       : '일반 소셜링',
+      description : '일회성 모임으로 번개처럼 가볍게 만나봐요.',
+      Icon        : IconSocial,
+      color       : COLOR.COLOR_SOCIAL,
+    },
+    {
+      value       : COMM_CONSTANTS.MEET_TYPE_GROUP,
+      title       : '클럽 소셜링',
+      description : '정기적으로 만나면서 관계를 함께 만들어가요.',
+      Icon        : IconClub,
+      color       : COLOR.COLOR_CLUB,
+    },
+  ];
 
   return (
     <View style={styles.container}>
@@ -27,23 +41,18 @@ export default function MeetCreateSubTypeScreen() {
         </View>
 
         <View style={styles.meetTypeContainer}>
-          <TouchableOpacity style={[styles.meetContainer, meetType === COMM_CONSTANTS.MEET_TYPE_NORMAL && styles.meetSelected]}
-            onPress={() => setMeetType(COMM_CONSTANTS.MEET_TYPE_NORMAL)}>
-            <IconSocial width={20} color={meetType !== COMM_CONSTANTS.MEET_TYPE_NORMAL ? COLOR.COLOR_SOCIAL : COLOR.COMM_WHITE} />
-            <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.meetTypeTitle, meetType === COMM_CONSTANTS.MEET_TYPE_NORMAL && styles.meetSelectedText]}>일반 소셜링</Text>
-              <Text style={[styles.meetTypeDesc, meetType === COMM_CONSTANTS.MEET_TYPE_NORMAL && styles.meetSelectedText]}>일회성 모임으로 번개처럼 가볍게 만나봐요.</Text>
-            </View>
-          </TouchableOpacity >
-          {meet !== COMM_CONSTANTS.MEET_SOCIAL && <TouchableOpacity style={[styles.meetContainer, meetType === COMM_CONSTANTS.MEET_TYPE_GROUP && styles.meetSelected]}
-            onPress={() => setMeetType(COMM_CONSTANTS.MEET_TYPE_GROUP)}>
-            <IconClub width={20} color={meetType !== COMM_CONSTANTS.MEET_TYPE_GROUP ? COLOR.COLOR_CLUB : COLOR.COMM_WHITE} />
-            <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.meetTypeTitle, meetType === COMM_CONSTANTS.MEET_TYPE_GROUP && styles.meetSelectedText]}>클럽 소셜링</Text>
-              <Text style={[styles.meetTypeDesc, meetType === COMM_CONSTANTS.MEET_TYPE_GROUP && styles.meetSelectedText]}>정기적으로 만나면서 관계를 함께 만들어가요.</Text>
-            </View>
-          </TouchableOpacity>}
-
+          {MEET_TYPE_OPTIONS.map(({ value, title, description, Icon, color }) => (
+            <TouchableOpacity
+              key={value}
+              style={[styles.meetContainer, meetType === value && styles.meetSelected]}
+              onPress={() => setMeetType(value)}>
+              <Icon width={20} color={meetType !== value ? color : COLOR.COMM_WHITE} />
+              <View style={styles.meetTypeSubContainer}>
+                <Text style={[styles.meetTypeTitle, meetType === value && styles.meetSelectedText]}>{title}</Text>
+                <Text style={[styles.meetTypeDesc, meetType === value && styles.meetSelectedText]}>{description}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
 
         <CommBottomButton label="다음" onPress={() => meetType && router.navigate({
@@ -60,56 +69,56 @@ export default function MeetCreateSubTypeScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex              : 1,
   },
   titleContainer: {
-    marginTop: 12,
-    marginBottom: 30,
-    paddingStart: 16,
+    marginTop         : 12,
+    marginBottom      : 30,
+    paddingStart      : 16,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-    marginBottom: 16,
+    fontSize          : 22,
+    fontWeight        : 'bold',
+    color             : COLOR.COMM_BLACK,
+    marginBottom      : 16,
   },
   subtitle: {
-    fontSize: 16,
-    color: COLOR.COMM_GRAY_2,
+    fontSize          : 16,
+    color             : COLOR.COMM_GRAY_2,
   },
   meetTypeContainer: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-    gap: 16,
+    marginHorizontal  : 16,
+    marginBottom      : 24,
+    gap               : 16,
   },
   meetTypeSubContainer: {
-    marginStart: 6,
+    marginStart       : 6,
   },
   meetContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: COLOR.COMM_GRAY_6,
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingStart: 28,
-    paddingVertical: 16,
-    gap: 12,
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    borderColor       : COLOR.COMM_GRAY_6,
+    borderRadius      : 8,
+    borderWidth       : 1,
+    paddingStart      : 28,
+    paddingVertical   : 16,
+    gap               : 12,
   },
   meetTypeTitle: {
-    fontSize: 16,
-    fontWeight: 'bold', 
-    marginBottom: 8,
+    fontSize          : 16,
+    fontWeight        : 'bold', 
+    marginBottom      : 8,
   },
   meetTypeDesc: {
-    fontSize: 14,
-    color: COLOR.COMM_GRAY_2,
+    fontSize          : 14,
+    color             : COLOR.COMM_GRAY_2,
   },
   meetSelected: {
-    borderColor: COLOR.APP_MAIN,
-    borderWidth: 1,
-    backgroundColor: COLOR.APP_ACTIVE_4,
+    borderColor       : COLOR.APP_MAIN,
+    borderWidth       : 1,
+    backgroundColor   : COLOR.APP_ACTIVE_4,
   },
   meetSelectedText: {
-    color: COLOR.COMM_WHITE,
+    color             : COLOR.COMM_WHITE,
   },
 });

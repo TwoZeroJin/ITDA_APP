@@ -8,6 +8,30 @@ import IconSocial from '@/assets/images/icon_social.svg';
 import IconClub from '@/assets/images/icon_club.svg';
 import IconClass from '@/assets/images/icon_class.svg';
 
+const MEET_OPTIONS = [
+  {
+    value       : COMM_CONSTANTS.MEET_SOCIAL,
+    title       : '소셜링',
+    description : '일회성 모임으로 번개처럼 가볍게 만나봐요.',
+    color       : COLOR.COLOR_SOCIAL,
+    Icon        : IconSocial,
+  },
+  {
+    value       : COMM_CONSTANTS.MEET_CLUB,
+    title       : '클럽',
+    description : '정기적으로 만나면서 관계를 함께 만들어가요.',
+    color       : COLOR.COLOR_CLUB,
+    Icon        : IconClub,
+  },
+  {
+    value       : COMM_CONSTANTS.MEET_CLASS,
+    title       : '클래스',
+    description : '클래스를 열고, 함께 배우는 경험을 나눠보세요.',
+    color       : COLOR.COLOR_CLASS,
+    Icon        : IconClass,
+  },
+] as const;
+
 /**
  * 모임 생성 - 모임 유형 선택 화면(소셜링/클럽/클래스)
  */
@@ -24,36 +48,28 @@ export default function MeetCreateScreen() {
         </View>
 
         <View style={styles.meetTypeContainer}>
-          <TouchableOpacity style={[styles.meetContainer, meet === COMM_CONSTANTS.MEET_SOCIAL && styles.meetSelected]}
-            onPress={() => setMeet(COMM_CONSTANTS.MEET_SOCIAL)}>
-            <IconSocial width={20} color={meet !== COMM_CONSTANTS.MEET_SOCIAL ? COLOR.COLOR_SOCIAL : COLOR.COMM_WHITE} />
-            <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.meetTypeTitle, meet === COMM_CONSTANTS.MEET_SOCIAL && styles.meetSelectedText]}>소셜링</Text>
-              <Text style={[styles.meetTypeDesc, meet === COMM_CONSTANTS.MEET_SOCIAL && styles.meetSelectedText]}>일회성 모임으로 번개처럼 가볍게 만나봐요.</Text>
-            </View>
-          </TouchableOpacity >
-          <TouchableOpacity style={[styles.meetContainer, meet === COMM_CONSTANTS.MEET_CLUB && styles.meetSelected]}
-            onPress={() => setMeet(COMM_CONSTANTS.MEET_CLUB)}>
-            <IconClub width={20} color={meet !== COMM_CONSTANTS.MEET_CLUB ? COLOR.COLOR_CLUB : COLOR.COMM_WHITE} />
-            <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.meetTypeTitle, meet === COMM_CONSTANTS.MEET_CLUB && styles.meetSelectedText]}>클럽</Text>
-              <Text style={[styles.meetTypeDesc, meet === COMM_CONSTANTS.MEET_CLUB && styles.meetSelectedText]}>정기적으로 만나면서 관계를 함께 만들어가요.</Text>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.meetContainer, meet === COMM_CONSTANTS.MEET_CLASS && styles.meetSelected]}
-            onPress={() => setMeet(COMM_CONSTANTS.MEET_CLASS)}>
-            <IconClass width={20} color={meet !== COMM_CONSTANTS.MEET_CLASS ? COLOR.COLOR_CLASS : COLOR.COMM_WHITE} />
-            <View style={styles.meetTypeSubContainer}>
-              <Text style={[styles.meetTypeTitle, meet === COMM_CONSTANTS.MEET_CLASS && styles.meetSelectedText]}>클래스</Text>
-              <Text style={[styles.meetTypeDesc, meet === COMM_CONSTANTS.MEET_CLASS && styles.meetSelectedText]}>클래스를 열고, 함께 배우는 경험을 나눠보세요.</Text>
-            </View>
-          </TouchableOpacity>
+          {MEET_OPTIONS.map(({ value, title, description, color, Icon }) => {
+            const isSelected = meet === value;
+
+            return (
+              <TouchableOpacity
+                key={value}
+                style={[styles.meetContainer, isSelected && styles.meetSelected]}
+                onPress={() => setMeet(value)}
+              >
+                <Icon width={20} color={isSelected ? COLOR.COMM_WHITE : color} />
+                <View style={styles.meetTypeSubContainer}>
+                  <Text style={[styles.meetTypeTitle, isSelected && styles.meetSelectedText]}>{title}</Text>
+                  <Text style={[styles.meetTypeDesc, isSelected && styles.meetSelectedText]}>{description}</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
-        <CommBottomButton label="다음" onPress={() => meet && router.navigate({
-            pathname: '/meets/createType',
-            params: { meet: meet },
-          })}
+        <CommBottomButton label="다음" onPress={() => meet && router.navigate(
+            meet === COMM_CONSTANTS.MEET_CLUB ? '/groups/createDetail' : '/meets/createType',
+          )}
           disabled={!meet}/>
     </View>
   );
@@ -61,56 +77,56 @@ export default function MeetCreateScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex              : 1,
   },
   titleContainer: {
-    marginTop: 12,
-    marginBottom: 30,
-    paddingStart: 16,
+    marginTop         : 12,
+    marginBottom      : 30,
+    paddingStart      : 16,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-    marginBottom: 16,
+    fontSize          : 22,
+    fontWeight        : 'bold',
+    color             : COLOR.COMM_BLACK,
+    marginBottom      : 16,
   },
   subtitle: {
-    fontSize: 16,
-    color: COLOR.COMM_GRAY_2,
+    fontSize          : 16,
+    color             : COLOR.COMM_GRAY_2,
   },
   meetTypeContainer: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-    gap: 16,
+    marginHorizontal  : 16,
+    marginBottom      : 24,
+    gap               : 16,
   },
   meetTypeSubContainer: {
-    marginStart: 6,
+    marginStart       : 6,
   },
   meetContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: COLOR.COMM_GRAY_6,
-    borderRadius: 8,
-    borderWidth: 1,
-    paddingStart: 28,
-    paddingVertical: 16,
-    gap: 12,
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    borderColor       : COLOR.COMM_GRAY_6,
+    borderRadius      : 8,
+    borderWidth       : 1,
+    paddingStart      : 28,
+    paddingVertical   : 16,
+    gap               : 12,
   },
   meetTypeTitle: {
-    fontSize: 16,
-    fontWeight: 'bold', 
-    marginBottom: 8,
+    fontSize          : 16,
+    fontWeight        : 'bold', 
+    marginBottom      : 8,
   },
   meetTypeDesc: {
-    fontSize: 14,
-    color: COLOR.COMM_GRAY_2,
+    fontSize          : 14,
+    color             : COLOR.COMM_GRAY_2,
   },
   meetSelected: {
-    borderColor: COLOR.APP_MAIN,
-    borderWidth: 1,
-    backgroundColor: COLOR.APP_ACTIVE_4,
+    borderColor       : COLOR.APP_MAIN,
+    borderWidth       : 1,
+    backgroundColor   : COLOR.APP_ACTIVE_4,
   },
   meetSelectedText: {
-    color: COLOR.COMM_WHITE,
+    color             : COLOR.COMM_WHITE,
   },
 });

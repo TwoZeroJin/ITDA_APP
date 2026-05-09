@@ -53,7 +53,7 @@ export default function MeetCreateDetailScreen() {
         {/* 소모임 생성 타이틀 */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{'어떻게 모임원을 모을까요?'}</Text>
-          <Text style={styles.subtitle}>{`${prevMeetInfo.meet_question === 'social' ? '일반 소셜링' : '클럽 소셜링'}을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
+          <Text style={styles.subtitle}>{`${prevMeetInfo.meet_type === COMM_CONSTANTS.MEET_TYPE_NORMAL ? '일반 소셜링' : '클럽 소셜링'}을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
         </View>
 
         <DividingLine />

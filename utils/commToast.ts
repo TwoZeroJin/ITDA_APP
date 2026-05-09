@@ -1,10 +1,13 @@
 import Toast from 'react-native-toast-message';
 
+/**
+ * 공통 토스트 메시지 표시 함수
+ */
 export const showToast = ({
   type = 'customToast',
   text1,
   text2,
-  visibilityTime = 3000,
+  visibilityTime = 2000,
   position = 'top',
   onPress = () => Toast.hide(),
   props = {},

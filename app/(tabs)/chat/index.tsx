@@ -5,7 +5,7 @@ import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { FlatList, Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type ChatCategory = "all" | "social" | "club" | "class";
 
@@ -32,18 +32,6 @@ function mapRoomTypeToCategory(roomType?: string): ChatCategory {
   }
 
   return "social";
-}
-
-function getRoomImageByCategory(category: ChatCategory): ImageSourcePropType {
-  if (category === "club") {
-    return require("@/assets/testImages/test_recommend_image1.png");
-  }
-
-  if (category === "class") {
-    return require("@/assets/testImages/test_review_image1.png");
-  }
-
-  return require("@/assets/testImages/test_recommend_image2.png");
 }
 
 function formatUpdatedText(dateText?: string): string {
@@ -77,6 +65,7 @@ function formatUpdatedText(dateText?: string): string {
 
 export default function ChatListScreen() {
   const [activeCategory, setActiveCategory] = useState<ChatCategory>("all");
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const { setLoading } = useLoading();
   const hasHandledInitialLoadingRef = useRef(false);
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatRoomListPaging({
@@ -144,10 +133,11 @@ export default function ChatListScreen() {
   };
 
   const renderChatRoom = ({ item }: { item: RoomData }) => {
-    const roomCategory = mapRoomTypeToCategory(item.room_type);
-    const roomImage = getRoomImageByCategory(roomCategory);
     const updatedText = formatUpdatedText(item.mod_sdate || item.reg_sdate);
     const messagePreview = item.last_msg || "대화를 시작해 보세요.";
+    const roomImageSource = item.thumb_url && !imageErrors[item.room_id]
+      ? { uri: item.thumb_url }
+      : require('@/assets/images/no_image.png');
 
     return (
     <TouchableOpacity
@@ -164,7 +154,11 @@ export default function ChatListScreen() {
       }
     > 
       <View style={styles.roomImageWrapper}>
-        <Image source={roomImage} style={styles.roomImage} />
+        <Image
+          source={roomImageSource}
+          style={styles.roomImage}
+          onError={() => setImageErrors((prev) => ({ ...prev, [item.room_id]: true }))}
+        />
       </View>
 
       <View style={styles.chatTextContainer}>
