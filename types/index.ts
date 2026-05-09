@@ -262,8 +262,8 @@ interface RoomData {
   mem_id          : number;
   reg_sdate       : string;
   mod_sdate       : string;
-  room_image_url? : string;
   last_msg?       : string;
+  thumb_url?      : string;
 }
 /**
  * 채팅 정보
