@@ -10,12 +10,22 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMeetListPaging } from "@/hooks/queries/useMeet";
 import { SearchParams, MeetInfo } from '@/types';
 import CategoryListLayout from '@/components/CategoryListLayout';
+import DividingLine from '@/components/DividingLine';
 
-export default function Community() {
+
+export default function Meet() {
   const [activeType, setActiveType] = useState<'social' | 'club' | 'class'>('social');
   const [refreshing, setRefreshing] = useState(false);
   const [myMemId, setMyMemId] = useState<number>(0);
-  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } = useMeetListPaging({
+
+  const { 
+    results, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage, 
+    isLoading, 
+    refetch 
+  } = useMeetListPaging({
     page_no : 0,
     page_size : 5,
     sch_condition: activeType,
@@ -75,17 +85,22 @@ export default function Community() {
       {/* 카테고리 목록 출력 */}
       {/* <CategoryListLayout /> */}
 
+        {/* CommunityListItem은 사진의 카드 레이아웃을 구현한 컴포넌트여야 합니다. */}
+        {/*클릭 시 데이터를 가지고 작성 화면으로 이동*/}
+        {/*  console.log('아이템 클릭:상세 화면으로 이동', item), // 클릭된 아이템 로그*/}
         <FlatList 
           data={results}
-          // CommunityListItem은 사진의 카드 레이아웃을 구현한 컴포넌트여야 합니다.
           renderItem={({ item }) => (
             // <TouchableOpacity 
-            //   // 클릭 시 데이터를 가지고 작성 화면으로 이동
-            //   onPress={() => router.navigate({
-            //     console.log('아이템 클릭:상세 화면으로 이동', item), // 클릭된 아이템 로그
-            //     pathname: '/communities/writeFeedback',
-            //     params: { data: JSON.stringify(item) }
-            //   })}
+            //   onPress={() => {
+            //     console.log('클릭된 아이템 ID:', item.meet_id);
+                
+            //     router.navigate({
+            //     pathname: '/meets/meetDetailPage',
+            //     params: {
+            //       meetId: item.meet_id,
+            //     },
+            //   })}}
             // >
               <CommunityMeet data={item as MeetInfo} type='MEET'/>
             // </TouchableOpacity>
@@ -99,7 +114,7 @@ export default function Community() {
             <View style={styles.headerGroup}>
               <SearchInput />
               <CategoryListLayout />
-              <View style={{ height: 10, backgroundColor: COLOR.COMM_GRAY_4 }} />
+              <DividingLine />
               <View style={styles.titleWrapper}>
                 <Text style={styles.listTitle}>BEST 10 소셜링</Text>
               </View>

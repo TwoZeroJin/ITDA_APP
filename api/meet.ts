@@ -1,4 +1,4 @@
-import { ApiResult, MeetInfo, SearchParams } from '@/types';
+import { ApiResult, MeetInfo, SearchParams, MeetReview, MemberInfo } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
@@ -16,7 +16,15 @@ async function meetView(meetId: number): Promise<ApiResult<MeetInfo>> {
   const { data } = await axiosInstance.post(API_URL.MEET_VIEW, { meet_id : meetId });
   return data;
 }
-
+/**
+ * 소셜링 참여자 조회
+ * @param meetId 
+ * @returns 소셜링 정보
+ */
+async function meetMemberList(meetId: number): Promise<ApiResult<MemberInfo[]>> {
+    const { data } = await axiosInstance.post(API_URL.MEET_MEMBER_LIST, { meet_id : meetId });
+    return data;
+}
 /**
  * 소셜링 등록
  * @param body 소셜링 정보
@@ -65,4 +73,5 @@ async function meetConfirm(): Promise<ApiResult<null>> {
   return data;
 }
 
-export { meetList, meetView, meetInsert, meetUpdate, meetDelete, meetApply, meetConfirm };
+export {meetList, meetView, meetMemberList, meetInsert, meetUpdate, meetDelete, meetApply, meetConfirm };
+

@@ -62,6 +62,9 @@ const QUERY_KEYS = {
     MEET                    : "meet",
     MEET_PAGING             : "meet_paging",
     MEET_VIEW               : "meet_view",
+    MEET_MEMBER_LIST        : "meet_member_list",
+    MEET_COMMENT_LIST       : "meet_comment_list",
+    MEET_REVIEW_LIST    : "meet_review_list",
     MEET_INSERT             : "meet_insert",
     GROUP                   : "group",
     GROUP_PAGING            : "group_paging",
@@ -143,9 +146,11 @@ const API_URL = {
     MEET_DELETE         : "/meet/delete",
     MEET_APPLY          : "/meet/apply",
     MEET_CONFIRM        : "/meet/confirm",
+    MEET_DETAIL         : "/meet/view",
+    MEET_MEMBER_LIST    : "/meet/member_list",
     REVIEW_LIST         : "/review/list",
     REVIEW_INSERT       : "/review/insert",
-    MY_MEET_LIST_NO_REVIEW : "/review/myMeetListNoReview",
+    MY_MEET_LIST_NO_REVIEW : "/review/my_meet_list_no_review",
     REVIEW_DELETE       : "/review/delete", // 추가된 후기 삭제 API
     REVIEW_UPDATE       : "/review/update", // 추가된 후기 수정 API
     GROUP_LIST          : "/group/list",

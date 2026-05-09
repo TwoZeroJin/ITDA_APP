@@ -199,7 +199,7 @@ export default function CommunityFeed({data}: communityFeedProps) {
           </Text>
 
           {/* ✅ 3. '더보기' 버튼: 2줄 이상일 가능성이 있고 아직 펼쳐지지 않았을 때만 표시 */}
-          {!isExpanded && data.review_content.length > 40 && (
+          {!isExpanded && (
             <TouchableOpacity 
               onPress={() => setIsExpanded(true)}
               style={styles.moreButton}
