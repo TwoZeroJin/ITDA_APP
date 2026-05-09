@@ -33,27 +33,38 @@ export default function CommunityMeet({data, type}: communityMeetProps) {
   // ✅ 클릭 핸들러 함수
   const handlePress = () => {
     // 현재 경로가 이미 'chooseMeet'을 포함하고 있다면 이동하지 않음
-    if (!pathname.includes('chooseMeet')) {
-      return; 
-    }
+    console.log('community meet 아이템 클릭:상세 화면으로 이동', pathname); // 클릭된 아이템 로그
 
-    router.push({
-      pathname: '/communities/writeFeedback',
-      params: { data: JSON.stringify(data) },
-    });
+  if (pathname === '/communities/chooseMeet') {
+      router.push({
+        pathname: '/communities/writeFeedback',
+        params: { data: JSON.stringify(data) },
+      });
+    }     
+    else {
+      router.push({
+      pathname: '/meets/meetDetailPage',
+      params: {
+        meetId: data.meet_id,
+      }});
+    }
+    
+
   };
 
   return (
         <View style={styles.recommendContainer}>
             <TouchableOpacity onPress={handlePress}
-            activeOpacity={pathname.includes('writeFeedback') ? 1 : 0.7} // 이미 그 페이지면 클릭 피드백 제거
+            activeOpacity={pathname.includes('writeFeedback') ? 1 : 0.7} 
             >
+              {/* 이미 그 페이지면 클릭 피드백 제거 */}
               <View style={styles.recommendListContainer}>
                 {/* 추천 소셜링 리스트 (3개) */}
-                <View style={[styles.recommendItemContainer, { backgroundColor: dynamicBackgroundColor }]}>                  {/* 이미지, 좋아요 버튼 */}
+                <View style={[styles.recommendItemContainer, { backgroundColor: dynamicBackgroundColor }]}>                  
+                  {/* 이미지, 좋아요 버튼 */}
                   <View>
                     <ImageBackground
-                      source={data.meet_image_url? { uri: data.meet_image_url } : require('@/assets/testImages/test_recommend_image2.png')}
+                      source={data.thumb_url? { uri: data.thumb_url } : require('@/assets/testImages/test_recommend_image2.png')}
                       style={styles.recommendItemImage}
                       imageStyle={styles.recommendImage}
                     >

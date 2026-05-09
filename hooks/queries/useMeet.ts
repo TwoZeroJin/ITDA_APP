@@ -1,9 +1,9 @@
-import { meetInsert, meetList } from "@/api/meet";
+import { meetInsert, meetList, meetMemberList, meetView,  } from "@/api/meet";
 import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { MeetInfo, SearchParams } from "@/types";
-import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 // 모임 목록 조회 (무한 스크롤)
 function useMeetListPaging(searchParams: SearchParams) {
@@ -44,4 +44,34 @@ function useMeetInsert() {
   });
 }
 
-export { useMeetListPaging, useMeetInsert };
+//3. 소모임 상세 조회
+function useMeetDetailView(meetId: number) {
+
+  const query = useQuery({
+    // queryKey에 params를 넣어 조건이 바뀔 때마다 다시 조회되도록 합니다.
+    queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_VIEW, meetId],
+    queryFn: () => meetView(meetId),
+  });  
+  // useInfiniteQuery의 'pages' 구조가 아니므로 바로 data를 추출합니다.
+  // 서버 응답 구조가 { data: [...] } 형태라면 아래와 같이 가공합니다.
+  const results = query.data?.data;
+
+  return { ...query, results };    
+}
+
+//3. 소모임에 참여하는 멤버 조회
+function useMeetMemberList(meetId: number) {
+
+  const query = useQuery({
+    // queryKey에 params를 넣어 조건이 바뀔 때마다 다시 조회되도록 합니다.
+    queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_MEMBER_LIST, meetId],
+    queryFn: () => meetMemberList(meetId),
+  });  
+  // useInfiniteQuery의 'pages' 구조가 아니므로 바로 data를 추출합니다.
+  // 서버 응답 구조가 { data: [...] } 형태라면 아래와 같이 가공합니다.
+  const results = query.data?.data;
+
+  return { ...query, results };    
+}
+
+export { useMeetListPaging, useMeetInsert, useMeetDetailView, useMeetMemberList };

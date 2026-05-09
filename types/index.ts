@@ -107,6 +107,7 @@ interface MemberInfo {
   mem_image_url?    : string;
   mem_image_id?     : string;
   new_image_name?   : string;
+  host_yn        : string;
 }
 
 /**
@@ -206,7 +207,7 @@ interface MyMeetInfo {
   mem_id          : number;
   mem_name        : string;
   apply_ratio     : string;
-  meet_image_url  : string;
+  thumb_url  : string;
 }
 
 /**

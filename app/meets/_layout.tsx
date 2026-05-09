@@ -72,6 +72,13 @@ export default function MeetLayout() {
                     headerShown: false,
                 }}
             />
+            <Stack.Screen
+                name="meetDetailPage"
+                options={{
+                    title: "모임 상세",
+                    headerShown: false,
+                }}
+            />
         </Stack>
     )
 }

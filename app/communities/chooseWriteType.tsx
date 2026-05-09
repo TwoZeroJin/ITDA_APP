@@ -60,6 +60,7 @@ export default function chooseWriteType() {
              const active = selected === opt.key;
              return (
               <TouchableOpacity style={[styles.meetContainer, active && styles.meetSelected]}
+                key={opt.key}
                 onPress={() => setSelected(opt.key)}
                 activeOpacity={0.85}>
                   <View style={[styles.iconBox]}><opt.icon width={20} color={active ? COLOR.COMM_WHITE : COLOR.COMM_GRAY_7}/></View>

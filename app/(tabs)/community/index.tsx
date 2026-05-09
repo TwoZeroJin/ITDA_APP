@@ -29,7 +29,7 @@ export default function community() {
     page_no : 0,
     page_size : 5,
     sch_condition: activeType, // 'latest', 'mypost', 'review' 중 하나
-    mem_id: 3 //myMemId, // 실제 mem_id는 로그인 정보에서 가져와야 함
+    sch_keyword: 3 //myMemId, // 실제 mem_id는 로그인 정보에서 가져와야 함
   } as SearchParams);
 
   // 내 mem_id 정보 조회. 한번 조회해서 상태에 저장해두면 이후 API 호출 시 활용 가능
