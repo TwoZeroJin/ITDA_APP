@@ -64,10 +64,12 @@ const QUERY_KEYS = {
     MEET_VIEW               : "meet_view",
     MEET_MEMBER_LIST        : "meet_member_list",
     MEET_COMMENT_LIST       : "meet_comment_list",
-    MEET_REVIEW_LIST    : "meet_review_list",
+    MEET_REVIEW_LIST        : "meet_review_list",
     MEET_INSERT             : "meet_insert",
     GROUP                   : "group",
     GROUP_PAGING            : "group_paging",
+    GROUP_VIEW              : "group_view",
+    GROUP_INSERT            : "group_insert",
     COMMUNITY               : "community",
     COMMUNITY_REVIEW_LIST   : "community_review_list",
     MY_MEET_LIST_NO_REVIEW  : "my_meet_list_no_review",
@@ -121,6 +123,10 @@ const COMM_CONSTANTS = {
     MEET_TYPE_GROUP             : "G",
     MEET_APPLY_TYPE_FIRST       : "F",
     MEET_APPLY_TYPE_APPROVE     : "A",
+    CHAT_TYPE_MEET              : "MEET",
+    CHAT_TYPE_GROUP             : "GROUP",
+    CHAT_TYPE_MEMBER            : "MEMBER",
+    CHAT_TYPE_CLASS             : "CLASS",
 }
 
 /**

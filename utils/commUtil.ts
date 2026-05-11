@@ -197,6 +197,7 @@ async function getMemberInfo(): Promise<MemberInfo> {
         mem_church_tm_nm    : mem_church_tm_nm  || "",
         push_send_yn        : push_send_yn      || "",
         push_token          : push_token        || "",
+        host_yn             : "N",
     };
 }
 

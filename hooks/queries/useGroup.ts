@@ -1,8 +1,11 @@
-import { groupList } from "@/api/group";
+import { groupInsert, groupList } from "@/api/group";
+import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
-import { SearchParams } from "@/types";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useLoading } from "@/contexts/LoadingContext";
+import { GroupInfo, SearchParams } from "@/types";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 
+// 클럽 목록 조회 (무한 스크롤)
 function useGroupListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
     queryFn: () => groupList({ ...searchParams }),
@@ -22,4 +25,23 @@ function useGroupListPaging(searchParams: SearchParams) {
   return { ...query, results };
 }
 
-export default useGroupListPaging;
+// 클럽 생성
+function useGroupInsert() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : GroupInfo) => {
+      setLoading(true);
+      return groupInsert(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_INSERT],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+export { useGroupListPaging, useGroupInsert };

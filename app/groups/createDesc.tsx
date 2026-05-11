@@ -6,53 +6,47 @@ import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
 import { useRoute } from "@react-navigation/native";
 import { FormProvider, useForm } from "react-hook-form";
-import MeetNameInput from "@/components/inputs/MeetNameInput";
-import { FileInfo, MeetInfo } from "@/types";
-import MeetDescInput from "@/components/inputs/MeetDescInput";
+import { FileInfo, GroupInfo } from "@/types";
 import CustomImagePicker from "@/components/CustomImagePicker";
 import TagInput from "@/components/inputs/TagInput";
-
-// 다음 화면에 데이터를 넘기기 위한 Params 타입 정의
-type MeetCreateRouteParams = {
-  [key: string]: string | number | (string | number)[] | undefined;
-  img_list_json?: string;
-};
+import GroupDescInput from "@/components/inputs/GroupDescInput";
+import GroupNameInput from "@/components/inputs/GroupNameInput";
 
 /**
- * 모임 생성 - 모임 설명 및 이미지 등록 화면
+ * 클럽 생성 - 클럽 설명 및 이미지 등록 화면
  */
-export default function MeetCreateDescScreen() {
+export default function GroupCreateDescScreen() {
   const params = useRoute();
-  const prevMeetInfo = (params.params ?? {}) as MeetCreateRouteParams;
+  const prevGroupInfo = (params.params ?? {}) as GroupInfo;
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>([]);
 
   // 폼 관리를 위한 useForm 훅 초기화
-  const meetForm = useForm<MeetInfo>({
+  const formValues = useForm<GroupInfo>({
     defaultValues: {
-      meet_name : '',
-      meet_desc : '',
+      group_name : '',
+      group_desc : '',
     }
   });
 
-  const canMoveNext = !!meetForm.watch('meet_name') && !!meetForm.watch('meet_desc');
+  const canMoveNext = !!formValues.watch('group_name') && !!formValues.watch('group_desc');
 
   return (
     <View style={styles.container}>
-      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
+      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
       >
-        {/* 소모임 생성 타이틀 */}
+        {/* 클럽 생성 타이틀 */}
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>{'나의 소셜링을 소개해주세요.'}</Text>
+          <Text style={styles.title}>{'나의 클럽을 소개해주세요.'}</Text>
         </View>
 
-        {/* 소셜링 제목, 설명, 이미지 추가 */}
+        {/* 클럽 제목, 설명, 이미지 추가 */}
         <View style={styles.commContainer}>
-          <FormProvider {...meetForm}>
-            <MeetNameInput />
-            <MeetDescInput />
+          <FormProvider {...formValues}>
+            <GroupNameInput />
+            <GroupDescInput />
             <CustomImagePicker onChangeImages={setUploadedImageList} />
             <TagInput />
           </FormProvider>
@@ -62,12 +56,12 @@ export default function MeetCreateDescScreen() {
       </ScrollView>
 
       <CommBottomButton label="미리보기" onPress={() => canMoveNext && router.navigate({
-            pathname: '/meets/createPreView',
+            pathname: '/groups/createPreView',
             params: {
-              ...prevMeetInfo,
-              ...meetForm.getValues(),
+              ...prevGroupInfo,
+              ...formValues.getValues(),
               img_list_json: JSON.stringify(uploadedImageList),
-            } as MeetCreateRouteParams,
+            } as Partial<GroupInfo>,
           })}
           disabled={!canMoveNext}/>
     </View>
@@ -76,22 +70,22 @@ export default function MeetCreateDescScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex          : 1,
   },
   titleContainer: {
-    marginTop: 12,
-    marginBottom: 5,
-    paddingStart: 16,
+    marginTop     : 12,
+    marginBottom  : 5,
+    paddingStart  : 16,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-    marginBottom: 16,
+    fontSize      : 22,
+    fontWeight    : 'bold',
+    color         : COLOR.COMM_BLACK,
+    marginBottom  : 16,
   },
   commContainer: {
-    marginHorizontal: 16,
-    marginBottom: 30,
-    gap: 16,
+    marginHorizontal  : 16,
+    marginBottom      : 30,
+    gap               : 16,
   },
 });

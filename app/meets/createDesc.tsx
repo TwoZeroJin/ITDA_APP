@@ -12,29 +12,23 @@ import MeetDescInput from "@/components/inputs/MeetDescInput";
 import CustomImagePicker from "@/components/CustomImagePicker";
 import TagInput from "@/components/inputs/TagInput";
 
-// 다음 화면에 데이터를 넘기기 위한 Params 타입 정의
-type MeetCreateRouteParams = {
-  [key: string]: string | number | (string | number)[] | undefined;
-  img_list_json?: string;
-};
-
 /**
  * 모임 생성 - 모임 설명 및 이미지 등록 화면
  */
 export default function MeetCreateDescScreen() {
   const params = useRoute();
-  const prevMeetInfo = (params.params ?? {}) as MeetCreateRouteParams;
+  const prevMeetInfo = (params.params ?? {}) as MeetInfo;
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>([]);
 
   // 폼 관리를 위한 useForm 훅 초기화
-  const meetForm = useForm<MeetInfo>({
+  const formValues = useForm<MeetInfo>({
     defaultValues: {
       meet_name : '',
       meet_desc : '',
     }
   });
 
-  const canMoveNext = !!meetForm.watch('meet_name') && !!meetForm.watch('meet_desc');
+  const canMoveNext = !!formValues.watch('meet_name') && !!formValues.watch('meet_desc');
 
   return (
     <View style={styles.container}>
@@ -50,7 +44,7 @@ export default function MeetCreateDescScreen() {
 
         {/* 소셜링 제목, 설명, 이미지 추가 */}
         <View style={styles.commContainer}>
-          <FormProvider {...meetForm}>
+          <FormProvider {...formValues}>
             <MeetNameInput />
             <MeetDescInput />
             <CustomImagePicker onChangeImages={setUploadedImageList} />
@@ -65,9 +59,9 @@ export default function MeetCreateDescScreen() {
             pathname: '/meets/createPreView',
             params: {
               ...prevMeetInfo,
-              ...meetForm.getValues(),
+              ...formValues.getValues(),
               img_list_json: JSON.stringify(uploadedImageList),
-            } as MeetCreateRouteParams,
+            } as Partial<MeetInfo>,
           })}
           disabled={!canMoveNext}/>
     </View>
@@ -76,22 +70,22 @@ export default function MeetCreateDescScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex          : 1,
   },
   titleContainer: {
-    marginTop: 12,
-    marginBottom: 5,
-    paddingStart: 16,
+    marginTop     : 12,
+    marginBottom  : 5,
+    paddingStart  : 16,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: COLOR.COMM_BLACK,
-    marginBottom: 16,
+    fontSize      : 22,
+    fontWeight    : 'bold',
+    color         : COLOR.COMM_BLACK,
+    marginBottom  : 16,
   },
   commContainer: {
-    marginHorizontal: 16,
-    marginBottom: 30,
-    gap: 16,
+    marginHorizontal  : 16,
+    marginBottom      : 30,
+    gap               : 16,
   },
 });

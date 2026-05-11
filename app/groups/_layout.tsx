@@ -17,20 +17,6 @@ export default function GroupLayout() {
         }}
       />
       <Stack.Screen
-        name="createFee"
-        options={{
-          title: "클럽 생성",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="createPlace"
-        options={{
-          title: "클럽 생성",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
         name="createCategory"
         options={{
           title: "클럽 생성",

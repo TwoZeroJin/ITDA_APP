@@ -3,28 +3,20 @@ import React, { ReactNode } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface CustomDialogProps {
-    visible       : boolean;
-    title?        : string;
-    content       : string;
-    onConfirm     : () => void;
-    onCancel      : () => void;
-    child?        : ReactNode;
-    confirmLabel? : string;
-    cancelLabel?  : string;
+  visible       : boolean;
+  title?        : string;
+  content       : string;
+  onConfirm     : () => void;
+  onCancel      : () => void;
+  child?        : ReactNode;
+  confirmLabel? : string;
+  cancelLabel?  : string;
 }
 
 /**
  * 공통 커스텀 다이얼로그 컴포넌트
  */
-function CustomDialog({
-  visible,
-  title,
-  content,
-  onConfirm,
-  onCancel,
-  confirmLabel,
-  cancelLabel,
-}: CustomDialogProps) {
+function CustomDialog({ visible, title, content, onConfirm, onCancel, confirmLabel, cancelLabel }: CustomDialogProps) {
   const hasConfirmButton = Boolean(confirmLabel);
   const hasCancelButton = Boolean(cancelLabel);
 

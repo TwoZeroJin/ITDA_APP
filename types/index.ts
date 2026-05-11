@@ -155,6 +155,7 @@ interface MeetInfo {
   fee_yn        : string;
   fee_info      : string;
   fee_entry     : number;
+  fee_desc      : string;
   place_type    : string;
   place_name    : string;
   place_addr    : string;
@@ -163,6 +164,8 @@ interface MeetInfo {
   group_id      : number;
   apply_ratio   : string;
   thumb_url?    : string;
+  // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
+  img_list_json? : string;
 }
 
 /**
@@ -220,7 +223,9 @@ interface GroupInfo {
   group_desc      : string;
   group_max       : number;
   apply_type      : string;
-  reg_sdate       : string;
+
+  // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
+  img_list_json? : string;
 }
 
 /**

@@ -130,7 +130,7 @@ export default function HomeScreen() {
       {/* Floating 버튼, 소셜링/클럽 생성 버튼 (화면에 고정) */}
       <TouchableOpacity
         style={styles.floatingButton}
-        activeOpacity={0.85}
+        activeOpacity={0.8}
         onPress={() => router.navigate('/meets/create')}
       >
         <IconCreate width={54} height={54} />

@@ -120,12 +120,7 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
 
 function WheelPickerModal({ visible, columns, onClose, onConfirm, cancelLabel = "취소", confirmLabel = "확인" }: WheelPickerModalProps) {
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
         <View style={styles.container}>
@@ -161,7 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor     : COLOR.COMM_MODAL_BG,
   },
   container: {
-    borderRadius        : 12,
+    borderRadius        : 10,
     backgroundColor     : COLOR.COMM_WHITE,
     overflow            : "hidden",
   },
@@ -186,8 +181,8 @@ const styles = StyleSheet.create({
     fontWeight          : 300,
   },
   itemTextSelected: {
-    color: COLOR.COMM_BLACK,
-    fontWeight: 500,
+    color               : COLOR.COMM_BLACK,
+    fontWeight          : 500,
   },
   highlight: {
     position            : "absolute",
@@ -197,41 +192,43 @@ const styles = StyleSheet.create({
     backgroundColor     : COLOR.COMM_GRAY_8,
   },
   pickerWrapper: {
-    flexDirection   : "row",
-    justifyContent  : "center",
-    alignItems      : "center",
-    gap             : 8,
-    paddingTop      : 16,
-    paddingBottom   : 8,
+    flexDirection       : "row",
+    justifyContent      : "center",
+    alignItems          : "center",
+    gap                 : 8,
+    paddingTop          : 16,
+    paddingBottom       : 8,
   },
   buttonRow: {
-    flexDirection   : "row",
+    flexDirection       : "row",
   },
   cancelButton: {
     flex                    : 1,
-    height                  : 58,
-    borderBottomLeftRadius  : 12,
+    height                  : 55,
+    borderBottomLeftRadius  : 10,
     justifyContent          : "center",
     alignItems              : "center",
-    backgroundColor         : COLOR.COMM_GRAY_7,
+    backgroundColor         : COLOR.COMM_GRAY_6,
   },
   cancelButtonText: {
-    fontSize        : 18,
-    fontWeight      : 500,
-    color           : COLOR.COMM_WHITE,
+    fontSize        : 16,
+    color           : COLOR.TEXT_DEFAULT,
+    fontWeight      : 'medium',
+    alignSelf       : "center",
   },
   confirmButton: {
     flex                    : 1,
-    height                  : 58,
-    borderBottomRightRadius : 12,
+    height                  : 55,
+    borderBottomRightRadius : 10,
     justifyContent          : "center",
     alignItems              : "center",
     backgroundColor         : COLOR.APP_MAIN,
   },
   confirmButtonText: {
-    fontSize        : 18,
-    fontWeight      : 500,
+    fontSize        : 16,
     color           : COLOR.COMM_WHITE,
+    fontWeight      : 'medium',
+    alignSelf       : "center",
   },
 });
 

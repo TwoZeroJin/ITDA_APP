@@ -1,6 +1,8 @@
 import { COLOR } from "@/constants";
-import React from "react";
+import { getCategoryList } from "@/utils/commUtil";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Text } from "react-native";
+import { CodeInfo } from "@/types";
 
 interface CommLabelProps {
     variant?    : "social" | "club" | "category";
@@ -9,45 +11,52 @@ interface CommLabelProps {
 
 // 소셜링 라벨 텍스트
 function CommLabel({ variant = "social", category = ""} : CommLabelProps) {
-    let text = variant === "social" ? "소셜링" : variant === "club" ? "클럽" : category;
+    const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
+
+    useEffect(() => {
+        if (variant === "category") {
+            getCategoryList().then(setCategoryList);
+        }
+    }, [variant]);
+
+    let text = "";
+    if (variant === "social") {
+        text = "소셜링";
+    } else if (variant === "club") {
+        text = "클럽";
+    } else if (variant === "category") {
+        const found = categoryList.find(item => item.code_id === category);
+        text = found?.code_value ?? category;
+    }
+
     return (
         <Text style={styles[`${variant}`]}>{text}</Text>
     )
 }
 
+const baseStyle = {
+  fontSize          : 12,
+  borderRadius      : 10,
+  fontWeight        : 'bold' as const,
+  paddingHorizontal : 8,
+  paddingVertical   : 4,
+};
+
 const styles = StyleSheet.create({
-    container: {
-    flexDirection: 'row',
-    gap: 6,
-    marginTop: 12,
-    marginBottom: 4,
-  },
   social: {
-    fontSize: 12,
-    borderRadius: 10,
-    fontWeight: 'bold',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    color: COLOR.COMM_WHITE,
-    backgroundColor: COLOR.BG_MEET,
+    ...baseStyle,
+    color           : COLOR.COMM_WHITE,
+    backgroundColor : COLOR.BG_MEET,
   },
   club: {
-    fontSize: 12,
-    borderRadius: 10,
-    fontWeight: 'bold',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    color: COLOR.TEXT_31AD69,
-    backgroundColor: COLOR.BG_CLUB,
+    ...baseStyle,
+    color           : COLOR.TEXT_31AD69,
+    backgroundColor : COLOR.BG_CLUB,
   },
   category: {
-    fontSize: 12,
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    fontWeight: 'bold',
-    color: COLOR.COMM_SHADOW,
-    backgroundColor: COLOR.BG_CATEGORY,
+    ...baseStyle,
+    color           : COLOR.COMM_SHADOW,
+    backgroundColor : COLOR.BG_CATEGORY,
   },
 });
 

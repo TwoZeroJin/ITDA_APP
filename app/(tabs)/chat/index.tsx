@@ -1,5 +1,5 @@
 import CommHeader from "@/components/CommHeader";
-import { COLOR } from "@/constants";
+import { COLOR, COMM_CONSTANTS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
@@ -7,32 +7,12 @@ import { router } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-type ChatCategory = "all" | "social" | "club" | "class";
-
-const CATEGORY_TABS: { key: ChatCategory; label: string }[] = [
-  { key: "all", label: "전체" },
-  { key: "social", label: "소셜링" },
-  { key: "club", label: "클럽" },
-  { key: "class", label: "클래스" },
+const CATEGORY_TABS: { key: string; label: string }[] = [
+  { key: "", label: "전체" },
+  { key: COMM_CONSTANTS.CHAT_TYPE_MEET  , label: "소셜링" },
+  { key: COMM_CONSTANTS.CHAT_TYPE_GROUP , label: "클럽" },
+  { key: COMM_CONSTANTS.CHAT_TYPE_CLASS , label: "클래스" },
 ];
-
-function mapRoomTypeToCategory(roomType?: string): ChatCategory {
-  const normalizedType = (roomType ?? "").toLowerCase();
-
-  if (normalizedType.includes("social") || normalizedType === "s" || normalizedType === "n") {
-    return "social";
-  }
-
-  if (normalizedType.includes("club") || normalizedType === "c" || normalizedType === "g") {
-    return "club";
-  }
-
-  if (normalizedType.includes("class") || normalizedType === "l") {
-    return "class";
-  }
-
-  return "social";
-}
 
 function formatUpdatedText(dateText?: string): string {
   if (!dateText) {
@@ -64,7 +44,7 @@ function formatUpdatedText(dateText?: string): string {
 }
 
 export default function ChatListScreen() {
-  const [activeCategory, setActiveCategory] = useState<ChatCategory>("all");
+  const [activeCategory, setActiveCategory] = useState<string>("");
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const { setLoading } = useLoading();
   const hasHandledInitialLoadingRef = useRef(false);
@@ -107,14 +87,14 @@ export default function ChatListScreen() {
   };
 
   const filteredChatRooms = useMemo(() => {
-    if (activeCategory === "all") {
+    if (activeCategory === "") {
       return results;
     }
 
-    return results.filter((room) => mapRoomTypeToCategory(room.room_type) === activeCategory);
+    return results.filter((room) => room.room_type === activeCategory);
   }, [activeCategory, results]);
 
-  const renderCategoryTab = (category: { key: ChatCategory; label: string }) => {
+  const renderCategoryTab = (category: { key: string; label: string }) => {
     const isActive = activeCategory === category.key;
 
     return (

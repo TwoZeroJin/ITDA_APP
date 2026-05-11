@@ -134,7 +134,7 @@ export default function Meet() {
       {/* 사진 우측 하단의 플로팅 글쓰기 버튼 */}
       <TouchableOpacity 
         style={styles.floatingButton}
-        activeOpacity={0.85}
+        activeOpacity={0.8}
         onPress={() => router.navigate('/meets/create')}
       >
         <MaterialCommunityIcons name="plus" size={32} color={COLOR.COMM_WHITE} />

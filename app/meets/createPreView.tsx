@@ -13,15 +13,12 @@ import IconCalendar from '@/assets/images/icon_calendar.svg';
 import CustomDialog from "@/components/CustomDialog";
 import { parseImageList } from "@/utils/commUtil";
 
-// 이전 화면에서 받은 데이터 타입 정의
-type MeetCreateRouteParams = {
-  [key: string]: string | number | (string | number)[] | undefined;
-  img_list_json?: string;
-};
-
+/**
+ * 모임 생성 - 최종 미리보기 및 생성 화면
+ */
 export default function MeetCreatePreViewScreen() {
   const params = useRoute();
-  const routeParams = (params.params ?? {}) as MeetCreateRouteParams;
+  const routeParams = (params.params ?? {}) as MeetInfo;
   const imageList = parseImageList(routeParams.img_list_json);
   const { img_list_json, ...restParams } = routeParams;
   const meetInfo = restParams as unknown as MeetInfo;
@@ -30,12 +27,12 @@ export default function MeetCreatePreViewScreen() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleCreateMeet = () => {
-    const requestBody = {
+    const formValues = {
       ...meetInfo,
       img_list: imageList,
     } as MeetInfo;
 
-    meetInsert.mutate(requestBody, {
+    meetInsert.mutate(formValues, {
       onSuccess: () => {
         router.navigate({
           pathname: '/meets/createComplete', 
@@ -114,31 +111,31 @@ export default function MeetCreatePreViewScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex              : 1,
   },
   commContainerTitle: {
-    fontSize: 20,
-    fontWeight: 'bold', 
-    marginBottom: 8,
+    fontSize          : 20,
+    fontWeight        : 'bold', 
+    marginBottom      : 8,
   },
   commContainer: {
-    marginHorizontal: 16,
-    marginBottom: 30,
-    gap: 16,
+    marginHorizontal  : 16,
+    marginBottom      : 30,
+    gap               : 16,
   },
   labelContainer: {
-    flexDirection: 'row',
-    gap: 6,
-    marginTop: 12,
-    marginBottom: 4,
+    flexDirection     : 'row',
+    gap               : 6,
+    marginTop         : 12,
+    marginBottom      : 4,
   },
   contentInfoText: {
-    fontSize: 16,
-    marginStart: -8,
-    color: COLOR.TEXT_DEFAULT,
+    fontSize          : 16,
+    marginStart       : -8,
+    color             : COLOR.TEXT_DEFAULT,
   },
   contentDesc: {
-    fontSize: 16,
-    color: COLOR.TEXT_DEFAULT,
+    fontSize          : 16,
+    color             : COLOR.TEXT_DEFAULT,
   },
 });
