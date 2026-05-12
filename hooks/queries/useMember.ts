@@ -1,10 +1,10 @@
 import { QUERY_KEYS } from '@/constants';
 import { useLoading } from '@/contexts/LoadingContext';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { memberDetail, memberUpdate } from '@/api/member';
+import { memberDetail, memberLike, memberLikeList, memberUpdate } from '@/api/member';
 import { printDebugLog } from '@/utils/commUtil';
-import { MemberInfo } from '@/types';
+import { MemberInfo, MemberLike, SearchParams } from '@/types';
 import queryClient from '@/api/queryClient';
 
 /**
@@ -58,4 +58,42 @@ function useMemberUpdate() {
 
 }
 
-export { useMemberDetail, useMemberUpdate }
+/**
+ * 회원 좋아요
+ */
+function useMemberLike() {
+  return useMutation({
+    mutationFn: async (body : MemberLike) => {
+      return memberLike(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_LIKE],
+      });
+    },
+    onSettled: () => {
+    },
+  });
+}
+
+// 회원 좋아요 목록 조회 (무한 스크롤)
+function useMemberLikeListPaging(searchParams: SearchParams) {
+  const query = useInfiniteQuery({
+    queryFn: () => memberLikeList({ ...searchParams }),
+    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_LIKE_LIST, searchParams],
+    initialPageParam: searchParams.page_no,
+    getNextPageParam: (lastPage) => {
+      if (!lastPage.paging) return undefined;
+      const { page_no, page_size, total_count } = lastPage.paging;
+      const isLast = (page_no + 1) * page_size >= total_count;
+      return isLast ? undefined : page_no + 1;
+    },
+  });
+  
+  // 데이터만 담은 result 객체
+  const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
+
+  return { ...query, results };
+}
+
+export { useMemberDetail, useMemberUpdate, useMemberLike, useMemberLikeListPaging }

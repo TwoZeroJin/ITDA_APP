@@ -5,8 +5,20 @@ import IconMembers from '@/assets/images/icon_members.svg';
 import CommLabel from '@/components/CommLabel';
 import { COLOR } from '@/constants';
 import { MeetInfo } from '@/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useMemberLike } from '@/hooks/queries/useMember';
+
+type MeetListItem = MeetInfo & {
+  like_yn?: 'Y' | 'N';
+};
+
+interface RecommendSectionStateItem {
+  key: string;
+  title: string;
+  subTitle: string;
+  data: MeetListItem[];
+}
 
 interface RecommendSectionItem {
   key: string;
@@ -24,6 +36,12 @@ interface CommRcmdMeetListProps {
  */
 export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
+  const [sectionState, setSectionState] = useState<RecommendSectionStateItem[]>(sections as RecommendSectionStateItem[]);
+  const memberLike = useMemberLike();
+
+  useEffect(() => {
+    setSectionState(sections as RecommendSectionStateItem[]);
+  }, [sections]);
 
   const handleImageError = (meetId: number | undefined) => {
     if (meetId !== undefined) {
@@ -31,10 +49,43 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
     }
   };
 
+  const handleLikePress = (item: MeetListItem) => {
+    const meetId = item.meet_id;
+    if (!meetId) {
+      return;
+    }
+
+    const isLiked = item.like_yn === 'Y';
+
+    memberLike.mutate({
+      target_id   : meetId,
+      target_type : 'M',
+      flag        : !isLiked,
+    }, {
+      onSuccess: () => {
+        setSectionState((prev) =>
+          prev.map((section) => ({
+            ...section,
+            data: section.data.map((dataItem) => {
+              if (dataItem.meet_id !== meetId) {
+                return dataItem;
+              }
+
+              return {
+                ...dataItem,
+                like_yn: dataItem.like_yn === 'Y' ? 'N' : 'Y',
+              };
+            }),
+          })),
+        );
+      },
+    });
+  };
+
   return (
     <View style={styles.recommendContainer}>
       <FlatList<RecommendSectionItem>
-        data={sections}
+        data={sectionState}
         renderItem={({ item: section }) => {
           return (
             <View>
@@ -52,7 +103,10 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
                         imageStyle={styles.recommendImage}
                         onError={() => handleImageError(item2.meet_id)}
                       >
-                        <TouchableOpacity style={styles.recommendLikeBtnContainer}>
+                        <TouchableOpacity 
+                          style={styles.recommendLikeBtnContainer}
+                          onPress={() => handleLikePress(item2)}
+                        >
                           <BtnLikeDefault />
                         </TouchableOpacity>
                       </ImageBackground>

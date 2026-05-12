@@ -1,4 +1,4 @@
-import { ApiResult, MeetInfo, SearchParams, MeetReview, MemberInfo } from '@/types';
+import { ApiResult, MeetInfo, SearchParams, MemberInfo } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 

@@ -120,6 +120,26 @@ interface MemberDetail extends MemberInfo {
 }
 
 /**
+ * 회원 좋아요 정보
+ */
+interface MemberLike {
+  target_id       : number;
+  target_type     : string;
+  flag            : boolean;
+}
+
+/**
+ * 좋아요한 데이터
+ */
+interface LikeData {
+  target_id         : number;
+  target_type       : string;
+  target_name       : string;
+  target_subj_name  : string;
+  thumb_url?        : string;
+}
+
+/**
  * 파일 정보
  */
 interface FileInfo {
@@ -300,4 +320,4 @@ interface BannerData {
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData, MainData };
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData, MainData, MemberLike, LikeData };
