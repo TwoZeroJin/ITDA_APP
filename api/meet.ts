@@ -1,4 +1,4 @@
-import { ApiResult, MeetInfo, SearchParams, MemberInfo } from '@/types';
+import { ApiResult, MeetInfo, SearchParams, MeetReview, MemberInfo, MeetApply } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
@@ -59,8 +59,8 @@ async function meetDelete(meetId: number): Promise<ApiResult<null>> {
  * 소셜링 신청
  * @returns 
  */
-async function meetApply(): Promise<ApiResult<null>> {
-  const { data } = await axiosInstance.post(API_URL.MEET_APPLY);
+async function meetApply(body: MeetApply): Promise<ApiResult<MeetApply>> {
+  const { data } = await axiosInstance.post(API_URL.MEET_APPLY, body);
   return data;
 }
 
@@ -68,10 +68,11 @@ async function meetApply(): Promise<ApiResult<null>> {
  * 소셜링 신청 승인
  * @returns 
  */
-async function meetConfirm(): Promise<ApiResult<null>> {
-  const { data } = await axiosInstance.post(API_URL.MEET_CONFIRM);
+async function meetConfirm(body: MeetApply): Promise<ApiResult<MeetApply>> {
+  const { data } = await axiosInstance.post(API_URL.MEET_CONFIRM, body);
   return data;
 }
 
 export {meetList, meetView, meetMemberList, meetInsert, meetUpdate, meetDelete, meetApply, meetConfirm };
+
 

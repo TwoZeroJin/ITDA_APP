@@ -11,6 +11,7 @@ interface placeLocationBoxProps {
 
 
 export default function PlaceLocationBox({data}: placeLocationBoxProps) {
+  if (data.place_addr != null && data.place_addr !== '') {
   return (
     <View style={styles.mapCard}>
       <Image 
@@ -22,7 +23,14 @@ export default function PlaceLocationBox({data}: placeLocationBoxProps) {
         <Text style={styles.locationAddress}>{data.place_addr}</Text>
       </View>
     </View>      
-  );
+    );
+  } else {
+    return null; // 장소 정보가 없으면 아무것도 렌더링하지 않음
+  }
+
+
+
+
 };
 
 const styles = StyleSheet.create({

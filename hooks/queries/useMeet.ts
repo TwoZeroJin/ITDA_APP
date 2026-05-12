@@ -1,8 +1,8 @@
-import { meetInsert, meetList, meetMemberList, meetView,  } from "@/api/meet";
+import { meetApply, meetInsert, meetList, meetMemberList, meetView, meetConfirm,  } from "@/api/meet";
 import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
-import { MeetInfo, SearchParams } from "@/types";
+import { MeetApply, MeetInfo, SearchParams } from "@/types";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 // 모임 목록 조회 (무한 스크롤)
@@ -74,4 +74,43 @@ function useMeetMemberList(meetId: number) {
   return { ...query, results };    
 }
 
-export { useMeetListPaging, useMeetInsert, useMeetDetailView, useMeetMemberList };
+//4.소모임 신청
+function useMeetApply() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : MeetApply) => {
+      setLoading(true);
+      return meetApply(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_APPLY],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+
+//4.소모임 신청 취소
+function useMeetNotApply() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : MeetApply) => {
+      setLoading(true);
+      return meetConfirm(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_NOT_APPLY],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+export { useMeetListPaging, useMeetInsert, useMeetDetailView, useMeetMemberList, useMeetApply, useMeetNotApply };

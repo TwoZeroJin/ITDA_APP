@@ -125,7 +125,6 @@ function getAccessToken() {
 function getRefreshToken() {
     return getSecureStore(STORE_KEY.X_REFRESH_TOKEN);
 }
-
 /**
  * @param data 회원 정보 SecureStore에 저장
  */

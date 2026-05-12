@@ -181,11 +181,15 @@ interface MeetInfo {
   place_addr    : string;
   mem_id        : number;
   mem_name      : string;
+  mem_nick      : string;
+  mem_image_url? : string;
   group_id      : number;
   apply_ratio   : string;
   thumb_url?    : string;
   // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
   img_list_json? : string;
+  img_list? : FileInfo[];
+
 }
 
 /**
@@ -193,6 +197,7 @@ interface MeetInfo {
  */
 interface MeetApply {
   meet_id       : number;
+  mem_id        : number;
   meet_answer?  : string;
   use_stat      : string;
 }

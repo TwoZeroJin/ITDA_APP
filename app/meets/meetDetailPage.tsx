@@ -1,10 +1,10 @@
-import { COLOR } from "@/constants";
-import React, { useState } from "react";
-import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { COLOR, QUERY_KEYS } from "@/constants";
+import React, { useEffect, useState } from "react";
+import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
-import {  useMeetDetailView, useMeetMemberList } from "@/hooks/queries/useMeet";
-import { MeetInfo, SearchParams } from "@/types";
+import {  useMeetNotApply, useMeetApply, useMeetDetailView, useMeetMemberList} from "@/hooks/queries/useMeet";
+import { MeetApply, MeetInfo, SearchParams } from "@/types";
 import {  useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/ImageCarousel";
 import CommLabel from "@/components/CommLabel";
@@ -17,16 +17,24 @@ import MeetComment from "@/components/MeetComment";
 import CommReviewList from '@/components/CommReviewList';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useReviewList } from "@/hooks/queries/useCommunity";
+import * as commUtil from '@/utils/commUtil';
+import queryClient from "@/api/queryClient";
 
 export default function MeetDetailPage() {
+  const meetApply = useMeetApply();
+  const meetConfirm = useMeetNotApply();
   const [comment, setComment] = useState('');
-
+  const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);
+  const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);
+  const [myMemId, setMyMemId] = useState<number>(0);
+  //내정보 조회
+//  const memId = commUtil.getMemId();
   // ✅ 1. 모임상세 데이터 조회
   const { meetId } = useLocalSearchParams();
   //소모임 정보 조회
   const { results : meetInfo, isLoading : isDetailLoading, isError : isDetailError } = useMeetDetailView(Number(meetId));  
   //소모임에 참여하는 멤버 조회
-  const { results : memberList, isLoading : isMemberLoading, isError : isMemberError } = useMeetMemberList(Number(meetId));  
+  const { results : memberList,refetch: refetchMemberList, isLoading : isMemberLoading, isError : isMemberError } = useMeetMemberList(Number(meetId));  
   //소모임 후기 조회
   const { results : reviewList, isLoading : isReviewLoading, isError : isReviewError } = 
           useReviewList({
@@ -36,11 +44,20 @@ export default function MeetDetailPage() {
             sch_keyword: Number(meetId), //myMemId, // 실제 mem_id는 로그인 정보에서 가져와야 함
         } as SearchParams); 
 
-  const hostMember = memberList?.find(member => member.host_yn === 'Y');
+//  const hostMember = memberList?.find(member => member.host_yn === 'Y');
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  useEffect(() => {
+    const fetchMyMemberInfo = async () => {
+      const memberInfo = await commUtil.getMemberInfo();
+      setMyMemId(memberInfo.mem_id ?? 0);
+    };
 
+    fetchMyMemberInfo();
+  }, []);
+
+  
   // ✅ 2. 로딩 상태 처리
   if (isDetailLoading || isMemberLoading || isReviewLoading) {
     return (
@@ -60,23 +77,57 @@ export default function MeetDetailPage() {
   }
 
   //모임 신청처리
-  const handleApplyMeet = () => {
+  const handleApplySubmit = (answer: string) => {
+    setApplyComfirmVisible(false);
+
+    console.log("모달에서 받은 답변:", answer);
     const requestBody = {
-      ...meetInfo,
-//      img_list: imageList,
-    } as MeetInfo;
+      meet_id: Number(meetInfo?.meet_id),
+      mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함
+      meet_answer: answer,
+      use_stat: '1', // 신청 상태 (예: 'Y' for 신청, 'N' for 취소)
+      
+    } as MeetApply;
     console.log("신청하기 요청 바디:", requestBody);
-    // meetCreate.mutate(requestBody, {
-    //   onSuccess: () => {
-    //     router.navigate({
-    //       pathname: '/meets/createComplete', 
-    //       params: { meetInfo: meetInfo }});
-    //   },
-    //   onError: (error) => {
-    //     setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
-    //     setIsErrorDialogVisible(true);
-    //   }
-    // });
+
+
+    // 실제 신청 로직은 여기에 추가 (API 호출 등)
+    meetApply.mutate(requestBody, {
+      onSuccess: () => {
+        Alert.alert('모임에 신청되었습니다.');     
+
+        refetchMemberList(); //참여멤버 재조회
+      },
+      onError: (error) => {
+        setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+        setIsErrorDialogVisible(true);
+      }
+    });
+  }
+  //모임 신청 취소처리
+  const handleNotApplySubmit = () => {
+    setNotApplyComfirmVisible(false);
+
+    const requestBody = {
+      meet_id: Number(meetInfo?.meet_id),
+      mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함
+      use_stat: '0', // 신청 상태 (예: 'Y' for 신청, 'N' for 취소)
+      
+    } as MeetApply;
+    console.log("신청하기 요청 바디:", requestBody);
+
+
+    // 실제 신청 로직은 여기에 추가 (API 호출 등)
+    meetConfirm.mutate(requestBody, {
+      onSuccess: () => {
+        Alert.alert('모임에 취소되었습니다.');    
+        refetchMemberList(); //참여멤버 재조회
+      },
+      onError: (error) => {
+        setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+        setIsErrorDialogVisible(true);
+      }
+    });
   }
 
   // 가상의 댓글 데이터
@@ -115,9 +166,9 @@ export default function MeetDetailPage() {
       >
         {/* 1. 이미지 캐러슬---------------------------- */}
         <View>
-          {/* onPressImage={(i) => console.log("pressed image", i)} // 추후 이미지 수정 기능 추가 시 활용 */}
+          {/* onPressImage={(i) => console.log("pressed image", i)}  추후 이미지 수정 기능 추가 시 활용 */}
           <ImageCarousel
-            images={meetInfo?.thumb_url ? [meetInfo.thumb_url] : []}
+            images={meetInfo?.img_list?.length ? meetInfo.img_list.map((file) => file.file_path) : []}
             height={280}
           />
         </View>
@@ -152,10 +203,10 @@ export default function MeetDetailPage() {
           <View style={styles.membersSection}>
             <Text style={styles.membersSectionTitle}>모임장 소개</Text>
             <View style={styles.hostContainer}>
-                <ProfileIcon mem_image_url={hostMember?.mem_image_url || ''} type="HOST" />
+                <ProfileIcon mem_image_url={meetInfo?.mem_image_url || ''} type="HOST" />
               <View style={styles.hostInfo}>
-                <Text style={styles.hostName}>{hostMember?.mem_name}</Text>
-                <Text style={styles.hostGreeting}>{hostMember?.mem_interest}</Text>
+                <Text style={styles.hostName}>{meetInfo?.mem_nick}</Text>
+                {/* <Text style={styles.hostGreeting}>{meetInfo?.mem_interest}</Text> */}
               </View>
             </View>
           </View>
@@ -169,9 +220,12 @@ export default function MeetDetailPage() {
               showsHorizontalScrollIndicator={false}
               keyExtractor={(item, index) => item?.mem_id?.toString() ?? String(index)}
               contentContainerStyle={styles.memberListContent}
-              renderItem={({ item }) => (
-                <ProfileIcon mem_image_url={item?.mem_image_url || ''} type="MEMBER" />
-              )}
+              renderItem={({ item }) => 
+                item.host_yn === 'Y' ? (
+                  <ProfileIcon mem_image_url={item?.mem_image_url || ''} type="HOST" />
+                ) : (
+                  <ProfileIcon mem_image_url={item?.mem_image_url || ''} type="MEMBER" />
+                )}
             />
           </View>
         </View>
@@ -186,12 +240,12 @@ export default function MeetDetailPage() {
 
           {/* 정보 박스 */}
           <View style={styles.meetDetailInfoBox}>
-            <InfoRow icon="pencil-outline" text={`취미 > ${meetInfo?.meet_subj ?? '정보가 없습니다.'}`} />
-            <InfoRow icon="information-outline" text={`${meetInfo?.meet_type ?? '모임 타입이 없습니다.'}`} />
-            <InfoRow icon="account-group-outline" text={`인원 > ${meetInfo?.meet_min ?? '인원 정보가 없습니다.'} ~ ${meetInfo?.meet_max ?? '인원 정보가 없습니다.'}`} />
-            <InfoRow icon="currency-krw" text={`비용 > ${meetInfo?.fee_info ?? '비용 정보가 없습니다.'}`} />
-            <InfoRow icon="calendar-month-outline" text={`날짜 > ${meetInfo?.meet_datetime ?? '날짜 정보가 없습니다.'}`} />
-            <InfoRow icon="map-marker-outline" text={meetInfo?.place_name ?? '장소 정보가 없습니다.'} />
+            <InfoRow icon="pencil-outline" text={`취미 > ${meetInfo?.meet_subj || ''}`} />
+            <InfoRow icon="information-outline" text={`타입 > ${meetInfo?.meet_type || ''}`} />
+            <InfoRow icon="account-group-outline" text={`인원 > ${meetInfo?.meet_min || ''} ~ ${meetInfo?.meet_max || ''}`} />
+            <InfoRow icon="currency-krw" text={`비용 > ${meetInfo?.fee_info || ''}`} />
+            <InfoRow icon="calendar-month-outline" text={`날짜 > ${meetInfo?.meet_datetime || ''}`} />
+            <InfoRow icon="map-marker-outline" text={`장소 > ${meetInfo?.place_name || ''}`} />
           </View>
 
           {/* 하단 지도 정보 카드 */}
@@ -215,9 +269,8 @@ export default function MeetDetailPage() {
             keyExtractor={(item) => item.comment_id}
             ItemSeparatorComponent={() => <View style={styles.commentSeparator} />}
             contentContainerStyle={styles.commentListContent}
-            // 💡 아래 두 속성을 추가하면 ScrollView 안에서도 에러가 나지 않습니다.
-            scrollEnabled={false}         // 자체 스크롤 기능 비활성화
-            nestedScrollEnabled={true}    // 중첩 스크롤 허용
+            scrollEnabled={false}         
+            nestedScrollEnabled={true}    
           />
 
           {/* 댓글 입력창 */}
@@ -246,18 +299,46 @@ export default function MeetDetailPage() {
 
       </ScrollView>
 
-      <CommBottomButton label="신청하기" onPress={handleApplyMeet}/>
+      {myMemId && memberList?.some(member => Number(member.mem_id) === myMemId) ? (
+        <CommBottomButton label="신청 취소하기" onPress={() => setNotApplyComfirmVisible(true)}/>
+      ) : (
+        <CommBottomButton label="신청하기" onPress={() => setApplyComfirmVisible(true)}/>
+      )}
 
+
+      {/* 4. 클럽 가입 모달 조립 */}
+      <CustomDialog
+        visible={isApplyComfirmVisible}
+        title="소셜링 가입 질문"
+        content="이 모임에 신청하시겠어요?"
+        textInput="답변을 작성해주세요."
+        cancelLabel="취소"
+        confirmLabel="완료"
+        onCancel={() => setApplyComfirmVisible(false)}
+        onConfirm={handleApplySubmit}
+      />
+
+      {/* 4. 클럽 가입 취소 */}
+      <CustomDialog
+        visible={isNotApplyComfirmVisible}
+        title="소셜링 참여 취소"
+        content="이 모임에 참여를 취소하시겠어요?"
+        cancelLabel="취소"
+        confirmLabel="완료"
+        onCancel={() => setNotApplyComfirmVisible(false)}
+        onConfirm={handleNotApplySubmit}
+      />
+
+        {/* 5. 에러 모달 조립 */}
       <CustomDialog
         visible={isErrorDialogVisible}
-        title="참가 실패"
-        content={`소셜링에 참가하지 못했어요. 잠시 후 다시 시도해 주세요. \n${errorMessage}`}
+        title="처리 실패"
+        content={`정상 처리되지 않았습니다. 잠시 후 다시 시도해 주세요. \n${errorMessage}`}
         cancelLabel="닫기"
         confirmLabel="다시 시도"
         onCancel={() => setIsErrorDialogVisible(false)}
         onConfirm={() => {
-          setIsErrorDialogVisible(false);
-          handleApplyMeet();
+         setIsErrorDialogVisible(false);
         }}
       />
     </View>
