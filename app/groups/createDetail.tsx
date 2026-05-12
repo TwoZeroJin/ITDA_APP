@@ -1,4 +1,4 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_CONSTANTS } from "@/constants";
 import React from "react";
 import { StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
@@ -24,8 +24,9 @@ export default function GroupCreateDetailScreen() {
     router.navigate({
       pathname: '/groups/createCategory',
       params: {
-        apply_type  : data.apply_type,
-        group_max   : data.group_max,
+        apply_type      : data.apply_type,
+        group_question  : data.group_question,
+        group_max       : data.group_max,
       } as Partial<GroupInfo>,
     });
   });
@@ -46,7 +47,7 @@ export default function GroupCreateDetailScreen() {
 
           <DividingLine />
 
-          <ApplyTypeInput />
+          <ApplyTypeInput questionFieldName="group_question"/>
 
           <DividingLine />
 
@@ -56,7 +57,12 @@ export default function GroupCreateDetailScreen() {
 
         </KeyboardAwareScrollView>
 
-        <CommBottomButton label="다음" onPress={onNext} disabled={!formValues.watch('apply_type') || !formValues.watch('group_max')} />
+        <CommBottomButton 
+          label="다음" 
+          onPress={onNext} 
+          disabled={!formValues.watch('apply_type') || !formValues.watch('group_max')
+            || (formValues.watch('apply_type') === COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE && !formValues.watch('group_question'))
+          } />
       </View>
     </FormProvider>
   );

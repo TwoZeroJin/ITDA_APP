@@ -8,13 +8,13 @@ function TagInput() {
     <Controller
         name='tag'
         control={control}
-        rules={{
-          validate: (data: string) => {
-            if (!data || data.trim().length === 0) {
-                return '태그를 입력해주세요.';
-            }
-          }
-        }}
+        // rules={{
+        //   validate: (data: string) => {
+        //     if (!data || data.trim().length === 0) {
+        //         return '태그를 입력해주세요.';
+        //     }
+        //   }
+        // }}
         render={({field: {onChange, value}, fieldState: {error}}) => (
             <InputField
                 label="태그" 

@@ -28,7 +28,18 @@ export default function GroupCreateDescScreen() {
     }
   });
 
-  const canMoveNext = !!formValues.watch('group_name') && !!formValues.watch('group_desc');
+    const onNext = formValues.handleSubmit((data) => {
+      router.navigate({
+        pathname: '/groups/createPreView',
+        params: {
+          ...prevGroupInfo,
+          group_name    : data.group_name,
+          group_desc    : data.group_desc,
+          img_list_json : JSON.stringify(uploadedImageList),
+        } as Partial<GroupInfo>,
+      });
+    });
+
 
   return (
     <View style={styles.container}>
@@ -55,15 +66,11 @@ export default function GroupCreateDescScreen() {
 
       </ScrollView>
 
-      <CommBottomButton label="미리보기" onPress={() => canMoveNext && router.navigate({
-            pathname: '/groups/createPreView',
-            params: {
-              ...prevGroupInfo,
-              ...formValues.getValues(),
-              img_list_json: JSON.stringify(uploadedImageList),
-            } as Partial<GroupInfo>,
-          })}
-          disabled={!canMoveNext}/>
+      <CommBottomButton 
+        label="미리보기" 
+        onPress={onNext} 
+        disabled={!formValues.watch('group_name') || !formValues.watch('group_desc')}
+      />
     </View>
   );
 }

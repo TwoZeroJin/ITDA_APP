@@ -21,8 +21,8 @@ function GenderSlider({ value, onChange, disabled = false }: GenderSliderProps) 
     return Math.max(0, Math.min(linearPercent + (linearPercent > 50 ? -THUMB_LEFT_PERCENT_OFFSET : linearPercent === 50 ? 0 : THUMB_LEFT_PERCENT_OFFSET), 100));
   }, [THUMB_LEFT_PERCENT_OFFSET, normalizedValue]);
 
-  const femaleRatio = normalizedValue.toFixed(1);
-  const maleRatio = (1 - normalizedValue).toFixed(1);
+  const femaleRatio = (normalizedValue * 10).toFixed(0);
+  const maleRatio = ((1 - normalizedValue) * 10).toFixed(0);
 
   return (
     <View style={[styles.sliderContainer, disabled && styles.sliderDisabled]}>
@@ -55,42 +55,42 @@ function GenderSlider({ value, onChange, disabled = false }: GenderSliderProps) 
 
 const styles = StyleSheet.create({
   sliderContainer: {
-    marginTop: 6,
+    marginTop       : 6,
   },
   sliderDisabled: {
-    opacity: 0.45,
+    opacity         : 0.45,
   },
   badge: {
-    position: 'absolute',
-    top: -2,
-    transform: [{ translateX: -25 }],
-    minWidth: 50,
-    height: 25,
-    borderRadius: 17,
-    backgroundColor: COLOR.APP_ACTIVE_5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 3,
+    justifyContent  : 'center',
+    alignItems      : 'center',
+    position        : 'absolute',
+    top             : -2,
+    transform       : [{ translateX: -25 }],
+    minWidth        : 50,
+    height          : 25,
+    borderRadius    : 17,
+    backgroundColor : COLOR.APP_ACTIVE_5,
+    zIndex          : 3,
   },
   badgeText: {
-    fontSize: 14,
-    color: COLOR.COMM_WHITE,
+    fontSize        : 14,
+    color           : COLOR.COMM_WHITE,
   },
   labelRow: {
-    marginTop: 26,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection   : 'row',
+    justifyContent  : 'space-between',
+    marginTop       : 26,
   },
   labelText: {
-    fontSize: 14,
-    color: COLOR.TEXT_DEFAULT,
+    fontSize        : 14,
+    color           : COLOR.TEXT_DEFAULT,
   },
   sliderRow: {
-    marginTop: 6,
+    marginTop       : 6,
   },
   slider: {
-    width: '100%',
-    height: 40,
+    width           : '100%',
+    height          : 40,
   },
 });
 

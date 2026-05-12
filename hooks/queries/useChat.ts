@@ -40,7 +40,7 @@ function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
         page_no: pageParam,
         room_id: searchParams.room_id,
       }),
-    queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_LIST, searchParams],
+    queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_LIST, searchParams, searchParams.room_id],
     initialPageParam: searchParams.page_no,
     getNextPageParam: (lastPage) => {
       if (!lastPage.paging) return undefined;

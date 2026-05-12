@@ -6,6 +6,7 @@ import { RoomData } from "@/types";
 import { router } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 const CATEGORY_TABS: { key: string; label: string }[] = [
   { key: "", label: "전체" },
@@ -53,6 +54,12 @@ export default function ChatListScreen() {
     page_size : 20
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   useEffect(() => {
     if (hasHandledInitialLoadingRef.current) {

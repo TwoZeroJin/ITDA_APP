@@ -1,5 +1,4 @@
 import { QUERY_KEYS, STORE_KEY } from "@/constants";
-import { useAuth } from "@/hooks/queries/useAuth";
 import { getAccessToken, getClientId, getRefreshToken, printErrorLog, printInfoLog } from "@/utils/commUtil";
 import { deleteSecureStore } from "@/utils/secureStoreUtil";
 import axios from "axios";

@@ -8,6 +8,7 @@ import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
 import MeetFeeInput from "@/components/inputs/MeetFeeInput";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 /**
  * 모임 생성 - 참가비 설정 화면
@@ -50,9 +51,12 @@ export default function MeetCreateFeeScreen() {
     <FormProvider {...formValues}>
       <View style={styles.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
-        <ScrollView
+        <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}>
+          contentContainerStyle={{ paddingBottom: 80 }}
+          enableOnAndroid={true}
+          extraScrollHeight={24}
+        >
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{'참가비가 있다면 설정해주세요.'}</Text>
             <Text style={styles.subtitle}>{'모임 운영에 필요한 경우 참가비를 설정해 주세요.\n운영비, 공간 대관료 등 다양한 용도로 활용할 수 있습니다.'}</Text>
@@ -60,7 +64,7 @@ export default function MeetCreateFeeScreen() {
 
           <MeetFeeInput />
 
-        </ScrollView>
+        </KeyboardAwareScrollView>
 
         <CommBottomButton label="다음" onPress={onNext} disabled={!canMoveNext}/>
       </View>

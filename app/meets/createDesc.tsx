@@ -28,7 +28,17 @@ export default function MeetCreateDescScreen() {
     }
   });
 
-  const canMoveNext = !!formValues.watch('meet_name') && !!formValues.watch('meet_desc');
+  const onNext = formValues.handleSubmit((data) => {
+      router.navigate({
+        pathname: '/meets/createPreView',
+        params: {
+          ...prevMeetInfo,
+          meet_name     : data.meet_name,
+          meet_desc     : data.meet_desc,
+          img_list_json : JSON.stringify(uploadedImageList),
+        } as Partial<MeetInfo>,
+      });
+    });
 
   return (
     <View style={styles.container}>
@@ -55,15 +65,11 @@ export default function MeetCreateDescScreen() {
 
       </ScrollView>
 
-      <CommBottomButton label="미리보기" onPress={() => canMoveNext && router.navigate({
-            pathname: '/meets/createPreView',
-            params: {
-              ...prevMeetInfo,
-              ...formValues.getValues(),
-              img_list_json: JSON.stringify(uploadedImageList),
-            } as Partial<MeetInfo>,
-          })}
-          disabled={!canMoveNext}/>
+      <CommBottomButton 
+        label="미리보기" 
+        onPress={onNext}
+        disabled={!formValues.watch('meet_name') || !formValues.watch('meet_desc')}
+      />
     </View>
   );
 }

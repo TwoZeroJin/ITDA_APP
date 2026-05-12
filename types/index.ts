@@ -222,6 +222,7 @@ interface GroupInfo {
   group_subj      : string;
   group_desc      : string;
   group_max       : number;
+  group_question  : string;
   apply_type      : string;
 
   // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)

@@ -4,12 +4,10 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { useRoute } from "@react-navigation/native";
-import { useMeetInsert } from "@/hooks/queries/useMeet";
-import { GroupInfo, MeetInfo, CodeInfo } from "@/types";
+import { GroupInfo, CodeInfo } from "@/types";
 import { router } from "expo-router";
 import ImageCarousel from "@/components/ImageCarousel";
 import CommLabel from "@/components/CommLabel";
-import IconCalendar from '@/assets/images/icon_calendar.svg';
 import CustomDialog from "@/components/CustomDialog";
 import { parseImageList, getCategoryList } from "@/utils/commUtil";
 import { useGroupInsert } from "@/hooks/queries/useGroup";
@@ -17,7 +15,7 @@ import { useGroupInsert } from "@/hooks/queries/useGroup";
 /**
  * 클럽 생성 - 최종 미리보기 및 생성 화면
  */
-export default function MeetCreatePreViewScreen() {
+export default function GroupCreatePreViewScreen() {
   const params = useRoute();
   const routeParams = (params.params ?? {}) as GroupInfo;
   const imageList = parseImageList(routeParams.img_list_json);
@@ -72,19 +70,18 @@ export default function MeetCreatePreViewScreen() {
           />
         </View>
 
-        {/* 소셜링 정보 */}
+        {/* 클럽 정보 */}
         <View style={styles.commContainer}>
-          {/* 소셜링 라벨 */}
+          {/* 클럽 라벨 */}
           <View style={styles.labelContainer}>
               <CommLabel variant="club" />
-              {/* 추후 넘긴 카테고리 값으로 세팅 */}
               <CommLabel variant="category" category={groupInfo.group_subj} />
           </View>
 
-          {/* 소셜링 제목 */}
+          {/* 클럽 제목 */}
           <Text style={styles.commContainerTitle}>{groupInfo.group_name}</Text>
 
-          {/* 소셜링 장소, 날짜, 시간 */}
+          {/* 클럽 장소, 날짜, 시간 */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <Text style={styles.contentInfoText}>{getCategoryValue(groupInfo.group_subj)}</Text>
           </View>
@@ -93,7 +90,7 @@ export default function MeetCreatePreViewScreen() {
         </View>
         {/* 추후 작업 */}
         {/* 모임장 및 참여 멤버 */}
-        {/* 소셜링 상세 소개 */}
+        {/* 클럽 상세 소개 */}
         {/* 장소 주소 및 지도?? */}
         {/* 댓글 ?? */}
         {/* 후기 */}

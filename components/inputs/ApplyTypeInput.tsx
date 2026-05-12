@@ -1,10 +1,10 @@
 import { COLOR, COMM_CONSTANTS } from '@/constants';
-import { MeetInfo } from '@/types';
 import React from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext, FieldValues, Path } from 'react-hook-form';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconApplyFirst from '@/assets/images/icon_apply_first.svg';
 import IconApplyApprove from '@/assets/images/icon_apply_approve.svg';
+import QuestionInput from './QuestionInput';
 
 const APPLY_TYPE_OPTIONS = [
   {
@@ -21,8 +21,9 @@ const APPLY_TYPE_OPTIONS = [
   },
 ];
 
-export default function ApplyTypeInput() {
-  const { control } = useFormContext<MeetInfo>();
+export default function ApplyTypeInput({ questionFieldName = 'meet_question' }) {
+  const { control, watch } = useFormContext<FieldValues>();
+  const applyType = watch('apply_type');
 
   return (
     <View style={styles.container}>
@@ -49,6 +50,12 @@ export default function ApplyTypeInput() {
           </>
         )}
       />
+      {/* 승인제 선택 시 질문 입력 */}
+      {applyType === COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE && (
+        <View style={{ marginTop: 10 }}>
+          <QuestionInput name={questionFieldName} />
+        </View>
+      )}
     </View>
   );
 }

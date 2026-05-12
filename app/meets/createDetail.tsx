@@ -38,6 +38,7 @@ export default function MeetCreateDetailScreen() {
         apply_type    : data.apply_type,
         meet_min      : data.meet_min,
         meet_max      : data.meet_max,
+        meet_question : data.meet_question,
         gender_ratio  : data.gender_ratio,
         age_min       : data.age_min,
         age_max       : data.age_max,
@@ -84,7 +85,9 @@ export default function MeetCreateDetailScreen() {
         <CommBottomButton
           label="다음"
           onPress={onNext}
-          disabled={!prevMeetInfo.meet_type || !formValues.watch('apply_type') || !formValues.watch('meet_min') || !formValues.watch('meet_max')}
+          disabled={!prevMeetInfo.meet_type || !formValues.watch('apply_type') || !formValues.watch('meet_min') || !formValues.watch('meet_max')
+            || (formValues.watch('apply_type') === COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE && !formValues.watch('meet_question'))
+          }
         />
       </View>
     </FormProvider>
