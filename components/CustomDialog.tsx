@@ -6,7 +6,7 @@ interface CustomDialogProps {
   visible       : boolean;
   title?        : string;
   content       : string;
-  textInput?  : string;
+  textInput?    : string| null |undefined;
   onConfirm     : (answer: string) => void;
   onCancel      : () => void;
   child?        : ReactNode;

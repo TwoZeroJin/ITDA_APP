@@ -65,6 +65,15 @@ async function meetApply(body: MeetApply): Promise<ApiResult<MeetApply>> {
 }
 
 /**
+ * 소셜링 신청취소
+ * @returns 
+ */
+async function meetCancelApply(body: MeetApply): Promise<ApiResult<MeetApply>> {
+  const { data } = await axiosInstance.post(API_URL.MEET_CANCEL_APPLY, body);
+  return data;
+}
+
+/**
  * 소셜링 신청 승인
  * @returns 
  */
@@ -73,6 +82,6 @@ async function meetConfirm(body: MeetApply): Promise<ApiResult<MeetApply>> {
   return data;
 }
 
-export {meetList, meetView, meetMemberList, meetInsert, meetUpdate, meetDelete, meetApply, meetConfirm };
+export {meetList, meetView, meetMemberList, meetInsert, meetUpdate, meetDelete, meetApply, meetCancelApply, meetConfirm };
 
 

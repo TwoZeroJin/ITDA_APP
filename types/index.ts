@@ -4,6 +4,7 @@
 interface ApiResult<T> {
   ret_code  : number;
   ret_msg   : string;
+  ext_msg   : string;
   paging?   : {
     page_no       : number;
     page_size     : number;
