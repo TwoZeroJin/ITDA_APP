@@ -1,4 +1,4 @@
-import { ApiResult, GroupInfo, SearchParams } from '@/types';
+import { ApiResult, GroupApply, GroupInfo, MemberInfo, SearchParams } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
@@ -27,8 +27,13 @@ async function groupDelete(groupId: number): Promise<ApiResult<null>> {
   return data;
 }
 
-async function groupApply(): Promise<ApiResult<null>> {
-  const { data } = await axiosInstance.post(API_URL.GROUP_APPLY);
+async function groupApply(body: GroupApply): Promise<ApiResult<GroupApply>> {
+  const { data } = await axiosInstance.post(API_URL.GROUP_APPLY, body);
+  return data;
+}
+
+async function groupCancelApply(body: GroupApply): Promise<ApiResult<GroupApply>> {
+  const { data } = await axiosInstance.post(API_URL.GROUP_CANCEL_APPLY, body);
   return data;
 }
 
@@ -37,4 +42,10 @@ async function groupConfirm(): Promise<ApiResult<null>> {
   return data;
 }
 
-export { groupList, groupView, groupInsert, groupUpdate, groupDelete, groupApply, groupConfirm };
+async function groupMemberList(groupId: number): Promise<ApiResult<MemberInfo[]>> {
+    const { data } = await axiosInstance.post(API_URL.GROUP_MEMBER_LIST, { group_id : groupId });
+    return data;
+}
+
+
+export { groupList, groupView, groupInsert, groupUpdate, groupDelete, groupApply, groupCancelApply, groupConfirm, groupMemberList };
