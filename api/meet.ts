@@ -1,4 +1,4 @@
-import { ApiResult, MeetInfo, SearchParams, MeetReview, MemberInfo, MeetApply } from '@/types';
+import { ApiResult, MeetInfo, SearchParams, MeetReview, MemberInfo, MeetApply, FileInfo } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
@@ -12,7 +12,7 @@ async function meetList(searchParams: SearchParams): Promise<ApiResult<MeetInfo[
  * @param meetId 
  * @returns 소셜링 정보
  */
-async function meetView(meetId: number): Promise<ApiResult<MeetInfo>> {
+async function meetView(meetId: number): Promise<ApiResult<MeetInfo & { img_list?: FileInfo[] }>> {
   const { data } = await axiosInstance.post(API_URL.MEET_VIEW, { meet_id : meetId });
   return data;
 }

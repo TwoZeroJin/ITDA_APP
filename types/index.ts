@@ -58,6 +58,7 @@ interface User {
   login_id        : string;
   login_pwd       : string;
   login_type      : string;
+  push_token?     : string;
 }
 
 /**
