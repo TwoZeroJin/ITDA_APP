@@ -1,4 +1,4 @@
-import { meetApply, meetInsert, meetList, meetMemberList, meetView, meetConfirm,  } from "@/api/meet";
+import { meetApply, meetInsert, meetList, meetMemberList, meetView, meetConfirm, meetCancelApply,  } from "@/api/meet";
 import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
@@ -8,11 +8,11 @@ import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 // 모임 목록 조회 (무한 스크롤)
 function useMeetListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => meetList({ ...searchParams }),
+    queryFn: ({pageParam}) => meetList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: (lastPage) => {
-      if (!lastPage.paging) return undefined;
+      if (!lastPage || !lastPage.paging) return undefined;
       const { page_no, page_size, total_count } = lastPage.paging;
       const isLast = (page_no + 1) * page_size >= total_count;
       return isLast ? undefined : page_no + 1;
@@ -95,16 +95,16 @@ function useMeetApply() {
 
 
 //4.소모임 신청 취소
-function useMeetNotApply() {
+function useMeetCancelApply() {
   const { setLoading } = useLoading();
   return useMutation({
     mutationFn: async (body : MeetApply) => {
       setLoading(true);
-      return meetConfirm(body);
+      return meetCancelApply(body);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_NOT_APPLY],
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CANCEL_APPLY],
       });
     },
     onSettled: () => {
@@ -113,4 +113,4 @@ function useMeetNotApply() {
   });
 }
 
-export { useMeetListPaging, useMeetInsert, useMeetDetailView, useMeetMemberList, useMeetApply, useMeetNotApply };
+export { useMeetListPaging, useMeetInsert, useMeetDetailView, useMeetMemberList, useMeetApply, useMeetCancelApply };

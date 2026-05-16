@@ -1,9 +1,9 @@
-import { COLOR, QUERY_KEYS } from "@/constants";
+import { COLOR } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
-import {  useMeetNotApply, useMeetApply, useMeetDetailView, useMeetMemberList} from "@/hooks/queries/useMeet";
+import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply} from "@/hooks/queries/useMeet";
 import { MeetApply, MeetInfo, SearchParams } from "@/types";
 import {  useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/ImageCarousel";
@@ -18,14 +18,13 @@ import CommReviewList from '@/components/CommReviewList';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useReviewList } from "@/hooks/queries/useCommunity";
 import * as commUtil from '@/utils/commUtil';
-import queryClient from "@/api/queryClient";
 
 export default function MeetDetailPage() {
   const meetApply = useMeetApply();
-  const meetConfirm = useMeetNotApply();
+  const meetCancelApply = useMeetCancelApply();
   const [comment, setComment] = useState('');
-  const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);
-  const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);
+  const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
+  const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
   const [myMemId, setMyMemId] = useState<number>(0);
   //내정보 조회
 //  const memId = commUtil.getMemId();
@@ -81,22 +80,32 @@ export default function MeetDetailPage() {
     setApplyComfirmVisible(false);
 
     console.log("모달에서 받은 답변:", answer);
+
+    if(meetInfo?.apply_type === 'A' && (!answer || answer.trim() === '')) {
+      Alert.alert('신청 답변을 입력해주세요.');
+      return;
+    }
+
     const requestBody = {
       meet_id: Number(meetInfo?.meet_id),
       mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함
       meet_answer: answer,
-      use_stat: '1', // 신청 상태 (예: 'Y' for 신청, 'N' for 취소)
-      
+      use_stat: (answer.trim() !== '' && meetInfo?.apply_type === 'A') ? '0' : '1', // 신청 상태 (예: 'Y' for 신청, 'N' for 취소)
     } as MeetApply;
     console.log("신청하기 요청 바디:", requestBody);
 
 
     // 실제 신청 로직은 여기에 추가 (API 호출 등)
     meetApply.mutate(requestBody, {
-      onSuccess: () => {
-        Alert.alert('모임에 신청되었습니다.');     
-
-        refetchMemberList(); //참여멤버 재조회
+      onSuccess: (result) => {
+        if(result.ret_code != 200){
+          setErrorMessage(result.ext_msg? result.ext_msg : result.ret_msg);
+          setIsErrorDialogVisible(true);
+        }else{
+          Alert.alert('모임에 신청되었습니다.');   
+          refetchMemberList(); //참여멤버 재조회  
+        }
+        
       },
       onError: (error) => {
         setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
@@ -110,15 +119,13 @@ export default function MeetDetailPage() {
 
     const requestBody = {
       meet_id: Number(meetInfo?.meet_id),
-      mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함
-      use_stat: '0', // 신청 상태 (예: 'Y' for 신청, 'N' for 취소)
-      
+      mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함      
     } as MeetApply;
     console.log("신청하기 요청 바디:", requestBody);
 
 
     // 실제 신청 로직은 여기에 추가 (API 호출 등)
-    meetConfirm.mutate(requestBody, {
+    meetCancelApply.mutate(requestBody, {
       onSuccess: () => {
         Alert.alert('모임에 취소되었습니다.');    
         refetchMemberList(); //참여멤버 재조회
@@ -310,8 +317,8 @@ export default function MeetDetailPage() {
       <CustomDialog
         visible={isApplyComfirmVisible}
         title="소셜링 가입 질문"
-        content="이 모임에 신청하시겠어요?"
-        textInput="답변을 작성해주세요."
+        content={meetInfo?.apply_type === 'A' && meetInfo.meet_question ? meetInfo.meet_question : "이 모임에 신청하시겠어요?"}        
+        textInput={meetInfo?.apply_type === 'A' && meetInfo.meet_question ? "답변을 작성해주세요." : null}
         cancelLabel="취소"
         confirmLabel="완료"
         onCancel={() => setApplyComfirmVisible(false)}
@@ -333,12 +340,16 @@ export default function MeetDetailPage() {
       <CustomDialog
         visible={isErrorDialogVisible}
         title="처리 실패"
-        content={`정상 처리되지 않았습니다. 잠시 후 다시 시도해 주세요. \n${errorMessage}`}
+        content={`정상 처리되지 않았습니다. \n${errorMessage}`}
         cancelLabel="닫기"
-        confirmLabel="다시 시도"
-        onCancel={() => setIsErrorDialogVisible(false)}
+        onCancel={() => {
+          setIsErrorDialogVisible(false)
+          refetchMemberList(); //참여멤버 재조회
+        }}
         onConfirm={() => {
-         setIsErrorDialogVisible(false);
+          setIsErrorDialogVisible(false);
+          handleApplySubmit //빈값으로 신청 시도하여 재신청 처리 유도 (API에서 빈값은 질문 없는 경우로 처리)
+
         }}
       />
     </View>

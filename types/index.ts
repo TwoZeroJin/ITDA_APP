@@ -4,6 +4,7 @@
 interface ApiResult<T> {
   ret_code  : number;
   ret_msg   : string;
+  ext_msg   : string;
   paging?   : {
     page_no       : number;
     page_size     : number;
@@ -250,9 +251,17 @@ interface GroupInfo {
   group_max       : number;
   group_question  : string;
   apply_type      : string;
+  thumb_url?      : string;
+
+  mem_id        : number;
+  mem_name      : string;
+  mem_nick      : string;
+  mem_image_url? : string;
 
   // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
   img_list_json? : string;
+  img_list? : FileInfo[];
+
 }
 
 /**
@@ -260,6 +269,7 @@ interface GroupInfo {
  */
 interface GroupApply {
   group_id      : number;
+  mem_id        : number;
   group_answer? : string;
   use_stat      : string;
 }

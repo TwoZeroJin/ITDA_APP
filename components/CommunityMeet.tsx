@@ -1,6 +1,6 @@
 import { COLOR } from '@/constants';
 import React from 'react';
-import { MeetInfo, MyMeetInfo} from '@/types';
+import { GroupInfo, MeetInfo, MyMeetInfo} from '@/types';
 import {
   View,
   Text,
@@ -14,21 +14,39 @@ import { router, usePathname } from 'expo-router';
 import BtnLikeDefault from '@/assets/images/btn_like_default.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
+import CommLabel from './CommLabel';
 
 const { width } = Dimensions.get('window');
 
 
 interface communityMeetProps {
-  data: MyMeetInfo | MeetInfo;
-  type?: 'MEET' | 'COMMUNITY'; // 명시적으로 타입을 받음
+  data: MyMeetInfo | MeetInfo | GroupInfo;
+  type?: 'MEET' | 'COMMUNITY' | 'CLUB'; // 명시적으로 타입을 받음
 }
 
 export default function CommunityMeet({data, type}: communityMeetProps) {
   // ✅ 현재 경로를 가져옵니다.
   const pathname = usePathname();  
+  const dynamicBackgroundColor = type === 'MEET' || type === 'CLUB' ? COLOR.COMM_WHITE : COLOR.COMM_GRAY;
+  let printData = { id: 0, name: '', thumb_url: '', place_addr: '', apply_ratio: '', mem_name: '', meet_type: '' };
+  // 2. 조건문에 따라 안전하게 값을 할당합니다.
+  if (type === 'CLUB') {
+    const groupData = data as GroupInfo;
+    printData.id = groupData.group_id;
+    printData.name = groupData.group_name;
+    printData.thumb_url = groupData.thumb_url || '';
+    printData.apply_ratio = String(groupData.group_max);
+  } else {
+    const meetData = data as MeetInfo;
+    printData.id = meetData.meet_id;
+    printData.name = meetData.meet_name;
+    printData.thumb_url = meetData.thumb_url || '';
+    printData.place_addr = meetData.place_addr;
+    printData.apply_ratio = meetData.apply_ratio;
+    printData.meet_type = meetData.meet_type;
+  }
 
-  const isMyMeet = 'meet_id' in data; 
-  const dynamicBackgroundColor = type === 'MEET' ? COLOR.COMM_WHITE : COLOR.COMM_GRAY;
+
 
   // ✅ 클릭 핸들러 함수
   const handlePress = () => {
@@ -40,14 +58,20 @@ export default function CommunityMeet({data, type}: communityMeetProps) {
         pathname: '/communities/writeFeedback',
         params: { data: JSON.stringify(data) },
       });
-    }     
-    else {
+  }     
+  else if (type === 'CLUB') {
       router.push({
-      pathname: '/meets/meetDetailPage',
-      params: {
-        meetId: data.meet_id,
-      }});
-    }
+        pathname: '/meets/groupDetailPage',
+        params: { groupId: printData.id },
+      });
+  }
+  else {
+    router.push({
+    pathname: '/meets/meetDetailPage',
+    params: {
+      meetId: printData.id,
+    }});
+  }
     
 
   };
@@ -64,7 +88,7 @@ export default function CommunityMeet({data, type}: communityMeetProps) {
                   {/* 이미지, 좋아요 버튼 */}
                   <View>
                     <ImageBackground
-                      source={data.thumb_url? { uri: data.thumb_url } : require('@/assets/testImages/test_recommend_image2.png')}
+                      source={printData.thumb_url? { uri: printData.thumb_url } : require('@/assets/testImages/test_recommend_image2.png')}
                       style={styles.recommendItemImage}
                       imageStyle={styles.recommendImage}
                     >
@@ -76,21 +100,24 @@ export default function CommunityMeet({data, type}: communityMeetProps) {
                   </View>
                   <View style={{ marginStart: 10 }}>
                     <View style={styles.recommendTagContainer}>
-                      <Text style={styles.recommendTagMeet}>모임</Text>
+                      <CommLabel variant="social" />
+                      <CommLabel variant="club" />
+                      <CommLabel variant="category" category={printData.meet_type || '카테고리'} />
+                      {/* <Text style={styles.recommendTagMeet}>모임</Text>
                       <Text style={styles.recommendTagClub}>클럽</Text>
-                      <Text style={styles.recommendTagCategory}>게임</Text>
+                      <Text style={styles.recommendTagCategory}>게임</Text> */}
                     </View>
                     <View style={styles.recommendContentContainer}>
-                      <Text style={styles.recommendContentTitle} numberOfLines={1} ellipsizeMode='tail'>{data.meet_name}</Text>
+                      <Text style={styles.recommendContentTitle} numberOfLines={1} ellipsizeMode='tail'>{printData.name}</Text>
                       <View style={styles.recommendContentInfoContainer}>
                         <IconMarker width={12} height={12} />
-                        <Text style={styles.recommendContentText}>{data.place_addr}</Text>
+                        <Text style={styles.recommendContentText}>{printData.place_addr}</Text>
                         <IconMembers width={12} height={12} />
-                        <Text style={styles.recommendContentText}>{data.apply_ratio}</Text>
+                        <Text style={styles.recommendContentText}>{printData.apply_ratio}</Text>
                       </View>
                       <View style={styles.recommendContentInfoContainer}>
                         <Image source={require('@/assets/testImages/test_image_profile.png')} style={{ width: 20, height: 20, borderRadius: 10, marginEnd: 4 }} />
-                        <Text style={styles.recommendHostText}>{data.mem_name}</Text>
+                        <Text style={styles.recommendHostText}>{printData.mem_name}</Text>
                       </View>
                     </View>
                   </View>
