@@ -57,15 +57,14 @@ export default function SignupInfoScreen() {
         <View style={styles.container}>
             <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
             <KeyboardAwareScrollView
-                contentContainerStyle={[
-                    styles.formContainer,
-                    { paddingBottom: isKeyboardVisible ? 0 : 120 }, // 키보드가 올라올 경우 하단 패딩 제거
-                ]}
+                contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
-                enableOnAndroid
-                extraScrollHeight={24}
+                enableOnAndroid={true}
+                extraScrollHeight={120}
+                enableAutomaticScroll={true} 
             >
                 <FormProvider {...signupForm}>
+                    <View style={styles.formContainer}>
                     <ProfileImageInput/>
                     <ChurchSelectBox/>
                     <ChurchTmNmInput/>
@@ -76,6 +75,7 @@ export default function SignupInfoScreen() {
                     <NickNameInput/>
                     <PasswordInput returnKeyType="next"/>
                     <PasswordConfirmInput/>
+                    </View>
                 </FormProvider>
             </KeyboardAwareScrollView>
             <CommBottomButton label="다음" onPress={signupForm.handleSubmit(onSubmit)}/>
@@ -87,8 +87,13 @@ const styles = StyleSheet.create({
     container: {
         flex                : 1,
     },
+    scrollContent: {
+        // 🌟 하단에 떠 있는 버튼 영역(약 70~80px) + 안드로이드 키보드 안전 마진을 고정 패딩으로 확보합니다.
+        paddingBottom       : 200, 
+    },
     formContainer: {
         marginHorizontal    : 20,
+        paddingTop          : 10,
         gap                 : 16,
     },
 })
