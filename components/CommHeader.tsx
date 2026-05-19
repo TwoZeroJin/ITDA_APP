@@ -36,7 +36,7 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
         </View>
         <View style={[styles.container, styles.rigtht]}>
           {isLike && 
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => {router.navigate("/mypage/likeList");}}>
               <Like/>
             </TouchableOpacity>
           }

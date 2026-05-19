@@ -37,6 +37,13 @@ export default function MyPageLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="likeList"
+          options={{
+            title: "좋아요 리스트",
+            headerShown: false,
+          }}
+        />
     </Stack>
   )
 }

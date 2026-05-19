@@ -1,4 +1,4 @@
-import { ApiResult, GroupApply, GroupInfo, MemberInfo, SearchParams } from '@/types';
+import { ApiResult, FileInfo, GroupApply, GroupInfo, MemberInfo, SearchParams } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
@@ -7,7 +7,7 @@ async function groupList(searchParams: SearchParams): Promise<ApiResult<GroupInf
   return data;
 }
 
-async function groupView(groupId: number): Promise<ApiResult<GroupInfo>> {
+async function groupView(groupId: number): Promise<ApiResult<GroupInfo & { img_list?: FileInfo[] }>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_VIEW, { group_id : groupId });
   return data;
 }

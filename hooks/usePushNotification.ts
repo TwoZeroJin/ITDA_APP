@@ -4,6 +4,9 @@ import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 
+/**
+ * 푸시 알림 관련 로직을 담당하는 커스텀 훅
+ */
 function usePushNotification() {
   const [expoPushToken, setExpoPushToken] = useState("");
   const [notification, setNotification] = useState<
@@ -77,11 +80,9 @@ function usePushNotification() {
 
     return () => {
       notificationListener.current &&
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
+        notificationListener.current.remove();
       responseListener.current &&
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
     };
   }, []);
 

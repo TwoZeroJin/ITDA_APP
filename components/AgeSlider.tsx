@@ -11,6 +11,9 @@ type AgeSliderProps = {
 
 const AGE_VALUES = [10, 15, 20, 25, 30, 35, 40, 45, 50];
 
+/**
+ * 나이대 선택 슬라이더 컴포넌트
+ */
 function AgeSlider({ value, onChange, disabled = false }: AgeSliderProps) {
   const normalizedValue = useMemo(() => {
     const rounded = Math.round(value / 5) * 5;
@@ -62,42 +65,42 @@ function AgeSlider({ value, onChange, disabled = false }: AgeSliderProps) {
 
 const styles = StyleSheet.create({
   sliderContainer: {
-    marginTop: 6,
+    marginTop         : 6,
   },
   sliderDisabled: {
-    opacity: 0.45,
+    opacity           : 0.45,
   },
   badge: {
-    position: 'absolute',
-    top: -2,
-    transform: [{ translateX: -25 }],
-    minWidth: 50,
-    height: 25,
-    borderRadius: 17,
-    backgroundColor: COLOR.APP_ACTIVE_5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 3,
+    position          : 'absolute',
+    top               : -2,
+    transform         : [{ translateX: -25 }],
+    minWidth          : 50,
+    height            : 25,
+    borderRadius      : 17,
+    backgroundColor   : COLOR.APP_ACTIVE_5,
+    justifyContent    : 'center',
+    alignItems        : 'center',
+    zIndex            : 3,
   },
   badgeText: {
-    fontSize: 14,
-    color: COLOR.COMM_WHITE,
+    fontSize          : 14,
+    color             : COLOR.COMM_WHITE,
   },
   sliderRow: {
-    marginTop: 26,
+    marginTop         : 26,
   },
   slider: {
-    width: '100%',
-    height: 40,
+    width             : '100%',
+    height            : 40,
   },
   valueRow: {
-    marginTop: 2,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    marginTop         : 2,
+    flexDirection     : 'row',
+    justifyContent    : 'space-between',
   },
   valueText: {
-    fontSize: 16,
-    color: COLOR.TEXT_GRAY,
+    fontSize          : 16,
+    color             : COLOR.TEXT_GRAY,
   },
 });
 

@@ -2,11 +2,11 @@ import CommHeader from '@/components/CommHeader';
 import { COLOR } from '@/constants';
 import { BannerData } from '@/types';
 import { getMainBannerList } from '@/utils/commUtil';
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import SearchButton from '@/assets/images/search_button.svg';
 import IconClose from '@/assets/images/icon_close.svg';
+import CreateFloatingButton from '@/components/CreateFloatingButton';
 import IconCreate from '@/assets/images/icon_create.svg';
 import CommCategoryList from '@/components/CommCategoryList';
 import CommRcmdMeetList from '@/components/CommRcmdMeetList';
@@ -15,10 +15,26 @@ import CommReviewList from '@/components/CommReviewList';
 import ImageCarousel from "@/components/ImageCarousel";
 import { useMainData } from '@/hooks/queries/useMain';
 import DividingLine from '@/components/DividingLine';
+import { router } from 'expo-router';
 
+/**
+ * 메인 화면
+ */
 export default function HomeScreen() {
   const [bannerList, setBannerList] = useState<BannerData[]>([]);
-  const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList } = useMainData();
+  const [refreshing, setRefreshing] = useState(false);
+  const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, refetch } = useMainData();
+
+  // 위로 땡겨서 새로고침
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+
+    try {
+      await refetch();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetch]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -56,8 +72,14 @@ export default function HomeScreen() {
       <CommHeader/>
       <ScrollView 
         showsVerticalScrollIndicator={false}
-        bounces={false}
+        bounces={true}
         overScrollMode="never"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        }
       >
         <View style={[styles.container, { flex : 1, paddingHorizontal: 16}]}>
           {/* 검색 조건 부분 */}
@@ -128,13 +150,7 @@ export default function HomeScreen() {
 
       </ScrollView>
       {/* Floating 버튼, 소셜링/클럽 생성 버튼 (화면에 고정) */}
-      <TouchableOpacity
-        style={styles.floatingButton}
-        activeOpacity={0.8}
-        onPress={() => router.navigate('/meets/create')}
-      >
-        <IconCreate width={54} height={54} />
-      </TouchableOpacity>
+      <CreateFloatingButton />
     </View>
   );
 }
@@ -196,16 +212,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
     color: COLOR.COMM_SHADOW,
-  },
-  floatingButton: {
-    position      : 'absolute',
-    right         : 16,
-    bottom        : 30,
-    elevation     : 6,
-    shadowColor   : COLOR.COMM_BLACK,
-    shadowOpacity : 0.18,
-    shadowOffset  : { width: 0, height: 4 },
-    shadowRadius  : 6,
-    zIndex        : 999,
   },
 });

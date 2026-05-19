@@ -1,9 +1,8 @@
 import CommHeader from '@/components/CommHeader';
+import CreateFloatingButton from '@/components/CreateFloatingButton';
 import { COLOR } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
-import { router } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ClubLayout from './clubLayout';
 import SocialClassLayout from './socialClassLayout';
 
@@ -44,13 +43,7 @@ export default function Meet() {
       )}      
 
       {/* 사진 우측 하단의 플로팅 글쓰기 버튼 */}
-      <TouchableOpacity 
-        style={styles.floatingButton}
-        activeOpacity={0.8}
-        onPress={() => router.navigate('/meets/create')}
-      >
-        <MaterialCommunityIcons name="plus" size={32} color={COLOR.COMM_WHITE} />
-      </TouchableOpacity>
+      <CreateFloatingButton />
     </View>
   );
 }
@@ -91,21 +84,5 @@ const styles = StyleSheet.create({
     height: 3,
     backgroundColor: '#FF5A5F',
     borderRadius: 2,
-  },
-  floatingButton: {
-    position: 'absolute',
-    right: 20,
-    bottom: 30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FF7A7A', // 사진의 플러스 버튼 색상
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
 });

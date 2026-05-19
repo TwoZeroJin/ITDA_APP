@@ -54,8 +54,13 @@ ITDA 사용자 앱
 # 3. Expo GO 앱 실행후 로그인 (EXPO 공용 계정으로 로그인 필요)
 # 4. 앱 실행
 #
+# SDK 버전 관련 문제 발생시 대처 방법
+# 1. npx expo-doctor 명령어 실행
+# 2. 결과 확인 및 Advice 메시지에 있는 명령어 실행
+#
 # 빌드 방법 (추후 개발자 계정 등록 후 진행 필요)
 # 1. npm install -g eas-cli
 # 2. eas login
 # 3. eas build:configure (빌드 초기화)
-# 4. eas build -p ios --profile dev (iOS 개발 빌드)
+# 4. eas build -p ios --profile [local|dev|prod] (iOS [로컬|개발|운영] 빌드)
+# 5. eas build -p android --profile [local|dev|prod] (Android [로컬|개발|운영] 빌드)

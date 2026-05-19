@@ -37,6 +37,11 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# firebase
+itda-b99d6-firebase-adminsdk-fbsvc-46941367ab
+# google-services.json
+google-services.json
+
 app-example
 # All Hidden File But .gitignore
 .*

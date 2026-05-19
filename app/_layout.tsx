@@ -15,20 +15,21 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
+import * as Notifications from 'expo-notifications';
 
-// Notifications.setNotificationHandler({
-//   handleNotification: async () => ({
-//     // shouldPlaySound: true,
-//     // shouldSetBadge: true,
-//     // shouldShowAlert: true,
-//     // shouldShowBanner: true,
-//     // shouldShowList: true,
-//     shouldPlaySound: false,
-//     shouldSetBadge: false,
-//     shouldShowBanner: true,
-//     shouldShowList: true,
-//   }),
-// });
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    // shouldPlaySound: true,
+    // shouldSetBadge: true,
+    // shouldShowAlert: true,
+    // shouldShowBanner: true,
+    // shouldShowList: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 export default function RootLayout() {
   const [appIsReady, setAppIsReady] = useState(false);

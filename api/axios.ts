@@ -70,7 +70,7 @@ axiosInstance.interceptors.response.use(
         deleteSecureStore(STORE_KEY.X_ACCESS_TOKEN);
         deleteSecureStore(STORE_KEY.X_REFRESH_TOKEN);
         queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
-        router.replace("/user" as any);
+        router.replace("/" as any);
       }
     }
     return Promise.reject(error);

@@ -13,8 +13,8 @@ function GroupNameInput() {
     control={control}
     rules={{
       validate: (data: string) => {
-        if (!data || data.trim().length < 5) {
-          return '클럽명을 입력해주세요.(5글자 이상)';
+        if (!data || data.length === 0) {
+          return '클럽명을 입력해주세요.';
         }
       }
     }}

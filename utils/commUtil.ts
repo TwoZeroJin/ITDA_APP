@@ -334,5 +334,50 @@ function parseChatPayload(raw: string): Partial<ChatData> {
     return { chat_msg: raw };
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, setChurchList, getChurchList, saveMemberInfoForUpdate };
+function formatRelativeMeetDatetime(meetDatetime: string) {
+    if (!meetDatetime) {
+        return '';
+    }
+
+    const normalized = meetDatetime.trim().replace(' ', 'T');
+    let targetDate = new Date(normalized);
+
+    if (Number.isNaN(targetDate.getTime())) {
+        const match = meetDatetime.match(/^(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2})$/);
+
+        if (!match) {
+            return meetDatetime;
+        }
+
+        const [, year, month, day, hour, minute] = match;
+        targetDate = new Date(
+            Number(year),
+            Number(month) - 1,
+            Number(day),
+            Number(hour),
+            Number(minute),
+        );
+
+        if (Number.isNaN(targetDate.getTime())) {
+            return meetDatetime;
+        }
+    }
+
+    const diffMs = Date.now() - targetDate.getTime();
+
+    if (diffMs <= 0) {
+        return '0시간 전';
+    }
+
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+    if (diffHours < 24) {
+        return `${Math.max(diffHours, 1)}시간 전`;
+    }
+
+    const diffDays = Math.floor(diffHours / 24);
+    return `D-${diffDays}`;
+}
+
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime };
 

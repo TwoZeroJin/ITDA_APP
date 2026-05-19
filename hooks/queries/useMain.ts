@@ -8,6 +8,8 @@ import * as Updates from 'expo-updates';
 import { useEffect, useState } from 'react';
 import { DevSettings, Image } from 'react-native';
 import { AxiosError } from 'axios';
+import { router } from 'expo-router';
+
 
 function useMainEntry() {
     const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);

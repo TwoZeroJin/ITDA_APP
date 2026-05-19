@@ -33,40 +33,19 @@ interface BottomPlaceSearchListModalProps {
 /**
  * 장소 검색 모달 컴포넌트
  */
-function BottomPlaceSearchListModal({
-  visible,
-  title,
-  placeholder = '검색어를 입력해 주세요.',
-  emptyText = '검색 결과가 없어요.',
-  defaultItems = [],
-  onClose,
-  onSelectItem,
-  renderItemIcon,
-}: BottomPlaceSearchListModalProps) {
+function BottomPlaceSearchListModal({ visible, title, placeholder = '검색어를 입력해 주세요.', emptyText = '검색 결과가 없어요.', onClose, onSelectItem }: BottomPlaceSearchListModalProps) {
   const sheetTranslateY = useRef(new Animated.Value(560)).current;
   const [isModalVisible, setIsModalVisible] = useState(visible);
   const [keyword, setKeyword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [items, setItems] = useState<BottomPlaceSearchListItem[]>(defaultItems);
+  const [items, setItems] = useState<BottomPlaceSearchListItem[]>([]);
   const isClosingRef = useRef(false);
 
   const searchPlaceByKeyword = useCallback(async (value: string) => {
     const trimmedKeyword = value.trim();
     const kakaoRestApiKey = process.env.EXPO_PUBLIC_KAKAO_REST_API_KEY;
 
-    if (!trimmedKeyword) {
-      setItems(defaultItems);
-      return;
-    }
-
-    if (!kakaoRestApiKey) {
-      const fallbackList = defaultItems.filter((item) => (
-        item.title.includes(trimmedKeyword) || item.description.includes(trimmedKeyword)
-      ));
-
-      setItems(fallbackList);
-      return;
-    }
+    console.log('장소 검색 시작', kakaoRestApiKey);
 
     setLoading(true);
 
@@ -99,16 +78,13 @@ function BottomPlaceSearchListModal({
 
       setItems(searchedPlaceList.length > 0 ? searchedPlaceList : []);
     } catch (error) {
-      const fallbackList = defaultItems.filter((item) => (
-        item.title.includes(trimmedKeyword) || item.description.includes(trimmedKeyword)
-      ));
 
-      setItems(fallbackList);
+      setItems([]);
       console.log('장소 검색 실패', error);
     } finally {
       setLoading(false);
     }
-  }, [defaultItems]);
+  }, []);
 
   const animateOpen = useCallback(() => {
     isClosingRef.current = false;
@@ -149,7 +125,7 @@ function BottomPlaceSearchListModal({
     if (visible) {
       setIsModalVisible(true);
       setKeyword('');
-      setItems(defaultItems);
+      setItems([]);
       return;
     }
 
@@ -158,7 +134,7 @@ function BottomPlaceSearchListModal({
         setIsModalVisible(false);
       });
     }
-  }, [animateClose, animateOpen, defaultItems, isModalVisible, visible]);
+  }, [animateClose, animateOpen, isModalVisible, visible]);
 
   useEffect(() => {
     if (!isModalVisible) {
@@ -221,7 +197,6 @@ function BottomPlaceSearchListModal({
                 style={styles.itemRow}
                 onPress={() => onSelectItem(item)}
               >
-                {renderItemIcon ?? null}
                 <View style={styles.itemTextContainer}>
                   <Text style={styles.itemTitleText}>{item.title}</Text>
                   <Text style={styles.itemDescriptionText}>{item.description}</Text>

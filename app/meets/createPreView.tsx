@@ -36,7 +36,7 @@ export default function MeetCreatePreViewScreen() {
       onSuccess: () => {
         router.navigate({
           pathname: '/meets/createComplete', 
-          params: { meet_type: meetInfo.meet_type}});
+          params: { meet_type: meetInfo.meet_type }});
       },
       onError: (error) => {
         setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');

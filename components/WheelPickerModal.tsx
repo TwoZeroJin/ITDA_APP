@@ -75,8 +75,14 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
   const handleMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     handleScrollFinish(event);
   };
+
   const handleScrollEndDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    handleScrollFinish(event);
+    const velocityY = event.nativeEvent.velocity?.y ?? 0;
+
+    // 손을 놓은 뒤 관성 스크롤이 거의 없을 때만 즉시 확정
+    if (Math.abs(velocityY) < 0.05) {
+      handleScrollFinish(event);
+    }
   };
 
   return (
@@ -87,10 +93,10 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
           data={options}
           keyExtractor={(item) => item.value}
           showsVerticalScrollIndicator={false}
-          decelerationRate={0.980}
+          decelerationRate={0.995}
           snapToInterval={WHEEL_ITEM_HEIGHT}
           snapToAlignment="center"
-          bounces={false}
+          bounces={true}
           onMomentumScrollEnd={handleMomentumScrollEnd}
           onScrollEndDrag={handleScrollEndDrag}
           scrollEventThrottle={16}

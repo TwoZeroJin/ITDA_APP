@@ -6,7 +6,6 @@ import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
 import IconSocial from '@/assets/images/icon_social.svg';
 import IconClub from '@/assets/images/icon_club.svg';
-import { MeetInfo } from "@/types";
 
 /**
  * 모임 생성 - 모임 유형 세부 선택 화면(소셜링 - 일반, 클럽 - 일반/클럽 클래스 - 일반)
@@ -59,10 +58,9 @@ export default function MeetCreateTypeScreen() {
             pathname: '/meets/createDetail',
             params: {
               meet_type : meetType
-            } as Partial<MeetInfo>,
+            },
           })}
           disabled={!meetType}/>
-          
     </View>
   );
 }

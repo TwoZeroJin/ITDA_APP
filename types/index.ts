@@ -139,6 +139,10 @@ interface LikeData {
   target_name       : string;
   target_subj_name  : string;
   thumb_url?        : string;
+  place_addr?       : string;
+  apply_ratio?      : string;
+  mem_nick?         : string;
+  mem_image_url?    : string;
 }
 
 /**
@@ -161,37 +165,37 @@ interface FileInfo {
  * 소모임 정보
  */
 interface MeetInfo {
-  meet_id       : number;
-  meet_name     : string;
-  meet_type     : string;
-  meet_subj     : string;
-  meet_datetime : string;
-  meet_desc     : string;
-  meet_min      : number;
-  meet_max      : number;
-  meet_question : string;
-  age_min       : number;
-  age_max       : number;
-  gender_ratio  : number;
-  apply_type    : string;
-  fee_yn        : string;
-  fee_info      : string;
-  fee_entry     : number;
-  fee_desc      : string;
-  place_type    : string;
-  place_name    : string;
-  place_addr    : string;
-  mem_id        : number;
-  mem_name      : string;
-  mem_nick      : string;
-  mem_image_url? : string;
-  group_id      : number;
-  apply_ratio   : string;
-  thumb_url?    : string;
+  meet_id         : number;
+  meet_name       : string;
+  meet_type       : string;
+  meet_subj       : string;
+  meet_subj_name  : string;
+  meet_datetime   : string;
+  meet_desc       : string;
+  meet_min        : number;
+  meet_max        : number;
+  meet_question   : string;
+  age_min         : number;
+  age_max         : number;
+  gender_ratio    : number;
+  apply_type      : string;
+  fee_yn          : string;
+  fee_info        : string;
+  fee_entry       : number;
+  fee_desc        : string;
+  place_type      : string;
+  place_name      : string;
+  place_addr      : string;
+  mem_id          : number;
+  mem_name        : string;
+  mem_nick        : string;
+  mem_image_url?  : string;
+  group_id        : number;
+  apply_ratio     : string;
+  thumb_url?      : string;
+  like_yn         : string;
   // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
-  img_list_json? : string;
-  img_list? : FileInfo[];
-
+  img_list_json?  : string;
 }
 
 /**
@@ -260,7 +264,6 @@ interface GroupInfo {
 
   // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
   img_list_json? : string;
-  img_list? : FileInfo[];
 
 }
 

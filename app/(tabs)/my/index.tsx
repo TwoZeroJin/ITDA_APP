@@ -6,9 +6,7 @@ import MemDefault from '@/assets/images/icon_mem_default.svg';
 import IconPencil from '@/assets/images/icon_pencil.svg';
 import { getMemberInfo, getCategoryList } from '@/utils/commUtil';
 import { MemberInfo } from "@/types";
-import { useAuth } from "@/hooks/queries/useAuth";
 import { router, useFocusEffect } from "expo-router";
-import CustomDialog from "@/components/CustomDialog";
 import DividingLine from "@/components/DividingLine";
 import CommUpcomingMeetList from "@/components/CommUpcomingMeetList";
 import { useMemberDetail } from "@/hooks/queries/useMember";
@@ -18,20 +16,13 @@ import CommReviewList from "@/components/CommReviewList";
  * 마이페이지 - 내 정보 화면
  */
 export default function MyPageScreen() {
-  const { logout } = useAuth();
   const [memberInfo, setMemberInfo] = useState<MemberInfo>();
-  const [isAuthDialogVisible, setIsAuthDialogVisible] = useState(false);
   const [interestCategories, setInterestCategories] = useState<{ label: string; id: string }[]>([]);
   const { upcomingMeetList, newClassList, reviewList } = useMemberDetail();
   const profileImageUrl = memberInfo?.mem_image_url;
 
   const fetchMyMemberInfo = useCallback(async () => {
     const memberInfo = await getMemberInfo();
-
-    if (!memberInfo) {
-      setIsAuthDialogVisible(true);
-      return;
-    }
 
     setMemberInfo(memberInfo);
 
@@ -131,17 +122,6 @@ export default function MyPageScreen() {
 
       </ScrollView>
 
-      <CustomDialog
-        visible={isAuthDialogVisible}
-        content="로그인이 필요합니다."
-        confirmLabel="OK"
-        onCancel={() => {}}
-        onConfirm={() => {
-          setIsAuthDialogVisible(false);
-          logout();
-          router.replace('/user/login');
-        }}
-      />
     </View>
   );
 }

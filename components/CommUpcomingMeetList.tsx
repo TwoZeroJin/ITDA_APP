@@ -3,10 +3,10 @@ import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
 import { COLOR } from '@/constants';
 import { MeetInfo } from '@/types';
+import { formatRelativeMeetDatetime } from '@/utils/commUtil';
 import { router } from 'expo-router';
-import { Dimensions, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-const { width } = Dimensions.get('window');
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import MemDefault from '@/assets/images/icon_mem_default.svg';
 
 interface CommUpcomingMeetListProps {
   upcomingMeetList: MeetInfo[];
@@ -16,7 +16,6 @@ interface CommUpcomingMeetListProps {
  * 다가오는 모임 리스트 컴포넌트
  */
 export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingMeetListProps) {
-
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -38,29 +37,28 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
           <FlatList<MeetInfo>
             data={upcomingMeetList}
             renderItem={({ item }) => {
-                return (
-                    <View style={styles.meetCell}>
-                        <Text style={styles.meetDay}>D-Day</Text>
-                        <Text style={styles.meetSubTitle} numberOfLines={1} ellipsizeMode="tail">
-                        {item.meet_name}
-                        </Text>
-                        <View style={styles.meetInfoRow}>
-                        <IconMarker width={12} height={12} />
-                        <Text style={styles.meetInfoText}>{item.place_addr}</Text>
-                        </View>
-                        <View style={styles.meetInfoRow}>
-                        <IconMembers width={12} height={12} />
-                        <Text style={styles.meetInfoText}>{item.apply_ratio}</Text>
-                        </View>
-                        <View style={styles.meetInfoRow}>
-                        <Image
-                            source={require('@/assets/testImages/test_image_profile.png')}
-                            style={{ width: 20, height: 20, borderRadius: 10, marginEnd: 4 }}
-                        />
-                        <Text style={styles.meetHostText}>{item.mem_name}</Text>
-                        </View>
-                    </View>
-                );
+              return (
+                <View style={styles.meetCell}>
+                  <Text style={styles.meetDay}>{formatRelativeMeetDatetime(item.meet_datetime)}</Text>
+                  <Text style={styles.meetSubTitle} numberOfLines={1} ellipsizeMode="tail">{item.meet_name}</Text>
+                  {item.place_addr && (<View style={styles.meetInfoRow}>
+                    <IconMarker width={12} height={12} />
+                    <Text style={styles.meetInfoText}>{item.place_addr}</Text>
+                  </View>)}
+                  {item.apply_ratio && (<View style={styles.meetInfoRow}>
+                    <IconMembers width={12} height={12} />
+                    <Text style={styles.meetInfoText}>{item.apply_ratio}</Text>
+                  </View>)}
+                  {item.mem_nick && (<View style={styles.meetInfoRow}>
+                    {item.mem_image_url ? (
+                        <Image source={{ uri: item.mem_image_url }} style={styles.hostImage} />
+                      ) : (
+                        <MemDefault width={23} height={23} />
+                      )}
+                    <Text style={styles.meetHostText}>{item.mem_nick}</Text>
+                  </View>)}
+                </View>
+              );
             }}
             keyExtractor={(item) => String(item.meet_id)}
             horizontal
@@ -106,36 +104,42 @@ const styles = StyleSheet.create({
   },
   meetDay: {
     fontSize        : 14,
-    fontWeight      : 'bold',
+    fontFamily      : 'Pretendard-SemiBold',
     color           : COLOR.BG_MEET,
   },
   meetSubTitle: {
     fontSize        : 16,
-    fontWeight      : 'bold',
+    fontFamily      : 'Pretendard-Medium',
     color           : COLOR.TEXT_3C3C3C,
-    flexShrink      : 1,
   },
   meetInfoRow: {
     flexDirection   : 'row',
-    gap             : 4,
     alignItems      : 'center',
+    marginVertical  : 2,
   },
   meetInfoText: {
     fontSize        : 12,
+    fontFamily      : 'Pretendard-Regular',
     color           : COLOR.COMM_SHADOW,
   },
   meetHostText: {
     fontSize        : 14,
-    fontWeight      : 'bold',
+    fontFamily      : 'Pretendard-Medium',
     color           : COLOR.COMM_SHADOW,
   },
   meetCell: {
-    width               : width / 2 - 40,
+    width               : 160,
+    height              : 140,
     marginHorizontal    : 6,
     padding             : 12,
     backgroundColor     : COLOR.COMM_WHITE,
-    justifyContent      : 'center',
     borderRadius        : 12,
     gap                 : 5,
+  },
+  hostImage: {
+    width             : 20,
+    height            : 20,
+    borderRadius      : 10,
+    marginEnd         : 4,
   },
 });

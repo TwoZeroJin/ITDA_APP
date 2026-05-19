@@ -33,7 +33,7 @@ export default function AgeRangeInput() {
               }}
             />
             <AgeSlider
-              value={value < 0 ? 45 : value}
+              value={value < 0 ? 30 : value}
               onChange={onChange}
               disabled={ageType === 'none'}
             />

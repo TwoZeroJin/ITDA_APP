@@ -1,19 +1,13 @@
 import CommHeader from "@/components/CommHeader";
-import { COLOR, COMM_CONSTANTS } from "@/constants";
+import { COLOR } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
 import { router } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-
-const CATEGORY_TABS: { key: string; label: string }[] = [
-  { key: "", label: "전체" },
-  { key: COMM_CONSTANTS.CHAT_TYPE_MEET  , label: "소셜링" },
-  { key: COMM_CONSTANTS.CHAT_TYPE_GROUP , label: "클럽" },
-  { key: COMM_CONSTANTS.CHAT_TYPE_CLASS , label: "클래스" },
-];
+import { CategoryTab } from "@/components/CategoryTab";
 
 function formatUpdatedText(dateText?: string): string {
   if (!dateText) {
@@ -56,7 +50,7 @@ export default function ChatListScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       refetch();
     }, [refetch]),
   );
@@ -74,12 +68,6 @@ export default function ChatListScreen() {
     setLoading(false);
     hasHandledInitialLoadingRef.current = true;
   }, [isLoading, setLoading]);
-
-  useEffect(() => {
-    return () => {
-      setLoading(false);
-    };
-  }, [setLoading]);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -100,24 +88,6 @@ export default function ChatListScreen() {
 
     return results.filter((room) => room.room_type === activeCategory);
   }, [activeCategory, results]);
-
-  const renderCategoryTab = (category: { key: string; label: string }) => {
-    const isActive = activeCategory === category.key;
-
-    return (
-      <TouchableOpacity
-        key={category.key}
-        style={[styles.categoryChip, isActive && styles.categoryChipActive]}
-        onPress={() => setActiveCategory(category.key)}
-      >
-        <Text
-          style={[styles.categoryChipText, isActive && styles.categoryChipTextActive]}
-        >
-          {category.label}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
 
   const renderChatRoom = ({ item }: { item: RoomData }) => {
     const updatedText = formatUpdatedText(item.mod_sdate || item.reg_sdate);
@@ -168,7 +138,7 @@ export default function ChatListScreen() {
       <CommHeader />
 
       {/* 카테고리 탭 */}
-      <View style={styles.categoryRow}>{CATEGORY_TABS.map(renderCategoryTab)}</View>
+      <CategoryTab data={activeCategory} onPress={setActiveCategory} />
 
       <FlatList
         data={filteredChatRooms}
@@ -209,23 +179,6 @@ const styles = StyleSheet.create({
     paddingHorizontal : 20,
     paddingTop        : 20,
     paddingBottom     : 18,
-  },
-  categoryChip: {
-    borderRadius      : 18,
-    backgroundColor   : COLOR.COMM_GRAY,
-    paddingHorizontal : 14,
-    paddingVertical   : 7,
-  },
-  categoryChipActive: {
-    backgroundColor   : COLOR.APP_MAIN,
-  },
-  categoryChipText: {
-    fontSize          : 16,
-    fontWeight        : 600,
-    color             : COLOR.TEXT_GRAY,
-  },
-  categoryChipTextActive: {
-    color             : COLOR.COMM_WHITE,
   },
   listContainer: {
     paddingHorizontal : 20,
