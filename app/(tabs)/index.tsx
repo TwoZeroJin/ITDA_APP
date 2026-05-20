@@ -14,7 +14,6 @@ import CommReviewList from '@/components/CommReviewList';
 import ImageCarousel from "@/components/ImageCarousel";
 import { useMainData } from '@/hooks/queries/useMain';
 import DividingLine from '@/components/DividingLine';
-import { useAuthRouter } from '@/components/AuthRoute';
 
 /**
  * 메인 화면

@@ -2,7 +2,7 @@ import { COLOR } from '@/constants';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
 import IconCreate from '@/assets/images/icon_create.svg';
-import { useAuthRouter } from './AuthRoute';
+import { useAuthRouter } from '@/components/AuthRoute';
 
 /**
  * 소셜링/클럽 생성 버튼 컴포넌트
