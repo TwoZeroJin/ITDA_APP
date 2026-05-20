@@ -1,4 +1,4 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_STYLES } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -50,7 +50,7 @@ export default function FeedbackCreateScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.CONTAINER}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="피드백 작성"/>
       <KeyboardAwareScrollView
         contentContainerStyle={[
@@ -76,10 +76,6 @@ export default function FeedbackCreateScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex            : 1,
-    backgroundColor : COLOR.COMM_WHITE,
-  },
   formContainer: {
     marginHorizontal  : 20,
     gap               : 16,

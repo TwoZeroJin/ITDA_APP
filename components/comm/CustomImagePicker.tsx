@@ -97,35 +97,35 @@ function CustomImagePicker({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection     : 'row',
   },
   photoButton: {
-    width: 80,
-    height: 80,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
+    width             : 80,
+    height            : 80,
+    borderWidth       : 1,
+    borderColor       : '#ddd',
+    borderRadius      : 8,
+    justifyContent    : 'center',
+    alignItems        : 'center',
+    marginRight       : 10,
   },
   photoCount: {
-    fontSize: 12,
-    color: '#aaa',
-    marginTop: 4,
+    fontSize          : 12,
+    color             : '#aaa',
+    marginTop         : 4,
   },
   imageWrapper: {
-    marginRight: 10,
-    position: 'relative',
+    marginRight       : 10,
+    position          : 'relative',
   },
   previewImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
+    width             : 80,
+    height            : 80,
+    borderRadius      : 8,
   },
   deleteBadge: {
-    position: 'absolute',
-    right: -1,
+    position          : 'absolute',
+    right             : -1,
   },
 });
 

@@ -1,5 +1,5 @@
 import CommHeader from "@/components/comm/CommHeader";
-import { COLOR } from "@/constants";
+import { COLOR, COMM_STYLES } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
@@ -136,7 +136,7 @@ export default function ChatListScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.CONTAINER}>
       <CommHeader />
 
       {/* 카테고리 탭 */}
@@ -170,10 +170,6 @@ export default function ChatListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex            : 1,
-    backgroundColor : COLOR.COMM_WHITE,
-  },
   categoryRow: {
     flexDirection     : "row",
     alignItems        : "center",

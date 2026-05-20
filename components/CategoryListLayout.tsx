@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { CodeInfo } from '@/types';
 import React from 'react';
 import { Image, Text, FlatList, StyleSheet, View } from 'react-native';
@@ -45,7 +45,7 @@ export default function CategoryListLayout({}: CategoryListLayoutProps) {
   return (
     <View>
       {/* 카테고리 섹션 */}
-      <View style={[styles.container, {marginTop: 8, paddingTop: 16,paddingBottom: 8, flex : 1, paddingHorizontal: 16}]}>
+      <View style={[COMM_STYLES.container, {marginTop: 8, paddingTop: 16,paddingBottom: 8, flex : 1, paddingHorizontal: 16}]}>
         <View>
           <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 12 }}>카테고리</Text>
           <FlatList<CodeInfo[]>
@@ -63,10 +63,6 @@ export default function CategoryListLayout({}: CategoryListLayoutProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: COLOR.COMM_WHITE,
-  },
-  // 카테고리 목록
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',

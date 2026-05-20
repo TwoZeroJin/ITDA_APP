@@ -1,4 +1,4 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_STYLES } from "@/constants";
 import React from "react";
 import { StyleSheet, View, Text } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -20,7 +20,7 @@ export default function MeetCreateCompleteScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} isBack={false} title="모임 생성"/>
 
       <View style={{ flex: 1, marginTop: 120, alignItems: 'center' }}>
@@ -42,9 +42,6 @@ export default function MeetCreateCompleteScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex        : 1,
-  },
   titleText: {
     fontSize    : 24,
     fontWeight  : 'bold',

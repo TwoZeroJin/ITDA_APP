@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import CommHeader from "@/components/comm/CommHeader";
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from "react-native";
-import { COLOR } from "@/constants";
+import { COLOR, COMM_STYLES } from "@/constants";
 import MemDefault from '@/assets/images/icon_mem_default.svg';
 import IconPencil from '@/assets/images/icon_pencil.svg';
 import { getMemberInfo, getCategoryList } from '@/utils/commUtil';
@@ -51,7 +51,7 @@ export default function MyPageScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.CONTAINER}>
       <CommHeader isNoti={false} isSetting={true} isLike={false} />
 
       <ScrollView 
@@ -132,10 +132,6 @@ export default function MyPageScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex            : 1,
-    backgroundColor : COLOR.COMM_WHITE,
-  },
   content: {
     paddingVertical   : 12,
     paddingBottom     : 40,

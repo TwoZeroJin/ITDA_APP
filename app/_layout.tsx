@@ -2,7 +2,7 @@ import queryClient from '@/api/queryClient';
 import AuthRoute from '@/components/comm/AuthRoute';
 import CustomDialog from '@/components/modal/CustomDialog';
 import LoadingLayout from '@/components/comm/LoadingLayout';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { LoadingProvider } from '@/contexts/LoadingContext';
 import { useAutoLogin } from '@/hooks/queries/useAuth';
 import { useMainEntry } from '@/hooks/queries/useMain';
@@ -82,7 +82,7 @@ export default function RootLayout() {
         <LoadingProvider>
           <QueryClientProvider client={queryClient}>
             <AuthRoute>
-              <SafeAreaView style={styles.container}>
+              <SafeAreaView style={COMM_STYLES.container}>
                 <RootNavigator />
               </SafeAreaView>
               <LoadingLayout/>
@@ -135,10 +135,6 @@ function RootNavigator() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex            : 1,
-    backgroundColor : COLOR.COMM_WHITE,
-  },
   toastContainer: { 
     backgroundColor : COLOR.APP_MAIN, 
     padding         : 16, 

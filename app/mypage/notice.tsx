@@ -1,4 +1,4 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_STYLES } from "@/constants";
 import React, { useMemo } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -44,7 +44,7 @@ export default function NoticeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.CONTAINER}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="공지사항"/>
 
       {isLoading ? (
@@ -71,10 +71,6 @@ export default function NoticeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex            : 1,
-    backgroundColor : COLOR.COMM_WHITE,
-  },
   menuContainer: {
     flex              : 1,
     paddingHorizontal : 16,

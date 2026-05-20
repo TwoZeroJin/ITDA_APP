@@ -1,4 +1,4 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_STYLES } from "@/constants";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -42,7 +42,7 @@ export default function GroupCreateDescScreen() {
 
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
       <ScrollView 
         showsVerticalScrollIndicator={false}
@@ -76,9 +76,6 @@ export default function GroupCreateDescScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex          : 1,
-  },
   titleContainer: {
     marginTop     : 12,
     marginBottom  : 5,

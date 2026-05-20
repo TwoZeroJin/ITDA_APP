@@ -1,4 +1,5 @@
 // 앱 내 상수 값
+import { StyleSheet } from 'react-native';
 
 /**
  * 컬러 값
@@ -189,4 +190,11 @@ const API_URL = {
     FEEDBACK_INSERT     : "/feedback/insert",
 }
 
-export { COLOR, QUERY_KEYS, STORE_KEY, COMM_CONSTANTS, API_URL };
+const COMM_STYLES = StyleSheet.create({
+    container: {
+        flex            : 1,
+        backgroundColor : COLOR.COMM_WHITE,
+    }
+});
+
+export { COLOR, QUERY_KEYS, STORE_KEY, COMM_CONSTANTS, API_URL, COMM_STYLES };

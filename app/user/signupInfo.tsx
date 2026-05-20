@@ -10,6 +10,7 @@ import NickNameInput from "@/components/inputs/NickNameInput";
 import PasswordConfirmInput from "@/components/inputs/PasswordConfirmInput";
 import PasswordInput from "@/components/inputs/PasswordInput";
 import ProfileImageInput from "@/components/inputs/ProfileImageInput";
+import { COMM_STYLES } from "@/constants";
 import { SignupInfo } from "@/types";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -54,7 +55,7 @@ export default function SignupInfoScreen() {
     }
 
     return (
-        <View style={styles.container}>
+        <View style={COMM_STYLES.container}>
             <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
             <KeyboardAwareScrollView
                 contentContainerStyle={styles.scrollContent}
@@ -84,16 +85,13 @@ export default function SignupInfoScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex                : 1,
-    },
-    scrollContent: {
-        // 🌟 하단에 떠 있는 버튼 영역(약 70~80px) + 안드로이드 키보드 안전 마진을 고정 패딩으로 확보합니다.
-        paddingBottom       : 200, 
-    },
-    formContainer: {
-        marginHorizontal    : 20,
-        paddingTop          : 10,
-        gap                 : 16,
-    },
+  scrollContent: {
+    // 🌟 하단에 떠 있는 버튼 영역(약 70~80px) + 안드로이드 키보드 안전 마진을 고정 패딩으로 확보합니다.
+    paddingBottom       : 200, 
+  },
+  formContainer: {
+    marginHorizontal    : 20,
+    paddingTop          : 10,
+    gap                 : 16,
+  },
 })

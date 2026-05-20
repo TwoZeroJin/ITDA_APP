@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { COMM_STYLES } from "@/constants";
 
 /**
  * 회원정보 수정
@@ -110,7 +111,7 @@ export default function MemberUpdateScreen() {
     }
 
     return (
-      <View style={styles.container}>
+      <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원정보 수정"/>
         <KeyboardAwareScrollView
           contentContainerStyle={[
@@ -149,11 +150,8 @@ export default function MemberUpdateScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex                : 1,
-    },
-    formContainer: {
-        marginHorizontal    : 20,
-        gap                 : 16,
-    },
+  formContainer: {
+    marginHorizontal    : 20,
+    gap                 : 16,
+  },
 })

@@ -1,4 +1,4 @@
-import { COLOR, COMM_CONSTANTS } from "@/constants";
+import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -31,7 +31,7 @@ export default function MeetCreateTypeScreen() {
   ];
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
         {/* 소모임 생성 타이틀 */}
         <View style={styles.titleContainer}>
@@ -67,9 +67,6 @@ export default function MeetCreateTypeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex              : 1,
-  },
   titleContainer: {
     marginTop         : 12,
     marginBottom      : 30,

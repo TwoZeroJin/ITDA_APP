@@ -1,4 +1,4 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_STYLES } from "@/constants";
 import React from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -34,7 +34,7 @@ export default function NoticeViewScreen() {
   const notice = data?.data;
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.CONTAINER}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="공지사항 조회" isBack={true} />
 
       {isLoading || isFetching ? (
@@ -68,10 +68,6 @@ export default function NoticeViewScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex            : 1,
-    backgroundColor : COLOR.COMM_WHITE,
-  },
   centerContainer: {
     flex              : 1,
     justifyContent    : 'center',

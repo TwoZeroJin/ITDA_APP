@@ -5,9 +5,9 @@ import { useAuth } from "@/hooks/queries/useAuth";
 import { SignupInfo } from "@/types";
 import { useLocalSearchParams } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
-import { StyleSheet, View, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import CommHeader from "@/components/comm/CommHeader";
-import { COLOR } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 
 /**
  * 회원가입 - 관심분야 선택
@@ -29,7 +29,7 @@ export default function SignupInterestScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.CONTAINER}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
       <ScrollView style={{ marginBottom: 100 }} keyboardShouldPersistTaps="handled">
         <FormProvider {...signupForm}>
@@ -40,10 +40,3 @@ export default function SignupInterestScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex            : 1,
-    backgroundColor : COLOR.COMM_WHITE,
-  },
-});

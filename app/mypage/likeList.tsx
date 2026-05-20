@@ -5,7 +5,7 @@ import BtnLikeActive from '@/assets/images/btn_like_active.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
 import MemDefault from '@/assets/images/icon_mem_default.svg';
-import { COLOR, COMM_CONSTANTS } from '@/constants';
+import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import { useMemberLike, useMemberLikeListPaging } from '@/hooks/queries/useMember';
 import { LikeData } from '@/types';
 import { useCallback, useMemo, useState } from 'react';
@@ -181,7 +181,7 @@ export default function LikeListScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.container}>
       <CommHeader title={"좋아요한 모임"} isBack={true} isLogo={false} isLike={false} isNoti={false} />
       <CategoryTab data={activeCategory} onPress={setActiveCategory} />
 
@@ -211,10 +211,6 @@ export default function LikeListScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex              : 1,
-    backgroundColor   : COLOR.COMM_WHITE,
-  },
   listContainer: {
     paddingHorizontal : 16,
     paddingVertical   : 16,
