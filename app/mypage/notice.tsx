@@ -44,7 +44,7 @@ export default function NoticeScreen() {
   };
 
   return (
-    <View style={COMM_STYLES.CONTAINER}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="공지사항"/>
 
       {isLoading ? (

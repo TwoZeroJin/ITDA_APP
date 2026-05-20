@@ -51,7 +51,7 @@ export default function MyPageScreen() {
   );
 
   return (
-    <View style={COMM_STYLES.CONTAINER}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isNoti={false} isSetting={true} isLike={false} />
 
       <ScrollView 

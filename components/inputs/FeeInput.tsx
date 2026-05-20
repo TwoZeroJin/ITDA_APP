@@ -1,6 +1,6 @@
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
 import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { CodeInfo, MeetInfo } from '@/types';
 import { getFeeList } from '@/utils/commUtil';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -139,10 +139,10 @@ export default function FeeInput() {
             />
           )}
 
-          <View style={styles.infoContainer}>
-            <View style={styles.infoTitleRow}>
+          <View style={COMM_STYLES.infoContainer}>
+            <View style={COMM_STYLES.infoTitleRow}>
               <IconInfoMark />
-              <Text style={styles.infoTitle}>참가비 설정시 참고해 주세요.</Text>
+              <Text style={COMM_STYLES.infoTitle}>참가비 설정시 참고해 주세요.</Text>
             </View>
             <Text style={styles.infoDesc}>· 참가비와 관련된 입금 안내는 클럽 소개시 작성해 주세요.</Text>
             <Text style={styles.infoDesc}>· 참가비와 관련된 금전적 거래에 대해 잇다는 책임을 지지 않습니다.</Text>
@@ -224,26 +224,6 @@ const styles = StyleSheet.create({
   },
   memberInputContainerError: {
     borderColor         : COLOR.TEXT_WARN,
-  },
-  infoContainer: {
-    marginTop           : 10,
-    borderRadius        : 12,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderWidth         : 1,
-    backgroundColor     : COLOR.COMM_GRAY_5,
-    paddingVertical     : 12,
-    paddingHorizontal   : 16,
-    gap                 : 6,
-  },
-  infoTitleRow: {
-    flexDirection       : 'row',
-    alignItems          : 'center',
-    gap                 : 8,
-  },
-  infoTitle: {
-    fontSize            : 12,
-    fontWeight          : 'bold',
-    color               : COLOR.COLOR_323232,
   },
   infoDesc: {
     fontSize            : 12,

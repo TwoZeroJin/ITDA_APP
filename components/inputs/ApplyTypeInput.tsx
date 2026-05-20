@@ -1,4 +1,4 @@
-import { COLOR, COMM_CONSTANTS } from '@/constants';
+import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import React from 'react';
 import { Controller, useFormContext, FieldValues } from 'react-hook-form';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -55,10 +55,10 @@ export default function ApplyTypeInput({ questionFieldName = 'meet_question' }) 
       {applyType === COMM_CONSTANTS.MEET_APPLY_TYPE_APPROVE && (
         <View style={{ marginTop: 10 }}>
           <QuestionInput name={questionFieldName} />
-          <View style={styles.infoContainer}>
-            <View style={styles.infoTitleRow}>
+          <View style={COMM_STYLES.infoContainer}>
+            <View style={COMM_STYLES.infoTitleRow}>
               <IconInfoMark />
-              <Text style={styles.infoTitle}>질문 작성시 주의해 주세요.</Text>
+              <Text style={COMM_STYLES.infoTitle}>질문 작성시 주의해 주세요.</Text>
             </View>
             <Text style={styles.infoDesc}>· 과도한 개인 정보를 요구하는 경우 가이드 위반으로 경고 및 제재를 받게 될 수 있어요.</Text>
           </View>
@@ -112,26 +112,6 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize            : 12,
     color               : COLOR.APP_ACTIVE_5,
-  },
-  infoContainer: {
-    marginTop           : 10,
-    borderRadius        : 12,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderWidth         : 1,
-    backgroundColor     : COLOR.COMM_GRAY_5,
-    paddingVertical     : 12,
-    paddingHorizontal   : 16,
-    gap                 : 6,
-  },
-  infoTitleRow: {
-    flexDirection       : 'row',
-    alignItems          : 'center',
-    gap                 : 8,
-  },
-  infoTitle: {
-    fontSize            : 12,
-    fontWeight          : 'bold',
-    color               : COLOR.COLOR_323232,
   },
   infoDesc: {
     fontSize            : 12,

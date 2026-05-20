@@ -29,7 +29,7 @@ export default function SignupInterestScreen() {
   };
 
   return (
-    <View style={COMM_STYLES.CONTAINER}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
       <ScrollView style={{ marginBottom: 100 }} keyboardShouldPersistTaps="handled">
         <FormProvider {...signupForm}>

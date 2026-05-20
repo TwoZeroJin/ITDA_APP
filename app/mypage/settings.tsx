@@ -76,7 +76,7 @@ export default function SettingsScreen() {
   ];
 
   return (
-    <View style={COMM_STYLES.CONTAINER}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="설정"/>
 
       <View style={styles.menuContainer}>
@@ -120,15 +120,15 @@ export default function SettingsScreen() {
         onRequestClose={() => setIsWebViewVisible(false)}
       >
         <SafeAreaView style={styles.webViewContainer}>
-            <WebView style={styles.webView} source={{ uri: termUrl }} startInLoadingState />
-            <View style={styles.webViewFooter}>
-                <CustomButton
-                  label="닫기"
-                  variant="filled"
-                  style={styles.webViewCloseButton}
-                  onPress={() => setIsWebViewVisible(false)}
-                />
-            </View>
+          <WebView style={styles.webView} source={{ uri: termUrl }} startInLoadingState />
+          <View style={styles.webViewFooter}>
+              <CustomButton
+                label="닫기"
+                variant="filled"
+                style={styles.webViewCloseButton}
+                onPress={() => setIsWebViewVisible(false)}
+              />
+          </View>
         </SafeAreaView>
       </Modal>
     </View>

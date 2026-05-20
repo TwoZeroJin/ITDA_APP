@@ -136,7 +136,7 @@ export default function ChatListScreen() {
   };
 
   return (
-    <View style={COMM_STYLES.CONTAINER}>
+    <View style={COMM_STYLES.container}>
       <CommHeader />
 
       {/* 카테고리 탭 */}

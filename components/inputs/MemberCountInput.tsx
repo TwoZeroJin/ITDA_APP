@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { MeetInfo } from '@/types';
 import React, { useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -100,10 +100,10 @@ export default function MemberCountInput() {
           )}
         />
       </View>
-      <View style={styles.infoContainer}>
-        <View style={styles.infoTitleRow}>
+      <View style={COMM_STYLES.infoContainer}>
+        <View style={COMM_STYLES.infoTitleRow}>
           <IconInfoMark />
-          <Text style={styles.infoTitle}>모임 설정시 참고해 주세요.</Text>
+          <Text style={COMM_STYLES.infoTitle}>모임 설정시 참고해 주세요.</Text>
         </View>
         <Text style={styles.infoDesc}>· 실제 모임 진행에 필요한 최소 인원으로 설정해주세요.</Text>
         <Text style={styles.infoDesc}>· 모임 시간 1시간 전까지 최소 인원이 모집되지 않으면 모임이 자동으로 취소돼요.</Text>
@@ -179,26 +179,6 @@ const styles = StyleSheet.create({
     fontSize            : 12,
     color               : COLOR.TEXT_WARN,
     marginStart         : 4,
-  },
-  infoContainer: {
-    marginTop           : 20,
-    borderRadius        : 12,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderWidth         : 1,
-    backgroundColor     : COLOR.COMM_GRAY_5,
-    paddingVertical     : 12,
-    paddingHorizontal   : 16,
-    gap                 : 6,
-  },
-  infoTitleRow: {
-    flexDirection       : 'row',
-    alignItems          : 'center',
-    gap                 : 8,
-  },
-  infoTitle: {
-    fontSize            : 12,
-    fontWeight          : 'bold',
-    color               : COLOR.COLOR_323232,
   },
   infoDesc: {
     fontSize            : 12,

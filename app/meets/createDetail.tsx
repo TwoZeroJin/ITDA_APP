@@ -26,7 +26,7 @@ export default function MeetCreateDetailScreen() {
       apply_type  : '',
       gender_ratio: 0.5,
       age_min     : AGE_MIN,
-      age_max     : 20,
+      age_max     : 30,
     },
   });
 

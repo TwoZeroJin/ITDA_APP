@@ -36,7 +36,7 @@ export default function MeetCreateCategoryScreen() {
 
   return (
     <FormProvider {...formValues}>
-      <View style={COMM_STYLES.CONTAINER}>
+      <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
         <ScrollView
           showsVerticalScrollIndicator={false}

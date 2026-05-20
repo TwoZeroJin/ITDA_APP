@@ -1,5 +1,5 @@
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { GroupInfo } from '@/types';
 import React, { useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -46,10 +46,10 @@ export default function GroupMaxMemberInput() {
           </>
         )}
       />
-      <View style={styles.infoContainer}>
-        <View style={styles.infoTitleRow}>
+      <View style={COMM_STYLES.infoContainer}>
+        <View style={COMM_STYLES.infoTitleRow}>
           <IconInfoMark />
-          <Text style={styles.infoTitle}>모임 설정시 참고해 주세요.</Text>
+          <Text style={COMM_STYLES.infoTitle}>모임 설정시 참고해 주세요.</Text>
         </View>
         <Text style={styles.infoDesc}>· 모임에 맞는 최대 인원으로 설정해주세요.</Text>
         <Text style={styles.infoDesc}>· 최대 인원은 호스트를 포함한 숫자예요.</Text>
@@ -113,26 +113,6 @@ const styles = StyleSheet.create({
     fontSize            : 14,
     color               : COLOR.TEXT_DEFAULT,
     marginStart         : 10,
-  },
-  infoContainer: {
-    marginTop           : 10,
-    borderRadius        : 12,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderWidth         : 1,
-    backgroundColor     : COLOR.COMM_GRAY_5,
-    paddingVertical     : 12,
-    paddingHorizontal   : 16,
-    gap                 : 6,
-  },
-  infoTitleRow: {
-    flexDirection       : 'row',
-    alignItems          : 'center',
-    gap                 : 8,
-  },
-  infoTitle: {
-    fontSize            : 12,
-    fontWeight          : 'bold',
-    color               : COLOR.COLOR_323232,
   },
   infoDesc: {
     fontSize            : 12,

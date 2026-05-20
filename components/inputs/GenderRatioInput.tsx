@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { MeetInfo } from '@/types';
 import React, { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -9,7 +9,7 @@ import GenderSlider from '@/components/GenderSlider';
 
 export default function GenderRatioInput() {
   const { control } = useFormContext<MeetInfo>();
-  const [genderType, setGenderType] = useState<'none' | 'set'>('set');
+  const [genderType, setGenderType] = useState<'none' | 'set'>('none');
 
   return (
     <View style={styles.container}>
@@ -38,10 +38,10 @@ export default function GenderRatioInput() {
           </>
         )}
       />
-      <View style={styles.infoContainer}>
-        <View style={styles.infoTitleRow}>
+      <View style={COMM_STYLES.infoContainer}>
+        <View style={COMM_STYLES.infoTitleRow}>
           <IconInfoMark />
-          <Text style={styles.infoTitle}>동그라미 바를 움직여 성비를 지정할 수 있어요.</Text>
+          <Text style={COMM_STYLES.infoTitle}>동그라미 바를 움직여 성비를 지정할 수 있어요.</Text>
         </View>
       </View>
     </View>
@@ -59,25 +59,5 @@ const styles = StyleSheet.create({
     fontSize            : 20,
     fontWeight          : 'bold',
     marginBottom        : 8,
-  },
-  infoContainer: {
-    marginTop           : 10,
-    borderRadius        : 12,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderWidth         : 1,
-    backgroundColor     : COLOR.COMM_GRAY_5,
-    paddingVertical     : 12,
-    paddingHorizontal   : 16,
-    gap                 : 6,
-  },
-  infoTitleRow: {
-    flexDirection       : 'row',
-    alignItems          : 'center',
-    gap                 : 8,
-  },
-  infoTitle: {
-    fontSize            : 12,
-    fontWeight          : 'bold',
-    color               : COLOR.COLOR_323232,
   },
 });

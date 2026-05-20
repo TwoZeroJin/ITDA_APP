@@ -50,7 +50,7 @@ export default function FeedbackCreateScreen() {
   };
 
   return (
-    <View style={COMM_STYLES.CONTAINER}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="피드백 작성"/>
       <KeyboardAwareScrollView
         contentContainerStyle={[

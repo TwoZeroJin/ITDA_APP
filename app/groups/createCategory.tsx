@@ -36,7 +36,7 @@ export default function GroupCreateCategoryScreen() {
 
   return (
     <FormProvider {...formValues}>
-      <View style={COMM_STYLES.CONTAINER}>
+      <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
         <ScrollView 
           showsVerticalScrollIndicator={false}

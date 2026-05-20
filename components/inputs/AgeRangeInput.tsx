@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import React, { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
@@ -11,7 +11,7 @@ const AGE_MIN = 10;
 
 export default function AgeRangeInput() {
   const { control } = useFormContext<MeetInfo>();
-  const [ageType, setAgeType] = useState<'none' | 'set'>('set');
+  const [ageType, setAgeType] = useState<'none' | 'set'>('none');
 
   return (
     <View style={styles.container}>
@@ -40,10 +40,10 @@ export default function AgeRangeInput() {
           </>
         )}
       />
-      <View style={styles.infoContainer}>
-        <View style={styles.infoTitleRow}>
+      <View style={COMM_STYLES.infoContainer}>
+        <View style={COMM_STYLES.infoTitleRow}>
           <IconInfoMark />
-          <Text style={styles.infoTitle}>동그라미 바를 움직여 나이를 지정할 수 있어요.</Text>
+          <Text style={COMM_STYLES.infoTitle}>동그라미 바를 움직여 나이를 지정할 수 있어요.</Text>
         </View>
       </View>
     </View>
@@ -63,25 +63,5 @@ const styles = StyleSheet.create({
     fontSize            : 20,
     fontWeight          : 'bold',
     marginBottom        : 8,
-  },
-  infoContainer: {
-    marginTop           : 10,
-    borderRadius        : 12,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderWidth         : 1,
-    backgroundColor     : COLOR.COMM_GRAY_5,
-    paddingVertical     : 12,
-    paddingHorizontal   : 16,
-    gap                 : 6,
-  },
-  infoTitleRow: {
-    flexDirection       : 'row',
-    alignItems          : 'center',
-    gap                 : 8,
-  },
-  infoTitle: {
-    fontSize            : 12,
-    fontWeight          : 'bold',
-    color               : COLOR.COLOR_323232,
   },
 });
