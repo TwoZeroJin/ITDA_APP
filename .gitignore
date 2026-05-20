@@ -38,7 +38,7 @@ yarn-error.*
 *.tsbuildinfo
 
 # firebase
-itda-b99d6-firebase-adminsdk-fbsvc-46941367ab
+itda-b99d6-firebase-adminsdk-fbsvc-46941367ab.json
 # google-services.json
 google-services.json
 
