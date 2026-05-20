@@ -19,7 +19,14 @@ export default function GroupLayout() {
       <Stack.Screen
         name="createFee"
         options={{
-          title: "모임 생성",
+          title: "클럽 생성",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="createPlace"
+        options={{
+          title: "클럽 생성",
           headerShown: false,
         }}
       />
@@ -40,7 +47,7 @@ export default function GroupLayout() {
       <Stack.Screen
         name="createPreView"
         options={{
-          title: "미리 보기",
+          title: "클럽 미리 보기",
           headerShown: false,
         }}
       />

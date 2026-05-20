@@ -257,7 +257,7 @@ interface GroupInfo {
   group_max       : number;
   group_question  : string;
   apply_type      : string;
-  gender_ratio    : number;
+  apply_ratio     : number;
   fee_yn          : string;
   fee_info        : string;
   fee_entry       : number;
@@ -265,6 +265,8 @@ interface GroupInfo {
   place_type      : string;
   place_name      : string;
   place_addr      : string;
+  freq_type       : string;
+  freq_desc       : string;
   thumb_url?      : string;
 
   mem_id        : number;

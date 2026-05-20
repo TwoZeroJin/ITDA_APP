@@ -1,17 +1,17 @@
 import { COLOR } from "@/constants";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
 import { router } from "expo-router";
 import { useRoute } from "@react-navigation/native";
-import { GroupInfo, MeetInfo } from "@/types";
+import { GroupInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
-import MeetFeeInput from "@/components/inputs/MeetFeeInput";
+import CommFeeInput from "@/components/inputs/CommFeeInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 /**
- * 모임 생성 - 참가비 설정 화면
+ * 클럽 생성 - 참가비 설정 화면
  */
 export default function GroupCreateFeeScreen() {
   const params = useRoute();
@@ -35,7 +35,7 @@ export default function GroupCreateFeeScreen() {
 
   const onNext = formValues.handleSubmit((data) => {
     router.navigate({
-      pathname: '/meets/createPlace',
+      pathname: '/groups/createPlace',
       params: {
         ...prevGroupInfo,
         fee_yn   : data.fee_yn,
@@ -49,7 +49,7 @@ export default function GroupCreateFeeScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={styles.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}
@@ -61,7 +61,7 @@ export default function GroupCreateFeeScreen() {
             <Text style={styles.subtitle}>{'모임 운영에 필요한 경우 참가비를 설정해 주세요.\n운영비, 공간 대관료 등 다양한 용도로 활용할 수 있습니다.'}</Text>
           </View>
 
-          <MeetFeeInput />
+          <CommFeeInput />
 
         </KeyboardAwareScrollView>
 

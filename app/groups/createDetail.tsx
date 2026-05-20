@@ -3,18 +3,19 @@ import React from "react";
 import { StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/CommHeader";
 import CommBottomButton from "@/components/CommBottomButton";
-import { router } from "expo-router";
 import DividingLine from "@/components/DividingLine";
 import { GroupInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
 import GroupMaxMemberInput from "@/components/inputs/GroupMaxMemberInput";
 import ApplyTypeInput from "@/components/inputs/ApplyTypeInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useAuthRouter } from "@/components/AuthRoute";
 
 /**
  * 클럽 생성 - 신청방식, 최대인원 설정 화면
  */
 export default function GroupCreateDetailScreen() {
+  const router = useAuthRouter();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
     },
@@ -22,7 +23,7 @@ export default function GroupCreateDetailScreen() {
 
   const onNext = formValues.handleSubmit((data) => {
     router.navigate({
-      pathname: '/groups/createCategory',
+      pathname: '/groups/createFee',
       params: {
         apply_type      : data.apply_type,
         group_question  : data.group_question,

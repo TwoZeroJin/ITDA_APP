@@ -8,7 +8,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 
-export default function MeetFeeInput() {
+export default function CommFeeInput() {
   const { control, watch, setValue } = useFormContext<MeetInfo>();
   const [feeList, setFeeList] = useState<CodeInfo[]>([]);
   const feeEntryInputRef = useRef<TextInput>(null);
@@ -69,7 +69,7 @@ export default function MeetFeeInput() {
               }
             }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
-              <View style={styles.memberInputWrap}>
+              <>
                 <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]} 
                   onPress={() => feeEntryInputRef.current?.focus()}
                 >
@@ -88,7 +88,7 @@ export default function MeetFeeInput() {
                   />
                 </TouchableOpacity>
               {error && <Text style={styles.errorText}>{error.message}</Text>}
-              </View>
+              </>
             )}
           />
 
@@ -143,7 +143,7 @@ export default function MeetFeeInput() {
               <IconInfoMark />
               <Text style={styles.infoTitle}>참가비 설정시 참고해 주세요.</Text>
             </View>
-            <Text style={styles.infoDesc}>· 참가비와 관련된 입금 안내는 모임 소개시 작성해 주세요.</Text>
+            <Text style={styles.infoDesc}>· 참가비와 관련된 입금 안내는 클럽 소개시 작성해 주세요.</Text>
             <Text style={styles.infoDesc}>· 참가비와 관련된 금전적 거래에 대해 잇다는 책임을 지지 않습니다.</Text>
           </View>
         </View>
@@ -210,17 +210,12 @@ const styles = StyleSheet.create({
     fontSize            : 16,
     color               : COLOR.COLOR_323232,
   },
-  memberInputWrap: {
-    flex                : 1,
-    height              : 50,
-    gap                 : 6,
-  },
   memberInputContainer: {
     flexDirection       : 'row',
     justifyContent      : 'space-between',
     alignItems          : 'center',
-    flex                : 1,
     height              : 50,
+    flex                : 1,
     borderWidth         : 1,
     borderColor         : COLOR.COMM_GRAY_6,
     borderRadius        : 12,
