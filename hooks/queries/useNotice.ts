@@ -23,12 +23,11 @@ function useNoticeListPaging(searchParams: SearchParams) {
 }
 
 // 공지 상세 조회
-function useNoticeView(noticeId?: number) {
+function useNoticeView(noticeId: number) {
   const { setLoading } = useLoading();
   const query = useQuery({
-    queryFn: () => noticeView(Number(noticeId)),
+    queryFn: () => noticeView(noticeId),
     queryKey: [QUERY_KEYS.NOTICE, QUERY_KEYS.NOTICE_VIEW, noticeId],
-    enabled: typeof noticeId === "number",
   });
 
   useEffect(() => {

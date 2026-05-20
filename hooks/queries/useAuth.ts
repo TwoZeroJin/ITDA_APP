@@ -121,7 +121,7 @@ function useAuth() {
     const logout = () => {
         deleteSecureStoreForMember();
         queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
-        router.replace("/user" as any);
+        router.replace("/" as any);
     }
 
     return { loginMutation, signupMutation, logout };

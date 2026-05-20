@@ -3,7 +3,7 @@ import CustomRadioGroup from '@/components/CustomRadioGroup';
 import { COLOR } from '@/constants';
 import { CodeInfo, MeetInfo } from '@/types';
 import { getFeeList } from '@/utils/commUtil';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -11,6 +11,7 @@ import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-nativ
 export default function MeetFeeInput() {
   const { control, watch, setValue } = useFormContext<MeetInfo>();
   const [feeList, setFeeList] = useState<CodeInfo[]>([]);
+  const feeEntryInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     (async () => {
@@ -58,18 +59,36 @@ export default function MeetFeeInput() {
           <Controller
             name="fee_entry"
             control={control}
-            render={({ field: { value, onChange } }) => (
-              <TextInput
-                value={value ? String(value) : ''}
-                onChangeText={(text) => {
-                  const onlyNumber = text.replace(/[^0-9]/g, '');
-                  onChange(onlyNumber ? Number(onlyNumber) : 0);
-                }}
-                keyboardType="number-pad"
-                placeholder="최소 1,000원 이상 입력해 주세요."
-                placeholderTextColor={COLOR.TEXT_GRAY}
-                style={styles.feeInput}
-              />
+            rules={{
+              required: '최소 1,000원 이상 입력해 주세요..',
+              validate: (value) => {
+                if ((value ?? 0) < 1000) {
+                  return '최소 1,000원 이상 입력해 주세요.';
+                }
+                return true;
+              }
+            }}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <View style={styles.memberInputWrap}>
+                <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]} 
+                  onPress={() => feeEntryInputRef.current?.focus()}
+                >
+                  <TextInput
+                    ref={feeEntryInputRef}
+                    value={value ? String(value) : ''}
+                    onChangeText={(text) => {
+                      const onlyNumber = text.replace(/[^0-9]/g, '');
+                      onChange(onlyNumber ? Number(onlyNumber) : 0);
+                    }}
+                    maxLength={9}
+                    keyboardType="number-pad"
+                    placeholder="최소 1,000원 이상 입력해 주세요."
+                    placeholderTextColor={COLOR.TEXT_GRAY}
+                    style={styles.feeInput}
+                  />
+                </TouchableOpacity>
+              {error && <Text style={styles.errorText}>{error.message}</Text>}
+              </View>
             )}
           />
 
@@ -148,13 +167,10 @@ const styles = StyleSheet.create({
     color               : COLOR.TEXT_DEFAULT,
   },
   feeInput: {
-    height              : 50,
-    borderRadius        : 12,
-    borderWidth         : 1,
-    borderColor         : COLOR.COMM_GRAY_6,
-    paddingHorizontal   : 16,
-    fontSize            : 14,
-    color               : COLOR.COMM_BLACK,
+    flex                : 1,
+    fontSize            : 16,
+    color               : COLOR.COLOR_323232,
+    padding             : 0,
   },
   feeInfoTypeContainer: {
     flexDirection       : 'row',
@@ -194,6 +210,25 @@ const styles = StyleSheet.create({
     fontSize            : 16,
     color               : COLOR.COLOR_323232,
   },
+  memberInputWrap: {
+    flex                : 1,
+    height              : 50,
+    gap                 : 6,
+  },
+  memberInputContainer: {
+    flexDirection       : 'row',
+    justifyContent      : 'space-between',
+    alignItems          : 'center',
+    flex                : 1,
+    height              : 50,
+    borderWidth         : 1,
+    borderColor         : COLOR.COMM_GRAY_6,
+    borderRadius        : 12,
+    paddingHorizontal   : 16,
+  },
+  memberInputContainerError: {
+    borderColor         : COLOR.TEXT_WARN,
+  },
   infoContainer: {
     marginTop           : 10,
     borderRadius        : 12,
@@ -217,5 +252,10 @@ const styles = StyleSheet.create({
   infoDesc: {
     fontSize            : 12,
     color               : COLOR.TEXT_DEFAULT,
+  },
+  errorText: {
+    fontSize            : 12,
+    color               : COLOR.TEXT_WARN,
+    marginStart         : 4,
   },
 });

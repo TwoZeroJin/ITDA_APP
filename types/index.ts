@@ -251,10 +251,20 @@ interface GroupInfo {
   group_id        : number;
   group_name      : string;
   group_subj      : string;
+  group_subj_name : string;
+  group_datetime  : string;
   group_desc      : string;
   group_max       : number;
   group_question  : string;
   apply_type      : string;
+  gender_ratio    : number;
+  fee_yn          : string;
+  fee_info        : string;
+  fee_entry       : number;
+  fee_desc        : string;
+  place_type      : string;
+  place_name      : string;
+  place_addr      : string;
   thumb_url?      : string;
 
   mem_id        : number;

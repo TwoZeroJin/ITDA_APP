@@ -18,7 +18,7 @@ async function noticeList(searchParams: SearchParams): Promise<ApiResult<BoardNo
  * @returns 공지사항 정보
  */
 async function noticeView(noticeId: number): Promise<ApiResult<BoardNotice>> {
-  const { data } = await axiosInstance.post(API_URL.NOTICE_VIEW, { notice_id : noticeId });
+  const { data } = await axiosInstance.post(API_URL.NOTICE_VIEW, { noti_id : noticeId });
   return data;
 }
 

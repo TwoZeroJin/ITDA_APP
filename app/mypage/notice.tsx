@@ -5,6 +5,7 @@ import CommHeader from "@/components/CommHeader";
 import { useNoticeListPaging } from "@/hooks/queries/useNotice";
 import IconMore from '@/assets/images/arrow_right.svg';
 import { BoardNotice, SearchParams } from "@/types";
+import { router } from "expo-router";
 
 /**
  * 마이페이지 - 공지사항 화면
@@ -23,7 +24,11 @@ export default function NoticeScreen() {
   };
 
   const renderItem = ({ item }: { item: BoardNotice }) => (
-    <TouchableOpacity style={styles.menuRow} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.menuRow}
+      activeOpacity={0.7}
+      onPress={() => router.navigate({ pathname: '/mypage/noticeView', params: { noticeId: item.noti_id } })}
+    >
       <Text style={styles.menuText} numberOfLines={1}>{item.noti_subject}</Text>
       <IconMore width={11} height={16} />
     </TouchableOpacity>

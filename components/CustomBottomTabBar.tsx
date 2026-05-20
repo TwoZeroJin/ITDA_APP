@@ -4,9 +4,19 @@ import Main from '@/assets/images/navi_main.svg';
 import Meet from '@/assets/images/navi_meet.svg';
 import My from '@/assets/images/navi_my.svg';
 import { COLOR } from '@/constants';
+import { useAuthRouter } from '@/components/AuthRoute';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
+// 탭 이름 → 경로 매핑 (EXCLUDE_PATHS 기준으로 protected 여부 판단)
+const TAB_PATHS: Record<string, string> = {
+  index     : '/',
+  community : '/community',
+  meet      : '/meet',
+  chat      : '/chat',
+  my        : '/my',
+};
 
 /**
  * 
@@ -14,6 +24,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
  * @returns 공통 바텀 고정 컴포넌트
  */
 function CustomBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
+  const { checkAndNavigate } = useAuthRouter();
   return (
     <View style={styles.tabContainer}>
       {state.routes.map((route, index) => {
@@ -28,7 +39,7 @@ function CustomBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)
             canPreventDefault: true,
           })
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(name);
+            checkAndNavigate(() => navigation.navigate(name), TAB_PATHS[name] ?? `/${name}`);
           }
         }
 

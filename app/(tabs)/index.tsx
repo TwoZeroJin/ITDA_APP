@@ -7,7 +7,6 @@ import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacit
 import SearchButton from '@/assets/images/search_button.svg';
 import IconClose from '@/assets/images/icon_close.svg';
 import CreateFloatingButton from '@/components/CreateFloatingButton';
-import IconCreate from '@/assets/images/icon_create.svg';
 import CommCategoryList from '@/components/CommCategoryList';
 import CommRcmdMeetList from '@/components/CommRcmdMeetList';
 import CommUpcomingMeetList from '@/components/CommUpcomingMeetList';
@@ -15,7 +14,7 @@ import CommReviewList from '@/components/CommReviewList';
 import ImageCarousel from "@/components/ImageCarousel";
 import { useMainData } from '@/hooks/queries/useMain';
 import DividingLine from '@/components/DividingLine';
-import { router } from 'expo-router';
+import { useAuthRouter } from '@/components/AuthRoute';
 
 /**
  * 메인 화면

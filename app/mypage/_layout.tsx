@@ -24,6 +24,13 @@ export default function MyPageLayout() {
           }}
         />
         <Stack.Screen
+          name="noticeView"
+          options={{
+            title: "공지사항",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="feedbackCreate"
           options={{
             title: "피드백 작성",

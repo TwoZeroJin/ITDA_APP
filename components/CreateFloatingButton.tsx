@@ -1,13 +1,14 @@
 import { COLOR } from '@/constants';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
-import { router } from 'expo-router';
 import IconCreate from '@/assets/images/icon_create.svg';
+import { useAuthRouter } from './AuthRoute';
 
 /**
  * 소셜링/클럽 생성 버튼 컴포넌트
  */
 export default function CreateFloatingButton() {
+  const router = useAuthRouter();
   return (
     <TouchableOpacity
       style={[styles.floatingButton]}

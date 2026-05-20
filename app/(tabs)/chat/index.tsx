@@ -3,7 +3,7 @@ import { COLOR } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
-import { router } from "expo-router";
+import { useAuthRouter } from "@/components/AuthRoute";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -39,6 +39,7 @@ function formatUpdatedText(dateText?: string): string {
 }
 
 export default function ChatListScreen() {
+  const router = useAuthRouter();
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const { setLoading } = useLoading();
@@ -142,7 +143,7 @@ export default function ChatListScreen() {
 
       <FlatList
         data={filteredChatRooms}
-        keyExtractor={(item) => String(item.room_id)}
+        keyExtractor={(item) => item.room_id}
         renderItem={renderChatRoom}
         ItemSeparatorComponent={() => <View style={styles.divider} />}
         contentContainerStyle={[

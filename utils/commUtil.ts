@@ -363,7 +363,7 @@ function formatRelativeMeetDatetime(meetDatetime: string) {
         }
     }
 
-    const diffMs = Date.now() - targetDate.getTime();
+    const diffMs = targetDate.getTime() - Date.now();
 
     if (diffMs <= 0) {
         return '0시간 전';
