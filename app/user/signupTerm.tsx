@@ -7,13 +7,14 @@ import { COLOR, COMM_STYLES } from '@/constants';
 import { router } from "expo-router";
 import { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Modal } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 /**
  * 회원 가입 - 약관 동의 화면
  */
 export default function SignupTermScreen() {
+  const insets = useSafeAreaInsets();
   const [serviceChecked, setServiceChecked] = useState(false);
   const [privacyChecked, setPrivacyChecked] = useState(false);
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
@@ -68,7 +69,17 @@ export default function SignupTermScreen() {
         animationType="slide"
         onRequestClose={() => setIsWebViewVisible(false)}
       >
-        <SafeAreaView style={styles.webViewContainer}>
+        <View 
+          style={[
+            styles.webViewContainer,
+            {
+              paddingTop: insets.top,
+              paddingBottom: insets.bottom + 25,
+              paddingLeft: insets.left,
+              paddingRight: insets.right,
+            },
+          ]}
+        >
           <WebView style={styles.webView} source={{ uri: termUrl }} startInLoadingState />
           <View style={styles.webViewFooter}>
             <CustomButton
@@ -78,7 +89,7 @@ export default function SignupTermScreen() {
               onPress={() => setIsWebViewVisible(false)}
             />
           </View>
-        </SafeAreaView>
+        </View>
       </Modal>
     </View>
   )

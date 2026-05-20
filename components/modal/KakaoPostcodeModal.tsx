@@ -2,7 +2,7 @@ import CommBottomButton from '@/components/comm/CommBottomButton';
 import { COLOR, COMM_STYLES } from '@/constants';
 import React from 'react';
 import { Modal, Platform, StyleSheet, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export type PostcodeAddress = {
   address: string;
@@ -53,7 +53,8 @@ const POSTCODE_WEBVIEW_HTML = `
 
 export default function KakaoPostcodeModal({ visible, postcodeKey, onClose, onComplete }: KakaoPostcodeModalProps) {
   const KakaoPostcodeEmbed = Platform.OS === 'web' ? require('react-daum-postcode').default : null;
-  const NativeWebView = Platform.OS !== 'web' ? require('react-native-webview').WebView : null;
+  const WebView = Platform.OS !== 'web' ? require('react-native-webview').WebView : null;
+  const insets = useSafeAreaInsets();
 
   const handleWebViewMessage = (event: any) => {
     const payload = JSON.parse(event.nativeEvent.data) as PostcodeAddress;
@@ -69,7 +70,17 @@ export default function KakaoPostcodeModal({ visible, postcodeKey, onClose, onCo
       presentationStyle="fullScreen"
       onRequestClose={onClose}
     >
-      <SafeAreaView style={COMM_STYLES.container} edges={['top', 'bottom', 'left', 'right']}>
+      <View
+        style={[
+          COMM_STYLES.container,
+          {
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
+            paddingLeft: insets.left,
+            paddingRight: insets.right,
+          },
+        ]}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.postcodeContainer}>
             {Platform.OS === 'web' && KakaoPostcodeEmbed && (
@@ -81,8 +92,8 @@ export default function KakaoPostcodeModal({ visible, postcodeKey, onClose, onCo
               />
             )}
 
-            {Platform.OS !== 'web' && NativeWebView && (
-              <NativeWebView
+            {Platform.OS !== 'web' && WebView && (
+              <WebView
                 key={`postcode-webview-${postcodeKey}`}
                 source={{
                   html: POSTCODE_WEBVIEW_HTML,
@@ -94,25 +105,23 @@ export default function KakaoPostcodeModal({ visible, postcodeKey, onClose, onCo
                 originWhitelist={['*']}
               />
             )}
-
             <CommBottomButton label="닫기" onPress={onClose} />
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 }
-
 const styles = StyleSheet.create({
   modalContainer: {
-    flex: 1,
-    backgroundColor: COLOR.COMM_WHITE,
-    overflow: 'hidden',
-    gap: 12,
+    flex                : 1,
+    backgroundColor     : COLOR.COMM_WHITE,
+    overflow             : 'hidden',
+    gap                  : 12,
   },
   postcodeContainer: {
-    flex: 1,
-    borderRadius: 12,
-    overflow: 'hidden',
+    flex                : 1,
+    borderRadius        : 12,
+    overflow            : 'hidden',
   },
 });

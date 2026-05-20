@@ -7,7 +7,7 @@ import CustomButton from "@/components/comm/CustomButton";
 import CustomDialog from "@/components/modal/CustomDialog";
 import { useAuth } from "@/hooks/queries/useAuth";
 import IconMore from '@/assets/images/arrow_right.svg';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebView from "react-native-webview";
 import { router } from "expo-router";
 
@@ -20,6 +20,7 @@ type SettingsMenuItem = {
  * 마이페이지 - 설정 화면
  */
 export default function SettingsScreen() {
+  const insets = useSafeAreaInsets();
   const { logout } = useAuth();
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
@@ -119,17 +120,27 @@ export default function SettingsScreen() {
         animationType="slide"
         onRequestClose={() => setIsWebViewVisible(false)}
       >
-        <SafeAreaView style={styles.webViewContainer}>
+        <View
+          style={[
+            styles.webViewContainer,
+            {
+              paddingTop: insets.top,
+              paddingBottom: insets.bottom + 25,
+              paddingLeft: insets.left,
+              paddingRight: insets.right,
+            },
+          ]}
+        >
           <WebView style={styles.webView} source={{ uri: termUrl }} startInLoadingState />
           <View style={styles.webViewFooter}>
-              <CustomButton
-                label="닫기"
-                variant="filled"
-                style={styles.webViewCloseButton}
-                onPress={() => setIsWebViewVisible(false)}
-              />
+            <CustomButton
+              label="닫기"
+              variant="filled"
+              style={styles.webViewCloseButton}
+              onPress={() => setIsWebViewVisible(false)}
+            />
           </View>
-        </SafeAreaView>
+        </View>
       </Modal>
     </View>
   );
