@@ -1,4 +1,4 @@
-import WheelPickerModal from "@/components/WheelPickerModal";
+import WheelPickerModal from "@/components/modal/WheelPickerModal";
 import React from "react";
 
 type TimePickerModalProps = {

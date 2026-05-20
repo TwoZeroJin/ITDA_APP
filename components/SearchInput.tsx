@@ -1,4 +1,4 @@
-import CustomButton from "@/components/CustomButton";
+import CustomButton from "@/components/comm/CustomButton";
 import { COLOR } from "@/constants";
 import React from 'react';
 import { Text, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';

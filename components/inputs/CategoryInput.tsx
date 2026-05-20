@@ -34,6 +34,7 @@ export default function CategoryInput({ name }: CategoryInputProps) {
                 <TouchableOpacity
                   key={item.code_id}
                   style={[styles.categoryBox, selected && styles.categoryBoxSelected]}
+                  activeOpacity={0.6}
                   onPress={() => onChange(item.code_id)}>
                   <Text style={[styles.categoryText, selected && styles.categoryTextSelected]}>{item.code_value}</Text>
                 </TouchableOpacity>

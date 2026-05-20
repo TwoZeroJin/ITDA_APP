@@ -1,6 +1,6 @@
-import CommHeader from '@/components/CommHeader';
+import CommHeader from '@/components/comm/CommHeader';
 import { CategoryTab } from '@/components/CategoryTab';
-import CommLabel from '@/components/CommLabel';
+import CommLabel from '@/components/comm/CommLabel';
 import BtnLikeActive from '@/assets/images/btn_like_active.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
@@ -104,7 +104,11 @@ export default function LikeListScreen() {
             imageStyle={styles.likeCardImageStyle}
             onError={() => setImageErrors((prev) => ({ ...prev, [item.target_id]: true }))}
           >
-            <TouchableOpacity style={styles.likeBtn} onPress={() => handleLikePress(item.target_id, item.target_type)}>
+            <TouchableOpacity 
+              style={styles.likeBtn} 
+              activeOpacity={0.6}
+              onPress={() => handleLikePress(item.target_id, item.target_type)}
+            >
               <BtnLikeActive />
             </TouchableOpacity>
           </ImageBackground>

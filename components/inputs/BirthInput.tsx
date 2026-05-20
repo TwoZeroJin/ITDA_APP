@@ -1,5 +1,5 @@
 import IconCalendar from '@/assets/images/icon_calendar.svg';
-import DatePickerModal from '@/components/DatePickerModal';
+import DatePickerModal from '@/components/modal/DatePickerModal';
 import { COLOR } from '@/constants';
 import { formatDisplayBirthDate, getDefaultBirthDate } from '@/utils/commUtil';
 import React, { useMemo, useState } from 'react';
@@ -31,7 +31,7 @@ function BirthInput() {
             <Text style={styles.label}>생년월일</Text>
             <TouchableOpacity
               style={[styles.inputContainer, Boolean(error?.message) && styles.inputError]}
-              activeOpacity={0.8}
+              activeOpacity={0.6}
               onPress={() => {
                 setDraftValue(value || defaultBirthDate);
                 setModalVisible(true);

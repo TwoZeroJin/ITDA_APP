@@ -13,8 +13,8 @@ import IconFeed from '@/assets/images/navi_community.svg';
 import IconClub from '@/assets/images/icon_club.svg';
 
 import { COLOR, COMM_CONSTANTS } from '@/constants';
-import CommBottomButton from '@/components/CommBottomButton';
-import CommHeader from '@/components/CommHeader';
+import CommBottomButton from '@/components/comm/CommBottomButton';
+import CommHeader from '@/components/comm/CommHeader';
 import { SvgProps } from 'react-native-svg';
 
 type OptionKey = 'feed' | 'review';

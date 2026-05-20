@@ -1,4 +1,4 @@
-import TimePickerModal from '@/components/TimePickerModal';
+import TimePickerModal from '@/components/modal/TimePickerModal';
 import { COLOR } from '@/constants';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';

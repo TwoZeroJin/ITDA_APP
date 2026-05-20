@@ -1,8 +1,8 @@
 import { COLOR } from "@/constants";
 import React from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router } from "expo-router";
 import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";

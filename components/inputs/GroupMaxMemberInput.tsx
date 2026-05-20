@@ -26,6 +26,7 @@ export default function GroupMaxMemberInput() {
           <>
             <TouchableOpacity
               style={[styles.memberInputContainer, error && styles.memberInputContainerError]}
+              activeOpacity={0.6}
               onPress={() => maxInputRef.current?.focus()}
             >
               <TextInput

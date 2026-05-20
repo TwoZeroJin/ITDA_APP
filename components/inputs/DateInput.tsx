@@ -29,6 +29,7 @@ export default function DateInput({ onDateChange }: DateInputProps) {
         <Text style={styles.commContainerSubTitle}>모임 날짜</Text>
         <TouchableOpacity
           style={styles.placeInfoContainer}
+          activeOpacity={0.6}
           onPress={() => setDateModalVisible(true)}
         >
           <IconCalendar width={15} height={13} />

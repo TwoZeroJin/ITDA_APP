@@ -5,36 +5,37 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface CheckboxFieldProps {
-    value       : boolean;
-    onChange    : (val: boolean) => void;
-    label       : string;
+  value       : boolean;
+  onChange    : (val: boolean) => void;
+  label       : string;
 }
 
 const CheckboxField = ({ value, onChange, label }: CheckboxFieldProps) => {
   return (
     <View>
-        <TouchableOpacity
-            style={styles.container}
-            onPress={() => onChange(!value)}
-            >
-            {value ? <CheckboxTrue/> : <CheckboxFalse/> }
-            <Text style={styles.labelText}>{label}</Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.container}
+        activeOpacity={0.6}
+        onPress={() => onChange(!value)}
+      >
+        {value ? <CheckboxTrue/> : <CheckboxFalse/> }
+        <Text style={styles.labelText}>{label}</Text>
+      </TouchableOpacity>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        height: 48,
-        flexDirection: "row",
-        alignItems : "center"
-    },
-    labelText: {
-        fontSize: 16,
-        color: COLOR.TEXT_DEFAULT,
-        marginStart: 8,
-    }
+  container: {
+    height: 48,
+    flexDirection: "row",
+    alignItems : "center"
+  },
+  labelText: {
+    fontSize: 16,
+    color: COLOR.TEXT_DEFAULT,
+    marginStart: 8,
+  }
 });
 
 export default CheckboxField;

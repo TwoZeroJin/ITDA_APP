@@ -1,7 +1,7 @@
 import { COLOR } from "@/constants";
 import React, { useMemo } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
+import CommHeader from "@/components/comm/CommHeader";
 import { useNoticeListPaging } from "@/hooks/queries/useNotice";
 import IconMore from '@/assets/images/arrow_right.svg';
 import { BoardNotice, SearchParams } from "@/types";

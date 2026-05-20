@@ -1,8 +1,8 @@
 import { COLOR, COMM_CONSTANTS } from "@/constants";
 import React from "react";
 import { StyleSheet, Text, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router } from "expo-router";
 import DividingLine from "@/components/DividingLine";
 import { useRoute } from "@react-navigation/native";

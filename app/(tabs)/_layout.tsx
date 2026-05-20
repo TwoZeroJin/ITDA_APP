@@ -1,4 +1,4 @@
-import CustomBottomTabBar from '@/components/CustomBottomTabBar';
+import CustomBottomTabBar from '@/components/comm/CustomBottomTabBar';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';

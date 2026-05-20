@@ -1,5 +1,5 @@
-import CommHeader from '@/components/CommHeader';
-import CustomDialog from '@/components/CustomDialog';
+import CommHeader from '@/components/comm/CommHeader';
+import CustomDialog from '@/components/modal/CustomDialog';
 import { COLOR, QUERY_KEYS } from '@/constants';
 import { useChatInsert, useChatListPaging } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
@@ -275,7 +275,10 @@ export default function IndexScreen() {
           />
 
           <View style={styles.inputBarWrap}>
-            <TouchableOpacity style={styles.addButton}>
+            <TouchableOpacity 
+              style={styles.addButton}
+              activeOpacity={0.6}
+            >
               <Text style={styles.addButtonText}>＋</Text>
             </TouchableOpacity>
 
@@ -291,7 +294,11 @@ export default function IndexScreen() {
               />
             </View>
 
-            <TouchableOpacity style={styles.sendButton} onPress={handleSubmitChat}>
+            <TouchableOpacity 
+              style={styles.sendButton} 
+              activeOpacity={0.6}
+              onPress={handleSubmitChat}
+            >
               <Text style={styles.sendButtonText}>↑</Text>
             </TouchableOpacity>
           </View>

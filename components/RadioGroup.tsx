@@ -45,6 +45,7 @@ const RadioGroup = ({ items, value, onChange, direction = "column", spacing = 12
                         : { marginBottom: direction === "column" ? spacing : 0 },
                     item.disabled && { opacity: 0.5 },
                     ]}
+                    activeOpacity={0.6}
                     onPress={() => !item.disabled && onChange(item.value)}
                     accessibilityRole="radio"
                     accessibilityState={{ selected, disabled: !!item.disabled }}

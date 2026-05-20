@@ -9,7 +9,7 @@ interface MenuItem {
   color?: string;
 }
 
-interface DropdownMenuProps {
+interface DropdownModalProps {
   items: MenuItem[];
   position?: 'left' | 'right';
 }
@@ -17,7 +17,7 @@ interface DropdownMenuProps {
 /**
  * 드롭다운 메뉴 컴포넌트
  */
-export default function DropdownMenu({ items, position = 'right' }: DropdownMenuProps) {
+export default function DropdownModal({ items, position = 'right' }: DropdownModalProps) {
   const [menuVisible, setMenuVisible] = useState(false);
 
   const handleItemPress = (onPress: () => void) => {

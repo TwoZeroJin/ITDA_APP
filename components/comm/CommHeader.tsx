@@ -26,7 +26,7 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
         <View style={styles.container}>
           {isLogo && <Logo width={101} height={50} style={{marginStart: 7}}/>}
           {!isLogo && isBack &&
-            <TouchableOpacity onPress={() => {router.back()}}>
+            <TouchableOpacity onPress={() => {router.back()}} activeOpacity={0.6}>
               <Back width={54} height={44}/>
             </TouchableOpacity>
           }
@@ -36,22 +36,22 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
         </View>
         <View style={[styles.container, styles.rigtht]}>
           {isLike && 
-            <TouchableOpacity onPress={() => {router.navigate("/mypage/likeList");}}>
+            <TouchableOpacity onPress={() => {router.navigate("/mypage/likeList");}} activeOpacity={0.6}>
               <Like/>
             </TouchableOpacity>
           }
           {isNoti && 
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => {}} activeOpacity={0.6}>
               <Noti/>
             </TouchableOpacity>
           }
           {isSetting && 
-            <TouchableOpacity onPress={() => {router.navigate("/mypage/settings");}}>
+            <TouchableOpacity onPress={() => {router.navigate("/mypage/settings");}} activeOpacity={0.6}>
               <Setting/>
             </TouchableOpacity>
           }
           {isDetail && 
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => {}} activeOpacity={0.6}>
               <Detail/>
             </TouchableOpacity>
           }

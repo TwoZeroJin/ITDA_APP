@@ -1,21 +1,23 @@
 import React, { useCallback, useState } from "react";
-import CommHeader from "@/components/CommHeader";
+import CommHeader from "@/components/comm/CommHeader";
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from "react-native";
 import { COLOR } from "@/constants";
 import MemDefault from '@/assets/images/icon_mem_default.svg';
 import IconPencil from '@/assets/images/icon_pencil.svg';
 import { getMemberInfo, getCategoryList } from '@/utils/commUtil';
 import { MemberInfo } from "@/types";
-import { router, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import DividingLine from "@/components/DividingLine";
 import CommUpcomingMeetList from "@/components/CommUpcomingMeetList";
 import { useMemberDetail } from "@/hooks/queries/useMember";
 import CommReviewList from "@/components/CommReviewList";
+import { useAuthRouter } from "@/components/comm/AuthRoute";
 
 /**
  * 마이페이지 - 내 정보 화면
  */
 export default function MyPageScreen() {
+  const router = useAuthRouter();
   const [memberInfo, setMemberInfo] = useState<MemberInfo>();
   const [interestCategories, setInterestCategories] = useState<{ label: string; id: string }[]>([]);
   const { upcomingMeetList, newClassList, reviewList } = useMemberDetail();
@@ -70,7 +72,10 @@ export default function MyPageScreen() {
           <View style={{ flex: 1, marginStart: 12 }}>
             <View style={styles.nameRow}>
               <Text style={styles.nameText}>{memberInfo?.mem_nick || memberInfo?.mem_name || ''}</Text>
-              <TouchableOpacity style={styles.editBtnGroup} activeOpacity={0.7} onPress={() => router.navigate('/mypage/memUpdate')}>
+              <TouchableOpacity 
+                style={styles.editBtnGroup} 
+                activeOpacity={0.6}
+                onPress={() => router.navigate('/mypage/memUpdate')}>
                 <IconPencil width={20} height={20}/>
               </TouchableOpacity>
             </View>

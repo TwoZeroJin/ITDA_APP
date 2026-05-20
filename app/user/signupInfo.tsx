@@ -1,5 +1,5 @@
-import CommBottomButton from "@/components/CommBottomButton";
-import CommHeader from "@/components/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
 import BirthInput from "@/components/inputs/BirthInput";
 import ChurchSelectBox from "@/components/inputs/ChurchSelectBox";
 import ChurchTmNmInput from "@/components/inputs/ChurchTmNmInput";

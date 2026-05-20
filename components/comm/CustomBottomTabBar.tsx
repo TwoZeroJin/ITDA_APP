@@ -4,7 +4,7 @@ import Main from '@/assets/images/navi_main.svg';
 import Meet from '@/assets/images/navi_meet.svg';
 import My from '@/assets/images/navi_my.svg';
 import { COLOR } from '@/constants';
-import { useAuthRouter } from '@/components/AuthRoute';
+import { useAuthRouter } from '@/components/comm/AuthRoute';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -48,7 +48,7 @@ function CustomBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)
             key={route.key}
             onPress={onPress}
             style={styles.tabButton}
-            activeOpacity={0.8}
+            activeOpacity={0.6}
           >
             <View style={styles.iconContainer}>
               {getIcon(name, isFocused)}

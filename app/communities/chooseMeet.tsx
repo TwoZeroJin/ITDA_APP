@@ -16,7 +16,7 @@ import { COLOR } from '@/constants';
 import { getCategoryList } from '@/utils/commUtil';
 import CommunityMeet from '@/components/CommunityMeet';
 import { useMyMeetListNoReview } from '@/hooks/queries/useCommunity';
-import CommHeader from '@/components/CommHeader';
+import CommHeader from '@/components/comm/CommHeader';
 const { width } = Dimensions.get('window');
 
 export default function chooseMeet() {

@@ -28,6 +28,7 @@ function CustomRadioGroup({ items, value, onChange }: CustomRadioGroupProps) {
           <TouchableOpacity
             key={item.value}
             style={[styles.commRadioBox, selected && styles.commRadioBoxActive]}
+            activeOpacity={0.6}
             onPress={() => onChange(item.value)}
           >
             <Text style={[styles.commRadioBoxText, selected && styles.commRadioBoxTextActive]}>{item.label}</Text>

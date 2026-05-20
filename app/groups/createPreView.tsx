@@ -1,14 +1,14 @@
 import { COLOR } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useRoute } from "@react-navigation/native";
 import { GroupInfo, CodeInfo } from "@/types";
 import { router } from "expo-router";
-import ImageCarousel from "@/components/ImageCarousel";
-import CommLabel from "@/components/CommLabel";
-import CustomDialog from "@/components/CustomDialog";
+import ImageCarousel from "@/components/comm/ImageCarousel";
+import CommLabel from "@/components/comm/CommLabel";
+import CustomDialog from "@/components/modal/CustomDialog";
 import { parseImageList, getCategoryList } from "@/utils/commUtil";
 import { useGroupInsert } from "@/hooks/queries/useGroup";
 

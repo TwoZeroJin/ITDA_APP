@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
-import CustomRadioGroup from '@/components/CustomRadioGroup';
+import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
 import AgeSlider from '@/components/AgeSlider';
 import { MeetInfo } from '@/types';
 

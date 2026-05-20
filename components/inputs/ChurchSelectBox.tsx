@@ -1,4 +1,4 @@
-import SelectboxModal from "@/components/SelectboxModal";
+import SelectboxModal from "@/components/modal/SelectboxModal";
 import { COLOR } from "@/constants";
 import { ChurchData } from "@/types";
 import { getChurchList } from "@/utils/commUtil";

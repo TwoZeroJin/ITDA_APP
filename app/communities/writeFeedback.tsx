@@ -24,7 +24,7 @@ import { COLOR } from '@/constants';
 import { useImagesUpload } from "@/hooks/queries/useImageUpload";
 import { useReviewInsert, useReviewUpdate } from '@/hooks/queries/useCommunity';
 import { getFormDataImages } from '@/utils/imageUtil';
-import CommHeader from '@/components/CommHeader';
+import CommHeader from '@/components/comm/CommHeader';
 
 // 폼 데이터 타입 정의
 interface ReviewFormData {

@@ -1,5 +1,5 @@
 import BottomPlaceSearchListModal, { BottomPlaceSearchListItem } from '@/components/BottomPlaceSearchListModal';
-import CustomRadioGroup from '@/components/CustomRadioGroup';
+import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
 import { COLOR } from '@/constants';
 import { GroupInfo } from '@/types';
 import React, { useMemo, useRef, useState, useEffect } from 'react';
@@ -135,7 +135,7 @@ export default function GroupPlaceInput() {
           {placeType === 'F' && (
             <>
               <Text style={styles.commContainerSubTitle}>주요 모임 장소</Text>
-              <TouchableOpacity style={styles.placeInfoContainer} onPress={() => setPlaceModalVisible(true)}>
+              <TouchableOpacity style={styles.placeInfoContainer} onPress={() => setPlaceModalVisible(true)} activeOpacity={0.6}>
                 <IconPlace width={13} height={17} />
                 <Text style={[styles.infoDesc, !selectedPlace && styles.placeholderText]}>
                   {selectedPlace ? selectedPlace.name : '어디서 만날까요?'}
@@ -183,6 +183,7 @@ export default function GroupPlaceInput() {
               />
               <TouchableOpacity
                 style={styles.memberInputContainer}
+                activeOpacity={0.6}
                 onPress={() => freqDescInputRef.current?.focus()}
               >
                 <TextInput

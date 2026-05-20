@@ -1,10 +1,10 @@
 import { COLOR } from "@/constants";
 import React, { useState } from "react";
 import { Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
-import CustomButton from "@/components/CustomButton";
-import CustomDialog from "@/components/CustomDialog";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
+import CustomButton from "@/components/comm/CustomButton";
+import CustomDialog from "@/components/modal/CustomDialog";
 import { useAuth } from "@/hooks/queries/useAuth";
 import IconMore from '@/assets/images/arrow_right.svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -91,7 +91,12 @@ export default function SettingsScreen() {
         </View>
 
         {SETTINGS_MENU.map((item) => (
-          <TouchableOpacity key={item.label} style={styles.menuRow} activeOpacity={0.7} onPress={item.onPress}>
+          <TouchableOpacity 
+            key={item.label} 
+            style={styles.menuRow} 
+            activeOpacity={0.6} 
+            onPress={item.onPress}
+          >
             <Text style={styles.menuText}>{item.label}</Text>
             <IconMore width={11} height={16} />
           </TouchableOpacity>

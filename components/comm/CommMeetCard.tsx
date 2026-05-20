@@ -2,7 +2,7 @@ import BtnLikeDefault from '@/assets/images/btn_like_default.svg';
 import BtnLikeActive from '@/assets/images/btn_like_active.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
-import CommLabel from '@/components/CommLabel';
+import CommLabel from '@/components/comm/CommLabel';
 import { COLOR } from '@/constants';
 import { MeetInfo } from '@/types';
 import { useState } from 'react';
@@ -29,10 +29,7 @@ export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
           imageStyle={styles.recommendImage}
           onError={() => setImageError(true)}
         >
-          <TouchableOpacity
-            style={styles.recommendLikeBtnContainer}
-            onPress={() => onLikePress?.(item)}
-          >
+          <TouchableOpacity style={styles.recommendLikeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
             {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
           </TouchableOpacity>
         </ImageBackground>

@@ -1,8 +1,8 @@
 import { COLOR } from "@/constants";
 import React from "react";
 import { StyleSheet, View, Text } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router } from "expo-router";
 import IconSocialCompl from '@/assets/images/icon_social_compl.svg';
 import IconClubCompl from '@/assets/images/icon_club_compl.svg';

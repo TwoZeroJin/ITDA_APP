@@ -1,13 +1,13 @@
 import { COLOR } from "@/constants";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router } from "expo-router";
 import { useRoute } from "@react-navigation/native";
 import { FormProvider, useForm } from "react-hook-form";
 import { FileInfo, GroupInfo } from "@/types";
-import CustomImagePicker from "@/components/CustomImagePicker";
+import CustomImagePicker from "@/components/comm/CustomImagePicker";
 import TagInput from "@/components/inputs/TagInput";
 import GroupDescInput from "@/components/inputs/GroupDescInput";
 import GroupNameInput from "@/components/inputs/GroupNameInput";

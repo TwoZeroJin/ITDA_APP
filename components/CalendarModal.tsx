@@ -129,7 +129,11 @@ function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfi
       onRequestClose={onClose}
     >
       <View style={styles.modalOverlay}>
-        <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={onClose} />
+        <TouchableOpacity 
+          style={styles.modalBackdrop} 
+          activeOpacity={0.6} 
+          onPress={onClose} 
+        />
         <View style={styles.modalContainer}>
           {!!title && <Text style={styles.modalTitle}>{title}</Text>}
 
@@ -138,12 +142,17 @@ function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfi
             <View style={styles.monthNavRow}>
               <TouchableOpacity
                 style={styles.monthNavButton}
+                activeOpacity={0.6}
                 onPress={() => moveMonth(-1)}
                 disabled={isPrevMonthDisabled}
               >
                 <Text style={[styles.monthNavText, isPrevMonthDisabled && styles.monthNavTextDisabled]}>‹</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.monthNavButton} onPress={() => moveMonth(1)}>
+              <TouchableOpacity 
+                style={styles.monthNavButton}
+                activeOpacity={0.6}
+                onPress={() => moveMonth(1)}
+              >
                 <Text style={styles.monthNavText}>›</Text>
               </TouchableOpacity>
             </View>
@@ -170,8 +179,8 @@ function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfi
                 <View key={`day-${day}`} style={styles.dayCell}>
                   <TouchableOpacity
                     style={[styles.dayButton, selected && styles.dayButtonSelected]}
+                    activeOpacity={0.6}
                     onPress={() => handleSelectDay(day)}
-                    activeOpacity={0.8}
                     disabled={isDisabled}
                   >
                     <Text style={[styles.dayText, isDisabled && styles.dayTextDisabled, selected && styles.dayTextSelected]}>{day}</Text>
@@ -182,10 +191,18 @@ function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfi
           </View>
 
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <TouchableOpacity 
+              style={styles.cancelButton}
+              activeOpacity={0.6}
+              onPress={onClose}
+            >
               <Text style={styles.cancelButtonText}>취소</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={handleConfirm}>
+            <TouchableOpacity
+              style={styles.confirmButton}
+              onPress={handleConfirm}
+              activeOpacity={0.6}
+            >
               <Text style={styles.confirmButtonText}>확인</Text>
             </TouchableOpacity>
           </View>

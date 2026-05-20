@@ -1,9 +1,9 @@
-import CommHeader from "@/components/CommHeader";
+import CommHeader from "@/components/comm/CommHeader";
 import { COLOR } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
-import { useAuthRouter } from "@/components/AuthRoute";
+import { useAuthRouter } from "@/components/comm/AuthRoute";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -100,6 +100,7 @@ export default function ChatListScreen() {
     return (
     <TouchableOpacity
       style={styles.chatRow}
+      activeOpacity={0.6}
       onPress={() =>
         router.push({
           pathname: "/chats",

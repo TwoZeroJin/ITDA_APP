@@ -1,7 +1,7 @@
 import queryClient from '@/api/queryClient';
-import AuthRoute from '@/components/AuthRoute';
-import CustomDialog from '@/components/CustomDialog';
-import LoadingLayout from '@/components/LoadingLayout';
+import AuthRoute from '@/components/comm/AuthRoute';
+import CustomDialog from '@/components/modal/CustomDialog';
+import LoadingLayout from '@/components/comm/LoadingLayout';
 import { COLOR } from '@/constants';
 import { LoadingProvider } from '@/contexts/LoadingContext';
 import { useAutoLogin } from '@/hooks/queries/useAuth';

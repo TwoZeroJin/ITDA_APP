@@ -41,7 +41,8 @@ export default function MemberCountInput() {
           }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View style={styles.memberInputWrap}>
-              <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]} 
+              <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]}
+                activeOpacity={0.6}
                 onPress={() => minMemberInputRef.current?.focus()}
               >
                 <TextInput
@@ -80,6 +81,7 @@ export default function MemberCountInput() {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View style={styles.memberInputWrap}>
               <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]}
+                activeOpacity={0.6}
                 onPress={() => maxMemberInputRef.current?.focus()}
               >
                 <TextInput

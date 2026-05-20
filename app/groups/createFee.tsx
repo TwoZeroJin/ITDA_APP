@@ -1,13 +1,13 @@
 import { COLOR } from "@/constants";
 import React from "react";
 import { StyleSheet, Text, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router } from "expo-router";
 import { useRoute } from "@react-navigation/native";
 import { GroupInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
-import CommFeeInput from "@/components/inputs/CommFeeInput";
+import FeeInput from "@/components/inputs/FeeInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 /**
@@ -61,7 +61,7 @@ export default function GroupCreateFeeScreen() {
             <Text style={styles.subtitle}>{'모임 운영에 필요한 경우 참가비를 설정해 주세요.\n운영비, 공간 대관료 등 다양한 용도로 활용할 수 있습니다.'}</Text>
           </View>
 
-          <CommFeeInput />
+          <FeeInput />
 
         </KeyboardAwareScrollView>
 

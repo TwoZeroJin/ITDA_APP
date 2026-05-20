@@ -72,7 +72,7 @@ function CustomImagePicker({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.photoButton} onPress={handleOpenImagePicker}>
+      <TouchableOpacity style={styles.photoButton} onPress={handleOpenImagePicker} activeOpacity={0.6}>
         <IconCamera />
         <Text style={styles.photoCount}>({imageUris.length}/{maxCount})</Text>
       </TouchableOpacity>
@@ -84,6 +84,7 @@ function CustomImagePicker({
             <TouchableOpacity
               style={styles.deleteBadge}
               onPress={() => handleDeleteImage(index)}
+              activeOpacity={0.6}
             >
               <IconCloseBtn />
             </TouchableOpacity>

@@ -1,5 +1,5 @@
-import CommHeader from '@/components/CommHeader';
-import CreateFloatingButton from '@/components/CreateFloatingButton';
+import CommHeader from '@/components/comm/CommHeader';
+import CreateFloatingButton from '@/components/comm/CreateFloatingButton';
 import { COLOR } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
@@ -15,7 +15,11 @@ export default function Meet() {
   const renderButton = (label: string, type: 'social' | 'club' | 'class') => {
   const isActive = activeType === type;
     return (
-      <TouchableOpacity onPress={() => setActiveType(type)} style={styles.tabButton}>
+      <TouchableOpacity 
+        style={styles.tabButton}
+        activeOpacity={0.6}
+        onPress={() => setActiveType(type)} 
+      >
         <Text style={[styles.tabText, isActive && styles.activeTabText]}>
           {label}
         </Text>

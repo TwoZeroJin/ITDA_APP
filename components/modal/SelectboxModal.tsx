@@ -24,6 +24,7 @@ function SelectboxModal({ options, value, onChange, placeholder = "선택하세�
       {/* 트리거 버튼 */}
       <TouchableOpacity
         style={styles.trigger}
+        activeOpacity={0.6}
         onPress={() => setOpen(true)}
       >
         <Text style={[styles.triggerText, !selected && styles.placeholder]}>
@@ -38,7 +39,7 @@ function SelectboxModal({ options, value, onChange, placeholder = "선택하세�
         animationType="fade"
         onRequestClose={() => setOpen(false)}
       >
-        <TouchableOpacity style={styles.backdrop} onPress={() => setOpen(false)} />
+        <TouchableOpacity style={styles.backdrop} onPress={() => setOpen(false)} activeOpacity={0.6}/>
         <View style={styles.sheet}>
           <FlatList
             data={options}
@@ -46,6 +47,7 @@ function SelectboxModal({ options, value, onChange, placeholder = "선택하세�
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.option}
+                activeOpacity={0.6}
                 onPress={() => {
                   onChange(item.value);
                   setOpen(false);

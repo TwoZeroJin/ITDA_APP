@@ -1,7 +1,7 @@
 import { COLOR } from "@/constants";
 import React from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import CommHeader from "@/components/CommHeader";
+import CommHeader from "@/components/comm/CommHeader";
 import { useNoticeView } from "@/hooks/queries/useNotice";
 import { useLocalSearchParams } from "expo-router";
 import RenderHtml from 'react-native-render-html';

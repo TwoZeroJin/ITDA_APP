@@ -1,5 +1,5 @@
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
-import CustomRadioGroup from '@/components/CustomRadioGroup';
+import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
 import { COLOR } from '@/constants';
 import { CodeInfo, MeetInfo } from '@/types';
 import { getFeeList } from '@/utils/commUtil';
@@ -7,8 +7,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-
-export default function CommFeeInput() {
+export default function FeeInput() {
   const { control, watch, setValue } = useFormContext<MeetInfo>();
   const [feeList, setFeeList] = useState<CodeInfo[]>([]);
   const feeEntryInputRef = useRef<TextInput>(null);
@@ -70,7 +69,8 @@ export default function CommFeeInput() {
             }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
-                <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]} 
+                <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]}
+                  activeOpacity={0.6}
                   onPress={() => feeEntryInputRef.current?.focus()}
                 >
                   <TextInput
@@ -106,6 +106,7 @@ export default function CommFeeInput() {
                       <TouchableOpacity
                         key={item.code_id}
                         style={[styles.feeInfoTypeBox, selected && styles.feeInfoTypeBoxSelected]}
+                        activeOpacity={0.6}
                         onPress={() => {
                           onChange(item.code_id);
                           if (item.code_id !== 'FEE_INFO_99') setValue('fee_desc', '');

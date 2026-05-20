@@ -1,8 +1,8 @@
 import { COLOR, COMM_CONSTANTS } from "@/constants";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router } from "expo-router";
 import IconSocial from '@/assets/images/icon_social.svg';
 import IconClub from '@/assets/images/icon_club.svg';
@@ -55,6 +55,7 @@ export default function MeetCreateScreen() {
               <TouchableOpacity
                 key={value}
                 style={[styles.meetContainer, isSelected && styles.meetSelected]}
+                activeOpacity={0.6}
                 onPress={() => setMeet(value)}
               >
                 <Icon width={20} color={isSelected ? COLOR.COMM_WHITE : color} />

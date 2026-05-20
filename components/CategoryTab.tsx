@@ -25,6 +25,7 @@ export function CategoryTab({ data, onPress }: CategoryTabProps) {
           <TouchableOpacity
             key={category.key}
             style={[styles.categoryChip, isActive && styles.categoryChipActive]}
+            activeOpacity={0.6}
             onPress={() => onPress(category.key)}
           >
             <Text style={[styles.categoryChipText, isActive && styles.categoryChipTextActive]}>{category.label}</Text>

@@ -1,5 +1,5 @@
 import { STORE_KEY } from '@/constants';
-import CustomDialog from '@/components/CustomDialog';
+import CustomDialog from '@/components/modal/CustomDialog';
 import { getSecureStore } from '@/utils/secureStoreUtil';
 import { router } from 'expo-router';
 import type { Href } from 'expo-router';

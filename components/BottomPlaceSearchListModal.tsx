@@ -156,7 +156,11 @@ function BottomPlaceSearchListModal({ visible, title, placeholder = '검색어�
       onRequestClose={handleClose}
     >
       <View style={styles.modalOverlay}>
-        <TouchableOpacity style={styles.modalBackdrop} onPress={handleClose} />
+        <TouchableOpacity 
+          style={styles.modalBackdrop} 
+          activeOpacity={0.6}
+          onPress={handleClose} 
+        />
 
         <Animated.View style={[styles.bottomSheetContainer, { transform: [{ translateY: sheetTranslateY }] }]}>
           <View style={styles.bottomSheetHeader}>

@@ -1,5 +1,5 @@
 import IconArrowRightMore from '@/assets/images/icon_arrow_right_more.svg';
-import CommMeetCard from '@/components/CommMeetCard';
+import CommMeetCard from '@/components/comm/CommMeetCard';
 import { COLOR } from '@/constants';
 import { MeetInfo } from '@/types';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -90,7 +90,7 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
       />
 
       <View style={{ alignItems: 'center' }}>
-        <TouchableOpacity style={styles.moreButton}>
+        <TouchableOpacity style={styles.moreButton} activeOpacity={0.6}>
           <Text style={styles.moreButtonText}>더보기</Text>
           <IconArrowRightMore width={12} height={12} />
         </TouchableOpacity>

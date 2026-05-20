@@ -14,7 +14,7 @@ import { router, usePathname } from 'expo-router';
 import BtnLikeDefault from '@/assets/images/btn_like_default.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
-import CommLabel from './CommLabel';
+import CommLabel from './comm/CommLabel';
 
 const { width } = Dimensions.get('window');
 

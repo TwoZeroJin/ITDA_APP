@@ -20,14 +20,16 @@ const InputField = ({label, variant = "filled", error, rightChild = null, textAr
   return (
     <View>
       {label && <Text style={styles.label}>{label}</Text>}
-      <TouchableOpacity onPress={() => innerRef.current?.focus()} style={[
-        styles.container
-        , styles[variant]
-        , Boolean(error) && styles.inputError
-        , isTextArea && styles.multiline
-        , isTextArea && { height: multilineContainerHeight }
+      <TouchableOpacity 
+        style={[
+          styles.container
+          , styles[variant]
+          , Boolean(error) && styles.inputError
+          , isTextArea && styles.multiline
+          , isTextArea && { height: multilineContainerHeight }
         ]}
-        activeOpacity={0.8}
+        activeOpacity={0.6}
+        onPress={() => innerRef.current?.focus()} 
       >
         <TextInput 
           ref={(node) => {

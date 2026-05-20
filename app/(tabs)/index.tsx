@@ -1,4 +1,4 @@
-import CommHeader from '@/components/CommHeader';
+import CommHeader from '@/components/comm/CommHeader';
 import { COLOR } from '@/constants';
 import { BannerData } from '@/types';
 import { getMainBannerList } from '@/utils/commUtil';
@@ -6,12 +6,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import SearchButton from '@/assets/images/search_button.svg';
 import IconClose from '@/assets/images/icon_close.svg';
-import CreateFloatingButton from '@/components/CreateFloatingButton';
-import CommCategoryList from '@/components/CommCategoryList';
-import CommRcmdMeetList from '@/components/CommRcmdMeetList';
+import CreateFloatingButton from '@/components/comm/CreateFloatingButton';
+import CommCategoryList from '@/components/comm/CommCategoryList';
+import CommRcmdMeetList from '@/components/comm/CommRcmdMeetList';
 import CommUpcomingMeetList from '@/components/CommUpcomingMeetList';
 import CommReviewList from '@/components/CommReviewList';
-import ImageCarousel from "@/components/ImageCarousel";
+import ImageCarousel from "@/components/comm/ImageCarousel";
 import { useMainData } from '@/hooks/queries/useMain';
 import DividingLine from '@/components/DividingLine';
 
@@ -84,6 +84,7 @@ export default function HomeScreen() {
           <View style={styles.searchContainer}>
             <Text style={styles.searchText}>참여하고 싶은 모임이나 클럽을 검색해 보세요.</Text>
             <TouchableOpacity
+              activeOpacity={0.6}
               // onPress={() => router.navigate('/search')}
               >
               <SearchButton width={20} height={20}/>
@@ -96,6 +97,7 @@ export default function HomeScreen() {
               renderItem={({ item }) => (
                 <View style={styles.recentSearchItem}>
                   <TouchableOpacity
+                    activeOpacity={0.6}
                     // onPress={() => handleSearch(item)}
                   >
                     <Text style={styles.recentSearchText}>{item}</Text>

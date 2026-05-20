@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import InterestCategoryInput from "@/components/inputs/InterestCategoryInput";
 import { useAuth } from "@/hooks/queries/useAuth";
 import { SignupInfo } from "@/types";
 import { useLocalSearchParams } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { StyleSheet, View, ScrollView } from "react-native";
-import CommHeader from "@/components/CommHeader";
+import CommHeader from "@/components/comm/CommHeader";
 import { COLOR } from "@/constants";
 
 /**

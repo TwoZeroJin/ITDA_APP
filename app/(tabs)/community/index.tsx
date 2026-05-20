@@ -1,4 +1,4 @@
-import CommHeader from '@/components/CommHeader';
+import CommHeader from '@/components/comm/CommHeader';
 import CommunityFeed from '@/components/CommunityFeed';
 import { COLOR } from '@/constants';
 import { StyleSheet, Text, FlatList, TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';

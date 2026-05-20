@@ -128,7 +128,7 @@ function WheelPickerModal({ visible, columns, onClose, onConfirm, cancelLabel = 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
+        <TouchableOpacity style={styles.backdrop} activeOpacity={0.6} onPress={onClose} />
         <View style={styles.container}>
           <View style={styles.pickerWrapper}>
             <View pointerEvents="none" style={styles.highlight} />
@@ -138,10 +138,10 @@ function WheelPickerModal({ visible, columns, onClose, onConfirm, cancelLabel = 
           </View>
 
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <TouchableOpacity style={styles.cancelButton} onPress={onClose} activeOpacity={0.6}>
               <Text style={styles.cancelButtonText}>{cancelLabel}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm} activeOpacity={0.6}>
               <Text style={styles.confirmButtonText}>{confirmLabel}</Text>
             </TouchableOpacity>
           </View>

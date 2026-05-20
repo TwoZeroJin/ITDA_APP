@@ -1,5 +1,5 @@
 import LogoMain from '@/assets/images/logo_main2.svg';
-import CustomButton from '@/components/CustomButton';
+import CustomButton from '@/components/comm/CustomButton';
 import IdInput from "@/components/inputs/IdInput";
 import PasswordInput from "@/components/inputs/PasswordInput";
 import { COLOR } from "@/constants";

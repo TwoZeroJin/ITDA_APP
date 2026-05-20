@@ -1,5 +1,5 @@
 import { formatYmdDateFromParts, getDaysInMonth, parseYmdDate } from "@/utils/commUtil";
-import WheelPickerModal, { WheelOption } from "@/components/WheelPickerModal";
+import WheelPickerModal, { WheelOption } from "@/components/modal/WheelPickerModal";
 import React, { useEffect, useMemo } from "react";
 
 type DatePickerModalProps = {

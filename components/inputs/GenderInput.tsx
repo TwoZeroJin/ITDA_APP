@@ -33,6 +33,7 @@ function GenderInput() {
                 <TouchableOpacity
                   key={option.value}
                   style={[styles.optionButton, selected && styles.optionButtonActive]}
+                  activeOpacity={0.6}
                   onPress={() => onChange(option.value)}
                   accessibilityRole="radio"
                   accessibilityState={{ selected }}

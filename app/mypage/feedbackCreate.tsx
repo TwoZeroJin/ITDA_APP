@@ -1,8 +1,8 @@
 import { COLOR } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from 'react-native';
-import CommHeader from "@/components/CommHeader";
-import CommBottomButton from "@/components/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
+import CommBottomButton from "@/components/comm/CommBottomButton";
 import FeedContentInput from "@/components/inputs/FeedContentInput";
 import FeedSubjectInput from "@/components/inputs/FeedSubjectInput";
 import { useFeedbackInsert } from "@/hooks/queries/useFeedback";

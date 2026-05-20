@@ -22,6 +22,7 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
         <Text style={styles.title}>다가오는 모임 리스트</Text>
         <TouchableOpacity
           style={{ height: '100%', justifyContent: 'center', paddingStart: 25 }}
+          activeOpacity={0.6}
           onPress={() => router.navigate('/meet')}
         >
           <ArrowRight width={11} height={16} />
@@ -38,7 +39,14 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
             data={upcomingMeetList}
             renderItem={({ item }) => {
               return (
-                <View style={styles.meetCell}>
+                <TouchableOpacity 
+                  style={styles.meetCell}
+                  activeOpacity={0.6}
+                  onPress={() => router.push({ 
+                    pathname: '/meets/meetDetailPage',
+                    params: { meetId: item.meet_id }
+                  })}
+                >
                   <Text style={styles.meetDay}>{formatRelativeMeetDatetime(item.meet_datetime)}</Text>
                   <Text style={styles.meetSubTitle} numberOfLines={1} ellipsizeMode="tail">{item.meet_name}</Text>
                   {item.place_addr && (<View style={styles.meetInfoRow}>
@@ -57,7 +65,7 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
                       )}
                     <Text style={styles.meetHostText}>{item.mem_nick}</Text>
                   </View>)}
-                </View>
+                </TouchableOpacity>
               );
             }}
             keyExtractor={(item) => String(item.meet_id)}

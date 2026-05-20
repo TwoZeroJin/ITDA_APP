@@ -60,6 +60,7 @@ export default function InterestCategoryInput() {
                       <TouchableOpacity
                         key={item.code_id}
                         style={[styles.itemButton, isSelected && styles.itemButtonSelected]}
+                        activeOpacity={0.6}
                         onPress={() => toggleSelect(item)}
                       >
                         <Text style={[styles.itemText, isSelected && styles.itemTextSelected]}>
