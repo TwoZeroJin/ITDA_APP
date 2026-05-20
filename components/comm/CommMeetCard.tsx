@@ -8,12 +8,16 @@ import { MeetInfo } from '@/types';
 import { useState } from 'react';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MemDefault from '@/assets/images/icon_mem_default.svg';
+import { router } from 'expo-router';
 
 interface CommMeetCardProps {
   item: MeetInfo;
   onLikePress?: (item: MeetInfo) => void;
 }
 
+/**
+ * 공통 소모임 아이템 카드 컴포넌트
+ */
 export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
   const [imageError, setImageError] = useState(false);
   const imageSource = imageError || !item.thumb_url
@@ -21,7 +25,14 @@ export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
     : { uri: item.thumb_url };
 
   return (
-    <View style={styles.recommendItemContainer}>
+    <TouchableOpacity 
+      style={styles.recommendItemContainer}
+      activeOpacity={0.6}
+      onPress={() => router.push({ 
+        pathname: '/meets/meetDetailPage',
+        params: { meetId: item.meet_id }
+      })}
+    >
       <View>
         <ImageBackground
           source={imageSource}
@@ -63,7 +74,7 @@ export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

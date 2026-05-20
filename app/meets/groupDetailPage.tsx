@@ -1,4 +1,4 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_CONSTANTS } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -16,6 +16,7 @@ import MeetComment from "@/components/MeetComment";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as commUtil from '@/utils/commUtil';
 import { useGroupDetailView, useGroupMemberList } from "@/hooks/queries/useGroup";
+import { useAuthRouter } from "@/components/comm/AuthRoute";
 
 export default function GroupDetailPage() {
 
@@ -32,6 +33,7 @@ export default function GroupDetailPage() {
   const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
   const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
   const [myMemId, setMyMemId] = useState<number>(0);
+  const router = useAuthRouter();
   //내정보 조회
 //  const memId = commUtil.getMemId();
   //소모임 정보 조회
@@ -161,7 +163,7 @@ export default function GroupDetailPage() {
   };
   return (
     <View style={styles.container}>
-      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title=""/>
+      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} isDetail={groupInfo?.host_yn === 'Y'} onPressDetail={() => {}}/>
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
@@ -294,10 +296,21 @@ export default function GroupDetailPage() {
 
       </ScrollView>
 
-      {myMemId && memberList?.some(member => Number(member.mem_id) === myMemId) ? (
-        <CommBottomButton label="신청 취소하기" onPress={() => setNotApplyComfirmVisible(true)}/>
-      ) : (
-        <CommBottomButton label="신청하기" onPress={() => setApplyComfirmVisible(true)}/>
+      {groupInfo?.apply_stat === '-1' && (
+        <CommBottomButton label="신청하기" onPress={() => setApplyComfirmVisible(true)} />
+      )}
+      {groupInfo?.apply_stat === '0' && (
+        <CommBottomButton label="신청 취소하기" onPress={() => setNotApplyComfirmVisible(true)} />
+      )}
+      {groupInfo?.apply_stat === '1' && (
+        <CommBottomButton label="채팅하기" onPress={() => {router.push({
+          pathname: "/chats",
+          params: {
+            room_id   : COMM_CONSTANTS.CHAT_TYPE_GROUP + '_' + groupInfo.group_id,
+            room_name : groupInfo.group_name,
+            room_type : COMM_CONSTANTS.CHAT_TYPE_GROUP,
+          },
+        })}} />
       )}
 
 

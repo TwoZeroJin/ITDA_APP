@@ -1,15 +1,13 @@
 import CommHeader from '@/components/comm/CommHeader';
 import CustomDialog from '@/components/modal/CustomDialog';
-import { COLOR, QUERY_KEYS } from '@/constants';
+import { COLOR } from '@/constants';
 import { useChatInsert, useChatListPaging } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useLocalSearchParams } from 'expo-router';
-import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
-import { useFocusEffect } from '@react-navigation/native';
-import { useQueryClient } from '@tanstack/react-query';
 
 const formatTimeText = (sourceDate?: string) => {
   if (!sourceDate) {
@@ -62,7 +60,7 @@ const getSenderText = (item: ChatData) => item.mem_name || '상대방';
 export default function IndexScreen() {
   const { room_id, room_name, room_type } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string }>();
   const chatInsert = useChatInsert();
-  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatListPaging({
+  const { results, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatListPaging({
     page_no: 0,
     page_size: 20,
     room_id: room_id ,

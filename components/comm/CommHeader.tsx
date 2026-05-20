@@ -10,17 +10,18 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 
 interface CommHeaderProps {
-  isLogo?    : boolean;
+  isLogo?         : boolean;
   // isBack?    : boolean;
-  isLike?    : boolean;
-  isNoti?    : boolean;
-  isSetting? : boolean;
-  isBack?    : boolean;
-  isDetail?  : boolean;
-  title?     : string;
+  isLike?         : boolean;
+  isNoti?         : boolean;
+  isSetting?      : boolean;
+  isBack?         : boolean;
+  isDetail?       : boolean;
+  title?          : string;
+  onPressDetail?  : () => void;
 }
 
-function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, isDetail = false, title}: CommHeaderProps) {
+function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, isDetail = false, title, onPressDetail}: CommHeaderProps) {
   return (
     <View style={styles.container}>
         <View style={styles.container}>
@@ -51,7 +52,7 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
             </TouchableOpacity>
           }
           {isDetail && 
-            <TouchableOpacity onPress={() => {}} activeOpacity={0.6}>
+            <TouchableOpacity onPress={onPressDetail} activeOpacity={0.6}>
               <Detail/>
             </TouchableOpacity>
           }

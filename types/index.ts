@@ -109,7 +109,7 @@ interface MemberInfo {
   mem_image_url?    : string;
   mem_image_id?     : string;
   new_image_name?   : string;
-  host_yn        : string;
+  host_yn           : string;
 }
 
 /**
@@ -179,9 +179,10 @@ interface MeetInfo {
   age_max         : number;
   gender_ratio    : number;
   apply_type      : string;
-  apply_yn        : string;
+  apply_stat      : string;
   apply_ratio     : string;
-  my_yn           : string;
+  host_yn         : string;
+  like_yn         : string;
   fee_yn          : string;
   fee_info        : string;
   fee_entry       : number;
@@ -195,7 +196,6 @@ interface MeetInfo {
   mem_image_url?  : string;
   group_id        : number;
   thumb_url?      : string;
-  like_yn         : string;
   // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
   img_list_json?  : string;
 }
@@ -259,9 +259,10 @@ interface GroupInfo {
   group_max       : number;
   group_question  : string;
   apply_type      : string;
-  apply_yn        : string;
+  apply_stat      : string;
   apply_ratio     : string;
-  my_yn           : string;
+  host_yn         : string;
+  like_yn         : string;
   fee_yn          : string;
   fee_info        : string;
   fee_entry       : number;

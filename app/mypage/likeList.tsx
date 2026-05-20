@@ -12,6 +12,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import React from 'react';
+import { router } from 'expo-router';
 
 /**
  * 좋아요 리스트 화면
@@ -96,7 +97,25 @@ export default function LikeListScreen() {
       : require('@/assets/images/no_image.png');
 
     return (
-      <View style={styles.cardContainer}>
+      <TouchableOpacity 
+        style={styles.cardContainer}
+        activeOpacity={0.6}
+        onPress={() => {
+          if (item.target_type === 'M') {
+            router.push({
+              pathname: '/meets/meetDetailPage',
+              params: { meetId: item.target_id },
+            });
+            return;
+          }
+          else if (item.target_type === 'G') {
+            router.push({
+              pathname: '/meets/groupDetailPage',
+              params: { groupId: item.target_id },
+            });
+          }
+        }}
+      >
         <View style={styles.likeCard}>
           <ImageBackground
             source={imageSource}
@@ -157,7 +176,7 @@ export default function LikeListScreen() {
             )}
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
