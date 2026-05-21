@@ -1,24 +1,33 @@
 import { COLOR } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 
 interface MenuItem {
-  label: string;
-  onPress: () => void;
-  color?: string;
+  label   : string;
+  onPress : () => void;
+  color?  : string;
 }
 
 interface DropdownModalProps {
-  items: MenuItem[];
-  position?: 'left' | 'right';
+  items             : MenuItem[];
+  position?         : 'left' | 'right';
+  visible?          : boolean;
+  onVisibleChange?  : (visible: boolean) => void;
 }
 
 /**
  * 드롭다운 메뉴 컴포넌트
  */
-export default function DropdownModal({ items, position = 'right' }: DropdownModalProps) {
-  const [menuVisible, setMenuVisible] = useState(false);
+export default function DropdownModal({ items, position = 'right', visible, onVisibleChange }: DropdownModalProps) {
+  const [internalVisible, setInternalVisible] = useState(false);
+  const menuVisible = visible ?? internalVisible;
+
+  const setMenuVisible = (nextVisible: boolean) => {
+    if (visible === undefined) {
+      setInternalVisible(nextVisible);
+    }
+    onVisibleChange?.(nextVisible);
+  };
 
   const handleItemPress = (onPress: () => void) => {
     onPress();
@@ -27,13 +36,6 @@ export default function DropdownModal({ items, position = 'right' }: DropdownMod
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.menuTrigger}
-        onPress={() => setMenuVisible(!menuVisible)}
-      >
-        <Ionicons name="ellipsis-vertical" size={24} color={COLOR.COMM_BLACK} />
-      </TouchableOpacity>
-
       {menuVisible && (
         <View style={[styles.menuPopup, position === 'left' && styles.menuPopupLeft]}>
           {items.map((item, index) => (
@@ -63,15 +65,12 @@ const styles = StyleSheet.create({
     padding             : 8,
   },
   menuPopup: {
-    position            : 'absolute',
-    top                 : 40,
-    right               : 0,
-    backgroundColor     : COLOR.COMM_WHITE,
-    borderRadius        : 8,
-    minWidth            : 120,
+    backgroundColor     : COLOR.COMM_TRANSPARENT,
+    borderRadius        : 16,
+    width               : 200,
     shadowColor         : COLOR.COMM_BLACK,
-    shadowOpacity       : 0.15,
-    shadowOffset        : { width: 0, height: 2 },
+    shadowOpacity       : 0.2,
+    shadowOffset        : { width: 0, height: 4 },
     shadowRadius        : 4,
     elevation           : 5,
     zIndex              : 1000,
@@ -86,10 +85,13 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize            : 14,
-    fontWeight          : '500',
+    fontFamily          : 'Pretendard-Regular',
+    color               : COLOR.COLOR_1A1A1A,
   },
   menuDivider: {
     height              : 1,
-    backgroundColor     : COLOR.COMM_GRAY_6,
+    width               : '85%',
+    backgroundColor     : COLOR.COLOR_E6E6E6,
+    alignSelf           : 'center',
   },
 });

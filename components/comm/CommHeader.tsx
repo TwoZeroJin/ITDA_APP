@@ -35,24 +35,24 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
         <View style={styles.titleWrapper}>
           {title && <Text style={styles.title}>{title}</Text>}
         </View>
-        <View style={[styles.container, styles.rigtht]}>
+        <View style={[styles.container, styles.right]}>
           {isLike && 
-            <TouchableOpacity onPress={() => {router.navigate("/mypage/likeList");}} activeOpacity={0.6}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => {router.navigate("/mypage/likeList");}} activeOpacity={0.6}>
               <Like/>
             </TouchableOpacity>
           }
           {isNoti && 
-            <TouchableOpacity onPress={() => {}} activeOpacity={0.6}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => {}} activeOpacity={0.6}>
               <Noti/>
             </TouchableOpacity>
           }
           {isSetting && 
-            <TouchableOpacity onPress={() => {router.navigate("/mypage/settings");}} activeOpacity={0.6}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => {router.navigate("/mypage/settings");}} activeOpacity={0.6}>
               <Setting/>
             </TouchableOpacity>
           }
           {isDetail && 
-            <TouchableOpacity onPress={onPressDetail} activeOpacity={0.6}>
+            <TouchableOpacity style={styles.iconContainer} onPress={onPressDetail} activeOpacity={0.6}>
               <Detail/>
             </TouchableOpacity>
           }
@@ -65,28 +65,34 @@ const styles = StyleSheet.create({
   container : {
     flexDirection   : "row",
     alignItems      : "center",
-    gap             : 10,
+    height          : 50,
     backgroundColor : COLOR.COMM_WHITE
   },
-  rigtht: {
-    marginStart   : "auto",
-    marginEnd     : 16,
+  right: {
+    marginStart     : "auto",
+    marginEnd       : 8,
   },
    titleWrapper: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 5,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    pointerEvents: 'none',
+    position        : 'absolute',
+    left            : 0,
+    right           : 0,
+    top             : 5,
+    bottom          : 0,
+    justifyContent  : 'center',
+    alignItems      : 'center',
+    pointerEvents   : 'none',
   },
   title: {
-    fontSize    : 18,
-    fontWeight  : "bold",
-    color       : COLOR.COMM_BLACK,
-  }
+    fontSize        : 18,
+    fontWeight      : "bold",
+    color           : COLOR.COMM_BLACK,
+  },
+  iconContainer: {
+    height            : '100%',
+    paddingHorizontal : 10,
+    justifyContent    : 'center',
+    alignItems        : 'center'
+  },
 });
 
 export default CommHeader;

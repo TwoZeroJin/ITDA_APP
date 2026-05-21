@@ -6,6 +6,7 @@ import { StyleSheet } from 'react-native';
  */
 const COLOR = {
   COMM_MODAL_BG       : 'rgba(0, 0, 0, 0.4)',
+  COMM_TRANSPARENT    : 'rgba(255, 255, 255, 0.99)',
   COMM_BLACK          : '#000000',
   COMM_WHITE          : '#FFFFFF',
   COMM_GRAY           : '#F2F2F2',
@@ -43,6 +44,8 @@ const COLOR = {
   COLOR_373737        : '#373737',
   COLOR_5537CD        : '#5537CD',
   COLOR_6B6B6B        : '#6B6B6B',
+  COLOR_E6E6E6        : '#E6E6E6',
+  COLOR_1A1A1A        : '#1A1A1A',
 };
 
 /**

@@ -1,4 +1,4 @@
-import { Platform } from "react-native";
+import { Alert, Linking, Platform } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
@@ -9,15 +9,30 @@ import Constants from "expo-constants";
  */
 function usePushNotification() {
   const [expoPushToken, setExpoPushToken] = useState("");
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
   const [notification, setNotification] = useState<
     Notifications.Notification | undefined
   >(undefined);
   const notificationListener = useRef<Notifications.EventSubscription | null>(null);
   const responseListener = useRef<Notifications.EventSubscription | null>(null);
 
-  const handleRegistrationError = (errorMessage: string) => {
-    alert(errorMessage);
-    throw new Error(errorMessage);
+  const handleRegistrationError = (errorMessage: string, canOpenSettings = false) => {
+    setRegistrationError(errorMessage);
+
+    if (canOpenSettings) {
+      Alert.alert("알림 권한 필요", errorMessage, [
+        { text: "취소", style: "cancel" },
+        {
+          text: "설정 열기",
+          onPress: () => {
+            Linking.openSettings();
+          },
+        },
+      ]);
+      return;
+    }
+
+    Alert.alert("알림 설정", errorMessage);
   };
 
   const registerForPushNotificationsAsync = async () => {
@@ -39,7 +54,7 @@ function usePushNotification() {
         finalStatus = status;
       }
       if (finalStatus !== "granted") {
-        handleRegistrationError("푸시 권한을 허용해주세요.");
+        handleRegistrationError("푸시 권한을 허용해주세요.", true);
         return;
       }
       const projectId =
@@ -47,6 +62,7 @@ function usePushNotification() {
         Constants?.easConfig?.projectId;
       if (!projectId) {
         handleRegistrationError("Project ID를 찾을 수 없습니다.");
+        return;
       }
       try {
         const pushTokenString = (
@@ -57,16 +73,21 @@ function usePushNotification() {
         return pushTokenString;
       } catch (e: unknown) {
         handleRegistrationError(`${e}`);
+        return;
       }
     } else {
       handleRegistrationError("실제 기기를 이용해주세요.");
+      return;
     }
   };
 
   useEffect(() => {
     registerForPushNotificationsAsync()
       .then((token) => setExpoPushToken(token ?? ""))
-      .catch((error: any) => console.log("error", error));
+      .catch((error: unknown) => {
+        const message = error instanceof Error ? error.message : String(error);
+        handleRegistrationError(message);
+      });
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -86,7 +107,7 @@ function usePushNotification() {
     };
   }, []);
 
-  return { expoPushToken, notification };
+  return { expoPushToken, notification, registrationError };
 }
 
 export default usePushNotification;

@@ -15,6 +15,7 @@ import ProfileIcon from "@/components/ProfileIcon";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import MeetComment from "@/components/MeetComment";
 import CommReviewList from '@/components/CommReviewList';
+import DropdownModal from '@/components/modal/DropdownModal';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useReviewList } from "@/hooks/queries/useCommunity";
 import * as commUtil from '@/utils/commUtil';
@@ -26,6 +27,7 @@ export default function MeetDetailPage() {
   const [comment, setComment] = useState('');
   const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
   const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
+  const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [myMemId, setMyMemId] = useState<number>(0);
   const router = useAuthRouter();
   //내정보 조회
@@ -166,9 +168,66 @@ export default function MeetDetailPage() {
     content: string;
     profile_image_url: string;
   };
+
+  const DETAIL_MENU_ITEMS = [
+    {
+      label: '모임 수정',
+      onPress: () => {
+        Alert.alert('안내', '수정 기능은 준비중입니다.');
+      },
+    },
+    {
+      label: '가입 승인',
+      onPress: () => {
+        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+      },
+    },
+    {
+      label: '멤버 관리',
+      onPress: () => {
+        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+      },
+    },
+    {
+      label: '모임 삭제',
+      onPress: () => {
+        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+      },
+    },
+  ];
+
   return (
     <View style={styles.container}>
-      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} isDetail={meetInfo?.host_yn === 'Y'} onPressDetail={() => {}}/>
+      <CommHeader
+        isLogo={false}
+        isNoti={false}
+        isSetting={false}
+        isLike={false}
+        isDetail={meetInfo?.host_yn === 'Y'}
+        onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
+      />
+
+      {isDetailMenuVisible && (
+        <TouchableOpacity
+          style={styles.detailMenuBackdrop}
+          activeOpacity={1}
+          onPress={() => setIsDetailMenuVisible(false)}
+        />
+      )}
+
+      {isDetailMenuVisible && (
+        <View style={styles.detailMenuLayer} pointerEvents="box-none">
+          <View style={styles.detailMenuAnchor}>
+            <DropdownModal
+              items={DETAIL_MENU_ITEMS}
+              position="right"
+              visible={isDetailMenuVisible}
+              onVisibleChange={setIsDetailMenuVisible}
+            />
+          </View>
+        </View>
+      )}
+
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
@@ -381,6 +440,27 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#fff' },
   container: {
     flex: 1,
+  },
+  detailMenuBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 10,
+  },
+  detailMenuLayer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 11,
+  },
+  detailMenuAnchor: {
+    position: 'absolute',
+    top: 44,
+    right: 8,
   },
   commContainerTitle: {
     fontSize: 20,
