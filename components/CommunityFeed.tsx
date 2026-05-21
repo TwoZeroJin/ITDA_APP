@@ -2,11 +2,12 @@ import { COLOR } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, NativeSyntheticEvent, NativeScrollEvent, FlatList, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { MeetReview, MyMeetInfo} from '@/types';
+import { MeetInfo, MeetReview, MyMeetInfo} from '@/types';
 import CommunityMeet from './CommunityMeet';
 import { useReviewDelete } from '@/hooks/queries/useCommunity';
 import queryClient from '@/api/queryClient';
 import { router } from 'expo-router';
+import PlaceLocationBox from './PlaceLocationBox';
 
 interface communityFeedProps {
   data: MeetReview;
@@ -188,6 +189,11 @@ export default function CommunityFeed({data}: communityFeedProps) {
         {/* 피드에 모임정보가  존재할 때만 컴포넌트를 렌더링 */}
         {data.memMeetListVO && <CommunityMeet data={data.memMeetListVO} />}
 
+          {/* 하단 지도 정보 카드 */}
+        <View style={styles.placeContainer} >
+          <PlaceLocationBox data={data.memMeetListVO as MeetInfo}/>
+        </View>
+
         {/* 본문 영역 */}
         <View style={styles.feedContent}>
           {/* ✅ 2. 조건부 numberOfLines 설정 */}
@@ -221,7 +227,10 @@ export default function CommunityFeed({data}: communityFeedProps) {
 }
 
 const styles = StyleSheet.create({
-// ✅ 점들을 감싸는 컨테이너 (이미지 하단 중앙 배치)
+  placeContainer: {
+    padding: 20,
+  },
+  // ✅ 점들을 감싸는 컨테이너 (이미지 하단 중앙 배치)
   indicatorContainer: {
     position: 'absolute',
     bottom: 12, // 이미지 하단에서 얼만큼 띄울지

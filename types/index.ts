@@ -239,6 +239,7 @@ interface MeetReview {
 interface MyMeetInfo {
   meet_id?        : number;
   meet_name       : string;
+  place_name      : string;
   place_addr      : string;
   mem_id          : number;
   mem_name        : string;

@@ -85,7 +85,7 @@ export default function MeetDetailPage() {
 
     console.log("모달에서 받은 답변:", answer);
 
-    if(meetInfo?.apply_type === 'A' && (!answer || answer.trim() === '')) {
+    if(meetInfo?.apply_type === 'A' && meetInfo?.meet_question?.trim() != '' && (!answer || answer.trim() === '')) {
       Alert.alert('신청 답변을 입력해주세요.');
       return;
     }

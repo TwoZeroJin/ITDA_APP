@@ -133,6 +133,7 @@ const styles = StyleSheet.create({
   recommendContainer: {
     marginTop: 5,
     alignItems: 'center',
+   zIndex: 1, elevation: 1,
   },
   recommendListContainer: {
     marginTop: 5,

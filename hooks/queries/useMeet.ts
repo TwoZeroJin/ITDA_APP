@@ -14,7 +14,7 @@ function useMeetListPaging(searchParams: SearchParams) {
     getNextPageParam: (lastPage) => {
       if (!lastPage || !lastPage.paging) return undefined;
       const { page_no, page_size, total_count } = lastPage.paging;
-      const isLast = (page_no + 1) * page_size >= total_count;
+      const isLast = (page_no ) * page_size >= total_count;
       return isLast ? undefined : page_no + 1;
     },
   });

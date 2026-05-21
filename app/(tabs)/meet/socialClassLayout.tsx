@@ -48,37 +48,39 @@ export default function SocialClassLayout({ activeType }: { activeType: 'social'
   }
 
   return (
-    <FlatList 
-      data={results}
-      renderItem={({ item }) => (
-        <CommunityMeet data={item as MeetInfo} type='MEET'/>
-      )}
-      keyExtractor={(item) => item.meet_id.toString()} 
-      onRefresh={onRefresh}
-      refreshing={refreshing}
-      onEndReached={loadMore}
-      onEndReachedThreshold={0.5}
-      ListHeaderComponent={
-        <View style={styles.headerGroup}>
-          <SearchInput />
-          <CategoryListLayout />
-          <DividingLine />
-          <View style={styles.titleWrapper}>
-            <Text style={styles.listTitle}>전체 {activeTypeLabel}</Text>
+    <View style={{ flex: 1 }}>
+      <FlatList 
+        data={results}
+        renderItem={({ item }) => (
+          <CommunityMeet data={item as MeetInfo} type='MEET'/>
+        )}
+        keyExtractor={(item) => item.meet_id.toString()} 
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+        onEndReached={loadMore}
+        onEndReachedThreshold={0.5}
+        ListHeaderComponent={
+          <View style={styles.headerGroup}>
+            <SearchInput />
+            <CategoryListLayout />
+            <DividingLine />
+            <View style={styles.titleWrapper}>
+              <Text style={styles.listTitle}>전체 {activeTypeLabel}</Text>
+            </View>
           </View>
-        </View>
-      }
-      ListFooterComponent={
-        isFetchingNextPage ? (
-          <ActivityIndicator size="small" color={COLOR.APP_ACTIVE_3} style={{ marginVertical: 20 }} />
-        ) : <View style={{ height: 100 }} />
-      }    
-      ListEmptyComponent={
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>후기를 작성할 수 있는 모임이 없습니다.</Text>
-        </View>
-      } 
-    />
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator size="small" color={COLOR.APP_ACTIVE_3} style={{ marginVertical: 20 }} />
+          ) : <View style={{ height: 100 }} />
+        }    
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>후기를 작성할 수 있는 모임이 없습니다.</Text>
+          </View>
+        } 
+      />
+    </View>
   );
 }  
 
