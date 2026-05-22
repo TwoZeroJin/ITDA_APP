@@ -2,8 +2,18 @@ import { Client, Message } from 'paho-mqtt';
 import { getDeviceUid, printErrorLog, printInfoLog } from './commUtil';
 
 let client: Client | null = null;
+let connectPromise: Promise<boolean> | null = null;
 
-const MQTT_URL = 'ws://146.56.105.2:9001';
+type MessageCallback = (msg: string, topic: string) => void;
+type DeliveredCallback = (msg: string, topic: string) => void;
+
+const LOGIN_TOPIC_SUBSCRIBER_ID = 'global:login-topic-subscriber';
+const LOGIN_TOPIC_CALLBACK: MessageCallback = () => {
+  // 로그인 공통 구독자: 화면별 처리는 각 화면 subscriber에서 담당
+};
+
+const topicSubscribers = new Map<string, Map<string, MessageCallback>>();
+const deliveredSubscribers = new Map<string, DeliveredCallback>();
 
 /**
  * MQTT INIT
@@ -12,60 +22,203 @@ const MQTT_URL = 'ws://146.56.105.2:9001';
  * @param msgReceiveCallback 
  * @param msgSendCallback 
  */
-const initMqtt = async (topic: string, msgReceiveCallback : (msg : string) => void, msgSendCallback : (msg : string) => void): Promise<boolean> => {
-    if (client == null) {
-        client = new Client(
-            "146.56.105.2", // host
-            9001,           // port
-            "/mqtt",        // path
-            await getDeviceUid()
-        );
+const ensureClient = async (): Promise<Client> => {
+  if (client == null) {
+    client = new Client(
+      "146.56.105.2", // host
+      9001,           // port
+      "/mqtt",        // path
+      await getDeviceUid()
+    );
+  }
+
+  return client;
+};
+
+const bindClientEvents = (mqttClient: Client) => {
+  mqttClient.onConnectionLost = (response) => {
+      if (response.errorCode !== 0) {
+          printInfoLog('connection Lost : ', response.errorMessage);
+      }
+  }
+
+  mqttClient.onMessageArrived = (message) => {
+    const topic = message.destinationName;
+    const payload = message.payloadString;
+    printInfoLog(`MQTT Message Arrived TOPIC :${topic} MSG : ${payload}`);
+
+    const subscribers = topicSubscribers.get(topic);
+    if (!subscribers || subscribers.size === 0) {
+      return;
     }
 
-    const mqttClient = client;
-
-    mqttClient.onConnectionLost = (response) => {
-        if (response.errorCode !== 0) {
-            printInfoLog('connection Lost : ', response.errorMessage);
-        }
-    }
-
-    mqttClient.onMessageArrived = (message) => {
-        printInfoLog(`MQTT Message Arrived TOPIC :${message.destinationName} MSG : ${message.payloadString}`);
-        msgReceiveCallback(message.payloadString);
-    }
-
-    mqttClient.onMessageDelivered = (message) => {
-        printInfoLog(`MQTT Message Delivered TOPIC :${message.destinationName} MSG : ${message.payloadString}`);
-        msgSendCallback(message.payloadString);
-    }
-
-    return new Promise<boolean>((resolve) => {
-        try {
-            if (mqttClient.isConnected()) {
-                mqttClient.subscribe(topic);
-                resolve(true);
-                return;
-            }
-
-            mqttClient.connect({
-                onSuccess: (success) => {
-                    printInfoLog(`MQTT Connected : ${JSON.stringify(success)}`);
-                    mqttClient.subscribe(topic);
-                    resolve(true);
-                },
-                onFailure: (error) => {
-                    printInfoLog(`MQTT Connect Failed : ${JSON.stringify(error)}`);
-                    resolve(false);
-                },
-                useSSL: false,
-            });
-        }
-        catch (e) {
-            printInfoLog(`MQTT Connect Exception : ${JSON.stringify(e)}`);
-            resolve(false);
-        }
+    subscribers.forEach((callback) => {
+      try {
+        callback(payload, topic);
+      } catch (e) {
+        printErrorLog(`MQTT Message callback error : ${String(e)}`);
+      }
     });
+  }
+
+  mqttClient.onMessageDelivered = (message) => {
+    const topic = message.destinationName;
+    const payload = message.payloadString;
+    printInfoLog(`MQTT Message Delivered TOPIC :${topic} MSG : ${payload}`);
+
+    deliveredSubscribers.forEach((callback) => {
+      try {
+        callback(payload, topic);
+      } catch (e) {
+        printErrorLog(`MQTT Delivered callback error : ${String(e)}`);
+      }
+    });
+  }
+};
+
+const connectMqtt = async (): Promise<boolean> => {
+  const mqttClient = await ensureClient();
+
+  if (mqttClient.isConnected()) {
+    return true;
+  }
+
+  if (connectPromise) {
+    return connectPromise;
+  }
+
+  connectPromise = new Promise<boolean>((resolve) => {
+    try {
+        bindClientEvents(mqttClient);
+
+        mqttClient.connect({
+          onSuccess: (success) => {
+            printInfoLog(`MQTT Connected : ${JSON.stringify(success)}`);
+            connectPromise = null;
+            resolve(true);
+          },
+          onFailure: (error) => {
+            printInfoLog(`MQTT Connect Failed : ${JSON.stringify(error)}`);
+            connectPromise = null;
+            resolve(false);
+          },
+          useSSL: false,
+        });
+    }
+    catch (e) {
+      printInfoLog(`MQTT Connect Exception : ${JSON.stringify(e)}`);
+      connectPromise = null;
+      resolve(false);
+    }
+  });
+
+  return connectPromise;
+};
+
+/**
+ * topic 구독 (화면/컨텍스트 별 콜백)
+ */
+const subscribe = async (topic: string, subscriberId: string, msgReceiveCallback: MessageCallback): Promise<boolean> => {
+  const connected = await connectMqtt();
+  if (!connected || !client) {
+    return false;
+  }
+
+  const subscribers = topicSubscribers.get(topic) ?? new Map<string, MessageCallback>();
+  const hadAnySubscribers = subscribers.size > 0;
+  subscribers.set(subscriberId, msgReceiveCallback);
+  topicSubscribers.set(topic, subscribers);
+
+  if (!hadAnySubscribers) {
+    client.subscribe(topic);
+  }
+
+  return true;
+};
+
+/**
+ * topic 구독 해제 (화면/컨텍스트 별 콜백)
+ */
+const unsubscribe = (topic: string, subscriberId: string) => {
+  if (!topicSubscribers.has(topic)) {
+    return;
+  }
+
+  const subscribers = topicSubscribers.get(topic)!;
+  subscribers.delete(subscriberId);
+
+  if (subscribers.size === 0) {
+    topicSubscribers.delete(topic);
+    if (client && client.isConnected()) {
+      try {
+        client.unsubscribe(topic);
+      } catch (e) {
+        printErrorLog(`MQTT Unsubscribe Exception : ${JSON.stringify(e)}`);
+      }
+    }
+  }
+};
+
+/**
+ * 특정 subscriber의 모든 topic 구독 해제
+ */
+const unsubscribeAll = (subscriberId: string) => {
+  Array.from(topicSubscribers.keys()).forEach((topic) => {
+    unsubscribe(topic, subscriberId);
+  });
+};
+
+/**
+ * topic 목록 일괄 구독
+ * - 기존 subscriberId 구독은 모두 해제 후 topic_list로 재구성
+ */
+const subscribeTopicList = async (topics: string[]) => {
+  const isConnected = await connectMqtt();
+  if (!isConnected) {
+    return false;
+  }
+
+  unsubscribeAll(LOGIN_TOPIC_SUBSCRIBER_ID);
+
+  const topicSet = new Set((topics ?? []).filter(Boolean));
+  if (topicSet.size === 0) {
+    return true;
+  }
+
+  const results = await Promise.all(
+    Array.from(topicSet).map((topic) => subscribe(topic, LOGIN_TOPIC_SUBSCRIBER_ID, LOGIN_TOPIC_CALLBACK))
+  );
+
+  return results.every(Boolean);
+};
+
+/**
+ * 메시지 전달 콜백 등록
+ */
+const addDeliveredListener = (listenerId: string, callback: DeliveredCallback) => {
+  deliveredSubscribers.set(listenerId, callback);
+};
+
+/**
+ * 메시지 전달 콜백 제거
+ */
+const removeDeliveredListener = (listenerId: string) => {
+  deliveredSubscribers.delete(listenerId);
+};
+
+/**
+ * MQTT INIT (기존 호출부 호환)
+ * 기존 시그니처: initMqtt(topic, onReceive, onDelivered)
+ */
+const initMqtt = async (topic: string, msgReceiveCallback : (msg : string) => void, msgSendCallback : (msg : string) => void): Promise<boolean> => {
+  const legacySubscriberId = `legacy:${topic}`;
+  const connected = await subscribe(topic, legacySubscriberId, (msg) => msgReceiveCallback(msg));
+  if (!connected) {
+    return false;
+  }
+
+  addDeliveredListener(legacySubscriberId, (msg) => msgSendCallback(msg));
+  return true;
 };
 
 /**
@@ -74,30 +227,41 @@ const initMqtt = async (topic: string, msgReceiveCallback : (msg : string) => vo
  * @param payload 
  */
 const sendMessage = (topic : string, payload: string | object) => {
-    if (!client || !client.isConnected()) {
-        printInfoLog('MQTT send failed : client is not connected');
-        return;
-    }
+  if (!client || !client.isConnected()) {
+    printInfoLog('MQTT send failed : client is not connected');
+    return;
+  }
 
-    const messagePayload = typeof payload === 'string' ? payload : JSON.stringify(payload);
-    const message = new Message(messagePayload);
-    message.destinationName = topic;
-    message.qos = 1; // QoS 설정
-    client.send(message);
+  const messagePayload = typeof payload === 'string' ? payload : JSON.stringify(payload);
+  const message = new Message(messagePayload);
+  message.destinationName = topic;
+  message.qos = 1; // QoS 설정
+  client.send(message);
 }
 
 /**
  * 연결 해제
  */
 const disconnect = () => {
-    if (client != null) {
-        client.disconnect();
-        client = null;
-    }
+  if (client != null) {
+    client.disconnect();
+    client = null;
+  }
+
+  connectPromise = null;
+  topicSubscribers.clear();
+  deliveredSubscribers.clear();
 }
 
 export const MqttUtil = {
-    initMqtt    : initMqtt,
-    sendMessage : sendMessage,
-    disconnect  : disconnect
+  connectMqtt             : connectMqtt,
+  subscribe               : subscribe,
+  unsubscribe             : unsubscribe,
+  unsubscribeAll          : unsubscribeAll,
+  subscribeTopicList      : subscribeTopicList,
+  addDeliveredListener    : addDeliveredListener,
+  removeDeliveredListener : removeDeliveredListener,
+  initMqtt                : initMqtt,
+  sendMessage             : sendMessage,
+  disconnect              : disconnect
 }

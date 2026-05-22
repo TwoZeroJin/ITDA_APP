@@ -3,6 +3,7 @@ import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { FeedbackData, SearchParams } from "@/types";
+import { getNextPageParamFromPaging } from "@/utils/commUtil";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
@@ -12,12 +13,7 @@ function useFeedbackListPaging(searchParams: SearchParams) {
     queryFn: () => feedbackList({ ...searchParams }),
     queryKey: [QUERY_KEYS.FEEDBACK, QUERY_KEYS.FEEDBACK_PAGING, searchParams],
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.paging) return undefined;
-      const { page_no, page_size, total_count } = lastPage.paging;
-      const isLast = (page_no + 1) * page_size >= total_count;
-      return isLast ? undefined : page_no + 1;
-    },
+    getNextPageParam: getNextPageParamFromPaging,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
   return { ...query, results };

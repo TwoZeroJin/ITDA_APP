@@ -179,13 +179,25 @@ export default function MeetDetailPage() {
     {
       label: '가입 승인',
       onPress: () => {
-        Alert.alert('안내', '삭제 기능은 준비중입니다.');
-      },
+        router.navigate({
+          pathname: '/members/applyList',
+          params: {
+            target_id: meetInfo?.meet_id,
+            target_type: 'M',
+          }
+        });
+      }
     },
     {
       label: '멤버 관리',
       onPress: () => {
-        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+        router.navigate({
+          pathname: '/members/memberList',
+          params: {
+            target_id: meetInfo?.meet_id,
+            target_type: 'M',
+          }
+        });
       },
     },
     {

@@ -3,7 +3,7 @@ import { COLOR } from '@/constants';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { useMeetListPaging } from "@/hooks/queries/useMeet";
-import { SearchParams } from '@/types';
+import { MeetInfo, SearchParams } from '@/types';
 import CategoryListLayout from '@/components/CategoryListLayout';
 import DividingLine from '@/components/DividingLine';
 import DropdownModal from '@/components/modal/DropdownModal';
@@ -86,20 +86,22 @@ export default function SocialClassLayout({ activeType }: { activeType: 'social'
   }
 
   // 좋아요 처리
-  const handleLikePress = (meetId: number, like_yn: string) => {
-    if (!meetId) {
+  const handleLikePress = (item: MeetInfo) => {
+    if (!item.meet_id) {
       return;
     }
 
     memberLike.mutate(
       {
-        target_id   : meetId,
+        target_id   : item.meet_id,
         target_type : 'M',
-        flag        : like_yn === 'N',
+        flag        : item.like_yn === 'N',
       },
       {
+        onSuccess: () => {
+          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+        },
         onError: () => {
-        
         },
       },
     );
@@ -136,7 +138,7 @@ export default function SocialClassLayout({ activeType }: { activeType: 'social'
           <View key={index} style={styles.recommendListContainer}>
             <CommMeetCard
               item={item}
-              onLikePress={(item) => handleLikePress(item.meet_id, item.like_yn)}            />
+              onLikePress={(item) => handleLikePress(item)} />
           </View>
         )}
         keyExtractor={(item) => item.meet_id.toString()} 

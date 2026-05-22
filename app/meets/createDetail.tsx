@@ -3,9 +3,8 @@ import React from "react";
 import { StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import DividingLine from "@/components/DividingLine";
-import { useRoute } from "@react-navigation/native";
 import { MeetInfo } from "@/types";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { FormProvider, useForm } from "react-hook-form";
@@ -18,9 +17,7 @@ import AgeRangeInput, { AGE_MIN } from "@/components/inputs/AgeRangeInput";
  * 모임 생성 - 신청방식, 참여인원, 성비, 나이 설정 화면
  */
 export default function MeetCreateDetailScreen() {
-  const params = useRoute();
-  const prevMeetInfo = (params.params ?? {}) as MeetInfo;
-
+  const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
       apply_type  : '',
@@ -42,7 +39,7 @@ export default function MeetCreateDetailScreen() {
         gender_ratio  : data.gender_ratio,
         age_min       : data.age_min,
         age_max       : data.age_max,
-      } as Partial<MeetInfo>,
+      },
     });
   });
 

@@ -3,8 +3,7 @@ import React from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import { GroupInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
 import GroupPlaceInput from "@/components/inputs/GroupPlaceInput";
@@ -13,8 +12,7 @@ import GroupPlaceInput from "@/components/inputs/GroupPlaceInput";
  * 클럽 생성 - 장소 및 날짜, 시간 설정 화면
  */
 export default function GroupCreatePlaceScreen() {
-  const params = useRoute();
-  const prevGroupInfo = (params.params ?? {}) as GroupInfo;
+  const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
       place_type   : 'F',
@@ -43,7 +41,7 @@ export default function GroupCreatePlaceScreen() {
         group_datetime: data.group_datetime,
         freq_type: data.freq_type,
         freq_desc: data.freq_desc,
-      } as Partial<GroupInfo>,
+      },
     });
   });
 

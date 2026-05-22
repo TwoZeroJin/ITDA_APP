@@ -3,8 +3,7 @@ import React from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import { MeetInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
 import MeetPlaceInput from "@/components/inputs/MeetPlaceInput";
@@ -13,8 +12,7 @@ import MeetPlaceInput from "@/components/inputs/MeetPlaceInput";
  * 모임 생성 - 장소 및 날짜, 시간 설정 화면
  */
 export default function MeetCreatePlaceScreen() {
-  const params = useRoute();
-  const prevMeetInfo = (params.params ?? {}) as MeetInfo;
+  const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
       place_type   : 'F',
@@ -42,7 +40,7 @@ export default function MeetCreatePlaceScreen() {
         place_name: data.place_type === 'F' ? data.place_name : '',
         place_addr: data.place_type === 'F' ? data.place_addr : '',
         meet_datetime: data.meet_datetime,
-      } as Partial<MeetInfo>,
+      },
     });
   });
 

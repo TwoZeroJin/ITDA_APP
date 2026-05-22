@@ -3,8 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import { GroupInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
 import FeeInput from "@/components/inputs/FeeInput";
@@ -14,8 +13,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
  * 클럽 생성 - 참가비 설정 화면
  */
 export default function GroupCreateFeeScreen() {
-  const params = useRoute();
-  const prevGroupInfo = (params.params ?? {}) as GroupInfo;
+  const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
       fee_yn   : 'N',
@@ -42,7 +40,7 @@ export default function GroupCreateFeeScreen() {
         fee_entry: data.fee_yn === 'Y' ? data.fee_entry : undefined,
         fee_info : data.fee_yn === 'Y' ? data.fee_info : '',
         fee_desc : data.fee_yn === 'Y' ? data.fee_desc : '',
-      } as Partial<GroupInfo>,
+      },
     });
   });
 

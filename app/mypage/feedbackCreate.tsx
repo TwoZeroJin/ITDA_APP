@@ -6,11 +6,12 @@ import CommBottomButton from "@/components/comm/CommBottomButton";
 import FeedContentInput from "@/components/inputs/FeedContentInput";
 import FeedSubjectInput from "@/components/inputs/FeedSubjectInput";
 import { useFeedbackInsert } from "@/hooks/queries/useFeedback";
-import { FeedbackData } from "@/types";
+import { FeedbackData, FileInfo } from "@/types";
 import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { showToast } from "@/utils/commToast";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import CustomImagePicker from "@/components/comm/CustomImagePicker";
 
 /**
  * 마이페이지 - 개선사항 등록 화면
@@ -18,8 +19,9 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 export default function FeedbackCreateScreen() {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const feedbackInsert = useFeedbackInsert();
+  const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>([]);
 
-  const feedbackForm = useForm<FeedbackData>({
+  const formValues = useForm<FeedbackData>({
     defaultValues: {
       feed_subject: '',
       feed_content: '',
@@ -37,7 +39,7 @@ export default function FeedbackCreateScreen() {
   }, []);
 
   const onSubmit = (formValues: FeedbackData) => {
-    feedbackInsert.mutate(formValues, {
+    feedbackInsert.mutate({ ...formValues, img_list: uploadedImageList }, {
       onSuccess: (result) => {
           showToast({ text1: result.ret_code === 200 ? '피드백이 등록되었습니다.' : '피드백 등록에 실패했습니다.' });
           router.back();
@@ -64,12 +66,13 @@ export default function FeedbackCreateScreen() {
         alwaysBounceVertical={false}
         overScrollMode="never"
         >
-          <FormProvider {...feedbackForm}>
+          <FormProvider {...formValues}>
             <FeedSubjectInput />
             <FeedContentInput />
+            <CustomImagePicker onChangeImages={setUploadedImageList} />
           </FormProvider>
       </KeyboardAwareScrollView>
-      <CommBottomButton label="등록" onPress={feedbackForm.handleSubmit(onSubmit)} />
+      <CommBottomButton label="등록" onPress={formValues.handleSubmit(onSubmit)} />
     </View>
 
   );

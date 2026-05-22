@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import MeetNameInput from "@/components/inputs/MeetNameInput";
 import { FileInfo, MeetInfo } from "@/types";
@@ -16,8 +15,7 @@ import TagInput from "@/components/inputs/TagInput";
  * 모임 생성 - 모임 설명 및 이미지 등록 화면
  */
 export default function MeetCreateDescScreen() {
-  const params = useRoute();
-  const prevMeetInfo = (params.params ?? {}) as MeetInfo;
+  const prevMeetInfo = useLocalSearchParams();
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>([]);
 
   // 폼 관리를 위한 useForm 훅 초기화
@@ -36,7 +34,7 @@ export default function MeetCreateDescScreen() {
           meet_name     : data.meet_name,
           meet_desc     : data.meet_desc,
           img_list_json : JSON.stringify(uploadedImageList),
-        } as Partial<MeetInfo>,
+        },
       });
     });
 

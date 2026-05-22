@@ -3,8 +3,7 @@ import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { FileInfo, GroupInfo } from "@/types";
 import CustomImagePicker from "@/components/comm/CustomImagePicker";
@@ -16,8 +15,7 @@ import GroupNameInput from "@/components/inputs/GroupNameInput";
  * 클럽 생성 - 클럽 설명 및 이미지 등록 화면
  */
 export default function GroupCreateDescScreen() {
-  const params = useRoute();
-  const prevGroupInfo = (params.params ?? {}) as GroupInfo;
+  const prevGroupInfo = useLocalSearchParams();
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>([]);
 
   // 폼 관리를 위한 useForm 훅 초기화
@@ -36,7 +34,7 @@ export default function GroupCreateDescScreen() {
           group_name    : data.group_name,
           group_desc    : data.group_desc,
           img_list_json : JSON.stringify(uploadedImageList),
-        } as Partial<GroupInfo>,
+        },
       });
     });
 

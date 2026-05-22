@@ -119,6 +119,7 @@ function RootNavigator() {
         <Stack.Screen name="groups"       options={{ headerShown: false }} />
         <Stack.Screen name="communities"  options={{ headerShown: false }} /> 
         <Stack.Screen name="mypage"       options={{ headerShown: false }} /> 
+        <Stack.Screen name="members"      options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <CustomDialog

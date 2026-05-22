@@ -5,6 +5,7 @@ import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { ApiResult, MemberInfo, SignupInfo, Token, User } from '@/types';
 import { showToast } from '@/utils/commToast';
 import { printDebugLog, saveMemberInfo } from '@/utils/commUtil';
+import { MqttUtil } from '@/utils/mqttUtil';
 import { deleteSecureStore } from '@/utils/secureStoreUtil';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
@@ -57,14 +58,15 @@ function useLogin() {
       return userLogin(body);
     },
     onSuccess: async (result: ApiResult<MemberInfo & Token>) => {
-      if (result.ret_code != 200) {
+        if (result.ret_code != 200) {
         showToast({
-          text1: result.ret_msg
+          text1: result.ret_msg || '로그인 응답 데이터가 없습니다.'
         });
       }
       else {
         // 회원 정보 SecureStore에 저장
         saveMemberInfo(result.data);
+        MqttUtil.subscribeTopicList(result.data?.topic_list ?? []);
         router.replace("/");
         showToast({
           text1: "로그인하였습니다."
@@ -95,6 +97,7 @@ function useAutoLogin(options = {enabled : false}) {
       if (isSuccess) {
         if (data.ret_code == 200 && data.data) {
           saveMemberInfo(data.data);
+          MqttUtil.subscribeTopicList(data.data.topic_list ?? []);
         }
         else {
           // 자동 로그인 실패
@@ -114,17 +117,18 @@ function useAutoLogin(options = {enabled : false}) {
 }
 
 function useAuth() {
-    const loginMutation     = useLogin();
-    const signupMutation    = useSignup();
+  const loginMutation     = useLogin();
+  const signupMutation    = useSignup();
 
-    // 토큰 및 회원정보 삭제
-    const logout = () => {
-        deleteSecureStoreForMember();
-        queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
-        router.replace("/" as any);
-    }
+  // 토큰 및 회원정보 삭제
+  const logout = () => {
+    MqttUtil.disconnect();
+    deleteSecureStoreForMember();
+    queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
+    router.replace("/" as any);
+  }
 
-    return { loginMutation, signupMutation, logout };
+  return { loginMutation, signupMutation, logout };
 }
 
 function deleteSecureStoreForMember() {

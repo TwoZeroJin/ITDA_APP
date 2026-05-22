@@ -2,8 +2,8 @@ import { QUERY_KEYS } from '@/constants';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { memberDetail, memberLike, memberLikeList, memberUpdate } from '@/api/member';
-import { printDebugLog } from '@/utils/commUtil';
+import { memberApplyGroupList, memberApplyList, memberApplyMeetList, memberDetail, memberLike, memberLikeList, memberMyGroupList, memberMyMeetList, memberUpdate, pushTest } from '@/api/member';
+import { getNextPageParamFromPaging, printDebugLog } from '@/utils/commUtil';
 import { MemberInfo, MemberLike, SearchParams } from '@/types';
 import queryClient from '@/api/queryClient';
 
@@ -82,18 +82,88 @@ function useMemberLikeListPaging(searchParams: SearchParams) {
     queryFn: () => memberLikeList({ ...searchParams }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_LIKE_LIST, searchParams],
     initialPageParam: searchParams.page_no,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.paging) return undefined;
-      const { page_no, page_size, total_count } = lastPage.paging;
-      const isLast = (page_no + 1) * page_size >= total_count;
-      return isLast ? undefined : page_no + 1;
-    },
+    getNextPageParam: getNextPageParamFromPaging,
+  });
+  const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
+  return { ...query, results };
+}
+
+// 신청/등록된 소셜링/클럽 목록 조회
+function useMemberApplyList({target_id, target_type, use_stat}: {target_id: number, target_type: string, use_stat: string}) {
+  const query = useQuery({
+    queryFn: () => memberApplyList({ target_id, target_type, use_stat }),
+    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_LIST, { target_id, target_type, use_stat }],
+    enabled: target_id > 0 && !!target_type,
+  });
+  const results = query.data?.data ?? [];
+  return { ...query, results };
+}
+
+// 내가 만든된 소셜링 목록 조회 (무한 스크롤)
+function useMemberMyMeetListPaging(searchParams: SearchParams) {
+  const query = useInfiniteQuery({
+    queryFn: () => memberMyMeetList({ ...searchParams }),
+    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_MEET_LIST, searchParams],
+    initialPageParam: searchParams.page_no,
+    getNextPageParam: getNextPageParamFromPaging,
+  });
+  const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
+  return { ...query, results };
+}
+
+// 내가 신청한 소셜링 목록 조회 (무한 스크롤)
+function useMemberApplyMeetListPaging(searchParams: SearchParams) {
+  const query = useInfiniteQuery({
+    queryFn: () => memberApplyMeetList({ ...searchParams }),
+    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_MEET_LIST, searchParams],
+    initialPageParam: searchParams.page_no,
+    getNextPageParam: getNextPageParamFromPaging,
+  });
+  const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
+  return { ...query, results };
+}
+
+// 내가 만든된 클럽 목록 조회 (무한 스크롤)
+function useMemberMyGroupListPaging(searchParams: SearchParams) {
+  const query = useInfiniteQuery({
+    queryFn: () => memberMyGroupList({ ...searchParams }),
+    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_GROUP_LIST, searchParams],
+    initialPageParam: searchParams.page_no,
+    getNextPageParam: getNextPageParamFromPaging,
   });
   
-  // 데이터만 담은 result 객체
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
 
   return { ...query, results };
 }
 
-export { useMemberDetail, useMemberUpdate, useMemberLike, useMemberLikeListPaging }
+// 내가 신청한 클럽 목록 목록 조회 (무한 스크롤)
+function useMemberApplyGroupListPaging(searchParams: SearchParams) {
+  const query = useInfiniteQuery({
+    queryFn: () => memberApplyGroupList({ ...searchParams }),
+    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_GROUP_LIST, searchParams],
+    initialPageParam: searchParams.page_no,
+    getNextPageParam: getNextPageParamFromPaging,
+  });
+  
+  const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
+
+  return { ...query, results };
+}
+
+/**
+ * 푸시 테스트
+ */
+function usePushTest({ push_title, push_message }: { push_title: string, push_message: string }) {
+  return useMutation({
+    mutationFn: async () => {
+      return pushTest({ push_title, push_message });
+    },
+    onSuccess: () => {
+    },
+    onSettled: () => {
+    },
+  });
+}
+
+export { useMemberDetail, useMemberUpdate, useMemberLike, useMemberLikeListPaging, useMemberApplyList, useMemberMyMeetListPaging, useMemberApplyMeetListPaging, useMemberMyGroupListPaging, useMemberApplyGroupListPaging, usePushTest }

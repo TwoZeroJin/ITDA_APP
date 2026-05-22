@@ -28,7 +28,7 @@ export default function GroupCreateDetailScreen() {
         apply_type      : data.apply_type,
         group_question  : data.group_question,
         group_max       : data.group_max,
-      } as Partial<GroupInfo>,
+      },
     });
   });
 

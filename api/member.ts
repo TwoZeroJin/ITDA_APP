@@ -1,4 +1,4 @@
-import { ApiResult, LikeData, MemberDetail, MemberInfo, MemberLike, SearchParams } from '@/types';
+import { ApiResult, GroupInfo, LikeData, MeetInfo, MemberApply, MemberDetail, MemberInfo, MemberLike, SearchParams } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
@@ -34,4 +34,55 @@ async function memberLikeList(searchParams: SearchParams): Promise<ApiResult<Lik
   return data;
 }
 
-export { memberDetail, memberUpdate, memberLike, memberLikeList };
+/**
+ * 신청/등록된 소셜링/클럽 목록 조회 
+ * target_id    : 소셜링/클럽 ID
+ * target_type  : M : 소셜링 / G : 클럽
+ * use_stat     : 0 : 신청 (승인대기) / 1 : 승인 (가입완료)
+ */
+async function memberApplyList({target_id, target_type, use_stat}: {target_id: number, target_type: string, use_stat: string}): Promise<ApiResult<MemberApply[]>> {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_APPLY_LIST, { target_id, target_type, use_stat });
+  return data;
+}
+
+/**
+ * 내가 만든된 소셜링 목록 조회 
+ */
+async function memberMyMeetList(searchParams: SearchParams): Promise<ApiResult<MeetInfo[]>> {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_MY_MEET_LIST, searchParams);
+  return data;
+}
+
+/**
+ * 내가 신청한 소셜링 목록 조회 
+ */
+async function memberApplyMeetList(searchParams: SearchParams): Promise<ApiResult<MeetInfo[]>> {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_APPLY_MEET_LIST, searchParams);
+  return data;
+}
+
+/**
+ * 내가 만든된 클럽 목록 조회 
+ */
+async function memberMyGroupList(searchParams: SearchParams): Promise<ApiResult<GroupInfo[]>> {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_MY_GROUP_LIST, searchParams);
+  return data;
+}
+
+/**
+ * 내가 신청한 클럽 목록 조회 
+ */
+async function memberApplyGroupList(searchParams: SearchParams): Promise<ApiResult<GroupInfo[]>> {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_APPLY_GROUP_LIST, searchParams);
+  return data;
+}
+
+/**
+ * 푸시 테스트
+ */
+async function pushTest({ push_title, push_message }: { push_title: string, push_message: string }): Promise<ApiResult<null>> {
+  const { data } = await axiosInstance.post(API_URL.PUSH_INSERT, { push_title, push_message });
+  return data;
+}
+
+export { memberDetail, memberUpdate, memberLike, memberLikeList, memberApplyList, memberMyMeetList, memberApplyMeetList, memberMyGroupList, memberApplyGroupList, pushTest };

@@ -3,6 +3,7 @@ import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { MeetApply, MeetInfo, SearchParams } from "@/types";
+import { getNextPageParamFromPaging } from "@/utils/commUtil";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 // 모임 목록 조회 (무한 스크롤)
@@ -11,12 +12,7 @@ function useMeetListPaging(searchParams: SearchParams) {
     queryFn: ({pageParam}) => meetList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage || !lastPage.paging) return undefined;
-      const { page_no, page_size, total_count } = lastPage.paging;
-      const isLast = (page_no ) * page_size >= total_count;
-      return isLast ? undefined : page_no + 1;
-    },
+    getNextPageParam: getNextPageParamFromPaging,
   });
   
   // 데이터만 담은 result 객체

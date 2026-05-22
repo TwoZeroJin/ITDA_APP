@@ -4,7 +4,6 @@ import { COLOR } from '@/constants';
 import { MeetInfo } from '@/types';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMemberLike } from '@/hooks/queries/useMember';
-import { useEffect, useState } from 'react';
 
 interface RecommendSectionItem {
   key: string;
@@ -22,61 +21,43 @@ interface CommRcmdMeetListProps {
  */
 export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
   const memberLike = useMemberLike();
-  const [sectionList, setSectionList] = useState<RecommendSectionItem[]>(sections);
-
-  useEffect(() => {
-    setSectionList(sections);
-  }, [sections]);
 
   // 좋아요 처리
-  const handleLikePress = (meetId: number, like_yn: string) => {
-    if (!meetId) {
+  const handleLikePress = (item: MeetInfo) => {
+    if (!item.meet_id) {
       return;
     }
 
-    const previousSectionList = sectionList;
-
-    setSectionList((prev) =>
-      prev.map((section) => ({
-        ...section,
-        data: section.data.map((meet) =>
-          meet.meet_id === meetId
-            ? { ...meet, like_yn: meet.like_yn === 'Y' ? 'N' : 'Y' }
-            : meet,
-        ),
-      })),
-    );
-
     memberLike.mutate(
       {
-        target_id   : meetId,
+        target_id   : item.meet_id,
         target_type : 'M',
-        flag        : like_yn === 'N',
+        flag        : item.like_yn === 'N',
       },
       {
-        onError: () => {
-          setSectionList(previousSectionList);
+        onSuccess: () => {
+          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
         },
       },
     );
   };
 
   return (
-    <View style={styles.recommendContainer}>
+    <View style={styles.container}>
       <FlatList<RecommendSectionItem>
-        data={sectionList}
+        data={sections}
         renderItem={({ item: section }) => {
           return (
             <View style={{ width: 320 }}>
               <View>
-                <Text style={styles.recommendTitle}>{section.title}</Text>
-                <Text style={styles.recommendSubTitle}>{section.subTitle}</Text>
+                <Text style={styles.title}>{section.title}</Text>
+                <Text style={styles.subTitle}>{section.subTitle}</Text>
               </View>
               {section.data.map((item2, colIdx) => (
-                <View key={colIdx} style={styles.recommendListContainer}>
+                <View key={colIdx} style={styles.listContainer}>
                   <CommMeetCard
                     item={item2}
-                    onLikePress={(item) => handleLikePress(item.meet_id, item.like_yn)}
+                    onLikePress={(item) => handleLikePress(item)}
                   />
                 </View>
               ))}
@@ -100,21 +81,21 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
 }
 
 const styles = StyleSheet.create({
-  recommendContainer: {
+  container: {
     paddingVertical   : 32,
     paddingHorizontal : 16,
   },
-  recommendTitle: {
+  title: {
     fontSize          : 20,
     fontWeight        : 'bold',
     color             : COLOR.TEXT_TITLE,
   },
-  recommendSubTitle: {
+  subTitle: {
     fontSize          : 14,
     color             : COLOR.TEXT_2F2F2F,
     marginTop         : 4,
   },
-  recommendListContainer: {
+  listContainer: {
     marginTop         : 16,
   },
   moreButton: {

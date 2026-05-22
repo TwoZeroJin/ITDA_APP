@@ -3,17 +3,15 @@ import React from "react";
 import { StyleSheet, View, Text } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import IconSocialCompl from '@/assets/images/icon_social_compl.svg';
 import IconClubCompl from '@/assets/images/icon_club_compl.svg';
-import { useRoute } from "@react-navigation/native";
 
 /**
  * 모임 생성 - 완료 화면
  */
 export default function MeetCreateCompleteScreen() {
-  const params = useRoute();
-  const { meet_type } = (params.params ?? {}) as { meet_type?: string };
+  const { meet_type } = useLocalSearchParams();
   const handleComplete = () => {
     router.dismissAll();
     router.replace('/');

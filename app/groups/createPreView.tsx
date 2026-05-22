@@ -3,9 +3,8 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { useRoute } from "@react-navigation/native";
 import { GroupInfo, CodeInfo } from "@/types";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
 import CustomDialog from "@/components/modal/CustomDialog";
@@ -16,11 +15,8 @@ import { useGroupInsert } from "@/hooks/queries/useGroup";
  * 클럽 생성 - 최종 미리보기 및 생성 화면
  */
 export default function GroupCreatePreViewScreen() {
-  const params = useRoute();
-  const routeParams = (params.params ?? {}) as GroupInfo;
-  const imageList = parseImageList(routeParams.img_list_json);
-  const { img_list_json, ...restParams } = routeParams;
-  const groupInfo = restParams as unknown as GroupInfo;
+  const prevGroupInfo = useLocalSearchParams() as Partial<GroupInfo> as GroupInfo;
+  const imageList = parseImageList(prevGroupInfo.img_list_json);
   const groupInsert = useGroupInsert();
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -37,9 +33,9 @@ export default function GroupCreatePreViewScreen() {
 
   const handleCreateGroup = () => {
     const formValues = {
-      ...groupInfo,
+      ...prevGroupInfo,
       img_list: imageList,
-    } as GroupInfo;
+    };
     
     groupInsert.mutate(formValues, {
       onSuccess: () => {
@@ -75,18 +71,18 @@ export default function GroupCreatePreViewScreen() {
           {/* 클럽 라벨 */}
           <View style={styles.labelContainer}>
               <CommLabel variant="club" />
-              <CommLabel variant="category" category={groupInfo.group_subj} />
+              <CommLabel variant="category" category={prevGroupInfo.group_subj} />
           </View>
 
           {/* 클럽 제목 */}
-          <Text style={styles.commContainerTitle}>{groupInfo.group_name}</Text>
+          <Text style={styles.commContainerTitle}>{prevGroupInfo.group_name}</Text>
 
           {/* 클럽 장소, 날짜, 시간 */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text style={styles.contentInfoText}>{getCategoryValue(groupInfo.group_subj)}</Text>
+            <Text style={styles.contentInfoText}>{getCategoryValue(prevGroupInfo.group_subj)}</Text>
           </View>
           {/* 설명 */}
-          <Text style={styles.contentDesc}>{groupInfo.group_desc}</Text>
+          <Text style={styles.contentDesc}>{prevGroupInfo.group_desc}</Text>
         </View>
         {/* 추후 작업 */}
         {/* 모임장 및 참여 멤버 */}

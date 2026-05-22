@@ -2,13 +2,17 @@ import BtnLikeDefault from '@/assets/images/btn_like_default.svg';
 import BtnLikeActive from '@/assets/images/btn_like_active.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
+import ImageDefault from '@/assets/images/no_image.svg';
 import CommLabel from '@/components/comm/CommLabel';
 import { COLOR } from '@/constants';
 import { MeetInfo } from '@/types';
-import { useState } from 'react';
+import { getAccessToken } from '@/utils/commUtil';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MemDefault from '@/assets/images/icon_mem_default.svg';
 import { router } from 'expo-router';
+
+let cachedIsLoggedIn: boolean | null = null;
 
 interface CommMeetCardProps {
   item: MeetInfo;
@@ -19,14 +23,52 @@ interface CommMeetCardProps {
  * 공통 소모임 아이템 카드 컴포넌트
  */
 export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
-  const [imageError, setImageError] = useState(false);
-  const imageSource = imageError || !item.thumb_url
-    ? require('@/assets/images/no_image.png')
-    : { uri: item.thumb_url };
+  const [thumbImageError, setThumbImageError] = useState(false);
+  const [profileImageError, setProfileImageError] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(cachedIsLoggedIn ?? false);
+
+  // 좋아요 버튼 여부
+  useEffect(() => {
+    let isMounted = true;
+    if (cachedIsLoggedIn !== null) {
+      setIsLoggedIn(cachedIsLoggedIn);
+      return () => {
+        isMounted = false;
+      };
+    }
+    getAccessToken()
+      .then((token) => {
+        const nextIsLoggedIn = !!token;
+        cachedIsLoggedIn = nextIsLoggedIn;
+        if (isMounted) {
+          setIsLoggedIn(nextIsLoggedIn);
+        }
+      })
+      .catch(() => {
+        cachedIsLoggedIn = false;
+        if (isMounted) {
+          setIsLoggedIn(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const imageSource = useMemo(
+    () => (thumbImageError || !item.thumb_url ? null : { uri: item.thumb_url }),
+    [thumbImageError, item.thumb_url],
+  );
+
+  const hostImageSource = useMemo(
+    () => (profileImageError || !item.mem_image_url ? null : { uri: item.mem_image_url }),
+    [profileImageError, item.mem_image_url],
+  );
 
   return (
     <TouchableOpacity 
-      style={styles.recommendItemContainer}
+      style={styles.itemContainer}
       activeOpacity={0.6}
       onPress={() => router.push({ 
         pathname: '/meets/meetDetailPage',
@@ -34,43 +76,55 @@ export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
       })}
     >
       <View>
-        <ImageBackground
-          source={imageSource}
-          style={styles.recommendItemImage}
-          imageStyle={styles.recommendImage}
-          onError={() => setImageError(true)}
-        >
-          <TouchableOpacity style={styles.recommendLikeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
+        {imageSource ? (
+          <ImageBackground
+            source={imageSource}
+            style={styles.itemImage}
+            imageStyle={styles.image}
+            onError={() => setThumbImageError(true)}
+          >
+        {isLoggedIn && (
+          <TouchableOpacity style={styles.likeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
             {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
           </TouchableOpacity>
-        </ImageBackground>
+        )}
+        </ImageBackground>) : (
+          <View style={styles.itemImage}>
+            <ImageDefault width={96} height={96} />
+            {isLoggedIn && (
+              <TouchableOpacity style={styles.likeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
+                {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       </View>
       <View style={styles.contentWrap}>
-        <View style={styles.recommendTagContainer}>
+        <View style={styles.tagContainer}>
           <CommLabel variant="social" />
           <CommLabel variant="category" category={item.meet_subj_name} />
         </View>
-        <View style={styles.recommendContentContainer}>
-          <Text style={styles.recommendContentTitle} numberOfLines={1} ellipsizeMode="tail">
+        <View style={styles.contentContainer}>
+          <Text style={styles.contentTitle} numberOfLines={1} ellipsizeMode="tail">
             {item.meet_name}
           </Text>
-          <View style={styles.recommendContentInfoContainer}>
+          <View style={styles.contentInfoContainer}>
             {item.place_addr && (<><IconMarker width={12} height={12} />
-            <Text style={styles.recommendContentText}>{item.place_addr}</Text></>)}
+            <Text style={styles.contentText}>{item.place_addr}</Text></>)}
             {item.apply_ratio && (<><IconMembers width={12} height={12} />
-            <Text style={styles.recommendContentText}>{item.apply_ratio}</Text></>)}
+            <Text style={styles.contentText}>{item.apply_ratio}</Text></>)}
           </View>
-          <View style={styles.recommendContentInfoContainer}>
-            {imageSource ? (
+          <View style={styles.contentInfoContainer}>
+            {hostImageSource ? (
               <Image 
-                source={{ uri: item.mem_image_url }} 
+                source={hostImageSource}
                 style={styles.hostImage}
-                onError={() => setImageError(true)}
+                onError={() => setProfileImageError(true)}
               />
             ) : (
               <MemDefault width={23} height={23} />
             )}
-            <Text style={styles.recommendHostText}>{item.mem_nick}</Text>
+            <Text style={styles.hostText}>{item.mem_nick}</Text>
           </View>
         </View>
       </View>
@@ -79,7 +133,7 @@ export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
 }
 
 const styles = StyleSheet.create({
-  recommendItemContainer: {
+  itemContainer: {
     width             : '95%',
     backgroundColor   : COLOR.COMM_WHITE,
     borderRadius      : 12,
@@ -87,18 +141,19 @@ const styles = StyleSheet.create({
     flexDirection     : 'row',
     marginEnd         : 30,
   },
-  recommendItemImage: {
+  itemImage: {
     width             : 96,
     height            : 96,
     borderRadius      : 12,
+    overflow          : 'hidden',
   },
-  recommendImage: {
+  image: {
     width             : '100%',
     height            : '100%',
     borderRadius      : 12,
     overflow          : 'hidden',
   },
-  recommendLikeBtnContainer: {
+  likeBtnContainer: {
     justifyContent    : 'center',
     alignItems        : 'center',
     position          : 'absolute',
@@ -110,25 +165,25 @@ const styles = StyleSheet.create({
   contentWrap: {
     marginStart       : 10,
   },
-  recommendTagContainer: {
+  tagContainer: {
     flexDirection     : 'row',
     gap               : 6,
     marginBottom      : 4,
   },
-  recommendContentContainer: {
+  contentContainer: {
     gap               : 4,
   },
-  recommendContentInfoContainer: {
+  contentInfoContainer: {
     flexDirection     : 'row',
     alignItems        : 'center',
     gap               : 12,
   },
-  recommendContentTitle: {
+  contentTitle: {
     fontSize          : 16,
     fontWeight        : 'bold',
     color             : COLOR.TEXT_3C3C3C,
   },
-  recommendContentText: {
+  contentText: {
     fontSize          : 12,
     marginStart       : -8,
     color             : COLOR.COMM_SHADOW,
@@ -139,7 +194,7 @@ const styles = StyleSheet.create({
     borderRadius      : 10,
     marginEnd         : 4,
   },
-  recommendHostText: {
+  hostText: {
     fontSize          : 14,
     marginStart       : -8,
     fontWeight        : 'bold',

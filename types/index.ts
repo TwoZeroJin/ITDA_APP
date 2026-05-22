@@ -111,6 +111,7 @@ interface MemberInfo {
   mem_image_id?     : string;
   new_image_name?   : string;
   host_yn           : string;
+  topic_list?       : string[];
 }
 
 /**
@@ -296,6 +297,16 @@ interface GroupApply {
   use_stat      : string;
 }
 
+interface MemberApply {
+  mem_id          : number;
+  mem_nick?       : string;
+  mem_image_url?  : string;
+  mem_info?       : string;
+  target_id       : number;
+  target_type     : string;
+  apply_answer?   : string;
+}
+
 /**
  * 공지사항 / FAQ 정보
  */
@@ -314,7 +325,7 @@ interface FeedbackData {
   feed_id         : number;
   feed_subject    : string;
   feed_content    : string;
-  reg_sdate       : string;
+  img_list?       : FileInfo[];
 }
 
 /**
@@ -358,4 +369,4 @@ interface BannerData {
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData, MainData, MemberLike, LikeData };
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply };

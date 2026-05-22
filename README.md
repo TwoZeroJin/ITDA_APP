@@ -58,9 +58,33 @@ ITDA 사용자 앱
 # 1. npx expo-doctor 명령어 실행
 # 2. 결과 확인 및 Advice 메시지에 있는 명령어 실행
 #
-# 빌드 방법 (추후 개발자 계정 등록 후 진행 필요)
+# 의존성 확인 및 업데이트 (여러 라이브러리 의존성 버전업 필요시 확인, build 진행시 에러날 경우 진행)
+# 1. npm outdated
+# 2. npm update
+#
+#
+# 푸시토큰 설정 및 배포 방법
+# 1. Expo 계정 로그인 및 EAS build
+# 2. 애플 디벨로퍼 맴버십 가입 및 결제
+# 3. 구글 파이어베이스 계정 생성 및 결제 정보 등록
+# 4. [*******iOS*********] eas device:create 실행
+# 5. Expo Go 계정 로그인
+# 6. Apple ID 로그인 -> 핸드폰 인증
+# 7. How would you like to register your devices? >> Website - generate a registration URL -> QR 이미지 찍고 프로필 다운로드
+# 8. 프로필 다운로드시 도난 기기 방지 해제 후 진행(하지 않을 경우 1시간 동안 대기 후 재 다운로드 필요)
+# 9. 설정 -> 프로필 다운로드됨 -> 프로필 설치 진행
+# 10. iOS 16부터는 설정 > 개인정보 보호 및 보안 > 개발자 모드 > 켬 필요
+#
+#
+# 빌드 방법 (위 내용 진행 후 필요[구글|애플계정 등록])
 # 1. npm install -g eas-cli
 # 2. eas login
 # 3. eas build:configure (빌드 초기화)
-# 4. eas build -p ios --profile [local|dev|prod] (iOS [로컬|개발|운영] 빌드)
-# 5. eas build -p android --profile [local|dev|prod] (Android [로컬|개발|운영] 빌드)
+# 4. -- eas build -p ios --profile [local|dev|prod] (iOS [로컬|개발|운영] 빌드)
+# 5. -- eas build -p android --profile [local|dev|prod] (Android [로컬|개발|운영] 빌드)
+# 6. eas build --profile dev 명령어 실행
+# 7. All 선택
+# 8. Apple ID 로그인 -> Generate a new Apple Distribution Certificate? -> Y 입력
+# 9. 위 설정 내용에서 Apple 프로필 설정 후 Device UUID 발급 받은 경우 목록에 선택할 수 있는 Device 나옴.
+# 10. Would you like to set up Push Notifications for your project? -> Yes 선택 -> 키 생성 Y
+# 11. 빌드 진행, 에러날 경우 로그 메시지 체크 후 상황에 맞는 해결 방법 진행

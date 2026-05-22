@@ -3,8 +3,7 @@ import React from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import CategoryInput from "@/components/inputs/CategoryInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { GroupInfo } from "@/types";
@@ -13,8 +12,7 @@ import { GroupInfo } from "@/types";
  * 클럽 생성 - 카테고리 선택 화면
  */
 export default function GroupCreateCategoryScreen() {
-  const params = useRoute();
-  const prevGroupInfo = (params.params ?? {}) as Partial<GroupInfo>;
+  const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
       group_subj: '',
@@ -30,7 +28,7 @@ export default function GroupCreateCategoryScreen() {
       params: {
         ...prevGroupInfo,
         group_subj: data.group_subj,
-      } as Partial<GroupInfo>,
+      },
     });
   });
 

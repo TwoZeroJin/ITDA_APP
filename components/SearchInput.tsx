@@ -1,5 +1,5 @@
 import { COLOR } from "@/constants";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Alert, TextInput, Text, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchButton from '@/assets/images/search_button.svg';
@@ -14,6 +14,7 @@ interface SearchInputProps {
 export default function SearchInput({ searchKey }: SearchInputProps) {
   const [inputText, setInputText] = useState('');
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const searchInputRef = useRef<TextInput>(null);
 
   // 💡 1. [로드] 앱이 켜질 때 로컬 스토리지에서 기존 검색어 가져오기
   useEffect(() => {
@@ -124,8 +125,15 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
 
   return (
     <View style={[styles.container, { paddingHorizontal: 16 }]}>
-      <View style={styles.searchContainer}>
+      <TouchableOpacity 
+        style={styles.searchContainer}
+        activeOpacity={0.6}
+        onPress={() => {
+          searchInputRef.current?.focus();
+        }}
+      >
         <TextInput
+          ref={searchInputRef}
           style={styles.searchText}
           placeholder="참여하고 싶은 모임이나 클럽을 검색해 보세요."
           placeholderTextColor={COLOR.COMM_GRAY_2}
@@ -134,10 +142,10 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
           onSubmitEditing={() => handleSearch(inputText)} // ✅ 엔터 칠 때도 정상 작동하도록 주석 해제
           returnKeyType="search"
         />
-        <TouchableOpacity onPress={() => handleSearch(inputText)}>
+        <TouchableOpacity style={{zIndex: 1}} onPress={() => handleSearch(inputText)}>
           <SearchButton width={20} height={20}/>
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
 
       {recentSearches.length > 0 && (
         <View style={styles.recentSearchContainer}>

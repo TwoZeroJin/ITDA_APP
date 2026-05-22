@@ -3,10 +3,9 @@ import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { useRoute } from "@react-navigation/native";
 import { useMeetInsert } from "@/hooks/queries/useMeet";
-import { MeetInfo } from "@/types";
-import { router } from "expo-router";
+import { CodeInfo, MeetInfo } from "@/types";
+import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
 import IconCalendar from '@/assets/images/icon_calendar.svg';
@@ -17,26 +16,24 @@ import { parseImageList } from "@/utils/commUtil";
  * 모임 생성 - 최종 미리보기 및 생성 화면
  */
 export default function MeetCreatePreViewScreen() {
-  const params = useRoute();
-  const routeParams = (params.params ?? {}) as MeetInfo;
-  const imageList = parseImageList(routeParams.img_list_json);
-  const { img_list_json, ...restParams } = routeParams;
-  const meetInfo = restParams as unknown as MeetInfo;
+  const prevMeetInfo = useLocalSearchParams() as Partial<MeetInfo> as MeetInfo; 
+  const imageList = parseImageList(prevMeetInfo.img_list_json);
   const meetInsert = useMeetInsert();
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
 
   const handleCreateMeet = () => {
     const formValues = {
-      ...meetInfo,
+      ...prevMeetInfo,
       img_list: imageList,
-    } as MeetInfo;
+    };
 
     meetInsert.mutate(formValues, {
       onSuccess: () => {
         router.navigate({
           pathname: '/meets/createComplete', 
-          params: { meet_type: meetInfo.meet_type }});
+          params: { meet_type: prevMeetInfo.meet_type }});
       },
       onError: (error) => {
         setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
@@ -66,19 +63,19 @@ export default function MeetCreatePreViewScreen() {
           {/* 소셜링 라벨 */}
           <View style={styles.labelContainer}>
               <CommLabel variant="social" />
-              <CommLabel variant="category" category={meetInfo.meet_subj} />
+              <CommLabel variant="category" category={prevMeetInfo.meet_subj} />
           </View>
 
           {/* 소셜링 제목 */}
-          <Text style={styles.commContainerTitle}>{meetInfo.meet_name}</Text>
+          <Text style={styles.commContainerTitle}>{prevMeetInfo.meet_name}</Text>
 
           {/* 소셜링 장소, 날짜, 시간 */}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
             <IconCalendar />
-            <Text style={styles.contentInfoText}>{`${meetInfo.place_name} · ${meetInfo.meet_datetime}`}</Text>
+            <Text style={styles.contentInfoText}>{`${prevMeetInfo.place_name} · ${prevMeetInfo.meet_datetime}`}</Text>
           </View>
           {/* 설명 */}
-          <Text style={styles.contentDesc}>{meetInfo.meet_desc}</Text>
+          <Text style={styles.contentDesc}>{prevMeetInfo.meet_desc}</Text>
         </View>
         {/* 추후 작업 */}
         {/* 모임장 및 참여 멤버 */}

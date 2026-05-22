@@ -3,8 +3,7 @@ import React from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router } from "expo-router";
-import { useRoute } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import { MeetInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
 import CategoryInput from "@/components/inputs/CategoryInput";
@@ -13,8 +12,7 @@ import CategoryInput from "@/components/inputs/CategoryInput";
  * 모임 생성 - 카테고리 선택 화면
  */
 export default function MeetCreateCategoryScreen() {
-  const params = useRoute();
-  const prevMeetInfo = (params.params ?? {}) as MeetInfo;
+  const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
       meet_subj: '',
@@ -30,7 +28,7 @@ export default function MeetCreateCategoryScreen() {
       params: {
         ...prevMeetInfo,
         meet_subj: data.meet_subj,
-      } as Partial<MeetInfo>,
+      },
     });
   });
 

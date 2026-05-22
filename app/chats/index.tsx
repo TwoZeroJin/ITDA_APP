@@ -72,6 +72,7 @@ export default function IndexScreen() {
   const myMemIdRef = useRef<number>(0);
   const topic = room_id;
   const mqttUtil = MqttUtil;
+  const subscriberIdRef = useRef(`chat-screen:${Date.now()}:${Math.random().toString(16).slice(2)}`);
   const flatListRef = useRef<FlatList<ChatData>>(null);
   const hasUserDraggedRef = useRef(false);
   const onEndReachedCalledDuringMomentum = useRef(true);
@@ -118,7 +119,7 @@ export default function IndexScreen() {
     }
   };
 
-  const msgReceiveCallback = (msg:string) => {
+  const msgReceiveCallback = (msg:string, receivedTopic?: string) => {
     const payload = parseChatPayload(msg);
     const currentMyMemId = myMemIdRef.current;
 
@@ -132,7 +133,7 @@ export default function IndexScreen() {
         chat_id     : payload.chat_id ?? Date.now(),
         chat_type   : payload.chat_type ?? 'MEET',
         chat_msg    : payload.chat_msg ?? msg,
-        room_id     : payload.room_id ?? room_id,
+        room_id     : payload.room_id ?? receivedTopic ?? room_id,
         sender_id   : payload.sender_id ? Number(payload.sender_id) : undefined,
         mem_name    : payload.mem_name,
         send_date   : payload.send_date || new Date().toISOString(),
@@ -141,23 +142,28 @@ export default function IndexScreen() {
     ]);
   }
 
-  // MQTT 메시지 발송 콜백 (현재는 별도 처리 없음)
-  const msgSendCallback = () => {}
-
   // MQTT 연결 및 메시지 수신 설정
   useEffect(() => {
-    const fetchData = async () => {
-      if (await mqttUtil.initMqtt(topic, msgReceiveCallback, msgSendCallback)) {
-        setIsConnected(true);
-      } else {
-        setIsConnected(false);
-      }
+    if (!topic) {
+      return;
     }
+
+    const subscriberId = subscriberIdRef.current;
+    let isMounted = true;
+
+    const fetchData = async () => {
+      const isSubscribed = await mqttUtil.subscribe(topic, subscriberId, msgReceiveCallback);
+
+      if (isMounted) {
+        setIsConnected(isSubscribed);
+      }
+    };
 
     fetchData();
 
     return () => {
-      mqttUtil.disconnect();
+      isMounted = false;
+      mqttUtil.unsubscribe(topic, subscriberId);
     };
   }, [topic])
 
@@ -309,7 +315,12 @@ export default function IndexScreen() {
         cancelLabel="뒤로"
         confirmLabel="재시도"
         onCancel={() => { router.back(); }}
-        onConfirm={() => mqttUtil.initMqtt(topic, msgReceiveCallback, msgSendCallback)}
+        onConfirm={async () => {
+          const isSubscribed = await mqttUtil.subscribe(topic, subscriberIdRef.current, (msg) => {
+            msgReceiveCallback(msg);
+          });
+          setIsConnected(isSubscribed);
+        }}
       />
     </>
   );

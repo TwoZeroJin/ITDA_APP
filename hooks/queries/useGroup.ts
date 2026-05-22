@@ -3,6 +3,7 @@ import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { GroupApply, GroupInfo, SearchParams } from "@/types";
+import { getNextPageParamFromPaging } from "@/utils/commUtil";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 // 클럽 목록 조회 (무한 스크롤)
@@ -11,12 +12,7 @@ function useGroupListPaging(searchParams: SearchParams) {
     queryFn: () => groupList({ ...searchParams }),
     queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.paging) return undefined;
-      const { page_no, page_size, total_count } = lastPage.paging;
-      const isLast = (page_no + 1) * page_size >= total_count;
-      return isLast ? undefined : page_no + 1;
-    },
+    getNextPageParam: getNextPageParamFromPaging,
   });
   
   // 데이터만 담은 result 객체

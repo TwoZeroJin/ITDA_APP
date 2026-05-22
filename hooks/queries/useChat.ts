@@ -1,6 +1,7 @@
 import { chatInsert, chatList, chatMemberList, chatRoomList } from "@/api/chat";
 import { QUERY_KEYS } from "@/constants";
 import { SearchParams } from "@/types";
+import { getNextPageParamFromPaging } from "@/utils/commUtil";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 /**
@@ -13,12 +14,7 @@ function useChatRoomListPaging(searchParams: SearchParams) {
     queryFn: ({ pageParam }) => chatRoomList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.paging) return undefined;
-      const { page_no, page_size, total_count } = lastPage.paging;
-      const isLast = (page_no + 1) * page_size >= total_count;
-      return isLast ? undefined : page_no + 1;
-    },
+    getNextPageParam: getNextPageParamFromPaging,
   });
   
   // 데이터만 담은 result 객체
@@ -42,12 +38,7 @@ function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
       }),
     queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_LIST, searchParams, searchParams.room_id],
     initialPageParam: searchParams.page_no,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.paging) return undefined;
-      const { page_no, page_size, total_count } = lastPage.paging;
-      const isLast = (page_no + 1) * page_size >= total_count;
-      return isLast ? undefined : page_no + 1;
-    },
+    getNextPageParam: getNextPageParamFromPaging,
   });
   
   // 데이터만 담은 result 객체

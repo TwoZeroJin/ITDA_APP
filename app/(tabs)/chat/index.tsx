@@ -8,6 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { CategoryTab } from "@/components/CategoryTab";
+import ImageDefault from "@/assets/images/no_image.svg";
 
 function formatUpdatedText(dateText?: string): string {
   if (!dateText) {
@@ -95,8 +96,7 @@ export default function ChatListScreen() {
     const messagePreview = item.last_msg || "대화를 시작해 보세요.";
     const roomImageSource = item.thumb_url && !imageErrors[item.room_id]
       ? { uri: item.thumb_url }
-      : require('@/assets/images/no_image.png');
-
+      : null;
     return (
     <TouchableOpacity
       style={styles.chatRow}
@@ -113,11 +113,17 @@ export default function ChatListScreen() {
       }
     > 
       <View style={styles.roomImageWrapper}>
-        <Image
-          source={roomImageSource}
-          style={styles.roomImage}
-          onError={() => setImageErrors((prev) => ({ ...prev, [item.room_id]: true }))}
-        />
+        {roomImageSource ? (
+          <Image
+            source={roomImageSource}
+            style={styles.roomImage}
+            onError={() => setImageErrors((prev) => ({ ...prev, [item.room_id]: true }))}
+          />
+        ) : (
+          <View style={styles.roomImage}>
+            <ImageDefault width={72} height={72} />
+          </View>
+        )}
       </View>
 
       <View style={styles.chatTextContainer}>
@@ -199,6 +205,7 @@ const styles = StyleSheet.create({
     width             : 72,
     height            : 72,
     borderRadius      : 14,
+    overflow          : "hidden",
   },
   chatTextContainer: {
     flex              : 1,
