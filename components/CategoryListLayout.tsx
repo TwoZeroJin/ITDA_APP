@@ -1,14 +1,14 @@
 import { COLOR, COMM_STYLES } from '@/constants';
 import { CodeInfo } from '@/types';
 import React from 'react';
-import { Image, Text, FlatList, StyleSheet, View } from 'react-native';
+import { Image, Text, FlatList, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { getCategoryList } from '@/utils/commUtil';
 
 interface CategoryListLayoutProps {
-
+  searchCategory?: (code_id: string) => void;
 }
-export default function CategoryListLayout({}: CategoryListLayoutProps) {
+export default function CategoryListLayout({searchCategory}: CategoryListLayoutProps) {
   const [categoryList, setCategoryList]   = useState<CodeInfo[]>([]);
   // 카테고리 데이터
   const PAGE_SIZE = 4;
@@ -30,12 +30,19 @@ export default function CategoryListLayout({}: CategoryListLayoutProps) {
           {Array(2).fill(0).map((_, rowIdx) => (
               <View key={rowIdx} style={styles.row}>
                   {pageItems.slice(rowIdx * 2, rowIdx * 2 + 2).map((item, colIdx) => (
-                      <View key={colIdx} style={{ alignItems: 'center'}}>
-                        <View style={styles.cell}>
-                          <Image source={{ uri: item.code_image_url }} style={{ width: 32, height: 25 }} />
-                        </View>
-                          <Text style={{ marginTop: 6, fontSize: 14, fontWeight: '600', color: COLOR.COMM_BLACK }}>{item.code_value}</Text>
-                      </View>
+                  <TouchableOpacity 
+                    key={colIdx} 
+                    activeOpacity={0.6} 
+                    onPress={() => {console.log('Selected category1 :', item.code_id); searchCategory?.(item.code_id)}} // ✅ 이제 개별 subItem 정보가 명확히 전달됩니다.
+                    style={{ alignItems: 'center' }}
+                  >
+                    <View style={styles.cell}>
+                      <Image source={{ uri: item.code_image_url }} style={{ width: 32, height: 25 }} />
+                    </View>
+                    <Text style={{ marginTop: 6, fontSize: 14, fontWeight: '600', color: COLOR.COMM_BLACK }}>
+                      {item.code_value}
+                    </Text>
+                  </TouchableOpacity>
                   ))}
               </View>
           ))}

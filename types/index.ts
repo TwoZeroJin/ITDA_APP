@@ -18,7 +18,8 @@ interface SearchParams {
   page_size       : number;
   search_type?    : string;
   sch_condition?  : string;
-  search_text?    : string;
+  sch_category?   : string;
+  sch_text?       : string;
   mem_id?         : number;
 }
 

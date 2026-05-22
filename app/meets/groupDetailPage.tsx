@@ -17,6 +17,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import * as commUtil from '@/utils/commUtil';
 import { useGroupDetailView, useGroupMemberList } from "@/hooks/queries/useGroup";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
+import DropdownModal from '@/components/modal/DropdownModal';
 
 export default function GroupDetailPage() {
 
@@ -43,6 +44,7 @@ export default function GroupDetailPage() {
 //  const hostMember = memberList?.find(member => member.host_yn === 'Y');
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
 
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
@@ -153,6 +155,32 @@ export default function GroupDetailPage() {
       profile_image_url: '',
     },
   ];
+  const DETAIL_MENU_ITEMS = [
+    {
+      label: '모임 수정',
+      onPress: () => {
+        Alert.alert('안내', '수정 기능은 준비중입니다.');
+      },
+    },
+    {
+      label: '가입 승인',
+      onPress: () => {
+        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+      },
+    },
+    {
+      label: '멤버 관리',
+      onPress: () => {
+        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+      },
+    },
+    {
+      label: '모임 삭제',
+      onPress: () => {
+        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+      },
+    },
+  ];  
   interface CommentTypeProps {
     mem_id: string;
     comment_id: string;
@@ -163,7 +191,35 @@ export default function GroupDetailPage() {
   };
   return (
     <View style={styles.container}>
-      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} isDetail={groupInfo?.host_yn === 'Y'} onPressDetail={() => {}}/>
+      <CommHeader 
+        isLogo={false} 
+        isNoti={false} 
+        isSetting={false} 
+        isLike={false} 
+        isDetail={groupInfo?.host_yn === 'Y'} 
+        onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
+        />      
+      {isDetailMenuVisible && (
+        <TouchableOpacity
+          style={styles.detailMenuBackdrop}
+          activeOpacity={1}
+          onPress={() => setIsDetailMenuVisible(false)}
+        />
+      )}
+
+      {isDetailMenuVisible && (
+        <View style={styles.detailMenuLayer} pointerEvents="box-none">
+          <View style={styles.detailMenuAnchor}>
+            <DropdownModal
+              items={DETAIL_MENU_ITEMS}
+              position="right"
+              visible={isDetailMenuVisible}
+              onVisibleChange={setIsDetailMenuVisible}
+            />
+          </View>
+        </View>
+      )}
+
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
@@ -366,6 +422,27 @@ const InfoRow = ({ icon, text }: { icon: string; text: string }) => (
 );
 
 const styles = StyleSheet.create({
+  detailMenuBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 10,
+  },
+  detailMenuLayer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 11,
+  },
+  detailMenuAnchor: {
+    position: 'absolute',
+    top: 44,
+    right: 8,
+  },
   safe: { flex: 1, backgroundColor: '#fff' },
   container: {
     flex: 1,

@@ -52,7 +52,7 @@ export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
         </View>
         <View style={styles.recommendContentContainer}>
           <Text style={styles.recommendContentTitle} numberOfLines={1} ellipsizeMode="tail">
-            {item.mem_nick}
+            {item.meet_name}
           </Text>
           <View style={styles.recommendContentInfoContainer}>
             {item.place_addr && (<><IconMarker width={12} height={12} />
