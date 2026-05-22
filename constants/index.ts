@@ -46,6 +46,7 @@ const COLOR = {
   COLOR_6B6B6B        : '#6B6B6B',
   COLOR_E6E6E6        : '#E6E6E6',
   COLOR_1A1A1A        : '#1A1A1A',
+  COLOR_BABABA        : '#BABABA',
 };
 
 /**
@@ -80,6 +81,7 @@ const QUERY_KEYS = {
   MEET_APPLY              : "meet_apply",
   MEET_CANCEL_APPLY       : "meet_cancel_apply",
   MEET_INSERT             : "meet_insert",
+  MEET_CONFIRM            : "meet_confirm",
   GROUP                   : "group",
   GROUP_PAGING            : "group_paging",
   GROUP_VIEW              : "group_view",

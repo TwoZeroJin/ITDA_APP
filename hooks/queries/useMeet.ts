@@ -109,4 +109,23 @@ function useMeetCancelApply() {
   });
 }
 
-export { useMeetListPaging, useMeetInsert, useMeetDetailView, useMeetMemberList, useMeetApply, useMeetCancelApply };
+function useMeetConfirm() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : MeetApply) => {
+      setLoading(true);
+      return meetConfirm(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CONFIRM],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+
+export { useMeetListPaging, useMeetInsert, useMeetDetailView, useMeetMemberList, useMeetApply, useMeetCancelApply, useMeetConfirm };
