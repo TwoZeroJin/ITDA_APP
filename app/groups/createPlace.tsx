@@ -12,17 +12,20 @@ import GroupPlaceInput from "@/components/inputs/GroupPlaceInput";
  * 클럽 생성 - 장소 및 날짜, 시간 설정 화면
  */
 export default function GroupCreatePlaceScreen() {
+  // 수정화면에서 받아올 경우 group_id 존재
   const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
-      place_type   : 'F',
-      place_name   : '',
-      place_addr   : '',
-      group_datetime: '',
+      place_type    : prevGroupInfo.place_type as string || 'F',
+      place_name    : prevGroupInfo.place_name as string || '',
+      place_addr    : prevGroupInfo.place_addr as string || '',
+      group_datetime: prevGroupInfo.group_datetime as string || '',
+      freq_type     : prevGroupInfo.freq_type as string || 'O',
+      freq_desc     : prevGroupInfo.freq_desc as string || '',
     },
   });
 
-  const placeType = (formValues.watch('place_type') as 'F' | 'O' | undefined) || 'F';
+  const placeType = formValues.watch('place_type');
   const placeName = formValues.watch('place_name');
   const groupDatetime = formValues.watch('group_datetime');
 
@@ -48,7 +51,7 @@ export default function GroupCreatePlaceScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={COMM_STYLES.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}>

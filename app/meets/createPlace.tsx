@@ -12,17 +12,18 @@ import MeetPlaceInput from "@/components/inputs/MeetPlaceInput";
  * 모임 생성 - 장소 및 날짜, 시간 설정 화면
  */
 export default function MeetCreatePlaceScreen() {
+  // 수정화면에서 받아올 경우 meet_id 존재
   const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
-      place_type   : 'F',
-      place_name   : '',
-      place_addr   : '',
-      meet_datetime: '',
+      place_type   : prevMeetInfo.place_type as string || 'F',
+      place_name   : prevMeetInfo.place_name as string || '',
+      place_addr   : prevMeetInfo.place_addr as string || '',
+      meet_datetime: prevMeetInfo.meet_datetime as string || '',
     },
   });
 
-  const placeType = (formValues.watch('place_type') as 'F' | 'O' | undefined) || 'F';
+  const placeType = formValues.watch('place_type');
   const placeName = formValues.watch('place_name');
   const meetDatetime = formValues.watch('meet_datetime');
 
@@ -47,7 +48,7 @@ export default function MeetCreatePlaceScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={COMM_STYLES.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}>

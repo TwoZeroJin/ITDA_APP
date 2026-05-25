@@ -10,17 +10,13 @@ import IconCloseBtn from '@/assets/images/icon_close_btn.svg';
 type CustomImagePickerProps = {
   onChangeImages: (files: FileInfo[]) => void;
   maxCount?: number;
-  fieldName?: string;
+  imgList?: FileInfo[];
 };
 
-function CustomImagePicker({
-  onChangeImages,
-  maxCount = 10,
-  fieldName = 'upfiles',
-}: CustomImagePickerProps) {
+function CustomImagePicker({ onChangeImages, maxCount = 10, imgList = [] }: CustomImagePickerProps) {
   // 이미지를 뿌리기 위한 URI 배열과, API에서 반환받은 파일 정보 배열을 각각 관리
-  const [imageUris, setImageUris] = useState<Array<string>>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>([]);
+  const [imageUris, setImageUris] = useState<Array<string>>(imgList.map((file) => file.file_path));
+  const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>(imgList);
   const uploadImages = useImagesUpload();
 
   const addImageUris = (files: FileInfo[]) => {
@@ -29,7 +25,7 @@ function CustomImagePicker({
       return;
     }
 
-    const nextImageUris = [...imageUris, ...files.map((file) => file.file_url)];
+    const nextImageUris = [...imageUris, ...files.map((file) => file.file_path)];
     const nextUploadedFiles = [...uploadedFiles, ...files];
 
     setImageUris(nextImageUris);
@@ -52,7 +48,7 @@ function CustomImagePicker({
     }
 
     // 다중 파일 이미지 업로드 API 호출
-    const formData = getFormDataImages(fieldName, result.assets);
+    const formData = getFormDataImages('upfiles', result.assets);
     uploadImages.mutate(formData, {
       onSuccess: (data: ApiResult<FileInfo[]>) => addImageUris(data?.data ?? []),
     });

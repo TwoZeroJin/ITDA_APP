@@ -152,7 +152,6 @@ interface LikeData {
  */
 interface FileInfo {
   file_id       : string;
-  file_url      : string;
   file_path     : string;
   file_name     : string;
   file_order    : number;

@@ -1,4 +1,4 @@
-import { meetApply, meetInsert, meetList, meetMemberList, meetView, meetConfirm, meetCancelApply,  } from "@/api/meet";
+import { meetApply, meetInsert, meetList, meetMemberList, meetView, meetConfirm, meetCancelApply, meetUpdate,  } from "@/api/meet";
 import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
@@ -32,6 +32,25 @@ function useMeetInsert() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_INSERT],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+// 모임 수정
+function useMeetUpdate() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : MeetInfo) => {
+      setLoading(true);
+      return meetUpdate(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_UPDATE],
       });
     },
     onSettled: () => {
@@ -128,4 +147,4 @@ function useMeetConfirm() {
 }
 
 
-export { useMeetListPaging, useMeetInsert, useMeetDetailView, useMeetMemberList, useMeetApply, useMeetCancelApply, useMeetConfirm };
+export { useMeetListPaging, useMeetInsert, useMeetUpdate, useMeetDetailView, useMeetMemberList, useMeetApply, useMeetCancelApply, useMeetConfirm };

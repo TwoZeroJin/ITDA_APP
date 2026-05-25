@@ -1,5 +1,5 @@
 import { COLOR, COMM_STYLES } from "@/constants";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
@@ -21,27 +21,32 @@ export default function GroupCreateDescScreen() {
   // 폼 관리를 위한 useForm 훅 초기화
   const formValues = useForm<GroupInfo>({
     defaultValues: {
-      group_name : '',
-      group_desc : '',
+      group_name: prevGroupInfo.group_name as string || '',
+      group_desc: prevGroupInfo.group_desc as string || '',
     }
   });
 
-    const onNext = formValues.handleSubmit((data) => {
-      router.navigate({
-        pathname: '/groups/createPreView',
-        params: {
-          ...prevGroupInfo,
-          group_name    : data.group_name,
-          group_desc    : data.group_desc,
-          img_list_json : JSON.stringify(uploadedImageList),
-        },
-      });
+  // 이미지 있을 경우 세팅
+  useEffect(() => {
+    setUploadedImageList(JSON.parse(prevGroupInfo.img_list_json as string) || []);
+  }, []);
+
+  const onNext = formValues.handleSubmit((data) => {
+    router.navigate({
+      pathname: '/groups/createPreView',
+      params: {
+        ...prevGroupInfo,
+        group_name    : data.group_name,
+        group_desc    : data.group_desc,
+        img_list_json : JSON.stringify(uploadedImageList),
+      },
     });
+  });
 
 
   return (
     <View style={COMM_STYLES.container}>
-      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
+      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
       <ScrollView 
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
@@ -56,7 +61,7 @@ export default function GroupCreateDescScreen() {
           <FormProvider {...formValues}>
             <GroupNameInput />
             <GroupDescInput />
-            <CustomImagePicker onChangeImages={setUploadedImageList} />
+            <CustomImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
             <TagInput />
           </FormProvider>
           

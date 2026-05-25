@@ -4,7 +4,7 @@ import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIn
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useGroupApply, useGroupCancelApply} from "@/hooks/queries/useGroup";
-import {  GroupApply } from "@/types";
+import {  FileInfo, GroupApply, GroupInfo } from "@/types";
 import {  useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -157,25 +157,45 @@ export default function GroupDetailPage() {
   ];
   const DETAIL_MENU_ITEMS = [
     {
-      label: '모임 수정',
+      label: '클럽 수정',
       onPress: () => {
-        Alert.alert('안내', '수정 기능은 준비중입니다.');
+        const { img_list, ...tmpGroupInfo } = groupInfo as GroupInfo & { img_list?: FileInfo[] };
+
+        router.navigate({
+          pathname: '/groups/createDetail',
+          params: {
+            ...tmpGroupInfo,
+            img_list_json: JSON.stringify(img_list ?? []),
+          }
+        });
       },
     },
     {
       label: '가입 승인',
       onPress: () => {
-        Alert.alert('안내', '삭제 기능은 준비중입니다.');
-      },
+        router.navigate({
+          pathname: '/members/applyList',
+          params: {
+            target_id: groupInfo?.group_id,
+            target_type: 'G',
+          }
+        });
+      }
     },
     {
       label: '멤버 관리',
       onPress: () => {
-        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+        router.navigate({
+          pathname: '/members/memberList',
+          params: {
+            target_id: groupInfo?.group_id,
+            target_type: 'G',
+          }
+        });
       },
     },
     {
-      label: '모임 삭제',
+      label: '클럽 삭제',
       onPress: () => {
         Alert.alert('안내', '삭제 기능은 준비중입니다.');
       },

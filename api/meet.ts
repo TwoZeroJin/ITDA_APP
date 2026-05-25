@@ -1,7 +1,12 @@
-import { ApiResult, MeetInfo, SearchParams, MeetReview, MemberInfo, MeetApply, FileInfo } from '@/types';
+import { ApiResult, MeetInfo, SearchParams, MemberInfo, MeetApply, FileInfo } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
+/**
+ * 소셜링 목록 조회
+ * @param searchParams 
+ * @returns 소셜링 정보
+ */
 async function meetList(searchParams: SearchParams): Promise<ApiResult<MeetInfo[]>> {
   const { data } = await axiosInstance.post(API_URL.MEET_LIST, searchParams);
   return data;

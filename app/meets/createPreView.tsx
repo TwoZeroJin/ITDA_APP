@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { useMeetInsert } from "@/hooks/queries/useMeet";
-import { CodeInfo, MeetInfo } from "@/types";
+import { useMeetInsert, useMeetUpdate } from "@/hooks/queries/useMeet";
+import { MeetInfo } from "@/types";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -19,9 +19,23 @@ export default function MeetCreatePreViewScreen() {
   const prevMeetInfo = useLocalSearchParams() as Partial<MeetInfo> as MeetInfo; 
   const imageList = parseImageList(prevMeetInfo.img_list_json);
   const meetInsert = useMeetInsert();
+  const meetUpdate = useMeetUpdate();
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
+
+  const handleMutationSuccess = () => {
+    router.navigate({
+      pathname: '/meets/createComplete',
+      params: { 
+        meet_id: prevMeetInfo.meet_id || '',
+        meet_type: prevMeetInfo.meet_type
+      },
+    });
+  };
+  const handleMutationError = (error: unknown) => {
+    setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+    setIsErrorDialogVisible(true);
+  };
 
   const handleCreateMeet = () => {
     const formValues = {
@@ -29,17 +43,18 @@ export default function MeetCreatePreViewScreen() {
       img_list: imageList,
     };
 
-    meetInsert.mutate(formValues, {
-      onSuccess: () => {
-        router.navigate({
-          pathname: '/meets/createComplete', 
-          params: { meet_type: prevMeetInfo.meet_type }});
-      },
-      onError: (error) => {
-        setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
-        setIsErrorDialogVisible(true);
-      }
-    });
+    if (prevMeetInfo.meet_id) {
+      // meet_id가 존재하면 업데이트, 없으면 새로 생성
+      meetUpdate.mutate(formValues, {
+        onSuccess: handleMutationSuccess,
+        onError: handleMutationError,
+      });
+    } else {
+      meetInsert.mutate(formValues, {
+        onSuccess: handleMutationSuccess,
+        onError: handleMutationError,
+      });
+    }
   }
 
   return (
@@ -52,7 +67,7 @@ export default function MeetCreatePreViewScreen() {
         {/* 이미지 캐러슬 */}
         <View>
           <ImageCarousel
-            images={imageList.map((file) => file.file_url)}
+            images={imageList.map((file) => file.file_path)}
             height={280}
             // onPressImage={(i) => console.log("pressed image", i)} // 추후 이미지 수정 기능 추가 시 활용
           />
@@ -62,8 +77,8 @@ export default function MeetCreatePreViewScreen() {
         <View style={styles.commContainer}>
           {/* 소셜링 라벨 */}
           <View style={styles.labelContainer}>
-              <CommLabel variant="social" />
-              <CommLabel variant="category" category={prevMeetInfo.meet_subj} />
+            <CommLabel variant="social" />
+            <CommLabel variant="category" category={prevMeetInfo.meet_subj} />
           </View>
 
           {/* 소셜링 제목 */}
@@ -86,7 +101,7 @@ export default function MeetCreatePreViewScreen() {
 
       </ScrollView>
 
-      <CommBottomButton label="소셜링 열기" onPress={handleCreateMeet}/>
+      <CommBottomButton label={`소셜링 ${prevMeetInfo.meet_id ? '수정' : '열기'}`} onPress={handleCreateMeet}/>
 
       <CustomDialog
         visible={isErrorDialogVisible}

@@ -11,7 +11,7 @@ import IconClubCompl from '@/assets/images/icon_club_compl.svg';
  * 모임 생성 - 완료 화면
  */
 export default function MeetCreateCompleteScreen() {
-  const { meet_type } = useLocalSearchParams();
+  const { meet_id, meet_type } = useLocalSearchParams();
   const handleComplete = () => {
     router.dismissAll();
     router.replace('/');
@@ -19,7 +19,7 @@ export default function MeetCreateCompleteScreen() {
 
   return (
     <View style={COMM_STYLES.container}>
-      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} isBack={false} title="모임 생성"/>
+      <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} isBack={false} title={meet_id ? '모임 수정' : '모임 생성'}/>
 
       <View style={{ flex: 1, marginTop: 120, alignItems: 'center' }}>
         {meet_type === 'N' ? (
@@ -28,10 +28,10 @@ export default function MeetCreateCompleteScreen() {
           <IconClubCompl width={120} height={120} />
         )}
         <Text style={styles.titleText}>
-          {meet_type === 'N' ? '소셜링이 오픈 되었어요!' : '클럽 소셜링이 오픈 되었어요!'}
+          {meet_type === 'N' ? `소셜링이 ${meet_id ? '수정' : '오픈'} 되었어요!` : `클럽 소셜링이 ${meet_id ? '수정' : '오픈'} 되었어요!`}
         </Text>
         <Text style={styles.descText}>
-          {`개설한 소셜링이 오픈되었어요.\n멤버 모집을 위해 소셜링을 홍보해보세요.`}
+          {`개설한 소셜링이 ${meet_id ? '수정' : '오픈'}되었어요.\n멤버 모집을 위해 소셜링을 홍보해보세요.`}
         </Text>
       </View>
       <CommBottomButton label="완료" onPress={handleComplete}/>

@@ -39,7 +39,7 @@ export default function ProfileImageInput({ fieldName = 'upfile', initialImageUr
         if (!uploaded) {
           return;
         }
-        setImageUri(uploaded.file_url);
+        setImageUri(uploaded.file_path);
         field.onChange(uploaded.sav_name + '|' + uploaded.org_name);
       },
       onError: () => {

@@ -99,7 +99,7 @@ function useMemberApplyList({target_id, target_type, use_stat}: {target_id: numb
   return { ...query, results };
 }
 
-// 내가 만든된 소셜링 목록 조회 (무한 스크롤)
+// 내가 만든 소셜링 목록 조회 (무한 스크롤)
 function useMemberMyMeetListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
     queryFn: () => memberMyMeetList({ ...searchParams }),
@@ -123,7 +123,7 @@ function useMemberApplyMeetListPaging(searchParams: SearchParams) {
   return { ...query, results };
 }
 
-// 내가 만든된 클럽 목록 조회 (무한 스크롤)
+// 내가 만든 클럽 목록 조회 (무한 스크롤)
 function useMemberMyGroupListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
     queryFn: () => memberMyGroupList({ ...searchParams }),
@@ -137,7 +137,7 @@ function useMemberMyGroupListPaging(searchParams: SearchParams) {
   return { ...query, results };
 }
 
-// 내가 신청한 클럽 목록 목록 조회 (무한 스크롤)
+// 내가 신청한 클럽 목록 조회 (무한 스크롤)
 function useMemberApplyGroupListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
     queryFn: () => memberApplyGroupList({ ...searchParams }),

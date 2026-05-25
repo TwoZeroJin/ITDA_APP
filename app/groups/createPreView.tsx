@@ -9,7 +9,7 @@ import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
 import CustomDialog from "@/components/modal/CustomDialog";
 import { parseImageList, getCategoryList } from "@/utils/commUtil";
-import { useGroupInsert } from "@/hooks/queries/useGroup";
+import { useGroupInsert, useGroupUpdate } from "@/hooks/queries/useGroup";
 
 /**
  * 클럽 생성 - 최종 미리보기 및 생성 화면
@@ -18,6 +18,7 @@ export default function GroupCreatePreViewScreen() {
   const prevGroupInfo = useLocalSearchParams() as Partial<GroupInfo> as GroupInfo;
   const imageList = parseImageList(prevGroupInfo.img_list_json);
   const groupInsert = useGroupInsert();
+  const groupUpdate = useGroupUpdate();
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
@@ -31,23 +32,37 @@ export default function GroupCreatePreViewScreen() {
     return found?.code_value ?? code_id;
   };
 
+  const handleMutationSuccess = () => {
+    router.navigate({
+      pathname: '/groups/createComplete',
+      params: { 
+        group_id: prevGroupInfo.group_id || '',
+      },
+    });
+  };
+  const handleMutationError = (error: unknown) => {
+    setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+    setIsErrorDialogVisible(true);
+  };
+
   const handleCreateGroup = () => {
     const formValues = {
       ...prevGroupInfo,
       img_list: imageList,
     };
     
-    groupInsert.mutate(formValues, {
-      onSuccess: () => {
-        router.navigate({
-          pathname: '/groups/createComplete', 
-        });
-      },
-      onError: (error) => {
-        setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
-        setIsErrorDialogVisible(true);
-      }
-    });
+    if (prevGroupInfo.group_id) {
+      // group_id가 존재하면 업데이트, 없으면 새로 생성
+      groupUpdate.mutate(formValues, {
+        onSuccess: handleMutationSuccess,
+        onError: handleMutationError,
+      });
+    } else {
+      groupInsert.mutate(formValues, {
+        onSuccess: handleMutationSuccess,
+        onError: handleMutationError,
+      });
+    }
   }
 
   return (
@@ -60,7 +75,7 @@ export default function GroupCreatePreViewScreen() {
         {/* 이미지 캐러슬 */}
         <View>
           <ImageCarousel
-            images={imageList.map((file) => file.file_url)}
+            images={imageList.map((file) => file.file_path)}
             height={280}
             // onPressImage={(i) => console.log("pressed image", i)} // 추후 이미지 수정 기능 추가 시 활용
           />
@@ -93,7 +108,7 @@ export default function GroupCreatePreViewScreen() {
 
       </ScrollView>
 
-      <CommBottomButton label="클럽 열기" onPress={handleCreateGroup}/>
+      <CommBottomButton label={`클럽 ${prevGroupInfo.group_id ? '수정' : '열기'}`} onPress={handleCreateGroup}/>
 
       <CustomDialog
         visible={isErrorDialogVisible}

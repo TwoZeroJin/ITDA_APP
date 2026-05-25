@@ -46,7 +46,7 @@ async function memberApplyList({target_id, target_type, use_stat}: {target_id: n
 }
 
 /**
- * 내가 만든된 소셜링 목록 조회 
+ * 내가 만든 소셜링 목록 조회 
  */
 async function memberMyMeetList(searchParams: SearchParams): Promise<ApiResult<MeetInfo[]>> {
   const { data } = await axiosInstance.post(API_URL.MEMBER_MY_MEET_LIST, searchParams);
@@ -62,7 +62,7 @@ async function memberApplyMeetList(searchParams: SearchParams): Promise<ApiResul
 }
 
 /**
- * 내가 만든된 클럽 목록 조회 
+ * 내가 만든 클럽 목록 조회 
  */
 async function memberMyGroupList(searchParams: SearchParams): Promise<ApiResult<GroupInfo[]>> {
   const { data } = await axiosInstance.post(API_URL.MEMBER_MY_GROUP_LIST, searchParams);

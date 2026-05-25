@@ -1,4 +1,4 @@
-import { groupCancelApply, groupApply, groupInsert, groupList, groupMemberList, groupView } from "@/api/group";
+import { groupCancelApply, groupApply, groupInsert, groupList, groupMemberList, groupView, groupUpdate } from "@/api/group";
 import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
@@ -47,6 +47,25 @@ function useGroupInsert() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_INSERT],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+// 클럽 수정
+function useGroupUpdate() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : GroupInfo) => {
+      setLoading(true);
+      return groupUpdate(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_UPDATE],
       });
     },
     onSettled: () => {
@@ -108,4 +127,4 @@ function useGroupCancelApply() {
     },
   });
 }
-export { useGroupListPaging, useGroupDetailView, useGroupInsert, useGroupMemberList, useGroupApply, useGroupCancelApply };
+export { useGroupListPaging, useGroupDetailView, useGroupInsert, useGroupUpdate, useGroupMemberList, useGroupApply, useGroupCancelApply };

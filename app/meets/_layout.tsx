@@ -24,6 +24,13 @@ export default function MeetLayout() {
         }}
       />
       <Stack.Screen
+        name="selectGroup"
+        options={{
+          title: "클럽 선택",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="createDetail"
         options={{
           title: "모임 생성",

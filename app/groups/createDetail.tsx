@@ -10,14 +10,20 @@ import GroupMaxMemberInput from "@/components/inputs/GroupMaxMemberInput";
 import ApplyTypeInput from "@/components/inputs/ApplyTypeInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
+import { useLocalSearchParams } from "expo-router";
 
 /**
  * 클럽 생성 - 신청방식, 최대인원 설정 화면
  */
 export default function GroupCreateDetailScreen() {
   const router = useAuthRouter();
+  // 수정화면에서 받아올 경우 group_id 존재
+  const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
+      apply_type      : prevGroupInfo.apply_type as string || '',
+      group_max       : prevGroupInfo.group_max ? Number(prevGroupInfo.group_max) : 0,
+      group_question  : prevGroupInfo.group_question as string || '',
     },
   });
 
@@ -25,6 +31,7 @@ export default function GroupCreateDetailScreen() {
     router.navigate({
       pathname: '/groups/createFee',
       params: {
+        ...prevGroupInfo,
         apply_type      : data.apply_type,
         group_question  : data.group_question,
         group_max       : data.group_max,
@@ -35,7 +42,7 @@ export default function GroupCreateDetailScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={COMM_STYLES.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 60 }}

@@ -11,7 +11,7 @@ import IconClub from '@/assets/images/icon_club.svg';
  * 모임 생성 - 모임 유형 세부 선택 화면(소셜링 - 일반, 클럽 - 일반/클럽 클래스 - 일반)
  */
 export default function MeetCreateTypeScreen() {
-  const [meetType, setMeetType] = useState<string | null>(null);
+  const [meet_type, setMeet_type] = useState<string | null>(null);
 
   const MEET_TYPE_OPTIONS = [
     {
@@ -43,25 +43,25 @@ export default function MeetCreateTypeScreen() {
           {MEET_TYPE_OPTIONS.map(({ value, title, description, Icon, color }) => (
             <TouchableOpacity
               key={value}
-              style={[styles.meetContainer, meetType === value && styles.meetSelected]}
+              style={[styles.meetContainer, meet_type === value && styles.meetSelected]}
               activeOpacity={0.6}
-              onPress={() => setMeetType(value)}>
-              <Icon width={20} color={meetType !== value ? color : COLOR.COMM_WHITE} />
+              onPress={() => setMeet_type(value)}>
+              <Icon width={20} color={meet_type !== value ? color : COLOR.COMM_WHITE} />
               <View style={styles.meetTypeSubContainer}>
-                <Text style={[styles.meetTypeTitle, meetType === value && styles.meetSelectedText]}>{title}</Text>
-                <Text style={[styles.meetTypeDesc, meetType === value && styles.meetSelectedText]}>{description}</Text>
+                <Text style={[styles.meetTypeTitle, meet_type === value && styles.meetSelectedText]}>{title}</Text>
+                <Text style={[styles.meetTypeDesc, meet_type === value && styles.meetSelectedText]}>{description}</Text>
               </View>
             </TouchableOpacity>
           ))}
         </View>
 
-        <CommBottomButton label="다음" onPress={() => meetType && router.navigate({
-            pathname: '/meets/createDetail',
+        <CommBottomButton label="다음" onPress={() => meet_type && router.navigate({
+            pathname: meet_type === COMM_CONSTANTS.MEET_TYPE_NORMAL ? '/meets/createDetail' : '/meets/selectGroup',
             params: {
-              meet_type : meetType
+              meet_type : meet_type
             },
           })}
-          disabled={!meetType}/>
+          disabled={!meet_type}/>
     </View>
   );
 }

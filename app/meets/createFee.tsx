@@ -13,17 +13,18 @@ import FeeInput from "@/components/inputs/FeeInput";
  * 모임 생성 - 참가비 설정 화면
  */
 export default function MeetCreateFeeScreen() {
+  // 수정화면에서 받아올 경우 meet_id 존재
   const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
-      fee_yn   : 'N',
-      fee_entry: 0,
-      fee_info : '',
-      fee_desc : '',
+      fee_yn   : prevMeetInfo.fee_yn as string || 'N',
+      fee_entry: prevMeetInfo.fee_entry ? Number(prevMeetInfo.fee_entry) : 0,
+      fee_info : prevMeetInfo.fee_info as string || '',
+      fee_desc : prevMeetInfo.fee_desc as string || '',
     },
   });
 
-  const feeYn = formValues.watch('fee_yn') as 'N' | 'Y' | undefined;
+  const feeYn = formValues.watch('fee_yn');
   const feeEntry = formValues.watch('fee_entry');
   const feeInfo = formValues.watch('fee_info');
 
@@ -48,7 +49,7 @@ export default function MeetCreateFeeScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={COMM_STYLES.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}

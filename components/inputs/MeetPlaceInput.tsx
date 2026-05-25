@@ -17,7 +17,7 @@ import useCombinedDateTime from '@/hooks/useCombinedDateTime';
 export default function MeetPlaceInput() {
   const { control, setValue, watch } = useFormContext<MeetInfo>();
 
-  const placeType = (watch('place_type') as 'F' | 'O' | undefined) || 'F';
+  const placeType = watch('place_type') || 'F';
   const placeName = watch('place_name');
   const placeAddr = watch('place_addr');
 

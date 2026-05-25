@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import DividingLine from "@/components/DividingLine";
 import { MeetInfo } from "@/types";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -12,18 +12,24 @@ import ApplyTypeInput from "@/components/inputs/ApplyTypeInput";
 import MemberCountInput from "@/components/inputs/MemberCountInput";
 import GenderRatioInput from "@/components/inputs/GenderRatioInput";
 import AgeRangeInput, { AGE_MIN } from "@/components/inputs/AgeRangeInput";
+import { useAuthRouter } from "@/components/comm/AuthRoute";
 
 /**
  * 모임 생성 - 신청방식, 참여인원, 성비, 나이 설정 화면
  */
 export default function MeetCreateDetailScreen() {
+  const router = useAuthRouter();
+  // 수정화면에서 받아올 경우 meet_id 존재
   const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
-      apply_type  : '',
-      gender_ratio: 0.5,
-      age_min     : AGE_MIN,
-      age_max     : 30,
+      apply_type    : prevMeetInfo.apply_type as string || '',
+      meet_min      : prevMeetInfo.meet_min ? Number(prevMeetInfo.meet_min) : 0,
+      meet_max      : prevMeetInfo.meet_max ? Number(prevMeetInfo.meet_max) : 0,
+      meet_question : prevMeetInfo.meet_question as string || '',
+      gender_ratio  : prevMeetInfo.gender_ratio ? Number(prevMeetInfo.gender_ratio) : 0.5,
+      age_min       : prevMeetInfo.age_min ? Number(prevMeetInfo.age_min) : AGE_MIN,
+      age_max       : prevMeetInfo.age_max ? Number(prevMeetInfo.age_max) : 30,
     },
   });
 
@@ -46,7 +52,7 @@ export default function MeetCreateDetailScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={COMM_STYLES.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 60 }}

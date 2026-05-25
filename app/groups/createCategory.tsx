@@ -15,7 +15,7 @@ export default function GroupCreateCategoryScreen() {
   const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
-      group_subj: '',
+      group_subj: prevGroupInfo.group_subj as string || '',
     },
   });
 
@@ -35,7 +35,7 @@ export default function GroupCreateCategoryScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={COMM_STYLES.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <ScrollView 
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}

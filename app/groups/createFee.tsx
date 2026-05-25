@@ -13,17 +13,18 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
  * 클럽 생성 - 참가비 설정 화면
  */
 export default function GroupCreateFeeScreen() {
+  // 수정화면에서 받아올 경우 group_id 존재
   const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
-      fee_yn   : 'N',
-      fee_entry: 0,
-      fee_info : '',
-      fee_desc : '',
+      fee_yn   : prevGroupInfo.fee_yn as string || 'N',
+      fee_entry: prevGroupInfo.fee_entry ? Number(prevGroupInfo.fee_entry) : 0,
+      fee_info : prevGroupInfo.fee_info as string || '',
+      fee_desc : prevGroupInfo.fee_desc as string || '',
     },
   });
 
-  const feeYn = formValues.watch('fee_yn') as 'N' | 'Y' | undefined;
+  const feeYn = formValues.watch('fee_yn');
   const feeEntry = formValues.watch('fee_entry');
   const feeInfo = formValues.watch('fee_info');
 
@@ -47,7 +48,7 @@ export default function GroupCreateFeeScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={COMM_STYLES.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="클럽 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}

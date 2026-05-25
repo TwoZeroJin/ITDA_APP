@@ -15,7 +15,7 @@ export default function MeetCreateCategoryScreen() {
   const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
-      meet_subj: '',
+      meet_subj: prevMeetInfo.meet_subj as string || '',
     },
   });
 
@@ -35,7 +35,7 @@ export default function MeetCreateCategoryScreen() {
   return (
     <FormProvider {...formValues}>
       <View style={COMM_STYLES.container}>
-        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}

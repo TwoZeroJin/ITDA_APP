@@ -4,7 +4,7 @@ import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIn
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply} from "@/hooks/queries/useMeet";
-import { MeetApply, MeetInfo, SearchParams } from "@/types";
+import { FileInfo, MeetApply, MeetInfo, SearchParams } from "@/types";
 import {  useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -173,7 +173,15 @@ export default function MeetDetailPage() {
     {
       label: '모임 수정',
       onPress: () => {
-        Alert.alert('안내', '수정 기능은 준비중입니다.');
+        const { img_list, ...tmpMeetInfo } = meetInfo as MeetInfo & { img_list?: FileInfo[] };
+
+        router.navigate({
+          pathname: '/meets/createDetail',
+          params: {
+            ...tmpMeetInfo,
+            img_list_json: JSON.stringify(img_list ?? []),
+          }
+        });
       },
     },
     {
