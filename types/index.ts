@@ -305,6 +305,9 @@ interface MemberApply {
   target_id       : number;
   target_type     : string;
   apply_answer?   : string;
+  my_yn           : string;
+  host_yn         : string;
+  room_id?        : string;
 }
 
 /**
@@ -346,11 +349,11 @@ interface RoomData {
  */
 interface ChatData {
   chat_id     : number;
-  chat_type   : 'MEMBER' | 'MEET' | 'GROUP';
+  chat_type   : string;
   chat_msg    : string;
   room_id     : string;
   sender_id?  : number;
-  mem_name?   : string;
+  mem_nick?   : string;
   send_date   : string;
 }
 

@@ -362,7 +362,7 @@ export default function GroupDetailPage() {
         <CommBottomButton label="채팅하기" onPress={() => {router.push({
           pathname: "/chats",
           params: {
-            room_id   : COMM_CONSTANTS.CHAT_TYPE_GROUP + '_' + groupInfo.group_id,
+            room_id   : `${COMM_CONSTANTS.CHAT_TYPE_GROUP}_${groupInfo.group_id}`,
             room_name : groupInfo.group_name,
             room_type : COMM_CONSTANTS.CHAT_TYPE_GROUP,
           },

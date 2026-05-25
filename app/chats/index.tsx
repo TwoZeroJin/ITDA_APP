@@ -1,109 +1,78 @@
 import CommHeader from '@/components/comm/CommHeader';
 import CustomDialog from '@/components/modal/CustomDialog';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_CONSTANTS } from '@/constants';
 import { useChatInsert, useChatListPaging } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useMemo, useEffect, useRef, useState } from 'react';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
+import ChatSend from '@/assets/images/icon_chat_send.svg';
 
-const formatTimeText = (sourceDate?: string) => {
-  if (!sourceDate) {
-    const now = new Date();
-    return `오후 ${now.getHours() > 12 ? now.getHours() - 12 : now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-  }
-
-  const date = new Date(sourceDate);
-  if (Number.isNaN(date.getTime())) {
-    return sourceDate;
-  }
-
-  const hour = date.getHours();
-  const minute = String(date.getMinutes()).padStart(2, '0');
-  const period = hour >= 12 ? '오후' : '오전';
-  const displayHour = hour % 12 === 0 ? 12 : hour % 12;
-  return `${period} ${displayHour}:${minute}`;
-};
-
-const getDateGroupKey = (sourceDate?: string) => {
-  if (!sourceDate) {
-    return '';
-  }
-
-  const date = new Date(sourceDate);
-  if (Number.isNaN(date.getTime())) {
-    return '';
-  }
-
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-};
-
-const formatDateBadgeText = (sourceDate?: string) => {
-  if (!sourceDate) {
-    return '';
-  }
-
-  const date = new Date(sourceDate);
-  if (Number.isNaN(date.getTime())) {
-    return '';
-  }
-
-  const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${dayNames[date.getDay()]}`;
-};
-
-const getMessageText = (item: ChatData) => item.chat_msg || '';
-const getSenderText = (item: ChatData) => item.mem_name || '상대방';
-
+/**
+ * 채팅 화면
+ */
 export default function IndexScreen() {
-  const { room_id, room_name, room_type } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string }>();
+  const { room_id, room_name, room_type, mem_id } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string, mem_id: string }>();
   const chatInsert = useChatInsert();
-  const { results, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatListPaging({
+  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatListPaging({
     page_no: 0,
     page_size: 20,
-    room_id: room_id ,
+    room_id: room_id,
   });
   const [chatMsg, setChatMsg] = useState("");
   const [realtimeMessages, setRealtimeMessages] = useState<ChatData[]>([]);
   const [isConnected, setIsConnected] = useState(true);
   const [myMemId, setMyMemId] = useState<number>(0);
-  const myMemIdRef = useRef<number>(0);
-  const topic = room_id;
+  const [myMemNick, setMyMemNick] = useState<string>('');
+  const [roomTitle, setRoomTitle] = useState<string>(room_name);
+  const msgInputRef = useRef<TextInput>(null);
+  const topic = room_id ? room_id : `${COMM_CONSTANTS.CHAT_TYPE_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`;
   const mqttUtil = MqttUtil;
-  const subscriberIdRef = useRef(`chat-screen:${Date.now()}:${Math.random().toString(16).slice(2)}`);
+  const subscriberIdRef = useRef(`chat-screen:${Date.now()}:${room_id}`);
   const flatListRef = useRef<FlatList<ChatData>>(null);
   const hasUserDraggedRef = useRef(false);
   const onEndReachedCalledDuringMomentum = useRef(true);
-  const chat_id = Number(room_id.substring(room_id.lastIndexOf("_") + 1));
-  const chat_type: ChatData['chat_type'] = room_type === "MEET" ? 'MEET' : room_type === 'GROUP' ? 'GROUP' : 'MEMBER';
+  const chat_id = Number(room_id ? room_id.split("_")[1] : Number(mem_id));
+  const chat_type = room_type;
+
+  // 화면 포커스시 재조회
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   // 내 mem_id 정보 조회
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
       const memberInfo = await getMemberInfo();
+      const myNick = memberInfo.mem_nick || '';
+      const myName = memberInfo.mem_name || '';
       setMyMemId(memberInfo.mem_id ?? 0);
-      myMemIdRef.current = memberInfo.mem_id ?? 0;
+      setMyMemNick(myNick || myName);
+
+      if (room_type === COMM_CONSTANTS.CHAT_TYPE_MEMBER && room_name?.includes(',')) {
+        const myNames = [myNick, myName];
+
+        const filteredNames = room_name
+           .split(',')
+           .map((name) => name.trim())
+           .filter((name) => !!name && !myNames.includes(name));
+           
+        const cleanedTitle = filteredNames.join(', ');
+        setRoomTitle(cleanedTitle);
+      }
     };
 
     fetchMyMemberInfo();
   }, []);
 
-  useEffect(() => {
-    myMemIdRef.current = myMemId;
-  }, [myMemId]);
-
+  // 메시지 메모리 관리
   const messages = useMemo(() => {
     return [...realtimeMessages, ...(results ?? [])];
   }, [results, realtimeMessages]);
-
-  useEffect(() => {
-    if (!messages.length) {
-      return;
-    }
-
-  }, [realtimeMessages.length]);
 
   // 채팅 메시지 맨위로 올릴 경우 추가 데이터 로드
   const handleEndReached = () => {
@@ -119,11 +88,10 @@ export default function IndexScreen() {
     }
   };
 
-  const msgReceiveCallback = (msg:string, receivedTopic?: string) => {
+  const msgReceiveCallback = (msg:string) => {
     const payload = parseChatPayload(msg);
-    const currentMyMemId = myMemIdRef.current;
 
-    if (payload.sender_id && Number(payload.sender_id) === currentMyMemId) {
+    if (payload.sender_id && Number(payload.sender_id) === myMemId) {
       // 내 메시지는 이미 실시간으로 반영되어 있으므로 별도 처리하지 않음
       return;
     }
@@ -133,9 +101,9 @@ export default function IndexScreen() {
         chat_id     : payload.chat_id ?? Date.now(),
         chat_type   : payload.chat_type ?? 'MEET',
         chat_msg    : payload.chat_msg ?? msg,
-        room_id     : payload.room_id ?? receivedTopic ?? room_id,
-        sender_id   : payload.sender_id ? Number(payload.sender_id) : undefined,
-        mem_name    : payload.mem_name,
+        room_id     : payload.room_id ?? room_id,
+        sender_id   : payload.sender_id,
+        mem_nick    : payload.mem_nick,
         send_date   : payload.send_date || new Date().toISOString(),
       },
       ...prev,
@@ -144,7 +112,7 @@ export default function IndexScreen() {
 
   // MQTT 연결 및 메시지 수신 설정
   useEffect(() => {
-    if (!topic) {
+    if (!topic || !myMemId) {
       return;
     }
 
@@ -165,7 +133,7 @@ export default function IndexScreen() {
       isMounted = false;
       mqttUtil.unsubscribe(topic, subscriberId);
     };
-  }, [topic])
+  }, [topic, myMemId])
 
   // 메시지 전송 핸들러
   const handleSubmitChat = () => {
@@ -181,13 +149,13 @@ export default function IndexScreen() {
       chat_type   : chat_type,
       chat_msg    : trimMsg,
       room_id     : room_id,
-      send_date  : nowIso,
+      sender_id   : myMemId,
+      send_date   : nowIso,
     };
 
     setRealtimeMessages((prev) => [
       {
         ...chatData,
-        sender_id: myMemId,
       },
       ...prev,
     ]);
@@ -197,35 +165,88 @@ export default function IndexScreen() {
     // Mongo DB Insert
     chatInsert.mutate({...chatData});
     // MQTT SendMessage
-    mqttUtil.sendMessage(topic, {...chatData, sender_id: myMemId, send_sdate: nowIso});
+    mqttUtil.sendMessage(topic, {...chatData});
   }
 
+  const formatDateBadgeText = (sourceDate?: string) => {
+  if (!sourceDate) {
+    return '';
+  }
+
+  const date = new Date(sourceDate);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${dayNames[date.getDay()]}`;
+};
+
+  const formatTimeText = (sourceDate?: string) => {
+    if (!sourceDate) {
+      return '';
+    }
+    const date = new Date(sourceDate);
+    const hour = date.getHours();
+    const minute = String(date.getMinutes()).padStart(2, '0');
+    const period = hour >= 12 ? '오후' : '오전';
+    const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+    return `${period} ${displayHour}:${minute}`;
+  };
+
+  const getDateGroupKey = (sourceDate?: string) => {
+    if (!sourceDate) {
+      return '';
+    }
+    const date = new Date(sourceDate);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  };
+
+  const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.CHAT_TYPE_MEMBER ? roomTitle : item.mem_nick;
+
+  // 채팅 메시지 렌더링
   const renderMessage = ({ item, index }: { item: ChatData; index: number }) => {
-    // 이전 메시지와 날짜가 다르면 날짜 배지 표시
     const prevItem = index > 0 ? messages[index - 1] : undefined;
-    const shouldShowDateBadge = index === 0 || getDateGroupKey(item.send_date) !== getDateGroupKey(prevItem?.send_date);
+    const nextItem = index < messages.length - 1 ? messages[index + 1] : undefined;
+    // 이전 메시지와 날짜가 다르면 날짜 배지 표시
+    const shouldShowDateBadge = getDateGroupKey(item.send_date) !== getDateGroupKey(prevItem?.send_date);
     const dateBadgeText = formatDateBadgeText(prevItem?.send_date);
+    // 보내는 사람이 같은 경우는 nextItem과 비교, 보낸 날짜는 prevItem과 비교하여 렌더링 여부 결정
+    const isSameSender = Number(nextItem?.sender_id) === Number(item.sender_id);
+    const isSameDateTime = formatTimeText(prevItem?.send_date) === formatTimeText(item.send_date);
     
     const isMine = Number(item.sender_id) === myMemId; // 내 메시지 여부
     // 메시지 표시
     const messageContent = isMine ? (
       <View style={styles.myMessageWrap}>
-        <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>
+        {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
         <View style={[styles.bubble, styles.myBubble]}>
-          <Text style={styles.myBubbleText}>{getMessageText(item)}</Text>
+          <Text style={styles.myBubbleText}>{item.chat_msg}</Text>
         </View>
       </View>
     ) : (
-      <View style={styles.otherMessageWrap}>
-        <View style={[styles.avatar, { backgroundColor: '#1E88E5' }]} />
-        <View style={styles.otherMessageContent}>
-          <Text style={styles.senderText}>{getSenderText(item)}</Text>
-          <View style={[styles.bubble, styles.otherBubble]}>
-            <Text style={styles.otherBubbleText}>{getMessageText(item)}</Text>
+      !isSameSender ? (
+        // 보낸 사람이 다르면 아바타와 함께 표시
+        <View style={styles.otherMessageWrap}>
+          <View style={[styles.avatar, { backgroundColor: '#1E88E5' }]} />
+          <View style={styles.otherMessageContent}>
+            <Text style={styles.senderText}>{getSenderText(item)}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+              <View style={[styles.bubble, styles.otherBubble]}>
+                <Text style={styles.otherBubbleText}>{item.chat_msg}</Text>
+              </View>
+              {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
+            </View>
           </View>
-          <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>
         </View>
-      </View>
+      ) : (
+        <View style={styles.otherMessageOnlyWrap}>
+          <View style={[styles.bubble, styles.otherBubble]}>
+            <Text style={styles.otherBubbleText}>{item.chat_msg}</Text>
+          </View>
+          {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
+        </View>
+      )
     );
     
     return (
@@ -249,11 +270,13 @@ export default function IndexScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 45 : 16}
       >
         <View style={styles.container}>
-          <CommHeader isLike={false} isNoti={false} isLogo={false} isDetail={true} title={room_name ?? "채팅"}/>
+          <CommHeader isLike={false} isNoti={false} isLogo={false} isDetail={true} title={roomTitle}/>
 
-          <View style={styles.meetInfoWrap}>
-            <Text style={styles.meetInfoText}>📅 한성교회 · 1.7(수) · 오후 8:30</Text>
-          </View>
+          {room_type === COMM_CONSTANTS.CHAT_TYPE_MEET && (
+            <View style={styles.meetInfoWrap}>
+              <Text style={styles.meetInfoText}>📅 한성교회 · 1.7(수) · 오후 8:30</Text>
+            </View>
+          )}
 
           <FlatList
             ref={flatListRef}
@@ -279,31 +302,34 @@ export default function IndexScreen() {
           />
 
           <View style={styles.inputBarWrap}>
-            <TouchableOpacity 
-              style={styles.addButton}
+            {/* <TouchableOpacity 
               activeOpacity={0.6}
             >
-              <Text style={styles.addButtonText}>＋</Text>
-            </TouchableOpacity>
+              <ChatAdd width={30} height={30} />
+            </TouchableOpacity> */}
 
-            <View style={styles.inputBoxWrap}>
+            <TouchableOpacity 
+              style={styles.inputBoxWrap}
+              activeOpacity={0.6}
+              onPress={() => { msgInputRef.current?.focus();}}
+            >
               <TextInput
+                ref={msgInputRef}
                 value={chatMsg}
                 onChangeText={setChatMsg}
                 placeholder="메시지 입력"
-                placeholderTextColor={COLOR.TEXT_GRAY}
+                placeholderTextColor={COLOR.COMM_GRAY_7}
                 style={styles.inputBox}
                 returnKeyType="send"
                 onSubmitEditing={handleSubmitChat}
               />
-            </View>
+            </TouchableOpacity>
 
             <TouchableOpacity 
-              style={styles.sendButton} 
               activeOpacity={0.6}
               onPress={handleSubmitChat}
             >
-              <Text style={styles.sendButtonText}>↑</Text>
+              <ChatSend width={30} height={30} />
             </TouchableOpacity>
           </View>
         </View>
@@ -316,6 +342,9 @@ export default function IndexScreen() {
         confirmLabel="재시도"
         onCancel={() => { router.back(); }}
         onConfirm={async () => {
+          if (!topic || !myMemId) {
+            return;
+          }
           const isSubscribed = await mqttUtil.subscribe(topic, subscriberIdRef.current, (msg) => {
             msgReceiveCallback(msg);
           });
@@ -362,39 +391,42 @@ const styles = StyleSheet.create({
     paddingTop        : 18,
     paddingHorizontal : 18,
     paddingBottom     : 10,
-    gap               : 8,
+    gap               : 6,
   },
   otherMessageWrap: {
     flexDirection     : 'row',
     alignItems        : 'flex-start',
-    marginBottom      : 8,
   },
   avatar: {
     width             : 28,
     height            : 28,
     borderRadius      : 14,
     marginRight       : 10,
-    marginTop         : 4,
   },
   otherMessageContent: {
     maxWidth          : '80%',
   },
+  otherMessageOnlyWrap: {
+    flexDirection     : 'row',
+    alignItems        : 'flex-end',
+    marginLeft        : 38,
+    maxWidth          : '80%',
+  },
   senderText: {
-    color             : COLOR.TEXT_2F2F2F,
-    fontSize          : 15,
-    marginBottom      : 4,
-    fontWeight        : '500',
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.TEXT_DEFAULT,
+    marginBottom      : 6,
   },
   myMessageWrap: {
     flexDirection     : 'row',
     justifyContent    : 'flex-end',
     alignItems        : 'flex-end',
-    marginBottom      : 8,
   },
   bubble: {
-    borderRadius      : 22,
-    paddingHorizontal : 14,
-    paddingVertical   : 11,
+    borderRadius      : 14,
+    paddingHorizontal : 11,
+    paddingVertical   : 6,
   },
   otherBubble: {
     alignSelf         : 'flex-start',
@@ -402,16 +434,18 @@ const styles = StyleSheet.create({
   },
   myBubble: {
     alignSelf         : 'flex-end',
-    backgroundColor   : COLOR.APP_MAIN,
+    backgroundColor   : COLOR.APP_ACTIVE_4,
   },
   otherBubbleText: {
-    color             : COLOR.TEXT_2F2F2F,
-    fontSize          : 17,
+    fontSize          : 16,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.TEXT_DEFAULT,
     lineHeight        : 23,
   },
   myBubbleText: {
+    fontSize          : 16,
+    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.COMM_WHITE,
-    fontSize          : 17,
     lineHeight        : 23,
   },
   timeText: {
@@ -423,26 +457,13 @@ const styles = StyleSheet.create({
   inputBarWrap: {
     flexDirection     : 'row',
     alignItems        : 'center',
-    paddingHorizontal : 14,
-    paddingTop        : 10,
+    paddingHorizontal : 16,
+    paddingTop        : 16,
     paddingBottom     : 18,
     borderTopWidth    : 1,
     borderTopColor    : COLOR.COMM_GRAY_4,
     gap               : 10,
     backgroundColor   : COLOR.COMM_WHITE,
-  },
-  addButton: {
-    width             : 36,
-    height            : 36,
-    borderRadius      : 18,
-    backgroundColor   : COLOR.COMM_GRAY_4,
-    alignItems        : 'center',
-    justifyContent    : 'center',
-  },
-  addButtonText: {
-    color             : COLOR.TEXT_DEFAULT,
-    fontSize          : 24,
-    lineHeight        : 24,
   },
   inputBoxWrap: {
     flex              : 1,
@@ -450,24 +471,12 @@ const styles = StyleSheet.create({
     backgroundColor   : COLOR.COMM_GRAY_5,
     paddingHorizontal : 14,
     justifyContent    : 'center',
-    height            : 46,
+    height            : 50,
   },
   inputBox: {
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_2F2F2F,
-    fontSize          : 16,
-  },
-  sendButton: {
-    width             : 36,
-    height            : 36,
-    borderRadius      : 18,
-    backgroundColor   : COLOR.APP_ACTIVE_5,
-    alignItems        : 'center',
-    justifyContent    : 'center',
-  },
-  sendButtonText: {
-    color             : COLOR.COMM_WHITE,
-    fontSize          : 18,
-    fontWeight        : '700',
   },
   topLoading: {
     marginVertical    : 10,

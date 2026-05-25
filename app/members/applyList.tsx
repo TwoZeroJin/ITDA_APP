@@ -172,7 +172,7 @@ export default function ApplyListScreen() {
 const styles = StyleSheet.create({
   sectionTitle: {
     fontSize          : 14,
-    fontFamily        : 'Pretendard-light',
+    fontFamily        : 'Pretendard-Light',
     color             : COLOR.TEXT_DEFAULT,
     marginTop         : 16,
     marginHorizontal  : 16,

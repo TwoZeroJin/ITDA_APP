@@ -389,7 +389,7 @@ export default function MeetDetailPage() {
         <CommBottomButton label="채팅하기" onPress={() => {router.push({
           pathname: "/chats",
           params: {
-            room_id   : COMM_CONSTANTS.CHAT_TYPE_MEET + '_' + meetInfo.meet_id,
+            room_id   : `${COMM_CONSTANTS.CHAT_TYPE_MEET}_${meetInfo.meet_id}`,
             room_name : meetInfo.meet_name,
             room_type : COMM_CONSTANTS.CHAT_TYPE_MEET,
           },

@@ -51,6 +51,7 @@ export default function ChatListScreen() {
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  // 화면 포커스시 재조회
   useFocusEffect(
     useCallback(() => {
       refetch();
