@@ -27,10 +27,10 @@ export default function MeetCreateCompleteScreen() {
         ) : (
           <IconClubCompl width={120} height={120} />
         )}
-        <Text style={styles.titleText}>
+        <Text style={COMM_STYLES.completeTitleText}>
           {meet_type === 'N' ? `소셜링이 ${meet_id ? '수정' : '오픈'} 되었어요!` : `클럽 소셜링이 ${meet_id ? '수정' : '오픈'} 되었어요!`}
         </Text>
-        <Text style={styles.descText}>
+        <Text style={COMM_STYLES.completeDescText}>
           {`개설한 소셜링이 ${meet_id ? '수정' : '오픈'}되었어요.\n멤버 모집을 위해 소셜링을 홍보해보세요.`}
         </Text>
       </View>
@@ -38,17 +38,3 @@ export default function MeetCreateCompleteScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleText: {
-    fontSize    : 24,
-    fontWeight  : 'bold',
-    color       : COLOR.TEXT_1C1C1C,
-    marginTop   : 30,
-  },
-  descText: {
-    fontSize    : 16,
-    marginTop   : 12,
-    color       : COLOR.TEXT_DEFAULT,
-  },
-});

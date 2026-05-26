@@ -15,7 +15,7 @@ export default function MeetCreateCategoryScreen() {
   const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
-      meet_subj: prevMeetInfo.meet_subj as string || '',
+      meet_subj: prevMeetInfo.meet_subj as string || undefined,
     },
   });
 
@@ -40,9 +40,9 @@ export default function MeetCreateCategoryScreen() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}
         >
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{'만남 주제를 선택해볼까요?'}</Text>
-            <Text style={styles.subtitle}>{'모임의 주제를 선택해보세요.'}</Text>
+          <View style={COMM_STYLES.commTitleContainer}>
+            <Text style={COMM_STYLES.commTitle}>{'만남 주제를 선택해볼까요?'}</Text>
+            <Text style={COMM_STYLES.commSubtitle}>{'모임의 주제를 선택해보세요.'}</Text>
           </View>
 
           <CategoryInput name="meet_subj" />
@@ -54,21 +54,3 @@ export default function MeetCreateCategoryScreen() {
     </FormProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop     : 12,
-    marginBottom  : 5,
-    paddingStart  : 16,
-  },
-  title: {
-    fontSize      : 22,
-    fontWeight    : 'bold',
-    color         : COLOR.COMM_BLACK,
-    marginBottom  : 16,
-  },
-  subtitle: {
-    fontSize      : 16,
-    color         : COLOR.COMM_GRAY_2,
-  },
-});

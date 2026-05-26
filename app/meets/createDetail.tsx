@@ -23,13 +23,14 @@ export default function MeetCreateDetailScreen() {
   const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
-      apply_type    : prevMeetInfo.apply_type as string || '',
-      meet_min      : prevMeetInfo.meet_min ? Number(prevMeetInfo.meet_min) : 0,
-      meet_max      : prevMeetInfo.meet_max ? Number(prevMeetInfo.meet_max) : 0,
-      meet_question : prevMeetInfo.meet_question as string || '',
+      apply_type    : prevMeetInfo.apply_type as string || undefined,
+      meet_min      : prevMeetInfo.meet_min ? Number(prevMeetInfo.meet_min) : undefined,
+      meet_max      : prevMeetInfo.meet_max ? Number(prevMeetInfo.meet_max) : undefined,
+      meet_question : prevMeetInfo.meet_question as string || undefined,
       gender_ratio  : prevMeetInfo.gender_ratio ? Number(prevMeetInfo.gender_ratio) : 0.5,
       age_min       : prevMeetInfo.age_min ? Number(prevMeetInfo.age_min) : AGE_MIN,
       age_max       : prevMeetInfo.age_max ? Number(prevMeetInfo.age_max) : 30,
+      group_id      : prevMeetInfo.group_id ? Number(prevMeetInfo.group_id) : 0,
     },
   });
 
@@ -45,6 +46,7 @@ export default function MeetCreateDetailScreen() {
         gender_ratio  : data.gender_ratio,
         age_min       : data.age_min,
         age_max       : data.age_max,
+        group_id      : data.group_id,
       },
     });
   });
@@ -60,9 +62,9 @@ export default function MeetCreateDetailScreen() {
           extraScrollHeight={24}
         >
           {/* 소모임 생성 타이틀 */}
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{'어떻게 모임원을 모을까요?'}</Text>
-            <Text style={styles.subtitle}>{`${prevMeetInfo.meet_type === COMM_CONSTANTS.MEET_TYPE_NORMAL ? '일반 소셜링' : '클럽 소셜링'}을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
+          <View style={COMM_STYLES.detailTitleContainer}>
+            <Text style={COMM_STYLES.commTitle}>{'어떻게 모임원을 모을까요?'}</Text>
+            <Text style={COMM_STYLES.commSubtitle}>{`${prevMeetInfo.meet_type === COMM_CONSTANTS.MEET_TYPE_NORMAL ? '일반 소셜링' : '클럽 소셜링'}을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
           </View>
 
           <DividingLine />
@@ -96,21 +98,3 @@ export default function MeetCreateDetailScreen() {
     </FormProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop     : 12,
-    marginBottom  : 30,
-    paddingStart  : 16,
-  },
-  title: {
-    fontSize      : 22,
-    fontWeight    : 'bold',
-    color         : COLOR.COMM_BLACK,
-    marginBottom  : 16,
-  },
-  subtitle: {
-    fontSize      : 16,
-    color         : COLOR.COMM_GRAY_2,
-  },
-});

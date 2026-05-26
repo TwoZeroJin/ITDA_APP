@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetInsert, useMeetUpdate } from "@/hooks/queries/useMeet";
-import { MeetInfo } from "@/types";
+import { ApiResult, MeetInfo } from "@/types";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -23,7 +23,13 @@ export default function MeetCreatePreViewScreen() {
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleMutationSuccess = () => {
+  const handleMutationSuccess = (result: ApiResult<null>) => {
+    if (result.ret_code !== 200) {
+      setErrorMessage(result.ret_msg || '요청 처리에 실패했습니다.');
+      setIsErrorDialogVisible(true);
+      return;
+    }
+
     router.navigate({
       pathname: '/meets/createComplete',
       params: { 

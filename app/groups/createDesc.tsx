@@ -21,14 +21,14 @@ export default function GroupCreateDescScreen() {
   // 폼 관리를 위한 useForm 훅 초기화
   const formValues = useForm<GroupInfo>({
     defaultValues: {
-      group_name: prevGroupInfo.group_name as string || '',
-      group_desc: prevGroupInfo.group_desc as string || '',
+      group_name: prevGroupInfo.group_name as string || undefined,
+      group_desc: prevGroupInfo.group_desc as string || undefined,
     }
   });
 
   // 이미지 있을 경우 세팅
   useEffect(() => {
-    setUploadedImageList(JSON.parse(prevGroupInfo.img_list_json as string) || []);
+    setUploadedImageList(JSON.parse(prevGroupInfo.img_list_json as string || '[]') || []);
   }, []);
 
   const onNext = formValues.handleSubmit((data) => {
@@ -52,12 +52,12 @@ export default function GroupCreateDescScreen() {
         contentContainerStyle={{ paddingBottom: 80 }}
       >
         {/* 클럽 생성 타이틀 */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{'나의 클럽을 소개해주세요.'}</Text>
+        <View style={COMM_STYLES.commTitleContainer}>
+          <Text style={COMM_STYLES.commTitle}>{'나의 클럽을 소개해주세요.'}</Text>
         </View>
 
         {/* 클럽 제목, 설명, 이미지 추가 */}
-        <View style={styles.commContainer}>
+        <View style={COMM_STYLES.commContainer}>
           <FormProvider {...formValues}>
             <GroupNameInput />
             <GroupDescInput />
@@ -77,22 +77,3 @@ export default function GroupCreateDescScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop     : 12,
-    marginBottom  : 5,
-    paddingStart  : 16,
-  },
-  title: {
-    fontSize      : 22,
-    fontWeight    : 'bold',
-    color         : COLOR.COMM_BLACK,
-    marginBottom  : 16,
-  },
-  commContainer: {
-    marginHorizontal  : 16,
-    marginBottom      : 30,
-    gap               : 16,
-  },
-});

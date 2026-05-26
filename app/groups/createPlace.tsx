@@ -17,11 +17,11 @@ export default function GroupCreatePlaceScreen() {
   const formValues = useForm<GroupInfo>({
     defaultValues: {
       place_type    : prevGroupInfo.place_type as string || 'F',
-      place_name    : prevGroupInfo.place_name as string || '',
-      place_addr    : prevGroupInfo.place_addr as string || '',
-      group_datetime: prevGroupInfo.group_datetime as string || '',
+      place_name    : prevGroupInfo.place_name as string || undefined,
+      place_addr    : prevGroupInfo.place_addr as string || undefined,
+      group_datetime: prevGroupInfo.group_datetime as string || undefined,
       freq_type     : prevGroupInfo.freq_type as string || 'O',
-      freq_desc     : prevGroupInfo.freq_desc as string || '',
+      freq_desc     : prevGroupInfo.freq_desc as string || undefined,
     },
   });
 
@@ -55,9 +55,9 @@ export default function GroupCreatePlaceScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{'모임의 정기 일정을 설정해 주세요.'}</Text>
-            <Text style={styles.subtitle}>{'멤버들이 반복되는 일정을 확인하고 참여할 수 있습니다.'}</Text>
+          <View style={COMM_STYLES.detailTitleContainer}>
+            <Text style={COMM_STYLES.commTitle}>{'모임의 정기 일정을 설정해 주세요.'}</Text>
+            <Text style={COMM_STYLES.commSubtitle}>{'멤버들이 반복되는 일정을 확인하고 참여할 수 있습니다.'}</Text>
           </View>
 
           <GroupPlaceInput />
@@ -69,21 +69,3 @@ export default function GroupCreatePlaceScreen() {
     </FormProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop         : 12,
-    marginBottom      : 5,
-    paddingStart      : 16,
-  },
-  title: {
-    fontSize          : 22,
-    fontWeight        : 'bold',
-    color             : COLOR.COMM_BLACK,
-    marginBottom      : 16,
-  },
-  subtitle: {
-    fontSize          : 16,
-    color             : COLOR.COMM_GRAY_2,
-  },
-});

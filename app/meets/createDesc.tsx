@@ -21,14 +21,14 @@ export default function MeetCreateDescScreen() {
   // 폼 관리를 위한 useForm 훅 초기화
   const formValues = useForm<MeetInfo>({
     defaultValues: {
-      meet_name: prevMeetInfo.meet_name as string || '',
-      meet_desc: prevMeetInfo.meet_desc as string || '',
+      meet_name: prevMeetInfo.meet_name as string || undefined,
+      meet_desc: prevMeetInfo.meet_desc as string || undefined,
     }
   });
 
   // 이미지 있을 경우 세팅
   useEffect(() => {
-    setUploadedImageList(JSON.parse(prevMeetInfo.img_list_json as string) || []);
+    setUploadedImageList(JSON.parse(prevMeetInfo.img_list_json as string || '[]') || []);
   }, []);
 
   const onNext = formValues.handleSubmit((data) => {
@@ -51,12 +51,12 @@ export default function MeetCreateDescScreen() {
         contentContainerStyle={{ paddingBottom: 80 }}
       >
         {/* 소모임 생성 타이틀 */}
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>{'나의 소셜링을 소개해주세요.'}</Text>
+        <View style={COMM_STYLES.commTitleContainer}>
+          <Text style={COMM_STYLES.commTitle}>{'나의 소셜링을 소개해주세요.'}</Text>
         </View>
 
         {/* 소셜링 제목, 설명, 이미지 추가 */}
-        <View style={styles.commContainer}>
+        <View style={COMM_STYLES.commContainer}>
           <FormProvider {...formValues}>
             <MeetNameInput />
             <MeetDescInput />
@@ -76,22 +76,3 @@ export default function MeetCreateDescScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop     : 12,
-    marginBottom  : 5,
-    paddingStart  : 16,
-  },
-  title: {
-    fontSize      : 22,
-    fontWeight    : 'bold',
-    color         : COLOR.COMM_BLACK,
-    marginBottom  : 16,
-  },
-  commContainer: {
-    marginHorizontal  : 16,
-    marginBottom      : 30,
-    gap               : 16,
-  },
-});

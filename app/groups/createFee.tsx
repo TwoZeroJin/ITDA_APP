@@ -18,9 +18,9 @@ export default function GroupCreateFeeScreen() {
   const formValues = useForm<GroupInfo>({
     defaultValues: {
       fee_yn   : prevGroupInfo.fee_yn as string || 'N',
-      fee_entry: prevGroupInfo.fee_entry ? Number(prevGroupInfo.fee_entry) : 0,
-      fee_info : prevGroupInfo.fee_info as string || '',
-      fee_desc : prevGroupInfo.fee_desc as string || '',
+      fee_entry: prevGroupInfo.fee_entry ? Number(prevGroupInfo.fee_entry) : undefined,
+      fee_info : prevGroupInfo.fee_info as string || undefined,
+      fee_desc : prevGroupInfo.fee_desc as string || undefined,
     },
   });
 
@@ -55,9 +55,9 @@ export default function GroupCreateFeeScreen() {
           enableOnAndroid={true}
           extraScrollHeight={24}
         >
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{'참가비가 있다면 설정해주세요.'}</Text>
-            <Text style={styles.subtitle}>{'모임 운영에 필요한 경우 참가비를 설정해 주세요.\n운영비, 공간 대관료 등 다양한 용도로 활용할 수 있습니다.'}</Text>
+          <View style={COMM_STYLES.detailTitleContainer}>
+            <Text style={COMM_STYLES.commTitle}>{'참가비가 있다면 설정해주세요.'}</Text>
+            <Text style={COMM_STYLES.commSubtitle}>{'모임 운영에 필요한 경우 참가비를 설정해 주세요.\n운영비, 공간 대관료 등 다양한 용도로 활용할 수 있습니다.'}</Text>
           </View>
 
           <FeeInput />
@@ -69,21 +69,3 @@ export default function GroupCreateFeeScreen() {
     </FormProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop           : 12,
-    marginBottom        : 5,
-    paddingStart        : 16,
-  },
-  title: {
-    fontSize            : 22,
-    fontWeight          : 'bold',
-    color               : COLOR.COMM_BLACK,
-    marginBottom        : 16,
-  },
-  subtitle: {
-    fontSize            : 16,
-    color               : COLOR.COMM_GRAY_2,
-  },
-});

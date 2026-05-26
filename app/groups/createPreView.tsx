@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { GroupInfo, CodeInfo } from "@/types";
+import { GroupInfo, CodeInfo, ApiResult } from "@/types";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -32,7 +32,13 @@ export default function GroupCreatePreViewScreen() {
     return found?.code_value ?? code_id;
   };
 
-  const handleMutationSuccess = () => {
+  const handleMutationSuccess = (result: ApiResult<null>) => {
+    if (result.ret_code !== 200) {
+      setErrorMessage(result.ret_msg || '요청 처리에 실패했습니다.');
+      setIsErrorDialogVisible(true);
+      return;
+    }
+    
     router.navigate({
       pathname: '/groups/createComplete',
       params: { 

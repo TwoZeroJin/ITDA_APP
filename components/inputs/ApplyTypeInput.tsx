@@ -60,7 +60,7 @@ export default function ApplyTypeInput({ questionFieldName = 'meet_question' }) 
               <IconInfoMark />
               <Text style={COMM_STYLES.infoTitle}>질문 작성시 주의해 주세요.</Text>
             </View>
-            <Text style={styles.infoDesc}>· 과도한 개인 정보를 요구하는 경우 가이드 위반으로 경고 및 제재를 받게 될 수 있어요.</Text>
+            <Text style={COMM_STYLES.infoDesc}>· 과도한 개인 정보를 요구하는 경우 가이드 위반으로 경고 및 제재를 받게 될 수 있어요.</Text>
           </View>
         </View>
       )}
@@ -112,9 +112,5 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize            : 12,
     color               : COLOR.APP_ACTIVE_5,
-  },
-  infoDesc: {
-    fontSize            : 12,
-    color               : COLOR.TEXT_DEFAULT,
   },
 });

@@ -21,9 +21,9 @@ export default function GroupCreateDetailScreen() {
   const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
-      apply_type      : prevGroupInfo.apply_type as string || '',
-      group_max       : prevGroupInfo.group_max ? Number(prevGroupInfo.group_max) : 0,
-      group_question  : prevGroupInfo.group_question as string || '',
+      apply_type      : prevGroupInfo.apply_type as string || undefined,
+      group_max       : prevGroupInfo.group_max ? Number(prevGroupInfo.group_max) : undefined,
+      group_question  : prevGroupInfo.group_question as string || undefined,
     },
   });
 
@@ -48,9 +48,9 @@ export default function GroupCreateDetailScreen() {
           contentContainerStyle={{ paddingBottom: 60 }}
           enableOnAndroid={true}
         >
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{'어떻게 모임원을 모을까요?'}</Text>
-            <Text style={styles.subtitle}>{`클럽을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
+          <View style={COMM_STYLES.detailTitleContainer}>
+            <Text style={COMM_STYLES.commTitle}>{'어떻게 모임원을 모을까요?'}</Text>
+            <Text style={COMM_STYLES.commSubtitle}>{`클럽을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
           </View>
 
           <DividingLine />
@@ -75,21 +75,3 @@ export default function GroupCreateDetailScreen() {
     </FormProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop     : 12,
-    marginBottom  : 30,
-    paddingStart  : 16,
-  },
-  title: {
-    fontSize      : 22,
-    fontWeight    : 'bold',
-    color         : COLOR.COMM_BLACK,
-    marginBottom  : 16,
-  },
-  subtitle: {
-    fontSize      : 16,
-    color         : COLOR.COMM_GRAY_2,
-  },
-});

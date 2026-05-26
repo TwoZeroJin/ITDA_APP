@@ -147,13 +147,13 @@ const styles = StyleSheet.create({
     fontWeight  : 'bold',
   },
   splashContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
+    flex            : 1,
+    justifyContent  : 'center',
+    alignItems      : 'center',
+    backgroundColor : COLOR.COMM_WHITE,
   },
   splashImage: {
-    width: '110%',
-    height: '110%',
+    width           : '110%',
+    height          : '110%',
   },  
 });

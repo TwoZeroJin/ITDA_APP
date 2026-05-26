@@ -17,9 +17,9 @@ export default function MeetCreatePlaceScreen() {
   const formValues = useForm<MeetInfo>({
     defaultValues: {
       place_type   : prevMeetInfo.place_type as string || 'F',
-      place_name   : prevMeetInfo.place_name as string || '',
-      place_addr   : prevMeetInfo.place_addr as string || '',
-      meet_datetime: prevMeetInfo.meet_datetime as string || '',
+      place_name   : prevMeetInfo.place_name as string || undefined,
+      place_addr   : prevMeetInfo.place_addr as string || undefined,
+      meet_datetime: prevMeetInfo.meet_datetime as string || undefined,
     },
   });
 
@@ -52,9 +52,9 @@ export default function MeetCreatePlaceScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 80 }}>
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{'언제 어디서 만날까요?'}</Text>
-            <Text style={styles.subtitle}>{'모임을 만날 장소와 시간을 기입해 주세요.'}</Text>
+          <View style={COMM_STYLES.detailTitleContainer}>
+            <Text style={COMM_STYLES.commTitle}>{'언제 어디서 만날까요?'}</Text>
+            <Text style={COMM_STYLES.commSubtitle}>{'모임을 만날 장소와 시간을 기입해 주세요.'}</Text>
           </View>
 
           <MeetPlaceInput />
@@ -66,21 +66,3 @@ export default function MeetCreatePlaceScreen() {
     </FormProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop         : 12,
-    marginBottom      : 5,
-    paddingStart      : 16,
-  },
-  title: {
-    fontSize          : 22,
-    fontWeight        : 'bold',
-    color             : COLOR.COMM_BLACK,
-    marginBottom      : 16,
-  },
-  subtitle: {
-    fontSize          : 16,
-    color             : COLOR.COMM_GRAY_2,
-  },
-});

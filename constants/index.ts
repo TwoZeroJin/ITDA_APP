@@ -210,6 +210,9 @@ const API_URL = {
   FEEDBACK_INSERT         : "/feedback/insert",
 }
 
+/**
+ * 공통 스타일
+ */
 const COMM_STYLES = StyleSheet.create({
   // 공통 컨테이너 스타일
   container: {
@@ -236,6 +239,58 @@ const COMM_STYLES = StyleSheet.create({
     fontSize            : 12,
     fontWeight          : 'bold',
     color               : COLOR.COLOR_323232,
+  },
+  infoDesc: {
+    fontSize            : 12,
+    color               : COLOR.TEXT_DEFAULT,
+  },
+  // 소모임/클럽 공통 스타일
+  commTitleContainer: {
+    marginTop     : 12,
+    marginBottom  : 5,
+    paddingStart  : 16,
+  },
+  commTitle: {
+    fontSize      : 22,
+    fontWeight    : 'bold',
+    color         : COLOR.COMM_BLACK,
+    marginBottom  : 16,
+  },
+  commSubtitle: {
+    fontSize      : 16,
+    color         : COLOR.COMM_GRAY_2,
+  },
+  //
+  completeTitleText: {
+    fontSize    : 24,
+    fontWeight  : 'bold',
+    color       : COLOR.TEXT_1C1C1C,
+    marginTop   : 30,
+  },
+  completeDescText: {
+    fontSize    : 16,
+    marginTop   : 12,
+    color       : COLOR.TEXT_DEFAULT,
+  },
+  //
+  commContainer: {
+    marginHorizontal  : 16,
+    marginBottom      : 30,
+    gap               : 16,
+  },
+  //
+  detailTitleContainer: {
+    marginTop     : 12,
+    marginBottom  : 30,
+    paddingStart  : 16,
+  },
+  // 가입승인, 회원 관리 공통
+  sectionTitle: {
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Light',
+    color             : COLOR.TEXT_DEFAULT,
+    marginTop         : 16,
+    marginHorizontal  : 16,
   },
 });
 

@@ -105,8 +105,8 @@ export default function MemberCountInput() {
           <IconInfoMark />
           <Text style={COMM_STYLES.infoTitle}>모임 설정시 참고해 주세요.</Text>
         </View>
-        <Text style={styles.infoDesc}>· 실제 모임 진행에 필요한 최소 인원으로 설정해주세요.</Text>
-        <Text style={styles.infoDesc}>· 모임 시간 1시간 전까지 최소 인원이 모집되지 않으면 모임이 자동으로 취소돼요.</Text>
+        <Text style={COMM_STYLES.infoDesc}>· 실제 모임 진행에 필요한 최소 인원으로 설정해주세요.</Text>
+        <Text style={COMM_STYLES.infoDesc}>· 모임 시간 1시간 전까지 최소 인원이 모집되지 않으면 모임이 자동으로 취소돼요.</Text>
       </View>
     </View>
   );
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     flexDirection       : 'row',
     alignItems          : 'center',
     gap                 : 10,
+    marginBottom        : 16,
   },
   memberInputWrap: {
     flex                : 1,
@@ -147,14 +148,12 @@ const styles = StyleSheet.create({
   },
   memberInputContainer: {
     flexDirection       : 'row',
-    justifyContent      : 'space-between',
     alignItems          : 'center',
-    flex                : 1,
-    height              : 50,
     borderWidth         : 1,
     borderColor         : COLOR.COMM_GRAY_6,
     borderRadius        : 12,
     paddingHorizontal   : 16,
+    height              : 50,
   },
   memberInputContainerError: {
     borderColor         : COLOR.TEXT_WARN,
@@ -179,9 +178,5 @@ const styles = StyleSheet.create({
     fontSize            : 12,
     color               : COLOR.TEXT_WARN,
     marginStart         : 4,
-  },
-  infoDesc: {
-    fontSize            : 12,
-    color               : COLOR.TEXT_DEFAULT,
   },
 });

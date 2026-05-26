@@ -65,7 +65,7 @@ function useLogin() {
       }
       else {
         // 회원 정보 SecureStore에 저장
-        saveMemberInfo(result.data);
+        await saveMemberInfo(result.data);
         MqttUtil.subscribeTopicList(result.data?.topic_list ?? []);
         router.replace("/");
         showToast({
@@ -96,12 +96,12 @@ function useAutoLogin(options = {enabled : false}) {
     (async () => {
       if (isSuccess) {
         if (data.ret_code == 200 && data.data) {
-          saveMemberInfo(data.data);
+          await saveMemberInfo(data.data);
           MqttUtil.subscribeTopicList(data.data.topic_list ?? []);
         }
         else {
           // 자동 로그인 실패
-          deleteSecureStoreForMember();
+          await deleteSecureStoreForMember();
         }
       }
     })()
@@ -121,9 +121,9 @@ function useAuth() {
   const signupMutation    = useSignup();
 
   // 토큰 및 회원정보 삭제
-  const logout = () => {
+  const logout = async () => {
     MqttUtil.disconnect();
-    deleteSecureStoreForMember();
+    await deleteSecureStoreForMember();
     queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
     router.replace("/" as any);
   }
@@ -131,22 +131,24 @@ function useAuth() {
   return { loginMutation, signupMutation, logout };
 }
 
-function deleteSecureStoreForMember() {
-  deleteSecureStore(STORE_KEY.X_ACCESS_TOKEN);
-  deleteSecureStore(STORE_KEY.X_REFRESH_TOKEN);
-  deleteSecureStore(STORE_KEY.MEM_ID);
-  deleteSecureStore(STORE_KEY.MEM_NAME);
-  deleteSecureStore(STORE_KEY.MEM_NICK);
-  deleteSecureStore(STORE_KEY.MEM_GENDER);
-  deleteSecureStore(STORE_KEY.MEM_BIRTH);
-  deleteSecureStore(STORE_KEY.MEM_TELNO);
-  deleteSecureStore(STORE_KEY.MEM_ADDR);
-  deleteSecureStore(STORE_KEY.MEM_INTEREST);
-  deleteSecureStore(STORE_KEY.MEM_IMAGE_URL);
-  deleteSecureStore(STORE_KEY.MEM_CHURCH_NM);
-  deleteSecureStore(STORE_KEY.MEM_CHURCH_TM_NM);
-  deleteSecureStore(STORE_KEY.PUSH_SEND_YN);
-  deleteSecureStore(STORE_KEY.PUSH_TOKEN);
+async function deleteSecureStoreForMember() {
+  await Promise.all([
+    deleteSecureStore(STORE_KEY.X_ACCESS_TOKEN),
+    deleteSecureStore(STORE_KEY.X_REFRESH_TOKEN),
+    deleteSecureStore(STORE_KEY.MEM_ID),
+    deleteSecureStore(STORE_KEY.MEM_NAME),
+    deleteSecureStore(STORE_KEY.MEM_NICK),
+    deleteSecureStore(STORE_KEY.MEM_GENDER),
+    deleteSecureStore(STORE_KEY.MEM_BIRTH),
+    deleteSecureStore(STORE_KEY.MEM_TELNO),
+    deleteSecureStore(STORE_KEY.MEM_ADDR),
+    deleteSecureStore(STORE_KEY.MEM_INTEREST),
+    deleteSecureStore(STORE_KEY.MEM_IMAGE_URL),
+    deleteSecureStore(STORE_KEY.MEM_CHURCH_NM),
+    deleteSecureStore(STORE_KEY.MEM_CHURCH_TM_NM),
+    deleteSecureStore(STORE_KEY.PUSH_SEND_YN),
+    deleteSecureStore(STORE_KEY.PUSH_TOKEN),
+  ]);
 }
 
 export { useAuth, useAutoLogin };

@@ -3,7 +3,7 @@ import { COLOR } from '@/constants';
 import { BannerData } from '@/types';
 import { getMainBannerList } from '@/utils/commUtil';
 import { useCallback, useEffect, useState } from 'react';
-import { FlatList, RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import CreateFloatingButton from '@/components/comm/CreateFloatingButton';
 import CommCategoryList from '@/components/comm/CommCategoryList';
 import CommRcmdMeetList from '@/components/comm/CommRcmdMeetList';

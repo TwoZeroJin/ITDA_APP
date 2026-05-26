@@ -15,7 +15,7 @@ export default function GroupCreateCategoryScreen() {
   const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
-      group_subj: prevGroupInfo.group_subj as string || '',
+      group_subj: prevGroupInfo.group_subj as string || undefined,
     },
   });
 
@@ -41,9 +41,9 @@ export default function GroupCreateCategoryScreen() {
           contentContainerStyle={{ paddingBottom: 80 }}
         >
           {/* 클럽 생성 타이틀 */}
-          <View style={styles.titleContainer}>
-            <Text style={styles.title}>{'클럽 주제를 선택해볼까요?'}</Text>
-            <Text style={styles.subtitle}>{'클럽의 주제를 선택해보세요.'}</Text>
+          <View style={COMM_STYLES.commTitleContainer}>
+            <Text style={COMM_STYLES.commTitle}>{'클럽 주제를 선택해볼까요?'}</Text>
+            <Text style={COMM_STYLES.commSubtitle}>{'클럽의 주제를 선택해보세요.'}</Text>
           </View>
 
           <CategoryInput name="group_subj" />
@@ -56,21 +56,3 @@ export default function GroupCreateCategoryScreen() {
     </FormProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop     : 12,
-    marginBottom  : 5,
-    paddingStart  : 16,
-  },
-  title: {
-    fontSize      : 22,
-    fontWeight    : 'bold',
-    color         : COLOR.COMM_BLACK,
-    marginBottom  : 16,
-  },
-  subtitle: {
-    fontSize      : 16,
-    color         : COLOR.COMM_GRAY_2,
-  },
-});
