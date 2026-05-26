@@ -122,6 +122,7 @@ const STORE_KEY = {
   MEM_GENDER          : "mem_gender",
   MEM_BIRTH           : "mem_birth",
   MEM_TELNO           : "mem_telno",
+  MEM_EMAIL           : "mem_email",
   MEM_ADDR            : "mem_addr",
   MEM_INTEREST        : "mem_interest",
   MEM_IMAGE_URL       : "mem_image_url",
@@ -291,6 +292,12 @@ const COMM_STYLES = StyleSheet.create({
     color             : COLOR.TEXT_DEFAULT,
     marginTop         : 16,
     marginHorizontal  : 16,
+  },
+  // 회원가입/회원정보 수정 form 공통 스타일
+  formContainer: {
+    marginHorizontal    : 20,
+    paddingTop          : 10,
+    gap                 : 16,
   },
 });
 

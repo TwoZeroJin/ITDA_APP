@@ -22,19 +22,19 @@ function QuestionInput({ name = '' }) {
           }
         }}
         render={({field: {ref, onChange, value}, fieldState: {error}}) => (
-            <InputField
-                ref={ref}
-                placeholder="모임 신청 시 멤버들에게 받을 질문을 작성해 주세요."
-                inputMode='text'
-                autoCapitalize='none'
-                returnKeyType='next'
-                submitBehavior='newline'
-                numberOfLines={10}
-                value={value}
-                onChangeText={onChange}
-                textArea={true}
-                error={error?.message}
-            />
+          <InputField
+            ref={ref}
+            placeholder="모임 신청 시 멤버들에게 받을 질문을 작성해 주세요."
+            inputMode='text'
+            autoCapitalize='none'
+            returnKeyType='next'
+            submitBehavior='newline'
+            numberOfLines={10}
+            value={value}
+            onChangeText={onChange}
+            textArea={true}
+            error={error?.message}
+          />
         )}
     />
   )

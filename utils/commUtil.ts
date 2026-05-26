@@ -138,6 +138,7 @@ async function saveMemberInfo(data?: MemberInfo & Token) {
     await saveSecureStore(STORE_KEY.MEM_GENDER,         data.mem_gender);
     await saveSecureStore(STORE_KEY.MEM_BIRTH,          data.mem_birth);
     await saveSecureStore(STORE_KEY.MEM_TELNO,          data.mem_telno);
+    await saveSecureStore(STORE_KEY.MEM_EMAIL,          data.mem_email);
     await saveSecureStore(STORE_KEY.MEM_ADDR,           data.mem_addr);
     await saveSecureStore(STORE_KEY.MEM_INTEREST,       data.mem_interest);
     await saveSecureStore(STORE_KEY.MEM_IMAGE_URL,      data.mem_image_url);
@@ -155,6 +156,7 @@ async function saveMemberInfoForUpdate(data?: MemberInfo) {
     await saveSecureStore(STORE_KEY.MEM_GENDER,         data.mem_gender);
     await saveSecureStore(STORE_KEY.MEM_BIRTH,          data.mem_birth);
     await saveSecureStore(STORE_KEY.MEM_TELNO,          data.mem_telno);
+    await saveSecureStore(STORE_KEY.MEM_EMAIL,          data.mem_email);
     await saveSecureStore(STORE_KEY.MEM_ADDR,           data.mem_addr);
     await saveSecureStore(STORE_KEY.MEM_INTEREST,       data.mem_interest);
     await saveSecureStore(STORE_KEY.MEM_IMAGE_URL,      data.mem_image_url);
@@ -174,6 +176,7 @@ async function getMemberInfo(): Promise<MemberInfo> {
   const mem_gender        = await getSecureStore(STORE_KEY.MEM_GENDER);
   const mem_birth         = await getSecureStore(STORE_KEY.MEM_BIRTH);
   const mem_telno         = await getSecureStore(STORE_KEY.MEM_TELNO);
+  const mem_email         = await getSecureStore(STORE_KEY.MEM_EMAIL);
   const mem_addr          = await getSecureStore(STORE_KEY.MEM_ADDR);
   const mem_interest      = await getSecureStore(STORE_KEY.MEM_INTEREST);
   const mem_image_url     = await getSecureStore(STORE_KEY.MEM_IMAGE_URL);
@@ -189,6 +192,7 @@ async function getMemberInfo(): Promise<MemberInfo> {
     mem_gender          : mem_gender        || "",
     mem_birth           : mem_birth         || "",
     mem_telno           : mem_telno         || "",
+    mem_email           : mem_email         || "",
     mem_addr            : mem_addr          || "",
     mem_interest        : mem_interest      || "",
     mem_image_url       : mem_image_url     || "",

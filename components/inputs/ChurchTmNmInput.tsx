@@ -6,28 +6,28 @@ function ChurchTmNmInput() {
     const {control} = useFormContext();
   return (
     <Controller
-        name='mem_church_tm_nm'
-        control={control}
-        rules={{
-          validate: (data: string) => {
-            if (!data || data.length === 0) {
-              return '팀을 입력해주세요.';
-            }
+      name='mem_church_tm_nm'
+      control={control}
+      rules={{
+        validate: (data: string) => {
+          if (!data || data.length === 0) {
+            return '팀을 입력해주세요.';
           }
-        }}
-        render={({field: {onChange, value}, fieldState: {error}}) => (
-            <InputField
-                label="팀" 
-                placeholder="팀 이름을 입력하세요."
-                inputMode='text'
-                autoCapitalize='none'
-                returnKeyType='next'
-                submitBehavior='submit'
-                value={value}
-                onChangeText={onChange}
-                error={error?.message}
-            />
-        )}
+        }
+      }}
+      render={({field: {onChange, value}, fieldState: {error}}) => (
+        <InputField
+          label="팀" 
+          placeholder="팀 이름을 입력하세요."
+          inputMode='text'
+          autoCapitalize='none'
+          returnKeyType='next'
+          submitBehavior='submit'
+          value={value}
+          onChangeText={onChange}
+          error={error?.message}
+        />
+      )}
     />
   )
 }

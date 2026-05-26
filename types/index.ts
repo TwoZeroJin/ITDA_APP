@@ -81,7 +81,8 @@ interface SignupInfo extends User {
   mem_gender        : string;
   mem_team          : string;
   mem_birth         : string;
-  mem_telno         : string;
+  mem_telno?        : string;
+  mem_email?        : string;
   mem_addr?         : string;
   mem_interest?     : string;
   mem_church_id?    : number;
@@ -100,6 +101,7 @@ interface MemberInfo {
   mem_gender        : string;
   mem_birth?        : string;
   mem_telno?        : string;
+  mem_email?        : string;
   mem_addr?         : string;
   mem_interest?     : string;
   mem_church_id?    : number;

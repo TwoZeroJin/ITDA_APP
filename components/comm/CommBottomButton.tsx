@@ -32,10 +32,16 @@ const styles = StyleSheet.create({
     paddingTop          : 12,
     paddingHorizontal   : 20,
     backgroundColor     : COLOR.COMM_WHITE,
+    shadowColor         : COLOR.COMM_SHADOW,
+    shadowOffset        : { width: 0, height: -4 },
+    shadowOpacity       : 0.03,
+    shadowRadius        : 8,
+    elevation           : 4,
+    zIndex              : 10,
   },
   bottomStyle: {
-    height          : 52,
-    borderRadius    : 12,
+    height              : 52,
+    borderRadius        : 12,
   }
 });
 

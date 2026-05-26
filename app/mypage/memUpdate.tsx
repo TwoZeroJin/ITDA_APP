@@ -16,9 +16,11 @@ import { getMemberInfo, getChurchList, saveMemberInfoForUpdate } from "@/utils/c
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { COMM_STYLES } from "@/constants";
+import MemEmailInput from "@/components/inputs/MemEmailInput";
+import MemTelnoInput from "@/components/inputs/MemTelnoInput";
 
 /**
  * 회원정보 수정
@@ -33,6 +35,8 @@ export default function MemberUpdateScreen() {
   const updateForm = useForm<MemberInfo>({
     defaultValues: {
       mem_name          : '',
+      mem_telno         : '',
+      mem_email         : '',
       mem_nick          : '',
       mem_gender        : '',
       mem_birth         : '',
@@ -64,6 +68,7 @@ export default function MemberUpdateScreen() {
           mem_gender        : memberInfo.mem_gender ?? '',
           mem_birth         : memberInfo.mem_birth ?? '',
           mem_telno         : memberInfo.mem_telno ?? '',
+          mem_email         : memberInfo.mem_email ?? '',
           mem_addr          : memberInfo.mem_addr ?? '',
           mem_interest      : memberInfo.mem_interest ?? '',
           mem_church_tm_nm  : memberInfo.mem_church_tm_nm ?? '',
@@ -115,7 +120,7 @@ export default function MemberUpdateScreen() {
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원정보 수정"/>
         <KeyboardAwareScrollView
           contentContainerStyle={[
-            styles.formContainer,
+            COMM_STYLES.formContainer,
             { paddingBottom: isKeyboardVisible ? 0 : 120 }, // 키보드가 올라올 경우 하단 패딩 제거
           ]}
           keyboardShouldPersistTaps="handled"
@@ -127,6 +132,8 @@ export default function MemberUpdateScreen() {
             <ChurchSelectBox/>
             <ChurchTmNmInput/>
             <NameInput/>
+            <MemTelnoInput/>
+            <MemEmailInput/>
             <GenderInput/>
             <BirthInput/>
             <NickNameInput/>
@@ -148,10 +155,3 @@ export default function MemberUpdateScreen() {
       </View>
     )
 }
-
-const styles = StyleSheet.create({
-  formContainer: {
-    marginHorizontal    : 20,
-    gap                 : 16,
-  },
-})

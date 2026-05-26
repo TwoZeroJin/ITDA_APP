@@ -28,13 +28,13 @@ function CustomButton({ label, size = "large", variant = "standard", style = nul
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius    : 20,
-    justifyContent  : "center",
-    alignItems      : "center"
+    borderRadius        : 25,
+    justifyContent      : "center",
+    alignItems          : "center"
   }, 
   large : {
-    width   : "100%",
-    height  : 45
+    width               : "100%",
+    height              : 45
   },
   medium : {
     height              : 38,
@@ -42,35 +42,35 @@ const styles = StyleSheet.create({
     paddingHorizontal   : 12
   },
   filled: {
-    backgroundColor : COLOR.APP_MAIN,
+    backgroundColor     : COLOR.APP_MAIN,
   },
   standard: {
-    backgroundColor : COLOR.COMM_WHITE,
-    borderWidth     : 1,
-    borderColor     : COLOR.COMM_GRAY_6
+    backgroundColor     : COLOR.COMM_WHITE,
+    borderWidth         : 1,
+    borderColor         : COLOR.COMM_GRAY_6
   },
   outlined: {
-    backgroundColor : COLOR.COMM_WHITE,
-    borderWidth     : 1,
-    borderColor     : COLOR.APP_MAIN
+    backgroundColor     : COLOR.COMM_WHITE,
+    borderWidth         : 1,
+    borderColor         : COLOR.APP_MAIN
   },
   pressed: {
-    opacity : 0.6,
+    opacity             : 0.6,
   },
   filledText: {
-    fontSize    : 18,
-    fontWeight  : "normal",
-    color       : COLOR.COMM_WHITE
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Medium',
+    color               : COLOR.COMM_WHITE
   },
   standardText: {
-    fontSize    : 18,
-    fontWeight  : "normal",
-    color       : COLOR.TEXT_DEFAULT
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Medium',
+    color               : COLOR.TEXT_DEFAULT
   },
   outlinedText: {
-    fontSize    : 18,
-    fontWeight  : "bold",
-    color       : COLOR.APP_MAIN
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-SemiBold',
+    color               : COLOR.APP_MAIN
   },
 });
 

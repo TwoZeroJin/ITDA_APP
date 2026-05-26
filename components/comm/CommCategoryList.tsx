@@ -71,14 +71,15 @@ const styles = StyleSheet.create({
     backgroundColor   : COLOR.COMM_WHITE,
   },
   title: {
-    fontWeight      : 'bold',
-    fontSize        : 20,
-    marginBottom    : 12,
+    fontSize          : 20,
+    fontFamily        : 'Pretendard-SemiBold',
+    color             : COLOR.COLOR_323232,
+    marginBottom      : 12,
   },
   row: {
-    marginBottom    : 12,
-    justifyContent  : 'space-between',
-    flexDirection   : 'row',
+    marginBottom      : 12,
+    justifyContent    : 'space-between',
+    flexDirection     : 'row',
   },
   cell: {
     justifyContent    : 'center',
@@ -96,9 +97,9 @@ const styles = StyleSheet.create({
     resizeMode        : 'contain',
   },
   categoryText: {
-    marginTop   : 6,
-    fontSize    : 14,
-    fontWeight  : 'bold',
-    color       : COLOR.COMM_BLACK,
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
+    marginTop         : 6,
+    color             : COLOR.TEXT_DEFAULT,
   },
 });
