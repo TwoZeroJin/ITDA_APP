@@ -2,21 +2,24 @@ import { COLOR } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, NativeSyntheticEvent, NativeScrollEvent, FlatList, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { MeetInfo, MeetReview, MyMeetInfo} from '@/types';
-import CommunityMeet from './CommunityMeet';
+import { MeetInfo, MeetReview} from '@/types';
 import { useReviewDelete } from '@/hooks/queries/useCommunity';
 import queryClient from '@/api/queryClient';
 import { router } from 'expo-router';
 import PlaceLocationBox from './PlaceLocationBox';
+import CommMeetCard from './comm/CommMeetCard';
+import { useMemberLike } from '@/hooks/queries/useMember';
+import ProfileIcon from "@/components/ProfileIcon";
 
 interface communityFeedProps {
   data: MeetReview;
+  memId: number;
 }
 
 // ✅ 1. 기기의 가로 너비를 가져옵니다. 이미지 한 장의 너비가 됩니다.
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-export default function CommunityFeed({data}: communityFeedProps) {
+export default function CommunityFeed({data, memId}: communityFeedProps) {
   // ✅ 1. 메뉴 팝업 상태 관리
   const [menuVisible, setMenuVisible] = useState(false);
   // ✅ 1. 가시성 상태 관리 추가 (삭제 시 false로 변경하여 화면에서 숨김)
@@ -28,6 +31,7 @@ export default function CommunityFeed({data}: communityFeedProps) {
   // 이미지 리스트가 비어있을 경우를 대비한 방어 코드
   const imageList = data.fileInfoVO || [];
   const reviewMutation = useReviewDelete(); // 텍스트 저장용 훅 추가
+  const memberLike = useMemberLike();
 
 // ✅ 2. 수정/삭제 핸들러.
   const handleUpdate = () => {
@@ -99,7 +103,28 @@ export default function CommunityFeed({data}: communityFeedProps) {
       setActiveIndex(currentIndex);
     }
   };
+  // 좋아요 처리
+  const handleLikePress = (item: MeetInfo) => {
+    if (!item.meet_id) {
+      return;
+    }
 
+    memberLike.mutate(
+      {
+        target_id   : item.meet_id,
+        target_type : 'M',
+        flag        : item.like_yn === 'N',
+      },
+      {
+        onSuccess: () => {
+          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+        },
+        onError: () => {
+        },
+      },
+    );
+  };
+  
   // ✅ 3. 삭제된 피드라면 아무것도 렌더링하지 않음 (스크롤 유지의 핵심)
   if (!isVisible) return null;  
 
@@ -108,14 +133,17 @@ export default function CommunityFeed({data}: communityFeedProps) {
       <View style={styles.feedCard}>
         {/* 상단 프로필 영역 */}
         <View style={styles.feedHeader}>
-          <Ionicons name="person-circle" size={36} color="lightgrey" />
+          <View style={styles.profileScale}>
+            <ProfileIcon mem_image_url={data.mem_image_url || ''} type="MEMBER" />
+          </View>          
+          {/* <Ionicons name="person-circle" size={36} color="lightgrey" /> */}
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>{data.mem_name}</Text>
+            <Text style={styles.userName}>{data.mem_nick}</Text>
             <Text style={styles.feedTime}>{data.reg_sdate}</Text>
           </View>
 
           {/* ✅ 3. 더보기 버튼 추가 */}
-          {data.mem_id === 3 && (
+          {data.mem_id === memId && (
             <>
             <TouchableOpacity 
               style={styles.menuTrigger} 
@@ -187,7 +215,9 @@ export default function CommunityFeed({data}: communityFeedProps) {
         )}
 
         {/* 피드에 모임정보가  존재할 때만 컴포넌트를 렌더링 */}
-        {data.memMeetListVO && <CommunityMeet data={data.memMeetListVO} />}
+        <View style={styles.meetContainer} >
+          {data.memMeetListVO && <CommMeetCard item={data.memMeetListVO} onLikePress={(item) => handleLikePress(item)} backgroundColor="grey"/>}
+        </View>
 
           {/* 하단 지도 정보 카드 */}
         <View style={styles.placeContainer} >
@@ -227,6 +257,19 @@ export default function CommunityFeed({data}: communityFeedProps) {
 }
 
 const styles = StyleSheet.create({
+  profileScale: {
+    // 원래 60짜리 크기를 0.6배로 축소 (60 * 0.6 = 36)
+    transform: [{ scale: 0.6 }], 
+    
+    // ⚠️ 중요: scale을 쓰면 자리는 60만큼 차지하면서 알맹이만 줄어들기 때문에, 
+    // 바깥 영역 레이아웃까지 완전히 36으로 고정해줍니다.
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },  meetContainer: {
+    paddingLeft: 20,
+  },
   placeContainer: {
     padding: 20,
   },
@@ -304,7 +347,7 @@ const styles = StyleSheet.create({
   /* 상단 */
   feedHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingHorizontal: 16,
     paddingVertical: 12,
   },

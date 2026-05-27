@@ -14,17 +14,19 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useForm, Controller } from 'react-hook-form'; // 추가
-
+import * as commUtil from '@/utils/commUtil';
 import IconCamera from '@/assets/images/icon_camera.svg';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import CommunityMeet from '@/components/CommunityMeet';
-import { FileInfo, MeetReview, MyMeetInfo } from '@/types';
+import { FileInfo, MeetReview, MeetInfo } from '@/types';
 import { COLOR } from '@/constants';
 import { useImagesUpload } from "@/hooks/queries/useImageUpload";
 import { useReviewInsert, useReviewUpdate } from '@/hooks/queries/useCommunity';
 import { getFormDataImages } from '@/utils/imageUtil';
 import CommHeader from '@/components/comm/CommHeader';
+import CommMeetCard from '@/components/comm/CommMeetCard';
+import { useMemberLike } from '@/hooks/queries/useMember';
 
 // 폼 데이터 타입 정의
 interface ReviewFormData {
@@ -38,15 +40,24 @@ export default function WriteFeedback() {
   const meetData = params.data ? JSON.parse(params.data as string) : null;
   const updFeedData = params.updFeedData ? JSON.parse(params.updFeedData as string) : null;
   const headerTitle = meetData ? '후기 작성' : '피드 작성';
-
+  const [myMemId, setMyMemId] = useState<number>(0);
   const router = useRouter();
   const imageMutation = useImagesUpload();
   const reviewMutation = useReviewInsert();
   const reviewUpdate = useReviewUpdate();
-
+  const memberLike = useMemberLike();
   // 이미지 관련 상태는 폼 외부에서 관리하는 것이 제어가 편합니다.
   const [images, setImages] = useState<string[]>(updFeedData?.fileInfoVO?.map((file: FileInfo) => file.file_path) || []);
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>(updFeedData?.fileInfoVO || []);
+
+  useEffect(() => {
+    const fetchMyMemberInfo = async () => {
+      const memberInfo = await commUtil.getMemberInfo();
+      setMyMemId(memberInfo.mem_id ?? 0);
+    };
+
+    fetchMyMemberInfo();
+  }, []);
 
   // 1. React Hook Form 초기화
   const { control, handleSubmit, setValue, formState: { errors } } = useForm<ReviewFormData>({
@@ -66,7 +77,7 @@ export default function WriteFeedback() {
       tag: data.tag,
       place_addr: data.place_addr,
       meet_id: meetData?.meet_id || null,
-      mem_id: meetData?.mem_id || 3,
+      mem_id: myMemId,
       fileInfoVO: uploadedImageList,
     };
 
@@ -140,7 +151,27 @@ export default function WriteFeedback() {
     setImages(prev => prev.filter((_, i) => i !== index));
     setUploadedImageList(prev => prev.filter((_, i) => i !== index));
   };
+  // 좋아요 처리
+  const handleLikePress = (item: MeetInfo) => {
+    if (!item.meet_id) {
+      return;
+    }
 
+    memberLike.mutate(
+      {
+        target_id   : item.meet_id,
+        target_type : 'M',
+        flag        : item.like_yn === 'N',
+      },
+      {
+        onSuccess: () => {
+          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+        },
+        onError: () => {
+        },
+      },
+    );
+  };
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -154,8 +185,8 @@ export default function WriteFeedback() {
       <View style={styles.titleContainer}>
         <Text style={styles.titleBig}>{headerTitle}</Text>
         <FlatList
-          data={meetData ? [meetData] : []}
-          renderItem={({ item }) => <CommunityMeet data={item as MyMeetInfo} />}
+          data={meetData ? [meetData] : []}          
+          renderItem={({ item }) => <CommMeetCard item={item as MeetInfo} onLikePress={(item) => handleLikePress(item)} backgroundColor="grey"/>}
           keyExtractor={(item) => item.meet_id?.toString() || ''}
         />
       </View>
@@ -242,7 +273,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     // marginBottom: 20,
-    alignItems: 'flex-start',
+//    alignItems: 'flex-start',
     paddingHorizontal: 20,    // ✅ 아래 ScrollView(content)의 padding과 동일하게 설정
     marginTop: 20,            // 상단 헤더와의 간격
     marginBottom: 10,         // FlatList와의 간격    marginBottom: 20,

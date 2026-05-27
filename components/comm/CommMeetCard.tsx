@@ -10,22 +10,25 @@ import { getAccessToken } from '@/utils/commUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MemDefault from '@/assets/images/icon_mem_default.svg';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 
 let cachedIsLoggedIn: boolean | null = null;
 
 interface CommMeetCardProps {
   item: MeetInfo;
   onLikePress?: (item: MeetInfo) => void;
+  backgroundColor?: string;
 }
 
 /**
  * 공통 소모임 아이템 카드 컴포넌트
  */
-export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
+export default function CommMeetCard({ item, onLikePress, backgroundColor }: CommMeetCardProps) {
   const [thumbImageError, setThumbImageError] = useState(false);
   const [profileImageError, setProfileImageError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(cachedIsLoggedIn ?? false);
+  const dynamicBackgroundColor = backgroundColor === 'grey' ? COLOR.COMM_GRAY_8 : COLOR.COMM_WHITE;
+  const pathname = usePathname();  
 
   // 좋아요 버튼 여부
   useEffect(() => {
@@ -66,14 +69,31 @@ export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
     [profileImageError, item.mem_image_url],
   );
 
-  return (
-    <TouchableOpacity 
-      style={styles.itemContainer}
-      activeOpacity={0.6}
-      onPress={() => router.push({ 
+  const movePage = () => {
+    // 현재 경로가 이미 'chooseMeet'을 포함하고 있다면 이동하지 않음
+    console.log('아이템 클릭:상세 화면으로 이동', pathname); // 클릭된 아이템 로그
+
+  if (pathname === '/communities/chooseMeet') {
+      router.push({
+        pathname: '/communities/writeFeedback',
+        params: { data: JSON.stringify(item) },
+      });
+  }     
+  else {
+    router.push({ 
         pathname: '/meets/meetDetailPage',
         params: { meetId: item.meet_id }
-      })}
+    })
+  }
+    
+
+  };
+
+  return (
+    <TouchableOpacity 
+      style={[styles.itemContainer, { backgroundColor: dynamicBackgroundColor }]}
+      activeOpacity={0.6}
+      onPress={movePage}
     >
       <View>
         {imageSource ? (
@@ -135,7 +155,7 @@ export default function CommMeetCard({ item, onLikePress }: CommMeetCardProps) {
 const styles = StyleSheet.create({
   itemContainer: {
     width             : '95%',
-    backgroundColor   : COLOR.COMM_WHITE,
+//    backgroundColor   : COLOR.COMM_WHITE,
     borderRadius      : 12,
     padding           : 12,
     flexDirection     : 'row',

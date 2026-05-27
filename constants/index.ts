@@ -16,7 +16,7 @@ const COLOR = {
   COMM_GRAY_5         : '#F4F4F4',
   COMM_GRAY_6         : '#DBDBDB',
   COMM_GRAY_7         : '#9D9D9D',
-  COMM_GRAY_8         : '#F1F1F1',
+  COMM_GRAY_8         : '#f3f1f1',
   COMM_GRAY_9         : '#8A8A8A',
   COMM_RED            : '#FF0000',
   COMM_SHADOW         : '#747474',

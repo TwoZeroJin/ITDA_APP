@@ -140,9 +140,6 @@ export default function ClubLayout() {
               onLikePress={(item) => handleLikePress(item.group_id, item.like_yn)}            
             />
           </View>
-
-
-          // <CommunityMeet data={item as GroupInfo} type='CLUB'/>
         )}
         keyExtractor={(item) => item.group_id.toString()} 
         onRefresh={onRefresh}
