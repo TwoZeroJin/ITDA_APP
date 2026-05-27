@@ -4,7 +4,7 @@ import { BannerData } from '@/types';
 import { getMainBannerList } from '@/utils/commUtil';
 import { useCallback, useEffect, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
-import CreateFloatingButton from '@/components/comm/CreateFloatingButton';
+import CommFloatingButton from '@/components/comm/CommFloatingButton';
 import CommCategoryList from '@/components/comm/CommCategoryList';
 import CommRcmdMeetList from '@/components/comm/CommRcmdMeetList';
 import CommUpcomingMeetList from '@/components/CommUpcomingMeetList';
@@ -113,7 +113,7 @@ export default function HomeScreen() {
 
       </ScrollView>
       {/* Floating 버튼, 소셜링/클럽 생성 버튼 (화면에 고정) */}
-      <CreateFloatingButton />
+      <CommFloatingButton />
     </View>
   );
 }

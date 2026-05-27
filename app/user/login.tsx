@@ -8,7 +8,7 @@ import usePushNotification from '@/hooks/usePushNotification';
 import { User } from '@/types';
 import { router } from 'expo-router';
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
+import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 
 export default function LoginScreen() {
   const { loginMutation } = useAuth();
@@ -20,7 +20,6 @@ export default function LoginScreen() {
       login_pwd   : "1111",
     }
   });
-  //const {expoPushToken} = usePushNotification();
 
   const onSubmit = (formValues: User) => {
     loginMutation.mutate({...formValues});
@@ -52,18 +51,23 @@ export default function LoginScreen() {
             <CustomButton label="로그인" onPress={loginForm.handleSubmit(defaultLogin)}/>
             <CustomButton label="회원가입" variant='filled' onPress={() => router.navigate('/user/signupTerm')}/>
           </View>
-          <View style={styles.findUserContainer}>
+          <TouchableOpacity 
+            style={styles.findUserContainer}
+            activeOpacity={0.6}
+            onPress={() => router.navigate('/user/findUser')}
+          >
             <Text style={styles.findIdText}>계정 정보를 잊으셨나요?</Text>
-          </View>
-          <View style={styles.snsLoginTextContainer}>
+          </TouchableOpacity>
+          {/* SNS 로그인 추후 작업 */}
+          {/* <View style={styles.snsLoginTextContainer}>
             <View style={styles.line}/>
             <Text style={styles.snsLoginText}>간편 로그인</Text>
             <View style={styles.line}/>
           </View>
           <View style={styles.snsLoginBtnContainer}>
-            <CustomButton label="카카오톡으로 시작하기" onPress={() => {}}/>
-            {/* <CustomButton label="애플로 시작하기" onPress={() => {}}/> */}
-          </View>
+            <CustomButton label="카카오톡으로 시작하기" style={styles.kakaoBtn} onPress={() => {}}/>
+            <CustomButton label="애플로 시작하기" style={styles.appleBtn} onPress={() => {}}/>
+          </View> */}
         </FormProvider>
       </View>
     </TouchableWithoutFeedback>
@@ -76,44 +80,60 @@ const styles = StyleSheet.create({
     marginHorizontal    : 25,
   },
   imageContainer: {
-    justifyContent  : "center",
-    alignItems      : "center",
-    marginTop       : 50,
-    marginBottom    : 30
+    justifyContent      : "center",
+    alignItems          : "center",
+    marginTop           : 50,
+    marginBottom        : 30
   },
   inputContainer: {
-    gap             : 20,
-    marginBottom    : 50
+    gap                 : 20,
+    marginBottom        : 50
   },
   buttonContainer: {
-    gap             : 10,
-    marginBottom    : 16
+    gap                 : 10,
+    marginBottom        : 16
   },
   findUserContainer: {
-    alignItems      : "center",
-    marginBottom    : 40
+    alignItems          : "center",
+    marginBottom        : 40,
+    height              : 40,
   },
   findIdText: {
-    fontSize    : 14,
-    color       : COLOR.TEXT_GRAY
+    fontSize            : 14,
+    fontFamily         : "Pretendard-Medium",
+    color               : COLOR.TEXT_GRAY
   },
   line: {
-    height          : 1,
-    flex            : 2,
-    backgroundColor : COLOR.COMM_GRAY_6
+    height              : 1,
+    flex                : 2,
+    backgroundColor     : COLOR.COMM_GRAY_6
   },
   snsLoginTextContainer: {
-    flexDirection   : "row",
-    alignItems      : "center",
-    marginBottom    : 5
+    flexDirection       : "row",
+    alignItems          : "center",
+    marginBottom        : 5
   },
   snsLoginText: {
     fontSize            : 12,
-    fontWeight          : 500,
+    fontFamily         : "Pretendard-Medium",
+    color               : COLOR.TEXT_GRAY,
     lineHeight          : 30,
     marginHorizontal    : 12
   },
   snsLoginBtnContainer: {
-    gap : 10
+    gap                 : 10
+  },
+  kakaoBtn: {
+    backgroundColor     : '#FEE500',
+    borderColor         : '#FEE500',
+    borderWidth         : 1,
+    borderRadius        : 16,
+  },
+  appleBtn: {
+    backgroundColor     : '#000000',
+    borderColor         : '#000000',
+    borderWidth         : 1,
+    borderRadius        : 16,
+    color               : '#FFFFFF'
   }
 })

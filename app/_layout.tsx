@@ -142,9 +142,9 @@ const styles = StyleSheet.create({
     borderRadius    : 16,
   },
   toastText: {
-    color       : 'white',
-    fontSize    : 16, 
-    fontWeight  : 'bold',
+    color           : 'white',
+    fontSize        : 16, 
+    fontWeight      : 'bold',
   },
   splashContainer: {
     flex            : 1,

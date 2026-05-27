@@ -45,7 +45,7 @@ export default function GroupCreateDetailScreen() {
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 60 }}
+          contentContainerStyle={{ paddingBottom: 80 }}
           enableOnAndroid={true}
         >
           <View style={COMM_STYLES.detailTitleContainer}>

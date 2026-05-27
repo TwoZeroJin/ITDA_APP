@@ -1,4 +1,4 @@
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { Keyboard, StyleSheet, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -11,7 +11,7 @@ import { router } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { showToast } from "@/utils/commToast";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import CustomImagePicker from "@/components/comm/CustomImagePicker";
+import CommImagePicker from "@/components/comm/CommImagePicker";
 
 /**
  * 마이페이지 - 개선사항 등록 화면
@@ -69,7 +69,7 @@ export default function FeedbackCreateScreen() {
           <FormProvider {...formValues}>
             <FeedSubjectInput />
             <FeedContentInput />
-            <CustomImagePicker onChangeImages={setUploadedImageList} />
+            <CommImagePicker onChangeImages={setUploadedImageList} />
           </FormProvider>
       </KeyboardAwareScrollView>
       <CommBottomButton label="등록" onPress={formValues.handleSubmit(onSubmit)} />

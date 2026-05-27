@@ -4,12 +4,12 @@ import { StyleSheet, Text, FlatList, View, ActivityIndicator, TouchableOpacity }
 import { useCallback, useEffect, useState } from 'react';
 import { useMeetListPaging } from "@/hooks/queries/useMeet";
 import { MeetInfo, SearchParams } from '@/types';
-import CategoryListLayout from '@/components/CategoryListLayout';
 import DividingLine from '@/components/DividingLine';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconFilter from '@/assets/images/icon_filter.svg';
 import CommMeetCard from '@/components/comm/CommMeetCard';
 import { useMemberLike } from '@/hooks/queries/useMember';
+import CommCategoryList from '@/components/comm/CommCategoryList';
 
 export default function SocialClassLayout({ activeType }: { activeType: 'social' | 'class' }) {
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
@@ -159,7 +159,7 @@ export default function SocialClassLayout({ activeType }: { activeType: 'social'
         ListHeaderComponent={
           <View style={styles.headerGroup}>
             <SearchInput searchKey={(searchKey) => handleKeySearch(searchKey)}/>
-            <CategoryListLayout searchCategory={(codeId) => handlePressSearch(codeId)}/>
+            <CommCategoryList onCategorySelect={(codeId) => handlePressSearch(codeId)}/>
             <DividingLine />
             <View style={styles.titleWrapper}>
               <Text style={styles.listTitle}>전체 {activeTypeLabel}</Text>

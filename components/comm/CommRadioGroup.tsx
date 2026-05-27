@@ -7,7 +7,7 @@ type CustomRadioItem = {
   value: string;
 }
 
-interface CustomRadioGroupProps {
+interface CommRadioGroupProps {
   items: CustomRadioItem[];
   value: string;
   onChange: (value: string) => void;
@@ -18,7 +18,7 @@ interface CustomRadioGroupProps {
  * @param param
  * @returns 모임 생성시 사용하는 공통 라디오 그룹 컴포넌트
  */
-function CustomRadioGroup({ items, value, onChange }: CustomRadioGroupProps) {
+function CommRadioGroup({ items, value, onChange }: CommRadioGroupProps) {
   return (
     <View style={styles.commRadioBoxContainer}>
       {items.map((item) => {
@@ -68,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomRadioGroup;
+export default CommRadioGroup;

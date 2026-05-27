@@ -1,6 +1,6 @@
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router, useLocalSearchParams } from "expo-router";
@@ -8,7 +8,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import MeetNameInput from "@/components/inputs/MeetNameInput";
 import { FileInfo, MeetInfo } from "@/types";
 import MeetDescInput from "@/components/inputs/MeetDescInput";
-import CustomImagePicker from "@/components/comm/CustomImagePicker";
+import CommImagePicker from "@/components/comm/CommImagePicker";
 import TagInput from "@/components/inputs/TagInput";
 
 /**
@@ -60,7 +60,7 @@ export default function MeetCreateDescScreen() {
           <FormProvider {...formValues}>
             <MeetNameInput />
             <MeetDescInput />
-            <CustomImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
+            <CommImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
             <TagInput />
           </FormProvider>
           

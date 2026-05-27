@@ -7,7 +7,7 @@ import { useAuthRouter } from '@/components/comm/AuthRoute';
 /**
  * 소셜링/클럽 생성 버튼 컴포넌트
  */
-export default function CreateFloatingButton() {
+export default function CommFloatingButton() {
   const router = useAuthRouter();
   return (
     <TouchableOpacity

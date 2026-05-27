@@ -3,13 +3,13 @@ import { COLOR } from '@/constants';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useCallback, useState } from 'react';
 import {  useFocusEffect } from 'expo-router';
-import CategoryListLayout from '@/components/CategoryListLayout';
 import DividingLine from '@/components/DividingLine';
 import { useGroupListPaging } from '@/hooks/queries/useGroup';
 import IconFilter from '@/assets/images/icon_filter.svg';
 import DropdownModal from '@/components/modal/DropdownModal';
 import CommGroupCard from '@/components/comm/CommGroupCard';
 import { useMemberLike } from '@/hooks/queries/useMember';
+import CommCategoryList from '@/components/comm/CommCategoryList';
 
 
 export default function ClubLayout() {
@@ -162,7 +162,7 @@ export default function ClubLayout() {
         ListHeaderComponent={
           <View style={styles.headerGroup}>
             <SearchInput searchKey={(searchKey) => handleKeySearch(searchKey)}/>
-            <CategoryListLayout searchCategory={(codeId) => handlePressSearch(codeId)}/>
+            <CommCategoryList onCategorySelect={(codeId) => handlePressSearch(codeId)}/>
             <DividingLine />
             
             <View style={styles.titleWrapper}>

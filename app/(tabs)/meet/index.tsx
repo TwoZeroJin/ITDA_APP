@@ -1,5 +1,5 @@
 import CommHeader from '@/components/comm/CommHeader';
-import CreateFloatingButton from '@/components/comm/CreateFloatingButton';
+import CommFloatingButton from '@/components/comm/CommFloatingButton';
 import { COLOR } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
@@ -47,7 +47,7 @@ export default function Meet() {
       )}      
 
       {/* 사진 우측 하단의 플로팅 글쓰기 버튼 */}
-      <CreateFloatingButton />
+      <CommFloatingButton />
     </View>
   );
 }

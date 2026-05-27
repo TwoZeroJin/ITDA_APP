@@ -1,12 +1,12 @@
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router, useLocalSearchParams } from "expo-router";
 import { FormProvider, useForm } from "react-hook-form";
 import { FileInfo, GroupInfo } from "@/types";
-import CustomImagePicker from "@/components/comm/CustomImagePicker";
+import CommImagePicker from "@/components/comm/CommImagePicker";
 import TagInput from "@/components/inputs/TagInput";
 import GroupDescInput from "@/components/inputs/GroupDescInput";
 import GroupNameInput from "@/components/inputs/GroupNameInput";
@@ -61,7 +61,7 @@ export default function GroupCreateDescScreen() {
           <FormProvider {...formValues}>
             <GroupNameInput />
             <GroupDescInput />
-            <CustomImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
+            <CommImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
             <TagInput />
           </FormProvider>
           

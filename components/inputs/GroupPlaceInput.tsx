@@ -1,4 +1,4 @@
-import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
+import CommRadioGroup from '@/components/comm/CommRadioGroup';
 import { COLOR, COMM_STYLES } from '@/constants';
 import { GroupInfo } from '@/types';
 import React, { useMemo, useRef, useState, useEffect } from 'react';
@@ -75,7 +75,7 @@ export default function GroupPlaceInput() {
           name="place_type"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <CustomRadioGroup
+            <CommRadioGroup
               items={[
                 { label: '온라인', value: 'O' },
                 { label: '오프라인', value: 'F' },
@@ -111,7 +111,7 @@ export default function GroupPlaceInput() {
             name="freq_type"
             control={control}
             render={({ field: { value, onChange } }) => (
-              <CustomRadioGroup
+              <CommRadioGroup
                 items={[
                   { label: '정기적', value: 'R' },
                   { label: '비정기적', value: 'I' },
@@ -132,7 +132,7 @@ export default function GroupPlaceInput() {
 
           {freqType === 'R' && (
             <View>
-              <CustomRadioGroup
+              <CommRadioGroup
                 items={[
                   { label: '매주', value: '매주' },
                   { label: '격주', value: '격주' },

@@ -9,13 +9,13 @@ import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } fr
 import IconCamera from '@/assets/images/icon_camera.svg';
 import IconCloseBtn from '@/assets/images/icon_close_btn.svg';
 
-type CustomImagePickerProps = {
+type CommImagePickerProps = {
   onChangeImages: (files: FileInfo[]) => void;
   maxCount?: number;
   imgList?: FileInfo[];
 };
 
-function CustomImagePicker({ onChangeImages, maxCount = 10, imgList = [] }: CustomImagePickerProps) {
+function CommImagePicker({ onChangeImages, maxCount = 10, imgList = [] }: CommImagePickerProps) {
   // 이미지를 뿌리기 위한 URI 배열과, API에서 반환받은 파일 정보 배열을 각각 관리
   const [imageUris, setImageUris] = useState<Array<string>>(imgList.map((file) => file.file_path));
   const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>(imgList);
@@ -203,4 +203,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CustomImagePicker;
+export default CommImagePicker;

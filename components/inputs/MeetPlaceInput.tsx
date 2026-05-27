@@ -1,4 +1,4 @@
-import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
+import CommRadioGroup from '@/components/comm/CommRadioGroup';
 import { COLOR, COMM_STYLES } from '@/constants';
 import { MeetInfo } from '@/types';
 import React, { useMemo, useState } from 'react';
@@ -60,7 +60,7 @@ export default function MeetPlaceInput() {
           name="place_type"
           control={control}
           render={({ field: { value, onChange } }) => (
-            <CustomRadioGroup
+            <CommRadioGroup
               items={[
                 { label: '온라인', value: 'O' },
                 { label: '오프라인', value: 'F' },

@@ -1,10 +1,10 @@
-import { COLOR, COMM_STYLES } from '@/constants';
+import { COMM_STYLES } from '@/constants';
 import { MeetInfo } from '@/types';
 import React, { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
-import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
+import CommRadioGroup from '@/components/comm/CommRadioGroup';
 import GenderSlider from '@/components/GenderSlider';
 
 export default function GenderRatioInput() {
@@ -19,7 +19,7 @@ export default function GenderRatioInput() {
         control={control}
         render={({ field: { onChange, value } }) => (
           <>
-            <CustomRadioGroup
+            <CommRadioGroup
               items={[
                 { label: '성비 무관', value: 'none' },
                 { label: '성비 지정', value: 'set' },

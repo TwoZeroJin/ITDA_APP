@@ -23,7 +23,7 @@ const TAB_PATHS: Record<string, string> = {
  * @param param
  * @returns 공통 바텀 고정 컴포넌트
  */
-function CustomBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
+function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
   const { checkAndNavigate } = useAuthRouter();
   return (
     <View style={styles.tabContainer}>
@@ -87,26 +87,22 @@ const styles = StyleSheet.create({
     alignItems        : 'center',
     height            : 60,
     paddingHorizontal : 10,
-    elevation         : 10,
-    shadowOffset      : { width: 0, height: -12 },
-    shadowOpacity     : 0.2,
-    shadowRadius      : 6,
     backgroundColor   : COLOR.COMM_WHITE,
+    shadowOffset      : { width: 0, height: -6 },
+    shadowOpacity     : 0.1,
+    shadowRadius      : 6,
     shadowColor       : COLOR.COMM_SHADOW,
+    elevation         : 10,
   },
   iconContainer : {
-    alignItems    : 'center',
+    alignItems        : 'center',
   },
   tabButton: {
-    flex        : 1,
+    flex              : 1,
   },
   tabButtonText: {
-    marginTop   : 6,
-  },
-  plusButtonWrapper: {
-    top     : -9,
-    zIndex  : 10,
+    marginTop         : 6,
   },
 })
 
-export default CustomBottomTabBar;
+export default CommBottomTabBar;

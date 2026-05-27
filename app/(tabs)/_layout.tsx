@@ -1,4 +1,4 @@
-import CustomBottomTabBar from '@/components/comm/CustomBottomTabBar';
+import CommBottomTabBar from '@/components/comm/CommBottomTabBar';
 import { Tabs } from 'expo-router';
 import React from 'react';
 import { Platform } from 'react-native';
@@ -7,7 +7,7 @@ export default function TabLayout() {
 
   return (
     <Tabs
-      tabBar={(props) => <CustomBottomTabBar {...props}/>}
+      tabBar={(props) => <CommBottomTabBar {...props}/>}
       screenOptions={{
         headerShown: false,
         tabBarStyle: Platform.select({

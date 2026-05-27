@@ -2,12 +2,15 @@ import { COLOR } from '@/constants';
 import { CodeInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
 import { useEffect, useState } from 'react';
-import { Image, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Image, FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
+interface CommCategoryListProps {
+  onCategorySelect?: (code_id: string) => void;
+}
 /**
  * 카테고리 리스트
  */
-export default function CommCategoryList() {
+export default function CommCategoryList({ onCategorySelect }: CommCategoryListProps) {
   const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
 
   useEffect(() => {
@@ -39,12 +42,17 @@ export default function CommCategoryList() {
                     .map((_, rowIdx) => (
                       <View key={rowIdx} style={styles.row}>
                         {pageItems.slice(rowIdx * 2, rowIdx * 2 + 2).map((item, colIdx) => (
-                          <View key={colIdx} style={{ alignItems: 'center' }}>
+                          <TouchableOpacity 
+                            key={colIdx} 
+                            style={{ alignItems: 'center' }} 
+                            onPress={() => onCategorySelect?.(item.code_id)}
+                            activeOpacity={0.6}
+                          >
                             <View style={styles.cell}>
                               <Image source={{ uri: item.code_image_url }} style={styles.image} />
                             </View>
                             <Text style={styles.categoryText}>{item.code_value}</Text>
-                          </View>
+                          </TouchableOpacity>
                         ))}
                       </View>
                     ))}

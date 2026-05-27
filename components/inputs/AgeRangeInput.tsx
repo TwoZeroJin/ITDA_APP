@@ -1,9 +1,9 @@
-import { COLOR, COMM_STYLES } from '@/constants';
+import { COMM_STYLES } from '@/constants';
 import React, { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
-import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
+import CommRadioGroup from '@/components/comm/CommRadioGroup';
 import AgeSlider from '@/components/AgeSlider';
 import { MeetInfo } from '@/types';
 
@@ -21,7 +21,7 @@ export default function AgeRangeInput() {
         control={control}
         render={({ field: { onChange, value } }) => (
           <>
-            <CustomRadioGroup
+            <CommRadioGroup
               items={[
                 { label: '나이 무관', value: 'none' },
                 { label: '나이 지정', value: 'set' },

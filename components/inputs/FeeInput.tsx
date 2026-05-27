@@ -1,5 +1,5 @@
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
-import CustomRadioGroup from '@/components/comm/CustomRadioGroup';
+import CommRadioGroup from '@/components/comm/CommRadioGroup';
 import { COLOR, COMM_STYLES } from '@/constants';
 import { CodeInfo, MeetInfo } from '@/types';
 import { getFeeList } from '@/utils/commUtil';
@@ -32,7 +32,7 @@ export default function FeeInput() {
         name="fee_yn"
         control={control}
         render={({ field: { value, onChange } }) => (
-          <CustomRadioGroup
+          <CommRadioGroup
             items={[
               { label: '없음', value: 'N' },
               { label: '있음', value: 'Y' },
