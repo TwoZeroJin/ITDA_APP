@@ -223,7 +223,8 @@ interface MeetReview {
   tag             : string;
   place_addr      : string;
   meet_id         : number;
-  mem_name        : string;
+  mem_nick        : string;
+  mem_image_url     : string;
   mem_id          : number;
   reg_sdate       : string;
   mod_sdate       : string;
@@ -231,23 +232,9 @@ interface MeetReview {
   thumb_url?      : string;
 
   // 중첩된 VO 객체 처리
-  memMeetListVO?: MyMeetInfo;
+  memMeetListVO?: MeetInfo;
 
   fileInfoVO? : FileInfo[];
-}
-/**
- * 내가 신청한 모임 정보
- * 후기작성가능한 모임 정보 조회
- */
-interface MyMeetInfo {
-  meet_id?        : number;
-  meet_name       : string;
-  place_name      : string;
-  place_addr      : string;
-  mem_id          : number;
-  mem_name        : string;
-  apply_ratio     : string;
-  thumb_url  : string;
 }
 
 /**
@@ -373,4 +360,4 @@ interface BannerData {
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, MyMeetInfo, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply };
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply };

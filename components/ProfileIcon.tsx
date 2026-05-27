@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { MemberInfo } from '@/types';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
+import { COLOR } from '@/constants';
 
 interface ProfileIconProps {
   mem_image_url?: string;

@@ -9,14 +9,15 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-import { CodeInfo, MyMeetInfo, SearchParams } from '@/types';
+import { CodeInfo, MeetInfo, SearchParams } from '@/types';
 import { router } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
 import { COLOR } from '@/constants';
 import { getCategoryList } from '@/utils/commUtil';
-import CommunityMeet from '@/components/CommunityMeet';
 import { useMyMeetListNoReview } from '@/hooks/queries/useCommunity';
 import CommHeader from '@/components/comm/CommHeader';
+import CommMeetCard from '@/components/comm/CommMeetCard';
+import { useMemberLike } from '@/hooks/queries/useMember';
+
 const { width } = Dimensions.get('window');
 
 export default function chooseMeet() {
@@ -25,6 +26,7 @@ export default function chooseMeet() {
   recommendPage.push({
     data :  categoryList.slice(0, 3)
   })
+  const memberLike = useMemberLike();
 
   // ✅ 1. API 호출 (페이징 없는 버전)
   const { results, isLoading, isError } = useMyMeetListNoReview({
@@ -34,7 +36,28 @@ export default function chooseMeet() {
     sch_condition: '3', // API에서 요구하는 조건이 있다면 추가
   } as SearchParams);  
 
-  useEffect(() => {
+// 좋아요 처리
+  const handleLikePress = (item: MeetInfo) => {
+    if (!item.meet_id) {
+      return;
+    }
+
+    memberLike.mutate(
+      {
+        target_id   : item.meet_id,
+        target_type : 'M',
+        flag        : item.like_yn === 'N',
+      },
+      {
+        onSuccess: () => {
+          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+        },
+        onError: () => {
+        },
+      },
+    );
+  };
+    useEffect(() => {
     const fetchData = async () => {
       // SecureStore에서 카테고리 코드 목록 가져오기
       setCategoryList(await getCategoryList());
@@ -82,7 +105,9 @@ export default function chooseMeet() {
               params: { data: JSON.stringify(item) }
             })}
           >
-            <CommunityMeet data={item as MyMeetInfo} />
+          <View style={styles.meetContainer} >
+              <CommMeetCard item={item as MeetInfo} onLikePress={(item) => handleLikePress(item)} backgroundColor="grey"/>
+          </View>
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.meet_id?.toString() || ''} // meet_id가 없을 경우 대비
@@ -99,6 +124,10 @@ export default function chooseMeet() {
 }
 
 const styles = StyleSheet.create({
+  meetContainer: {
+    paddingLeft: 20,
+    paddingTop: 10,
+  },
   emptyContainer: {
     flex: 1,
     marginTop: 100,
