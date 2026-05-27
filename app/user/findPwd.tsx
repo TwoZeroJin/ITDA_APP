@@ -68,9 +68,9 @@ export default function FindPwdScreen() {
 
           <FormProvider {...formValues}>
             <View style={COMM_STYLES.findInputContainer}>
-              <NameInput />
-              <IdInput />
-              <MemEmailInput />
+              <NameInput focusField="mem_email"/>
+              <MemEmailInput focusField="login_id"/>
+              <IdInput/>
             </View>
           </FormProvider>
         </View>

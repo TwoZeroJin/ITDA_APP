@@ -5,7 +5,12 @@ import { Controller, useFormContext } from 'react-hook-form';
 const sanitizeEmail = (data: string) => data.replace(/\s/g, '');
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
-function MemEmailInput() {
+interface MemEmailInputProps {
+  focusField?: string;
+  extraValidate?: (email: string) => true | string;
+}
+
+function MemEmailInput({ focusField = "", extraValidate }: MemEmailInputProps) {
   const { control, setFocus } = useFormContext();
   return (
     <Controller
@@ -23,20 +28,24 @@ function MemEmailInput() {
             return '이메일 형식이 올바르지 않습니다. (예: example@example.com)';
           }
 
-          return true;
+          if (extraValidate) {
+            return extraValidate(email);
+          }
+
         }
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({field: {ref, onChange, value}, fieldState: {error}}) => (
         <InputField
+          ref={ref}
           label="이메일"
           placeholder="이메일을 입력하세요."
           inputMode="email"
           keyboardType="email-address"
           autoCapitalize='none'
-          returnKeyType='done'
+          returnKeyType={focusField ? 'next' : 'done'}
           value={value ?? ''}
           onChangeText={(text) => onChange(sanitizeEmail(text))}
-          onSubmitEditing={() => setFocus("login_id")}
+          onSubmitEditing={() => focusField ? setFocus(focusField) : undefined}
           error={error?.message}
         />
       )}

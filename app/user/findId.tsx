@@ -52,7 +52,7 @@ export default function FindIdScreen() {
 
           <FormProvider {...formValues}>
             <View style={COMM_STYLES.findInputContainer}>
-              <NameInput />
+              <NameInput focusField="mem_email" />
               <MemEmailInput />
             </View>
           </FormProvider>

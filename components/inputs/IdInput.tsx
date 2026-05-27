@@ -4,7 +4,11 @@ import { Controller, useFormContext } from 'react-hook-form';
 
 const sanitizeLoginId = (value: string) => value.replace(/[^a-zA-Z0-9]/g, '');
 
-function IdInput() {
+interface IdInputProps {
+  focusField?: string;
+}
+
+function IdInput({ focusField = "" }: IdInputProps) {
   const {control, setFocus} = useFormContext();
   return (
     <Controller
@@ -21,15 +25,16 @@ function IdInput() {
           }
         }
       }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({field: {ref, onChange, value}, fieldState: {error}}) => (
         <InputField
+          ref={ref}
           label="아이디" 
           placeholder="아이디를 입력하세요."
           inputMode="email"
           autoCapitalize='none'
-          returnKeyType='next'
+          returnKeyType={focusField ? 'next' : 'done'}
           submitBehavior='submit'
-          onSubmitEditing={() => setFocus("login_pwd")}
+          onSubmitEditing={() => focusField ? setFocus(focusField) : undefined}
           value={value}
           onChangeText={(text) => onChange(sanitizeLoginId(text))}
           error={error?.message}

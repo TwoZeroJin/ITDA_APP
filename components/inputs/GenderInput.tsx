@@ -22,7 +22,7 @@ function GenderInput() {
           }
         },
       }}
-      render={({ field: { onChange, value }, fieldState: { error } }) => (
+      render={({ field: {onChange, value}, fieldState: { error } }) => (
         <View>
           <Text style={styles.label}>성별</Text>
           <View style={styles.container}>

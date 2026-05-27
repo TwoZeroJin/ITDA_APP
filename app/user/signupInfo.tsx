@@ -73,10 +73,10 @@ export default function SignupInfoScreen() {
             <ChurchTmNmInput/>
             <NameInput/>
             <MemTelnoInput/>
-            <MemEmailInput/>
+            <MemEmailInput focusField="login_id"/>
             <GenderInput/>
             <BirthInput/>
-            <IdInput/>
+            <IdInput focusField="mem_nick"/>
             <NickNameInput/>
             <PasswordInput returnKeyType="next"/>
             <PasswordConfirmInput/>

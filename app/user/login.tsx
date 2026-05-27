@@ -44,7 +44,7 @@ export default function LoginScreen() {
         </View>
         <FormProvider {...loginForm}>
           <View style={styles.inputContainer}>
-            <IdInput />
+            <IdInput focusField="login_pwd"/>
             <PasswordInput />
           </View>
           <View style={styles.buttonContainer}>
