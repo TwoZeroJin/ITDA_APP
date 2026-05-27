@@ -9,6 +9,9 @@ import { useEffect, useState } from 'react';
 import { DevSettings, Image } from 'react-native';
 import { AxiosError } from 'axios';
 
+/**
+ * 초기 정보 조회
+ */
 function useMainEntry() {
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const { data, isError, isSuccess, error, refetch } = useQuery({
@@ -108,6 +111,9 @@ function useMainEntry() {
   };
 }
 
+/**
+ * 메인 데이터 조회
+ */
 function useMainData() {
   const query = useQuery({
     queryFn: mainData,

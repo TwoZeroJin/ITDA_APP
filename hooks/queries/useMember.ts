@@ -40,8 +40,8 @@ function useMemberDetail() {
  * 회원 정보 수정
  */
 function useMemberUpdate() {
-    const { setLoading } = useLoading();
-    return useMutation({
+  const { setLoading } = useLoading();
+  return useMutation({
     mutationFn: async (body : MemberInfo) => {
       setLoading(true);
       return memberUpdate(body);
@@ -55,7 +55,6 @@ function useMemberUpdate() {
       setLoading(false);
     },
   });
-
 }
 
 /**
@@ -131,9 +130,7 @@ function useMemberMyGroupListPaging(searchParams: SearchParams) {
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
   });
-  
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
-
   return { ...query, results };
 }
 
@@ -145,9 +142,7 @@ function useMemberApplyGroupListPaging(searchParams: SearchParams) {
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
   });
-  
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
-
   return { ...query, results };
 }
 

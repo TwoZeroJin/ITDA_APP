@@ -1,83 +1,93 @@
 import CommBottomButton from "@/components/comm/CommBottomButton";
+import CommHeader from "@/components/comm/CommHeader";
 import IdInput from "@/components/inputs/IdInput";
 import MemEmailInput from "@/components/inputs/MemEmailInput";
 import NameInput from "@/components/inputs/NameInput";
-import { COLOR } from "@/constants";
+import CustomDialog from "@/components/modal/CustomDialog";
+import { COMM_STYLES } from "@/constants";
+import { useFindInfo } from "@/hooks/queries/useAuth";
 import { router } from "expo-router";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
-
-type FindPwdForm = {
-  mem_name  : string;
-  login_id  : string;
-  mem_email : string;
-};
+import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
 
 export default function FindPwdScreen() {
   const [isSuccess, setIsSuccess] = useState(false);
-
-  const findPwdForm = useForm<FindPwdForm>({
+  const [isSuccessForVerify, setIsSuccessForVerify] = useState(false);
+  const [isSuccessForUpdate, setIsSuccessForUpdate] = useState(false);
+  const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const { findPwdMutation, verifyCodeMutation, updatePwdMutation } = useFindInfo();
+  // 비밀번호 찾기
+  const formValues = useForm({
     defaultValues: {
       mem_name  : "",
       login_id  : "",
       mem_email : "",
     },
   });
+  // 인증번호 검증
+  const verifyFormValues = useForm({
+    defaultValues: {
+      verifyCode: "",
+    },
+  });
+  // 비밀번호 변경
+  const updateFormValues = useForm({
+    defaultValues: {
+      mem_id    : "",
+      login_pwd : "",
+    },
+  });
 
-  const onSubmit = (formValues: FindPwdForm) => {
-    // TODO: API 연동 - 200 응답 시 setIsSuccess(true) 호출
-    console.log(formValues);
-    // setIsSuccess(true);
+  // 비밀번호 찾기
+  const onSubmit = (formValues: any) => {
+    findPwdMutation.mutate(formValues, {
+      onSuccess: (result) => {
+        if(result.ret_code != 200){
+          setErrorMessage(result.ret_msg);
+          setIsErrorDialogVisible(true);
+        } else {
+          setIsSuccess(true);
+        }
+      },
+    });
   };
-
-  if (isSuccess) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>등록된 이메일로{"\n"}비밀번호 재설정 메일이 전송되었습니다.</Text>
-        <CommBottomButton
-          label="로그인 하기"
-          onPress={() => router.dismissAll()}
-        />
-      </View>
-    );
-  }
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Text style={styles.title}>이름, 아이디, 이메일을{"\n"}입력해 주세요.</Text>
-
-        <FormProvider {...findPwdForm}>
-          <View style={styles.inputContainer}>
-            <NameInput />
-            <IdInput />
-            <MemEmailInput />
+      <View style={COMM_STYLES.container}>
+        <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="비밀번호 찾기"/>
+        {isSuccess ? (
+          <View style={COMM_STYLES.findContentContainer}>
+            <Text style={COMM_STYLES.findTitle}>등록된 이메일로{"\n"}인증번호가 전송되었습니다.{"\n"}인증번호를 입력해 주세요.</Text>
           </View>
-        </FormProvider>
+        ) : (
+        <View style={COMM_STYLES.findContentContainer}>
+          <Text style={COMM_STYLES.findTitle}>등록된 이름, 아이디, 이메일을{"\n"}입력해 주세요.</Text>
+
+          <FormProvider {...formValues}>
+            <View style={COMM_STYLES.findInputContainer}>
+              <NameInput />
+              <IdInput />
+              <MemEmailInput />
+            </View>
+          </FormProvider>
+        </View>
+        )}
+
         <CommBottomButton
-          label="다음"
-          onPress={findPwdForm.handleSubmit(onSubmit)}
+          label={isSuccess ? "로그인 하기" : "다음"}
+          onPress={isSuccess ? () => router.dismissAll() : formValues.handleSubmit(onSubmit)}
+        />
+
+        <CustomDialog
+          visible={isErrorDialogVisible}
+          content={`${errorMessage}`}
+          cancelLabel="닫기"
+          onCancel={() => setIsErrorDialogVisible(false)}
         />
       </View>
     </TouchableWithoutFeedback>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex              : 1,
-    marginHorizontal  : 25,
-    paddingTop        : 36,
-  },
-  title: {
-    fontSize          : 24,
-    fontFamily        : "Pretendard-Bold",
-    color             : COLOR.COLOR_1A1A1A,
-    lineHeight        : 34,
-    marginBottom      : 36,
-  },
-  inputContainer: {
-    gap               : 20,
-  },
-});

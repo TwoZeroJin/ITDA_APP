@@ -7,8 +7,8 @@ interface CustomDialogProps {
   title?        : string;
   content       : string;
   textInput?    : string| null |undefined;
-  onConfirm     : (answer: string) => void;
-  onCancel      : () => void;
+  onConfirm?    : (answer: string) => void;
+  onCancel?     : () => void;
   child?        : ReactNode;
   confirmLabel? : string;
   cancelLabel?  : string;
@@ -64,7 +64,7 @@ function CustomDialog({ visible, title, content, textInput, onConfirm, onCancel,
 
               {hasConfirmButton && (
                 <TouchableOpacity
-                  onPress={() => onConfirm(answer)}
+                  onPress={() => onConfirm?.(answer)}
                   style={[
                     styles.button,
                     {
@@ -87,64 +87,66 @@ function CustomDialog({ visible, title, content, textInput, onConfirm, onCancel,
 
 const styles = StyleSheet.create({
   background: {
-    flex            : 1,
-    backgroundColor : COLOR.COMM_MODAL_BG,
-    justifyContent  : "center",
-    alignItems      : "center",
+    flex              : 1,
+    backgroundColor   : COLOR.COMM_MODAL_BG,
+    justifyContent    : "center",
+    alignItems        : "center",
+    paddingHorizontal : 32,
   },
   container: {
     backgroundColor   : COLOR.COMM_WHITE,
     borderRadius      : 10,
     marginHorizontal  : 16,
+    width             : "100%",
   },
   titleText: {
-    fontSize        : 14,
-    fontWeight      : "light",
-    marginBottom    : 10,
-    alignSelf       : "center",
-    color           : COLOR.TEXT_DEFAULT,
+    fontSize          : 14,
+    fontFamily        : "Pretendard-Light",
+    marginBottom      : 10,
+    alignSelf         : "center",
+    color             : COLOR.TEXT_DEFAULT,
   },
   contentText: {
-    fontSize        : 24,
-    alignSelf       : "center",
-    fontWeight      : "bold",
+    fontSize          : 24,
+    fontFamily        : "Pretendard-Bold",
+    alignSelf         : "center",
   },
   buttonContainer: {
-    flexDirection   : "row",
-    alignItems      : "center",
+    flexDirection     : "row",
+    alignItems        : "center",
   },
   button: {
-    flex            : 1,
-    height          : 55,
-    justifyContent  : "center",
-    alignItems      : "center",
+    flex              : 1,
+    height            : 55,
+    justifyContent    : "center",
+    alignItems        : "center",
   },
   cancelText: {
-    fontSize        : 16,
-    color           : COLOR.TEXT_DEFAULT,
-    fontWeight      : "medium",
-    alignSelf       : "center",
+    fontSize          : 16,
+    fontFamily        : "Pretendard-Medium",
+    color             : COLOR.TEXT_DEFAULT,
+    alignSelf         : "center",
   },
   confirmText: {
-    fontSize        : 16,
-    color           : COLOR.COMM_WHITE,
-    fontWeight      : "medium",
-    alignSelf       : "center",
+    fontSize          : 16,
+    fontFamily        : "Pretendard-Medium",
+    color             : COLOR.COMM_WHITE,
+    alignSelf         : "center",
   },
   textInput: {
-    width: '100%',
-    height: 50, // 입력창 높이
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E5E5EA',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingTop: 12, // multiline 대응용 위쪽 패딩
-    paddingBottom: 12,
-    marginTop: 12,
-    fontSize: 15,
-    color: '#1C1C1E',
-    textAlignVertical: 'top', // Android에서 텍스트가 상단부터 찍히도록 설정
+    width             : '100%',
+    height            : 50, // 입력창 높이
+    backgroundColor   : '#FFFFFF',
+    borderWidth       : 1,
+    borderColor       : '#E5E5EA',
+    borderRadius      : 12,
+    paddingHorizontal : 16,
+    paddingTop        : 12, // multiline 대응용 위쪽 패딩
+    paddingBottom     : 12,
+    marginTop         : 12,
+    fontSize          : 15,
+    color             : '#1C1C1E',
+    textAlignVertical : 'top', // Android에서 텍스트가 상단부터 찍히도록 설정
   },  
 });
 

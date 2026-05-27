@@ -6,8 +6,6 @@ import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 
 /**
  * 채팅방 룸 조회
- * @param searchParams 
- * @returns 
  */
 function useChatRoomListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
@@ -25,8 +23,6 @@ function useChatRoomListPaging(searchParams: SearchParams) {
 
 /**
  * 채팅방 메시지 조회
- * @param searchParams 
- * @returns 
  */
 function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
   const query = useInfiniteQuery({

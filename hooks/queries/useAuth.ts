@@ -1,5 +1,5 @@
 import queryClient from '@/api/queryClient';
-import { userAutoLogin, userLogin, userSignup } from '@/api/user';
+import { userAutoLogin, userFindId, userFindPwd, userLogin, userSignup, userUpdatePwd, userVerifyCode } from '@/api/user';
 import { useLoading } from '@/contexts/LoadingContext';
 import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { ApiResult, MemberInfo, SignupInfo, Token, User } from '@/types';
@@ -18,6 +18,9 @@ type ResponseError = AxiosError<{
   error       : string;
 }>
 
+/**
+ * 회원가입
+ */
 function useSignup() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -50,6 +53,9 @@ function useSignup() {
   });
 }
 
+/**
+ * 로그인
+ */
 function useLogin() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -85,6 +91,9 @@ function useLogin() {
   });
 }
 
+/**
+ * 자동 로그인
+ */
 function useAutoLogin(options = {enabled : false}) {
   const { data, isError, isSuccess } = useQuery({
     queryFn: userAutoLogin,
@@ -116,6 +125,90 @@ function useAutoLogin(options = {enabled : false}) {
   return { data };
 }
 
+/**
+ * 아이디 찾기
+ */
+function useFindId() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : MemberInfo) => {
+      setLoading(true);
+      return userFindId(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_UPDATE],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+/**
+ * 비밀번호 찾기
+ */
+function useFindPwd() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : MemberInfo) => {
+      setLoading(true);
+      return userFindPwd(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_UPDATE],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+/**
+ * 인증 코드 검증
+ */
+function useVerifyCode() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (verifyCode: string) => {
+      setLoading(true);
+      return userVerifyCode(verifyCode);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_UPDATE],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+/**
+ * 비밀번호 변경
+ */
+function useUpdatePwd() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body: MemberInfo & { login_pwd: string }) => {
+      setLoading(true);
+      return userUpdatePwd(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_UPDATE],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
 function useAuth() {
   const loginMutation     = useLogin();
   const signupMutation    = useSignup();
@@ -129,6 +222,15 @@ function useAuth() {
   }
 
   return { loginMutation, signupMutation, logout };
+}
+
+function useFindInfo() {
+  const findIdMutation      = useFindId();
+  const findPwdMutation     = useFindPwd();
+  const verifyCodeMutation  = useVerifyCode();
+  const updatePwdMutation   = useUpdatePwd();
+
+  return { findIdMutation, findPwdMutation, verifyCodeMutation, updatePwdMutation };
 }
 
 async function deleteSecureStoreForMember() {
@@ -151,4 +253,4 @@ async function deleteSecureStoreForMember() {
   ]);
 }
 
-export { useAuth, useAutoLogin };
+export { useAuth, useAutoLogin, useFindInfo };

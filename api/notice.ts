@@ -4,8 +4,6 @@ import { API_URL } from '@/constants';
 
 /**
  * 공지사항 목록 조회
- * @param searchParams 검색 조건
- * @returns 공지사항 목록
  */
 async function noticeList(searchParams: SearchParams): Promise<ApiResult<BoardNotice[]>> {
   const { data } = await axiosInstance.post(API_URL.NOTICE_LIST, searchParams);
@@ -14,8 +12,7 @@ async function noticeList(searchParams: SearchParams): Promise<ApiResult<BoardNo
 
 /**
  * 공지사항 조회
- * @param noticeId 공지사항 ID
- * @returns 공지사항 정보
+ * @param noticeId
  */
 async function noticeView(noticeId: number): Promise<ApiResult<BoardNotice>> {
   const { data } = await axiosInstance.post(API_URL.NOTICE_VIEW, { noti_id : noticeId });

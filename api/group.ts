@@ -4,8 +4,6 @@ import { API_URL } from '@/constants';
 
 /**
  * 클럽 목록 조회
- * @param searchParams 
- * @returns 클럽 정보
  */
 async function groupList(searchParams: SearchParams): Promise<ApiResult<GroupInfo[]>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_LIST, searchParams);
@@ -15,7 +13,6 @@ async function groupList(searchParams: SearchParams): Promise<ApiResult<GroupInf
 /**
  * 클럽 상세 정보 조회
  * @param groupId 
- * @returns 클럽 정보
  */
 async function groupView(groupId: number): Promise<ApiResult<GroupInfo & { img_list?: FileInfo[] }>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_VIEW, { group_id : groupId });
@@ -24,8 +21,6 @@ async function groupView(groupId: number): Promise<ApiResult<GroupInfo & { img_l
 
 /**
  * 클럽 등록
- * @param body 
- * @returns 
  */
 async function groupInsert(body : GroupInfo): Promise<ApiResult<null>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_INSERT, body);
@@ -34,8 +29,6 @@ async function groupInsert(body : GroupInfo): Promise<ApiResult<null>> {
 
 /**
  * 클럽 수정
- * @param body 
- * @returns 
  */
 async function groupUpdate(body : GroupInfo): Promise<ApiResult<null>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_UPDATE, body);
@@ -45,7 +38,6 @@ async function groupUpdate(body : GroupInfo): Promise<ApiResult<null>> {
 /**
  * 클럽 삭제
  * @param groupId 
- * @returns 
  */
 async function groupDelete(groupId: number): Promise<ApiResult<null>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_DELETE, { group_id : groupId });
@@ -54,8 +46,6 @@ async function groupDelete(groupId: number): Promise<ApiResult<null>> {
 
 /**
  * 클럽 신청
- * @param body 
- * @returns 
  */
 async function groupApply(body: GroupApply): Promise<ApiResult<GroupApply>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_APPLY, body);
@@ -64,8 +54,6 @@ async function groupApply(body: GroupApply): Promise<ApiResult<GroupApply>> {
 
 /**
  * 클럽 신청 취소
- * @param body 
- * @returns 
  */
 async function groupCancelApply(body: GroupApply): Promise<ApiResult<GroupApply>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_CANCEL_APPLY, body);
@@ -74,7 +62,6 @@ async function groupCancelApply(body: GroupApply): Promise<ApiResult<GroupApply>
 
 /**
  * 클럽 신청 승인
- * @returns 
  */
 async function groupConfirm(): Promise<ApiResult<null>> {
   const { data } = await axiosInstance.post(API_URL.GROUP_CONFIRM);

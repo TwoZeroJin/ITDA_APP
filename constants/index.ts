@@ -162,6 +162,10 @@ const API_URL = {
   USER_SIGNUP             : "/user/signup",
   USER_LOGIN              : "/user/login",
   USER_AUTO_LOGIN         : "/user/auto_login",
+  USER_FIND_ID            : "/user/find_id",
+  USER_FIND_PWD           : "/user/find_pwd",
+  USER_VERIFY_CODE        : "/user/verify_code",
+  USER_UPDATE_PWD         : "/user/update_pwd",
   USER_REFRESH_TOKEN      : "/user/refresh_token",
   MEMBER_DETAIL           : "/member/detail",
   MEMBER_UPDATE           : "/member/update",
@@ -298,6 +302,21 @@ const COMM_STYLES = StyleSheet.create({
     marginHorizontal    : 20,
     paddingTop          : 10,
     gap                 : 16,
+  },
+  // 로그인 정보 찾기 공통 스타일
+  findContentContainer: {
+    flex              : 1,
+    paddingHorizontal : 20,
+  },
+  findTitle: {
+    fontSize          : 24,
+    fontFamily        : "Pretendard-Bold",
+    color             : COLOR.COLOR_1A1A1A,
+    lineHeight        : 34,
+    marginBottom      : 36,
+  },
+  findInputContainer: {
+    gap               : 20,
   },
 });
 

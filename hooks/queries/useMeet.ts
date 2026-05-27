@@ -5,6 +5,7 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { MeetApply, MeetInfo, SearchParams } from "@/types";
 import { getNextPageParamFromPaging } from "@/utils/commUtil";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 // 모임 목록 조회 (무한 스크롤)
 function useMeetListPaging(searchParams: SearchParams) {
@@ -59,16 +60,18 @@ function useMeetUpdate() {
   });
 }
 
-//3. 소모임 상세 조회
+// 소모임 상세 조회
 function useMeetDetailView(meetId: number) {
-
+  const { setLoading } = useLoading();
   const query = useQuery({
-    // queryKey에 params를 넣어 조건이 바뀔 때마다 다시 조회되도록 합니다.
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_VIEW, meetId],
     queryFn: () => meetView(meetId),
   });  
-  // useInfiniteQuery의 'pages' 구조가 아니므로 바로 data를 추출합니다.
-  // 서버 응답 구조가 { data: [...] } 형태라면 아래와 같이 가공합니다.
+
+  useEffect(() => {
+    setLoading(query.isFetching);
+  }, [query.isFetching, setLoading]);
+
   const results = query.data?.data;
 
   return { ...query, results };    
