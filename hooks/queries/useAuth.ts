@@ -1,5 +1,5 @@
 import queryClient from '@/api/queryClient';
-import { userAutoLogin, userFindId, userFindPwd, userLogin, userSignup, userUpdatePwd, userVerifyCode } from '@/api/user';
+import { userAutoLogin, userCheckDup, userFindId, userFindPwd, userLogin, userSignup, userUpdatePwd, userVerifyCode } from '@/api/user';
 import { useLoading } from '@/contexts/LoadingContext';
 import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { ApiResult, MemberInfo, SignupInfo, Token, User } from '@/types';
@@ -209,6 +209,27 @@ function useUpdatePwd() {
   });
 }
 
+/**
+ * 중복 확인
+ */
+function useCheckDup() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body: MemberInfo) => {
+      setLoading(true);
+      return userCheckDup(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_CHECK_DUP],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
 function useAuth() {
   const loginMutation     = useLogin();
   const signupMutation    = useSignup();
@@ -227,10 +248,11 @@ function useAuth() {
 function useFindInfo() {
   const findIdMutation      = useFindId();
   const findPwdMutation     = useFindPwd();
+  const checkDupMutation    = useCheckDup();
   const verifyCodeMutation  = useVerifyCode();
   const updatePwdMutation   = useUpdatePwd();
 
-  return { findIdMutation, findPwdMutation, verifyCodeMutation, updatePwdMutation };
+  return { findIdMutation, findPwdMutation, checkDupMutation, verifyCodeMutation, updatePwdMutation };
 }
 
 async function deleteSecureStoreForMember() {

@@ -132,7 +132,7 @@ export default function MemberUpdateScreen() {
             <ChurchSelectBox/>
             <ChurchTmNmInput/>
             <NameInput/>
-            <MemTelnoInput/>
+            {/* <MemTelnoInput/> */}
             <MemEmailInput/>
             <GenderInput/>
             <BirthInput/>

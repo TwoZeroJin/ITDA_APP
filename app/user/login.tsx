@@ -16,8 +16,8 @@ export default function LoginScreen() {
   const loginForm = useForm<User>({
     defaultValues: {
       // 테스트 고정 값
-      login_id    : "ghong",
-      login_pwd   : "1111",
+      login_id    : "",
+      login_pwd   : "",
     }
   });
 

@@ -66,4 +66,12 @@ async function userRefreshToken(): Promise<ApiResult<Token>> {
   return data;
 }
 
-export { userAutoLogin, userLogin, userSignup, userFindId, userFindPwd, userVerifyCode, userUpdatePwd, userRefreshToken };
+/**
+ * 중복 확인
+ */
+async function userCheckDup(body: MemberInfo): Promise<ApiResult<null>> {
+  const { data } = await axiosInstance.post(API_URL.USER_CHECK_DUP, body);
+  return data;
+}
+
+export { userAutoLogin, userLogin, userSignup, userFindId, userFindPwd, userVerifyCode, userUpdatePwd, userRefreshToken, userCheckDup };

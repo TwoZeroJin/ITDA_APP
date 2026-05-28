@@ -72,7 +72,7 @@ export default function SignupInfoScreen() {
             <ChurchSelectBox/>
             <ChurchTmNmInput/>
             <NameInput/>
-            <MemTelnoInput/>
+            {/* <MemTelnoInput/> */}
             <MemEmailInput focusField="login_id"/>
             <GenderInput/>
             <BirthInput/>
