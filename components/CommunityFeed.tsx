@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { MeetInfo, MeetReview} from '@/types';
 import { useReviewDelete } from '@/hooks/queries/useCommunity';
-import queryClient from '@/api/queryClient';
+import ImageCarousel from "@/components/comm/ImageCarousel";
 import { router } from 'expo-router';
 import PlaceLocationBox from './PlaceLocationBox';
 import CommMeetCard from './comm/CommMeetCard';
@@ -170,6 +170,14 @@ export default function CommunityFeed({data, memId}: communityFeedProps) {
 
         {/* 이미지 슬라이더 영역 */}
         {imageList.length > 0 && (
+          <View style={styles.imageCarousel} >
+            <ImageCarousel
+              images={imageList?.length ? imageList.map((file) => file.file_path) : []}
+              height={390}
+            />
+          </View>
+        )}
+        {/* {imageList.length > 0 && (
           <View style={styles.imageSliderContainer}>
             <FlatList
               data={imageList}
@@ -185,7 +193,7 @@ export default function CommunityFeed({data, memId}: communityFeedProps) {
 //                console.log(`[디버깅] 경로값 확인:`, item?.file_path);
 
                 return (
-                  <Image
+          <Image
                     source={{ uri: item.file_path }}
                     style={styles.feedImage}
                     resizeMode="cover"
@@ -200,7 +208,7 @@ export default function CommunityFeed({data, memId}: communityFeedProps) {
           </View>
         )}
         {/* ✅ 2. 이미지 밖으로 나온 인디케이터 (이미지 아래, 모임정보 위에 위치) */}
-        {imageList.length > 1 && (
+        {/* {imageList.length > 1 && (
           <View style={styles.outsideIndicatorContainer}>
             {imageList.map((_, index) => (
               <View
@@ -212,7 +220,7 @@ export default function CommunityFeed({data, memId}: communityFeedProps) {
               />
             ))}
           </View>
-        )}
+        )}  */}
 
         {/* 피드에 모임정보가  존재할 때만 컴포넌트를 렌더링 */}
         <View style={styles.meetContainer} >
@@ -257,6 +265,9 @@ export default function CommunityFeed({data, memId}: communityFeedProps) {
 }
 
 const styles = StyleSheet.create({
+  imageCarousel: {
+    marginBottom:10
+  },
   profileScale: {
     // 원래 60짜리 크기를 0.6배로 축소 (60 * 0.6 = 36)
     transform: [{ scale: 0.6 }], 

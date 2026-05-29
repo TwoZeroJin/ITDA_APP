@@ -44,6 +44,8 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
   // 💡 2. [검색 기능 통합] 중복 제거 및 단일 요청 보장
   const handleSearch = async (keyword: string) => {
     const trimmedKeyword = keyword.trim();
+    // 화면 입력창 동기화
+    setInputText(trimmedKeyword);
 
     // ✅ 검색어가 아예 없는 빈 값 상태라면 유효성 검사를 건너뛰고 전체 조회를 처리합니다.
     if (!trimmedKeyword) {
@@ -58,8 +60,6 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
       return; // ❌ 조건 통과 못 하면 차단
     }
 
-    // 화면 입력창 동기화
-    setInputText(trimmedKeyword);
     
     // ✅ [핵심] 부모 컴포넌트의 페이징 리셋 및 API 요청은 여기서 '딱 한 번만' 호출합니다.
     console.log('Selected category1 :', trimmedKeyword); 

@@ -123,11 +123,8 @@ export default function SocialClassLayout({ activeType }: { activeType: 'social'
     console.log('Selected category code_id:', searchKey); // ✅ 선택된 카테고리 코드 확인 로그
 
     setSelectedCategory('');
-    if (searchKey === searchKey) {
-      refetch(); // 👈 리액트 쿼리에게 강제로 새로고침하라고 명령합니다 (0번 페이지부터 다시 조회)
-      return;
-    }
     setSearchKey(searchKey);
+    refetch(); // 👈 리액트 쿼리에게 강제로 새로고침하라고 명령합니다 (0번 페이지부터 다시 조회)
   };
 
   return (
