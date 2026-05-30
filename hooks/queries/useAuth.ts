@@ -64,12 +64,7 @@ function useLogin() {
       return userLogin(body);
     },
     onSuccess: async (result: ApiResult<MemberInfo & Token>) => {
-        if (result.ret_code != 200) {
-        showToast({
-          text1: result.ret_msg || '로그인 응답 데이터가 없습니다.'
-        });
-      }
-      else {
+      if (result.ret_code == 200) {
         // 회원 정보 SecureStore에 저장
         await saveMemberInfo(result.data);
         MqttUtil.subscribeTopicList(result.data?.topic_list ?? []);
@@ -173,9 +168,9 @@ function useFindPwd() {
 function useVerifyCode() {
   const { setLoading } = useLoading();
   return useMutation({
-    mutationFn: async (verifyCode: string) => {
+    mutationFn: async ({ verify_code, mem_id }: { verify_code: string; mem_id: number }) => {
       setLoading(true);
-      return userVerifyCode(verifyCode);
+      return userVerifyCode(verify_code, mem_id);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -194,7 +189,7 @@ function useVerifyCode() {
 function useUpdatePwd() {
   const { setLoading } = useLoading();
   return useMutation({
-    mutationFn: async (body: MemberInfo & { login_pwd: string }) => {
+    mutationFn: async (body: User & { mem_id: number }) => {
       setLoading(true);
       return userUpdatePwd(body);
     },

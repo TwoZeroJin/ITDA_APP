@@ -37,7 +37,7 @@ async function userFindId(body: MemberInfo): Promise<ApiResult<null>> {
 /**
  * 비밀번호 찾기 (이름, 이메일, 로그인 ID 입력, Email로 전송 SNS로그인일 경우 후 처리)
  */
-async function userFindPwd(body: MemberInfo): Promise<ApiResult<null>> {
+async function userFindPwd(body: MemberInfo): Promise<ApiResult<{ mem_id: number }>> {
   const { data } = await axiosInstance.post(API_URL.USER_FIND_PWD, body);
   return data;
 }
@@ -45,15 +45,15 @@ async function userFindPwd(body: MemberInfo): Promise<ApiResult<null>> {
 /**
  * 인증 코드 검증 (이메일로 전송된 인증 코드 검증, 서버에서 RequestParam으로 받음)
  */
-async function userVerifyCode(verifyCode: string): Promise<ApiResult<{ mem_id: number }>> {
-  const { data } = await axiosInstance.post(API_URL.USER_VERIFY_CODE, null, { params: { verify_code: verifyCode } });
+async function userVerifyCode(verify_code: string, mem_id: number): Promise<ApiResult<{ mem_id: number }>> {
+  const { data } = await axiosInstance.post(API_URL.USER_VERIFY_CODE, null, { params: { verify_code: verify_code, mem_id: mem_id } });
   return data;
 }
 
 /**
  * 비밀번호 변경 (인증 코드 검증 후 받은 mem_id, 새 비밀번호 입력으로 업데이트)
  */
-async function userUpdatePwd(body: MemberInfo & { login_pwd: string }): Promise<ApiResult<null>> {
+async function userUpdatePwd(body: User & { mem_id: number }): Promise<ApiResult<null>> {
   const { data } = await axiosInstance.post(API_URL.USER_UPDATE_PWD, body);
   return data;
 }

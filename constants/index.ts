@@ -318,7 +318,7 @@ const COMM_STYLES = StyleSheet.create({
     marginBottom      : 36,
   },
   findInputContainer: {
-    gap               : 20,
+    gap               : 10,
   },
 });
 

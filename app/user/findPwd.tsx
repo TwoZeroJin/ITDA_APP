@@ -3,6 +3,9 @@ import CommHeader from "@/components/comm/CommHeader";
 import IdInput from "@/components/inputs/IdInput";
 import MemEmailInput from "@/components/inputs/MemEmailInput";
 import NameInput from "@/components/inputs/NameInput";
+import PasswordConfirmInput from "@/components/inputs/PasswordConfirmInput";
+import PasswordInput from "@/components/inputs/PasswordInput";
+import VerifyCodeInput from "@/components/inputs/VerifyCodeInput";
 import CustomDialog from "@/components/modal/CustomDialog";
 import { COMM_STYLES } from "@/constants";
 import { useFindInfo } from "@/hooks/queries/useAuth";
@@ -15,9 +18,12 @@ export default function FindPwdScreen() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSuccessForVerify, setIsSuccessForVerify] = useState(false);
   const [isSuccessForUpdate, setIsSuccessForUpdate] = useState(false);
+  const [memIdForUpdatePwd, setMemIdForUpdatePwd] = useState(0);
+  const [memIdForVerify, setMemIdForVerify] = useState(0);
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { findPwdMutation, verifyCodeMutation, updatePwdMutation } = useFindInfo();
+
   // 비밀번호 찾기
   const formValues = useForm({
     defaultValues: {
@@ -29,7 +35,7 @@ export default function FindPwdScreen() {
   // 인증번호 검증
   const verifyFormValues = useForm({
     defaultValues: {
-      verifyCode: "",
+      verify_code: "",
     },
   });
   // 비밀번호 변경
@@ -48,37 +54,116 @@ export default function FindPwdScreen() {
           setErrorMessage(result.ret_msg);
           setIsErrorDialogVisible(true);
         } else {
+          setMemIdForVerify(Number(result.data?.mem_id));
           setIsSuccess(true);
         }
       },
     });
   };
 
+  // 인증번호 검증
+  const onVerifySubmit = (formValues: any) => {
+    verifyCodeMutation.mutate({
+      verify_code: formValues.verify_code,
+      mem_id: memIdForVerify,
+    }, {
+      onSuccess: (result) => {
+        if(result.ret_code != 200){
+          setErrorMessage(result.ret_msg);
+          setIsErrorDialogVisible(true);
+        } else {
+          setMemIdForUpdatePwd(Number(result.data?.mem_id));
+          setIsSuccessForVerify(true);
+        }
+      },
+    });
+  };
+
+  // 비밀번호 변경
+  const onUpdatePwdSubmit = (formValues: any) => {
+    updatePwdMutation.mutate({
+      ...formValues,
+      mem_id : memIdForUpdatePwd
+    }, {
+      onSuccess: (result) => {
+        if(result.ret_code != 200){
+          setErrorMessage(result.ret_msg);
+          setIsErrorDialogVisible(true);
+        } else {
+          setIsSuccessForUpdate(true);
+        }
+      },
+    });
+  };
+
+  const bottomButtonLabel = 
+    isSuccess 
+      ? (isSuccessForVerify 
+          ? (isSuccessForUpdate ? "로그인" : "비밀번호 변경") 
+        : "인증번호 검증")
+      : "비밀번호 찾기";
+
+  const handleSubmit = 
+    isSuccess
+      ? (isSuccessForVerify
+        ? (isSuccessForUpdate ? () => { router.navigate('/user/login') } : updateFormValues.handleSubmit(onUpdatePwdSubmit))
+      : verifyFormValues.handleSubmit(onVerifySubmit))
+    : formValues.handleSubmit(onSubmit);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="비밀번호 찾기"/>
         {isSuccess ? (
-          <View style={COMM_STYLES.findContentContainer}>
-            <Text style={COMM_STYLES.findTitle}>등록된 이메일로{"\n"}인증번호가 전송되었습니다.{"\n"}인증번호를 입력해 주세요.</Text>
-          </View>
-        ) : (
-        <View style={COMM_STYLES.findContentContainer}>
-          <Text style={COMM_STYLES.findTitle}>등록된 이름, 아이디, 이메일을{"\n"}입력해 주세요.</Text>
+          isSuccessForVerify ? (
+            isSuccessForUpdate ? (
+              // 로그인 화면
+              <View style={COMM_STYLES.findContentContainer}>
+                <Text style={COMM_STYLES.findTitle}>비밀번호 변경이 완료되었습니다.{"\n"}로그인 화면으로 이동해주세요.</Text>
+              </View>
+            ) : (
+              // 비밀번호 입력 화면
+              <View style={COMM_STYLES.findContentContainer}>
+                <Text style={COMM_STYLES.findTitle}>새로운 비밀번호를 입력해 주세요.</Text>
 
-          <FormProvider {...formValues}>
-            <View style={COMM_STYLES.findInputContainer}>
-              <NameInput focusField="mem_email"/>
-              <MemEmailInput focusField="login_id"/>
-              <IdInput/>
-            </View>
-          </FormProvider>
-        </View>
+                <FormProvider {...updateFormValues}>
+                  <View style={COMM_STYLES.findInputContainer}>
+                    <PasswordInput returnKeyType="next" />
+                    <PasswordConfirmInput />
+                  </View>
+                </FormProvider>
+              </View>
+            )
+          ) : (
+            // 인증번호 검증 화면
+            <View style={COMM_STYLES.findContentContainer}>
+            <Text style={COMM_STYLES.findTitle}>등록된 이메일로{"\n"}인증번호가 전송되었습니다.{"\n"}인증번호를 입력해 주세요.</Text>
+
+            <FormProvider {...verifyFormValues}>
+              <View style={COMM_STYLES.findInputContainer}>
+                <VerifyCodeInput/>
+              </View>
+            </FormProvider>
+          </View>
+          )
+        ) : (
+          // 비밀번호 찾기 화면
+          <View style={COMM_STYLES.findContentContainer}>
+            <Text style={COMM_STYLES.findTitle}>등록된 이름, 아이디, 이메일을{"\n"}입력해 주세요.</Text>
+
+            <FormProvider {...formValues}>
+              <View style={COMM_STYLES.findInputContainer}>
+                <NameInput focusField="mem_email"/>
+                <MemEmailInput focusField="login_id"/>
+                <IdInput/>
+              </View>
+            </FormProvider>
+          </View>
         )}
 
         <CommBottomButton
-          label={isSuccess ? "로그인 하기" : "다음"}
-          onPress={isSuccess ? () => router.dismissAll() : formValues.handleSubmit(onSubmit)}
+          label={bottomButtonLabel}
+          onPress={handleSubmit}
         />
 
         <CustomDialog

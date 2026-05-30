@@ -33,7 +33,7 @@ function IdInput({ focusField = "" }: IdInputProps) {
           inputMode="email"
           autoCapitalize='none'
           returnKeyType={focusField ? 'next' : 'done'}
-          submitBehavior='submit'
+          submitBehavior={focusField ? 'submit' : 'blurAndSubmit'}
           onSubmitEditing={() => focusField ? setFocus(focusField) : undefined}
           value={value}
           onChangeText={(text) => onChange(sanitizeLoginId(text))}

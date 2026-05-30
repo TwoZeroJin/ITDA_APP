@@ -9,6 +9,7 @@ import { User } from '@/types';
 import { router } from 'expo-router';
 import { FormProvider, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { showToast } from '@/utils/commToast';
 
 export default function LoginScreen() {
   const { loginMutation } = useAuth();
@@ -22,7 +23,21 @@ export default function LoginScreen() {
   });
 
   const onSubmit = (formValues: User) => {
-    loginMutation.mutate({...formValues});
+    loginMutation.mutate(formValues, {
+      onSuccess: (result) => {
+        if (result.ret_code == 624) {
+          // 인증이 필요한 계정입니다.
+        }
+        else if (result.ret_code == 615) {
+          // 비밀번호 변경이 필요합니다.
+        }
+        else if (result.ret_code != 200) {
+          showToast({
+            text1: result.ret_msg || '로그인 응답 데이터가 없습니다.'
+          });
+        }
+      }
+    });
   }
 
   // 기본 로그인, ID / PASSWORD 입력
@@ -44,7 +59,7 @@ export default function LoginScreen() {
         </View>
         <FormProvider {...loginForm}>
           <View style={styles.inputContainer}>
-            <IdInput focusField="login_pwd"/>
+            <IdInput />
             <PasswordInput />
           </View>
           <View style={styles.buttonContainer}>
@@ -86,11 +101,11 @@ const styles = StyleSheet.create({
     marginBottom        : 30
   },
   inputContainer: {
-    gap                 : 20,
-    marginBottom        : 50
+    gap                 : 16,
+    marginBottom        : 36
   },
   buttonContainer: {
-    gap                 : 10,
+    gap                 : 16,
     marginBottom        : 16
   },
   findUserContainer: {
