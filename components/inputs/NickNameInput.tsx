@@ -2,23 +2,12 @@ import InputField from "@/components/InputField";
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-interface NickNameInputProps {
-  extraValidate?: (nickname: string) => true | string;
-}
-
-function NickNameInput({ extraValidate }: NickNameInputProps) {
+function NickNameInput() {
   const {control, setFocus} = useFormContext();
   return (
     <Controller
       name='mem_nick'
       control={control}
-      rules={{
-        validate: (data?: string) => {
-          if (extraValidate) {
-            return extraValidate(data ?? '');
-          }
-        }
-      }}
       render={({field: {ref, onChange, value}, fieldState: {error}}) => (
         <InputField
           ref={ref}

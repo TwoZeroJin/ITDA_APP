@@ -9,8 +9,8 @@ import VerifyCodeInput from "@/components/inputs/VerifyCodeInput";
 import CustomDialog from "@/components/modal/CustomDialog";
 import { COMM_STYLES } from "@/constants";
 import { useFindInfo } from "@/hooks/queries/useAuth";
-import { router } from "expo-router";
-import { useState } from "react";
+import { router, useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { Keyboard, Text, TouchableWithoutFeedback, View } from "react-native";
 
@@ -23,6 +23,7 @@ export default function FindPwdScreen() {
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { findPwdMutation, verifyCodeMutation, updatePwdMutation } = useFindInfo();
+  const { screen_type, mem_id } = useLocalSearchParams();
 
   // 비밀번호 찾기
   const formValues = useForm({
@@ -35,16 +36,32 @@ export default function FindPwdScreen() {
   // 인증번호 검증
   const verifyFormValues = useForm({
     defaultValues: {
-      verify_code: "",
+      mem_id      : 0,
+      verify_code : "",
     },
   });
   // 비밀번호 변경
   const updateFormValues = useForm({
     defaultValues: {
-      mem_id    : "",
+      mem_id    : 0,
       login_pwd : "",
     },
   });
+
+  // 로그인 화면에서 인증이 필요한 계정, 비밀번호 변경이 필요한 계정으로 이동 시 해당 mem_id와 화면 타입을 받아서 바로 처리
+  useEffect(() => {
+    if (mem_id) {
+      if (screen_type == 'verify') {
+        setIsSuccess(true);
+        setMemIdForVerify(Number(mem_id));
+      }
+      else if (screen_type === 'update') {
+        setIsSuccess(true);
+        setIsSuccessForVerify(true);
+        setMemIdForUpdatePwd(Number(mem_id));
+      }
+    }
+  }, [screen_type, mem_id]);
 
   // 비밀번호 찾기
   const onSubmit = (formValues: any) => {
@@ -64,8 +81,8 @@ export default function FindPwdScreen() {
   // 인증번호 검증
   const onVerifySubmit = (formValues: any) => {
     verifyCodeMutation.mutate({
-      verify_code: formValues.verify_code,
-      mem_id: memIdForVerify,
+      verify_code : formValues.verify_code,
+      mem_id      : memIdForVerify,
     }, {
       onSuccess: (result) => {
         if(result.ret_code != 200){

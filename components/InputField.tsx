@@ -12,7 +12,7 @@ interface InputFieldProps extends TextInputProps {
 
 const InputField = ({label, variant = "filled", error, rightChild = null, textArea = false, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
   const innerRef = useRef<TextInput>(null);
-  const accessoryIDRef = useRef(`input-accessory-${Math.random().toString(36).slice(2, 11)}`);
+  const accessoryIDRef = useRef(label);
   const isIOS = Platform.OS === 'ios';
   const isTextArea = textArea || Boolean(props.multiline);
   const multilineLines = isTextArea ? (props.numberOfLines ?? 5) : 1;

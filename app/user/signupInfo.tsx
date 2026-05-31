@@ -13,7 +13,9 @@ import PasswordConfirmInput from "@/components/inputs/PasswordConfirmInput";
 import PasswordInput from "@/components/inputs/PasswordInput";
 import ProfileImageInput from "@/components/inputs/ProfileImageInput";
 import { COMM_STYLES } from "@/constants";
+import { useFindInfo } from "@/hooks/queries/useAuth";
 import { SignupInfo } from "@/types";
+import { showToast } from "@/utils/commToast";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -25,6 +27,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
  */
 export default function SignupInfoScreen() {
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const { checkDupMutation } = useFindInfo();
 
   // 키보드가 올라오고 내려갈 때 isKeyboardVisible 상태 업데이트
   useEffect(() => {
@@ -43,7 +46,25 @@ export default function SignupInfoScreen() {
       }
   })
 
-  const onSubmit = (formValues: SignupInfo) => {
+  // 중복 체크 함수 (아이디, 이메일, 닉네임)
+  const checkDuplicateField = async (key: "login_id" | "mem_email" | "mem_nick", value?: string) => {
+    const targetValue = (value ?? "").trim();
+
+    const result = await checkDupMutation.mutateAsync({ [key]: targetValue });
+    if (result.ret_code != 200) {
+      showToast({ text1: result.ret_msg });
+      return false;
+    }
+
+    return true;
+  };
+
+  const onSubmit = async (formValues: SignupInfo) => {
+    // 서버를 통한 중복 체크
+    if (!await checkDuplicateField("mem_email", formValues.mem_email)) return;
+    if (!await checkDuplicateField("login_id", formValues.login_id)) return;
+    if (!await checkDuplicateField("mem_nick", formValues.mem_nick)) return;
+
     const submitValues = {
       ...formValues,
       new_image_name: formValues.new_image_name === 'DEL' ? '' : formValues.new_image_name, // DEL일 경우 빈 문자열로 변경하여 서버에 전달
@@ -64,14 +85,13 @@ export default function SignupInfoScreen() {
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
         extraScrollHeight={120}
-        enableAutomaticScroll={true} 
       >
         <FormProvider {...signupForm}>
           <View style={COMM_STYLES.formContainer}>
             <ProfileImageInput/>
             <ChurchSelectBox/>
             <ChurchTmNmInput/>
-            <NameInput/>
+            <NameInput focusField="mem_email"/>
             {/* <MemTelnoInput/> */}
             <MemEmailInput focusField="login_id"/>
             <GenderInput/>

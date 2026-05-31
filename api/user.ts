@@ -59,18 +59,18 @@ async function userUpdatePwd(body: User & { mem_id: number }): Promise<ApiResult
 }
 
 /**
- * 토큰 갱신
+ * 중복 체크 (아이디, 이메일, 전화번호, 닉네임)
  */
-async function userRefreshToken(): Promise<ApiResult<Token>> {
-  const { data } = await axiosInstance.post(API_URL.USER_REFRESH_TOKEN);
+async function userCheckDup(body: Partial<MemberInfo>): Promise<ApiResult<null>> {
+  const { data } = await axiosInstance.post(API_URL.USER_CHECK_DUP, body);
   return data;
 }
 
 /**
- * 중복 확인
+ * 토큰 갱신
  */
-async function userCheckDup(body: MemberInfo): Promise<ApiResult<null>> {
-  const { data } = await axiosInstance.post(API_URL.USER_CHECK_DUP, body);
+async function userRefreshToken(): Promise<ApiResult<Token>> {
+  const { data } = await axiosInstance.post(API_URL.USER_REFRESH_TOKEN);
   return data;
 }
 

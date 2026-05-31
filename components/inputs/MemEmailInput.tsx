@@ -7,10 +7,9 @@ const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 interface MemEmailInputProps {
   focusField?: string;
-  extraValidate?: (email: string) => true | string;
 }
 
-function MemEmailInput({ focusField = "", extraValidate }: MemEmailInputProps) {
+function MemEmailInput({ focusField = "" }: MemEmailInputProps) {
   const { control, setFocus } = useFormContext();
   return (
     <Controller
@@ -26,10 +25,6 @@ function MemEmailInput({ focusField = "", extraValidate }: MemEmailInputProps) {
 
           if (!EMAIL_REGEX.test(email)) {
             return '이메일 형식이 올바르지 않습니다. (예: example@example.com)';
-          }
-
-          if (extraValidate) {
-            return extraValidate(email);
           }
 
         }

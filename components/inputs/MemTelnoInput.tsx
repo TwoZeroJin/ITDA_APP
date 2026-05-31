@@ -22,11 +22,7 @@ const formatPhoneNumber = (data: string) => {
   return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7, 11)}`;
 };
 
-interface MemTelnoInputProps {
-  extraValidate?: (telno: string) => true | string;
-}
-
-function MemTelnoInput({ extraValidate }: MemTelnoInputProps) {
+function MemTelnoInput() {
   const { control, setFocus } = useFormContext();
   return (
     <Controller
@@ -44,9 +40,6 @@ function MemTelnoInput({ extraValidate }: MemTelnoInputProps) {
             return '전화번호 형식이 올바르지 않습니다. (예: 010-1234-5678)';
           }
 
-          if (extraValidate) {
-            return extraValidate(digits);
-          }
         }
       }}
       render={({field: {ref, onChange, value}, fieldState: {error}}) => (

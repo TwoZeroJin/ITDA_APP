@@ -16,7 +16,6 @@ export default function LoginScreen() {
   const { expoPushToken } = usePushNotification();
   const loginForm = useForm<User>({
     defaultValues: {
-      // 테스트 고정 값
       login_id    : "",
       login_pwd   : "",
     }
@@ -27,9 +26,23 @@ export default function LoginScreen() {
       onSuccess: (result) => {
         if (result.ret_code == 624) {
           // 인증이 필요한 계정입니다.
+          router.navigate({
+            pathname: '/user/findPwd',
+            params: {
+              mem_id: result.data?.mem_id,
+              screen_type: 'verify',
+            },
+          });
         }
         else if (result.ret_code == 615) {
           // 비밀번호 변경이 필요합니다.
+          router.navigate({
+            pathname: '/user/findPwd',
+            params: {
+              mem_id: result.data?.mem_id,
+              screen_type: 'update',
+            },
+          });
         }
         else if (result.ret_code != 200) {
           showToast({
@@ -54,12 +67,11 @@ export default function LoginScreen() {
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          {/* <Logo width={97} height={80.6}/> */}
           <LogoMain width={200} height={98}/>
         </View>
         <FormProvider {...loginForm}>
           <View style={styles.inputContainer}>
-            <IdInput />
+            <IdInput focusField="login_pwd"/>
             <PasswordInput />
           </View>
           <View style={styles.buttonContainer}>

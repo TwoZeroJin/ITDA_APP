@@ -210,7 +210,7 @@ function useUpdatePwd() {
 function useCheckDup() {
   const { setLoading } = useLoading();
   return useMutation({
-    mutationFn: async (body: MemberInfo) => {
+    mutationFn: async (body: Partial<MemberInfo>) => {
       setLoading(true);
       return userCheckDup(body);
     },

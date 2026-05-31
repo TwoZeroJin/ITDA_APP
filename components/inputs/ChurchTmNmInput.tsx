@@ -3,7 +3,7 @@ import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 function ChurchTmNmInput() {
-    const {control} = useFormContext();
+    const {control, setFocus} = useFormContext();
   return (
     <Controller
       name='mem_church_tm_nm'
@@ -23,6 +23,7 @@ function ChurchTmNmInput() {
           autoCapitalize='none'
           returnKeyType='next'
           submitBehavior='submit'
+          onSubmitEditing={() => setFocus("mem_name")}
           value={value}
           onChangeText={onChange}
           error={error?.message}
