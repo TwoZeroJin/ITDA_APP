@@ -27,8 +27,8 @@ export default function ApplyTypeInput({ questionFieldName = 'meet_question' }) 
   const applyType = watch('apply_type');
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.containerTitle}>신청방식</Text>
+    <View style={COMM_STYLES.commInputContainer}>
+      <Text style={COMM_STYLES.commInputContainerTitle}>신청방식</Text>
       <Controller
         name="apply_type"
         control={control}
@@ -69,17 +69,6 @@ export default function ApplyTypeInput({ questionFieldName = 'meet_question' }) 
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop           : 30,
-    marginHorizontal    : 16,
-    marginBottom        : 30,
-    gap                 : 16,
-  },
-  containerTitle: {
-    fontSize            : 20,
-    fontWeight          : 'bold',
-    marginBottom        : 8,
-  },
   subContainer: {
     marginStart         : 6,
   },
@@ -95,11 +84,12 @@ const styles = StyleSheet.create({
   },
   applyTypeTitle: {
     fontSize            : 16,
-    fontWeight          : 'bold',
+    fontFamily          : 'Pretendard-Medium',
     marginBottom        : 8,
   },
   applyTypeDesc: {
     fontSize            : 14,
+    fontFamily          : 'Pretendard-Regular',
     color               : COLOR.COMM_GRAY_2,
   },
   applySelected: {
@@ -107,6 +97,7 @@ const styles = StyleSheet.create({
     borderWidth         : 1,
   },
   applySelectedText: {
+    fontFamily          : 'Pretendard-SemiBold',
     color               : COLOR.APP_ACTIVE_4,
   },
   errorText: {

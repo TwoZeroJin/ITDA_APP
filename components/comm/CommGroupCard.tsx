@@ -29,7 +29,7 @@ export default function CommGroupCard({ item, onLikePress }: CommGroupCardProps)
       style={styles.recommendItemContainer}
       activeOpacity={0.6}
       onPress={() => router.push({ 
-        pathname: '/meets/groupDetailPage',
+        pathname: '/groups/groupDetailPage',
         params: { groupId: item.group_id }
       })}
     >

@@ -23,14 +23,15 @@ const MEET_OPTIONS = [
     color       : COLOR.COLOR_CLUB,
     Icon        : IconClub,
   },
-  {
-    value       : COMM_CONSTANTS.MEET_CLASS,
-    title       : '클래스',
-    description : '클래스를 열고, 함께 배우는 경험을 나눠보세요.',
-    color       : COLOR.COLOR_CLASS,
-    Icon        : IconClass,
-  },
-] as const;
+  // 클래스 주석
+  // {
+  //   value       : COMM_CONSTANTS.MEET_CLASS,
+  //   title       : '클래스',
+  //   description : '클래스를 열고, 함께 배우는 경험을 나눠보세요.',
+  //   color       : COLOR.COLOR_CLASS,
+  //   Icon        : IconClass,
+  // },
+];
 
 /**
  * 모임 생성 - 모임 유형 선택 화면(소셜링/클럽/클래스)

@@ -1,4 +1,4 @@
-import { COLOR, COMM_CONSTANTS } from "@/constants";
+import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -229,15 +229,15 @@ export default function MeetDetailPage() {
 
       {isDetailMenuVisible && (
         <TouchableOpacity
-          style={styles.detailMenuBackdrop}
+          style={COMM_STYLES.detailMenuBackdrop}
           activeOpacity={1}
           onPress={() => setIsDetailMenuVisible(false)}
         />
       )}
 
       {isDetailMenuVisible && (
-        <View style={styles.detailMenuLayer} pointerEvents="box-none">
-          <View style={styles.detailMenuAnchor}>
+        <View style={COMM_STYLES.detailMenuLayer} pointerEvents="box-none">
+          <View style={COMM_STYLES.detailMenuAnchor}>
             <DropdownModal
               items={DETAIL_MENU_ITEMS}
               position="right"
@@ -460,27 +460,6 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#fff' },
   container: {
     flex: 1,
-  },
-  detailMenuBackdrop: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 10,
-  },
-  detailMenuLayer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 11,
-  },
-  detailMenuAnchor: {
-    position: 'absolute',
-    top: 44,
-    right: 8,
   },
   commContainerTitle: {
     fontSize: 20,

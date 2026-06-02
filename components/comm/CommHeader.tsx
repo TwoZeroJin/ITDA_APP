@@ -8,6 +8,7 @@ import { COLOR } from '@/constants';
 import { router } from 'expo-router';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { useAuthRouter } from "@/components/comm/AuthRoute";
 
 interface CommHeaderProps {
   isLogo?         : boolean;
@@ -22,6 +23,7 @@ interface CommHeaderProps {
 }
 
 function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, isDetail = false, title, onPressDetail}: CommHeaderProps) {
+  const authRouter = useAuthRouter();
   return (
     <View style={styles.container}>
         <View style={styles.container}>
@@ -37,17 +39,17 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
         </View>
         <View style={[styles.container, styles.right]}>
           {isLike && 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => {router.navigate("/mypage/likeList");}} activeOpacity={0.6}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => {authRouter.navigate("/mypage/likeList");}} activeOpacity={0.6}>
               <Like/>
             </TouchableOpacity>
           }
           {isNoti && 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => {}} activeOpacity={0.6}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => {authRouter.navigate("/mypage/notiList");}} activeOpacity={0.6}>
               <Noti/>
             </TouchableOpacity>
           }
           {isSetting && 
-            <TouchableOpacity style={styles.iconContainer} onPress={() => {router.navigate("/mypage/settings");}} activeOpacity={0.6}>
+            <TouchableOpacity style={styles.iconContainer} onPress={() => {authRouter.navigate("/mypage/settings");}} activeOpacity={0.6}>
               <Setting/>
             </TouchableOpacity>
           }
@@ -84,7 +86,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize        : 18,
-    fontWeight      : "bold",
+    fontFamily      : 'Pretendard-Bold',
     color           : COLOR.COMM_BLACK,
   },
   iconContainer: {

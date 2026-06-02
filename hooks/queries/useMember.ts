@@ -78,7 +78,7 @@ function useMemberLike() {
 // 회원 좋아요 목록 조회 (무한 스크롤)
 function useMemberLikeListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => memberLikeList({ ...searchParams }),
+    queryFn: ({ pageParam }) => memberLikeList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_LIKE_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
@@ -101,7 +101,7 @@ function useMemberApplyList({target_id, target_type, use_stat}: {target_id: numb
 // 내가 만든 소셜링 목록 조회 (무한 스크롤)
 function useMemberMyMeetListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => memberMyMeetList({ ...searchParams }),
+    queryFn: ({ pageParam }) => memberMyMeetList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_MEET_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
@@ -113,7 +113,7 @@ function useMemberMyMeetListPaging(searchParams: SearchParams) {
 // 내가 신청한 소셜링 목록 조회 (무한 스크롤)
 function useMemberApplyMeetListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => memberApplyMeetList({ ...searchParams }),
+    queryFn: ({ pageParam }) => memberApplyMeetList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_MEET_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
@@ -125,7 +125,7 @@ function useMemberApplyMeetListPaging(searchParams: SearchParams) {
 // 내가 만든 클럽 목록 조회 (무한 스크롤)
 function useMemberMyGroupListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => memberMyGroupList({ ...searchParams }),
+    queryFn: ({ pageParam }) => memberMyGroupList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_GROUP_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
@@ -137,7 +137,7 @@ function useMemberMyGroupListPaging(searchParams: SearchParams) {
 // 내가 신청한 클럽 목록 조회 (무한 스크롤)
 function useMemberApplyGroupListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => memberApplyGroupList({ ...searchParams }),
+    queryFn: ({ pageParam }) => memberApplyGroupList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_GROUP_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,

@@ -1,14 +1,16 @@
 import CommHeader from '@/components/comm/CommHeader';
 import CustomDialog from '@/components/modal/CustomDialog';
-import { COLOR, COMM_CONSTANTS } from '@/constants';
-import { useChatInsert, useChatListPaging } from '@/hooks/queries/useChat';
+import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
+import { useChatInsert, useChatListPaging, useChatMemberList } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native';
 import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
 import ChatSend from '@/assets/images/icon_chat_send.svg';
+import DropdownModal from '@/components/modal/DropdownModal';
+import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 
 /**
  * 채팅 화면
@@ -16,6 +18,7 @@ import ChatSend from '@/assets/images/icon_chat_send.svg';
 export default function IndexScreen() {
   const { room_id, room_name, room_type, mem_id } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string, mem_id: string }>();
   const chatInsert = useChatInsert();
+  const { results: chatMemberList } = useChatMemberList({room_id : room_id});
   const { results, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatListPaging({
     page_no: 0,
     page_size: 20,
@@ -27,6 +30,7 @@ export default function IndexScreen() {
   const [myMemId, setMyMemId] = useState<number>(0);
   const [myMemNick, setMyMemNick] = useState<string>('');
   const [roomTitle, setRoomTitle] = useState<string>(room_name);
+  const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const msgInputRef = useRef<TextInput>(null);
   const topic = room_id ? room_id : `${COMM_CONSTANTS.CHAT_TYPE_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`;
   const mqttUtil = MqttUtil;
@@ -34,12 +38,17 @@ export default function IndexScreen() {
   const flatListRef = useRef<FlatList<ChatData>>(null);
   const hasUserDraggedRef = useRef(false);
   const onEndReachedCalledDuringMomentum = useRef(true);
+  const hasFocusedOnceRef = useRef(false);
   const chat_id = Number(room_id ? room_id.split("_")[1] : Number(mem_id));
   const chat_type = room_type;
 
   // 화면 포커스시 재조회
   useFocusEffect(
     useCallback(() => {
+      if (!hasFocusedOnceRef.current) {
+        hasFocusedOnceRef.current = true;
+        return;
+      }
       refetch();
     }, [refetch]),
   );
@@ -53,9 +62,9 @@ export default function IndexScreen() {
       setMyMemId(memberInfo.mem_id ?? 0);
       setMyMemNick(myNick || myName);
 
+      // 1:1 채팅방인 경우, 방 제목에서 내 이름 제거하여 상대방 이름으로 표시
       if (room_type === COMM_CONSTANTS.CHAT_TYPE_MEMBER && room_name?.includes(',')) {
         const myNames = [myNick, myName];
-
         const filteredNames = room_name
            .split(',')
            .map((name) => name.trim())
@@ -71,8 +80,22 @@ export default function IndexScreen() {
 
   // 메시지 메모리 관리
   const messages = useMemo(() => {
-    return [...realtimeMessages, ...(results ?? [])];
-  }, [results, realtimeMessages]);
+    const mergedMessages = [...realtimeMessages, ...(results ?? [])];
+
+    return mergedMessages.map((message) => {
+      const senderInfo = chatMemberList.find((member) => Number(member.mem_id) === Number(message.sender_id));
+
+      if (!senderInfo) {
+        return message;
+      }
+
+      return {
+        ...message,
+        mem_nick     : senderInfo.mem_nick || senderInfo.mem_name || message.mem_nick,
+        mem_image_url: senderInfo.mem_image_url || message.mem_image_url,
+      };
+    });
+  }, [realtimeMessages, results, chatMemberList]);
 
   // 채팅 메시지 맨위로 올릴 경우 추가 데이터 로드
   const handleEndReached = () => {
@@ -88,27 +111,30 @@ export default function IndexScreen() {
     }
   };
 
-  const msgReceiveCallback = (msg:string) => {
+  const msgReceiveCallback = useCallback((msg: string) => {
     const payload = parseChatPayload(msg);
+    const senderId = payload.sender_id ? Number(payload.sender_id) : undefined;
+    const senderInfo = chatMemberList.find((member) => Number(member.mem_id) === senderId);
 
-    if (payload.sender_id && Number(payload.sender_id) === myMemId) {
+    if (senderId && senderId === myMemId) {
       // 내 메시지는 이미 실시간으로 반영되어 있으므로 별도 처리하지 않음
       return;
     }
 
     setRealtimeMessages((prev) => [
       {
-        chat_id     : payload.chat_id ?? Date.now(),
-        chat_type   : payload.chat_type ?? 'MEET',
-        chat_msg    : payload.chat_msg ?? msg,
-        room_id     : payload.room_id ?? room_id,
-        sender_id   : payload.sender_id,
-        mem_nick    : payload.mem_nick,
-        send_date   : payload.send_date || new Date().toISOString(),
+        chat_id      : payload.chat_id ?? Date.now(),
+        chat_type    : payload.chat_type ?? 'MEET',
+        chat_msg     : payload.chat_msg ?? msg,
+        room_id      : payload.room_id ?? room_id,
+        sender_id    : senderId,
+        mem_nick     : senderInfo?.mem_nick || senderInfo?.mem_name || payload.mem_nick,
+        mem_image_url: senderInfo?.mem_image_url,
+        send_date    : payload.send_date || new Date().toISOString(),
       },
       ...prev,
     ]);
-  }
+  }, [chatMemberList, myMemId, room_id]);
 
   // MQTT 연결 및 메시지 수신 설정
   useEffect(() => {
@@ -133,7 +159,7 @@ export default function IndexScreen() {
       isMounted = false;
       mqttUtil.unsubscribe(topic, subscriberId);
     };
-  }, [topic, myMemId])
+  }, [topic, myMemId, msgReceiveCallback]);
 
   // 메시지 전송 핸들러
   const handleSubmitChat = () => {
@@ -172,16 +198,13 @@ export default function IndexScreen() {
   if (!sourceDate) {
     return '';
   }
-
   const date = new Date(sourceDate);
   if (Number.isNaN(date.getTime())) {
     return '';
   }
-
   const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${dayNames[date.getDay()]}`;
-};
-
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${dayNames[date.getDay()]}`;
+  };
   const formatTimeText = (sourceDate?: string) => {
     if (!sourceDate) {
       return '';
@@ -193,7 +216,6 @@ export default function IndexScreen() {
     const displayHour = hour % 12 === 0 ? 12 : hour % 12;
     return `${period} ${displayHour}:${minute}`;
   };
-
   const getDateGroupKey = (sourceDate?: string) => {
     if (!sourceDate) {
       return '';
@@ -201,8 +223,32 @@ export default function IndexScreen() {
     const date = new Date(sourceDate);
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   };
-
   const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.CHAT_TYPE_MEMBER ? roomTitle : item.mem_nick;
+
+  const DETAIL_MENU_ITEMS = [
+    {
+      label: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? '소셜링 정보' : '클럽 정보',
+      onPress: () => {
+        router.push({
+          pathname: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? `/meets/meetDetailPage` : `/groups/groupDetailPage`,
+          params: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ?
+            { meetId: chat_id } : { groupId: chat_id },
+        });
+      },
+    },
+    {
+      label: '멤버 목록',
+      onPress: () => {
+        router.navigate({
+          pathname: '/members/memberList',
+          params: {
+            target_id: chat_id,
+            target_type: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? 'M' : 'G',
+          }
+        });
+      }
+    },
+  ];
 
   // 채팅 메시지 렌더링
   const renderMessage = ({ item, index }: { item: ChatData; index: number }) => {
@@ -228,7 +274,13 @@ export default function IndexScreen() {
       !isSameSender ? (
         // 보낸 사람이 다르면 아바타와 함께 표시
         <View style={styles.otherMessageWrap}>
-          <View style={[styles.avatar, { backgroundColor: '#1E88E5' }]} />
+          {item.mem_image_url ? (
+            <Image source={{ uri: item.mem_image_url }} style={styles.avatar} />
+          ) : (
+            <View style={styles.avatarDefaultWrap}>
+              <IconProfileDefault width={28} height={28} />
+            </View>
+          )}
           <View style={styles.otherMessageContent}>
             <Text style={styles.senderText}>{getSenderText(item)}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
@@ -270,13 +322,41 @@ export default function IndexScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 45 : 16}
       >
         <View style={styles.container}>
-          <CommHeader isLike={false} isNoti={false} isLogo={false} isDetail={true} title={roomTitle}/>
+          <CommHeader 
+            isLike={false} 
+            isNoti={false} 
+            isLogo={false} 
+            isDetail={chat_type !== COMM_CONSTANTS.CHAT_TYPE_MEMBER} 
+            title={roomTitle}
+            onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
+          />
 
-          {room_type === COMM_CONSTANTS.CHAT_TYPE_MEET && (
+          {isDetailMenuVisible && (
+            <TouchableOpacity
+              style={COMM_STYLES.detailMenuBackdrop}
+              activeOpacity={1}
+              onPress={() => setIsDetailMenuVisible(false)}
+            />
+          )}
+    
+          {isDetailMenuVisible && (
+            <View style={COMM_STYLES.detailMenuLayer} pointerEvents="box-none">
+              <View style={COMM_STYLES.detailMenuAnchor}>
+                <DropdownModal
+                  items={DETAIL_MENU_ITEMS}
+                  position="right"
+                  visible={isDetailMenuVisible}
+                  onVisibleChange={setIsDetailMenuVisible}
+                />
+              </View>
+            </View>
+          )}
+
+          {/* {room_type === COMM_CONSTANTS.CHAT_TYPE_MEET && (
             <View style={styles.meetInfoWrap}>
               <Text style={styles.meetInfoText}>📅 한성교회 · 1.7(수) · 오후 8:30</Text>
             </View>
-          )}
+          )} */}
 
           <FlatList
             ref={flatListRef}
@@ -398,10 +478,17 @@ const styles = StyleSheet.create({
     alignItems        : 'flex-start',
   },
   avatar: {
-    width             : 28,
-    height            : 28,
-    borderRadius      : 14,
-    marginRight       : 10,
+    width             : 40,
+    height            : 40,
+    borderRadius      : 20,
+    marginEnd         : 8,
+  },
+  avatarDefaultWrap: {
+    width             : 40,
+    height            : 40,
+    borderRadius      : 20,
+    marginEnd         : 8,
+    overflow          : 'hidden',
   },
   otherMessageContent: {
     maxWidth          : '80%',
@@ -409,14 +496,14 @@ const styles = StyleSheet.create({
   otherMessageOnlyWrap: {
     flexDirection     : 'row',
     alignItems        : 'flex-end',
-    marginLeft        : 38,
+    marginStart       : 36,
     maxWidth          : '80%',
   },
   senderText: {
     fontSize          : 14,
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_DEFAULT,
-    marginBottom      : 6,
+    marginBottom      : 8,
   },
   myMessageWrap: {
     flexDirection     : 'row',

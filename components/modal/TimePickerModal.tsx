@@ -15,7 +15,7 @@ type TimePickerModalProps = {
 
 const MERIDIEM_OPTIONS = ['오전', '오후'];
 const HOUR_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1);
-const MINUTE_OPTIONS = Array.from({ length: 60 }, (_, i) => i);
+const MINUTE_OPTIONS = Array.from({ length: 6 }, (_, i) => i * 10);
 
 const MERIDIEM_WHEEL_OPTIONS = MERIDIEM_OPTIONS.map((value) => ({ label: value, value }));
 const HOUR_WHEEL_OPTIONS = HOUR_OPTIONS.map((value) => ({ label: `${value}시`, value: `${value}`.padStart(2, '0') }));

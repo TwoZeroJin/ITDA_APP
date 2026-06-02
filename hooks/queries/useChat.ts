@@ -26,12 +26,7 @@ function useChatRoomListPaging(searchParams: SearchParams) {
  */
 function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
   const query = useInfiniteQuery({
-    queryFn: ({ pageParam }) =>
-      chatList({
-        ...searchParams,
-        page_no: pageParam,
-        room_id: searchParams.room_id,
-      }),
+    queryFn: ({ pageParam }) => chatList({ ...searchParams, page_no: pageParam, room_id: searchParams.room_id }),
     queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_LIST, searchParams, searchParams.room_id],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,

@@ -16,11 +16,12 @@ import { getMemberInfo, getChurchList, saveMemberInfoForUpdate } from "@/utils/c
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, View } from "react-native";
+import { Keyboard, View, Text } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { COMM_STYLES } from "@/constants";
 import MemEmailInput from "@/components/inputs/MemEmailInput";
 import MemTelnoInput from "@/components/inputs/MemTelnoInput";
+import InterestCategoryInput from "@/components/inputs/InterestCategoryInput";
 
 /**
  * 회원정보 수정
@@ -108,8 +109,8 @@ export default function MemberUpdateScreen() {
 
   const onSubmit = async (formValues: MemberInfo) => {
     // 서버를 통한 중복 체크
-    if (!await checkDuplicateField("mem_email", formValues.mem_email)) return;
-    if (!await checkDuplicateField("mem_nick", formValues.mem_nick)) return;
+    if (memberInfo?.mem_name !== formValues.mem_name && !await checkDuplicateField("mem_email", formValues.mem_email)) return;
+    if (memberInfo?.mem_nick !== formValues.mem_nick && !await checkDuplicateField("mem_nick", formValues.mem_nick)) return;
 
     const submitValues = {
       ...formValues,
@@ -155,6 +156,7 @@ export default function MemberUpdateScreen() {
           <GenderInput/>
           <BirthInput/>
           <NickNameInput/>
+          <InterestCategoryInput />
         </FormProvider>
       </KeyboardAwareScrollView>
       <CommBottomButton label="수정하기" onPress={updateForm.handleSubmit(onSubmit)}/>

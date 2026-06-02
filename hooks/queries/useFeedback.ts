@@ -10,9 +10,9 @@ import { useEffect } from "react";
 // 피드백 목록 조회 (무한 스크롤)
 function useFeedbackListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => feedbackList({ ...searchParams }),
+    queryFn: ({ pageParam }) => feedbackList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.FEEDBACK, QUERY_KEYS.FEEDBACK_PAGING, searchParams],
-    initialPageParam: 1,
+    initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];

@@ -122,7 +122,7 @@ export default function ChatListScreen() {
           />
         ) : (
           <View style={styles.roomImage}>
-            <ImageDefault width={72} height={72} />
+            <ImageDefault width={65} height={65} />
           </View>
         )}
       </View>
@@ -147,7 +147,7 @@ export default function ChatListScreen() {
       <CommHeader />
 
       {/* 카테고리 탭 */}
-      <CategoryTab data={activeCategory} onPress={setActiveCategory} />
+      <CategoryTab data={activeCategory} onPress={setActiveCategory} isMember={true} />
 
       <FlatList
         data={filteredChatRooms}
@@ -198,13 +198,13 @@ const styles = StyleSheet.create({
     paddingVertical   : 16,
   },
   roomImageWrapper: {
-    width             : 72,
-    height            : 72,
+    width             : 65,
+    height            : 65,
     marginRight       : 14,
   },
   roomImage: {
-    width             : 72,
-    height            : 72,
+    width             : 65,
+    height            : 65,
     borderRadius      : 14,
     overflow          : "hidden",
   },
@@ -218,19 +218,20 @@ const styles = StyleSheet.create({
   },
   roomTitle: {
     maxWidth          : "72%",
-    fontSize          : 20,
-    color             : COLOR.TEXT_2F2F2F,
-    fontWeight        : 700,
+    fontSize          : 16,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COLOR_323232,
     marginRight       : 6,
   },
   updatedText: {
     marginTop         : 4,
-    fontSize          : 15,
+    fontSize          : 12,
+    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_DEFAULT,
-    fontWeight        : 500,
   },
   previewText: {
-    fontSize          : 16,
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_DEFAULT,
   },
   divider: {

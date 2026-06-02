@@ -36,7 +36,7 @@ export default function Meet() {
       <View style={styles.tabContainer}>
         {renderButton('소셜링', 'social')}
         {renderButton('클럽', 'club')}
-        {renderButton('클래스', 'class')}
+        {/* {renderButton('클래스', 'class')} */}
       </View>
 
       {/* activeType에 따라 다른 리스트 컴포넌트 출력 */}

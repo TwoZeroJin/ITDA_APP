@@ -224,7 +224,7 @@ interface MeetReview {
   place_addr      : string;
   meet_id         : number;
   mem_nick        : string;
-  mem_image_url     : string;
+  mem_image_url   : string;
   mem_id          : number;
   reg_sdate       : string;
   mod_sdate       : string;
@@ -336,13 +336,14 @@ interface RoomData {
  * 채팅 정보
  */
 interface ChatData {
-  chat_id     : number;
-  chat_type   : string;
-  chat_msg    : string;
-  room_id     : string;
-  sender_id?  : number;
-  mem_nick?   : string;
-  send_date   : string;
+  chat_id         : number;
+  chat_type       : string;
+  chat_msg        : string;
+  room_id         : string;
+  sender_id?      : number;
+  mem_nick?       : string;
+  mem_image_url?  : string;
+  send_date       : string;
 }
 
 /**

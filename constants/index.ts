@@ -35,7 +35,7 @@ const COLOR = {
   TEXT_3C3C3C         : '#3C3C3C',
   TEXT_1C1C1C         : '#1C1C1C',
   BG_MEET             : '#F6554C',
-  BG_CLUB             : '#E2FBED',
+  BG_CLUB             : '#F1EFFC',
   BG_CATEGORY         : '#F3F3F3',
   COLOR_SOCIAL        : '#FF5047',
   COLOR_CLUB          : '#6F5ADB',
@@ -223,19 +223,19 @@ const API_URL = {
 const COMM_STYLES = StyleSheet.create({
   // 공통 컨테이너 스타일
   container: {
-    flex              : 1,
-    backgroundColor   : COLOR.COMM_WHITE,
+    flex                : 1,
+    backgroundColor     : COLOR.COMM_WHITE,
   },
   // 소모임/클럽 생성시 주의 사항 스타일
   infoContainer: {
-    marginTop         : 10,
-    borderRadius      : 12,
-    borderColor       : COLOR.COMM_GRAY_6,
-    borderWidth       : 1,
-    backgroundColor   : COLOR.COMM_GRAY_5,
-    paddingVertical   : 12,
-    paddingHorizontal : 16,
-    gap               : 6,
+    marginTop           : 10,
+    borderRadius        : 12,
+    borderColor         : COLOR.COMM_GRAY_6,
+    borderWidth         : 1,
+    backgroundColor     : COLOR.COMM_GRAY_5,
+    paddingVertical     : 12,
+    paddingHorizontal   : 16,
+    gap                 : 6,
   },
   infoTitleRow: {
     flexDirection       : 'row',
@@ -244,60 +244,74 @@ const COMM_STYLES = StyleSheet.create({
   },
   infoTitle: {
     fontSize            : 12,
-    fontWeight          : 'bold',
+    fontFamily          : 'Pretendard-Medium',
     color               : COLOR.COLOR_323232,
   },
   infoDesc: {
     fontSize            : 12,
+    fontFamily          : 'Pretendard-Light',
     color               : COLOR.TEXT_DEFAULT,
   },
   // 소모임/클럽 공통 스타일
   commTitleContainer: {
-    marginTop     : 12,
-    marginBottom  : 5,
-    paddingStart  : 16,
+    marginTop           : 12,
+    marginBottom        : 5,
+    paddingStart        : 16,
   },
   commTitle: {
-    fontSize      : 22,
-    fontWeight    : 'bold',
-    color         : COLOR.COMM_BLACK,
-    marginBottom  : 16,
+    fontSize            : 22,
+    fontFamily          : 'Pretendard-Bold',
+    color               : COLOR.COMM_BLACK,
+    marginBottom        : 16,
   },
   commSubtitle: {
-    fontSize      : 16,
-    color         : COLOR.COMM_GRAY_2,
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Light',
+    color               : COLOR.COMM_GRAY_2,
+  },
+  commInputContainer: {
+    marginTop           : 30,
+    marginHorizontal    : 16,
+    marginBottom        : 30,
+    gap                 : 16,
+  },
+  commInputContainerTitle: {
+    fontSize            : 20,
+    fontFamily          : 'Pretendard-SemiBold',
+    marginBottom        : 8,
   },
   //
   completeTitleText: {
-    fontSize    : 24,
-    fontWeight  : 'bold',
-    color       : COLOR.TEXT_1C1C1C,
-    marginTop   : 30,
+    fontSize            : 24,
+    fontFamily          : 'Pretendard-Bold',
+    color               : COLOR.TEXT_1C1C1C,
+    marginTop           : 30,
   },
   completeDescText: {
-    fontSize    : 16,
-    marginTop   : 12,
-    color       : COLOR.TEXT_DEFAULT,
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Light',
+    marginTop           : 12,
+    color               : COLOR.TEXT_DEFAULT,
   },
   //
   commContainer: {
-    marginHorizontal  : 16,
-    marginBottom      : 30,
-    gap               : 16,
+    marginHorizontal    : 16,
+    marginBottom        : 30,
+    gap                 : 16,
   },
   //
   detailTitleContainer: {
-    marginTop     : 12,
-    marginBottom  : 30,
-    paddingStart  : 16,
+    marginTop           : 12,
+    marginBottom        : 30,
+    paddingStart        : 16,
   },
   // 가입승인, 회원 관리 공통
   sectionTitle: {
-    fontSize          : 14,
-    fontFamily        : 'Pretendard-Light',
-    color             : COLOR.TEXT_DEFAULT,
-    marginTop         : 16,
-    marginHorizontal  : 16,
+    fontSize            : 14,
+    fontFamily          : 'Pretendard-Light',
+    color               : COLOR.TEXT_DEFAULT,
+    marginTop           : 16,
+    marginHorizontal    : 16,
   },
   // 회원가입/회원정보 수정 form 공통 스타일
   formContainer: {
@@ -307,18 +321,40 @@ const COMM_STYLES = StyleSheet.create({
   },
   // 로그인 정보 찾기 공통 스타일
   findContentContainer: {
-    flex              : 1,
-    paddingHorizontal : 20,
+    flex                : 1,
+    paddingHorizontal   : 20,
   },
   findTitle: {
-    fontSize          : 24,
-    fontFamily        : "Pretendard-Bold",
-    color             : COLOR.COLOR_1A1A1A,
-    lineHeight        : 34,
-    marginBottom      : 36,
+    fontSize            : 24,
+    fontFamily          : "Pretendard-Bold",
+    color               : COLOR.COLOR_1A1A1A,
+    lineHeight          : 34,
+    marginBottom        : 36,
   },
   findInputContainer: {
-    gap               : 10,
+    gap                 : 10,
+  },
+  // """ 모달 팝업
+  detailMenuBackdrop: {
+    position            : 'absolute',
+    top                 : 0,
+    left                : 0,
+    right               : 0,
+    bottom              : 0,
+    zIndex              : 10,
+  },
+  detailMenuLayer: {
+    position            : 'absolute',
+    top                 : 0,
+    left                : 0,
+    right               : 0,
+    bottom              : 0,
+    zIndex              : 11,
+  },
+  detailMenuAnchor: {
+    position            : 'absolute',
+    top                 : 44,
+    right               : 8,
   },
 });
 

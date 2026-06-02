@@ -36,10 +36,10 @@ function CommLabel({ variant = "social", category = ""} : CommLabelProps) {
 
 const baseStyle = {
   fontSize          : 12,
+  fontFamily        : "Pretendard-Medium",
   borderRadius      : 10,
-  fontWeight        : 'bold' as const,
-  paddingHorizontal : 8,
-  paddingVertical   : 4,
+  paddingHorizontal : 6,
+  paddingVertical   : 5,
 };
 
 const styles = StyleSheet.create({
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
   },
   club: {
     ...baseStyle,
-    color           : COLOR.TEXT_31AD69,
+    color           : COLOR.COLOR_CLUB,
     backgroundColor : COLOR.BG_CLUB,
   },
   category: {

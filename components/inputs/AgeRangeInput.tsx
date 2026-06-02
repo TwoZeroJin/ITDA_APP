@@ -14,8 +14,8 @@ export default function AgeRangeInput() {
   const [ageType, setAgeType] = useState<'none' | 'set'>('none');
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.containerTitle}>나이</Text>
+    <View style={COMM_STYLES.commInputContainer}>
+      <Text style={COMM_STYLES.commInputContainerTitle}>나이</Text>
       <Controller
         name="age_max"
         control={control}
@@ -29,11 +29,11 @@ export default function AgeRangeInput() {
               value={ageType}
               onChange={(type) => {
                 setAgeType(type as 'none' | 'set');
-                if (type === 'none') onChange(-1);
+                if (type === 'none') onChange(undefined);
               }}
             />
             <AgeSlider
-              value={value < 0 ? 30 : value}
+              value={value ?? 30}
               onChange={onChange}
               disabled={ageType === 'none'}
             />
@@ -51,17 +51,3 @@ export default function AgeRangeInput() {
 }
 
 export { AGE_MIN };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop           : 30,
-    marginHorizontal    : 16,
-    marginBottom        : 30,
-    gap                 : 16,
-  },
-  containerTitle: {
-    fontSize            : 20,
-    fontWeight          : 'bold',
-    marginBottom        : 8,
-  },
-});

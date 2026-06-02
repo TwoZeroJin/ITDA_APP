@@ -9,7 +9,7 @@ import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 // 클럽 목록 조회 (무한 스크롤)
 function useGroupListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => groupList({ ...searchParams }),
+    queryFn: ({ pageParam }) => groupList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,

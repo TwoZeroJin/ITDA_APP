@@ -51,6 +51,13 @@ export default function MyPageLayout() {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="notiList"
+          options={{
+            title: "알림 리스트",
+            headerShown: false,
+          }}
+        />
     </Stack>
   )
 }

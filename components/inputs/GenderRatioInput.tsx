@@ -12,8 +12,8 @@ export default function GenderRatioInput() {
   const [genderType, setGenderType] = useState<'none' | 'set'>('none');
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.containerTitle}>성비</Text>
+    <View style={COMM_STYLES.commInputContainer}>
+      <Text style={COMM_STYLES.commInputContainerTitle}>성비</Text>
       <Controller
         name="gender_ratio"
         control={control}
@@ -27,11 +27,11 @@ export default function GenderRatioInput() {
               value={genderType}
               onChange={(type) => {
                 setGenderType(type as 'none' | 'set');
-                if (type === 'none') onChange(-1);
+                if (type === 'none') onChange(undefined);
               }}
             />
             <GenderSlider
-              value={value < 0 ? 0.5 : value}
+              value={value ?? 0.5}
               onChange={onChange}
               disabled={genderType === 'none'}
             />
@@ -47,17 +47,3 @@ export default function GenderRatioInput() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop           : 30,
-    marginHorizontal    : 16,
-    marginBottom        : 30,
-    gap                 : 16,
-  },
-  containerTitle: {
-    fontSize            : 20,
-    fontWeight          : 'bold',
-    marginBottom        : 8,
-  },
-});

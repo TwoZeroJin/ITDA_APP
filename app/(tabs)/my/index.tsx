@@ -27,13 +27,14 @@ export default function MyPageScreen() {
     const memberInfo = await getMemberInfo();
 
     setMemberInfo(memberInfo);
-
+    
     if (memberInfo.mem_interest) {
       const interestIds = memberInfo.mem_interest.split('|').filter(Boolean);
       const categoryList = await getCategoryList();
+      const subCategoryList = categoryList.flatMap((cat) => cat.sub_list ?? []);
       const matched = interestIds
         .map((id) => {
-          const found = categoryList.find((cat) => cat.code_id === id);
+          const found = subCategoryList.find((cat) => cat.code_id === id);
           return found ? { label: found.code_value, id: found.code_id } : null;
         })
         .filter((item): item is { label: string; id: string } => item !== null);
@@ -103,9 +104,9 @@ export default function MyPageScreen() {
               contentContainerStyle={styles.interestScroll}
             >
               {interestCategories.map((cat) => (
-                <TouchableOpacity key={cat.id} style={styles.interestChip} activeOpacity={0.7}>
+                <View key={cat.id} style={styles.interestChip}>
                   <Text style={styles.interestText}>{cat.label}</Text>
-                </TouchableOpacity>
+                </View>
               ))}
             </ScrollView>
           ) : (

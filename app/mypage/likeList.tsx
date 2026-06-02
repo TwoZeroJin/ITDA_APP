@@ -25,7 +25,7 @@ export default function LikeListScreen() {
 
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useMemberLikeListPaging({
     page_no   : 0,
-    page_size : 20,
+    page_size : 10,
   });
 
   useFocusEffect(
@@ -110,7 +110,7 @@ export default function LikeListScreen() {
           }
           else if (item.target_type === 'G') {
             router.push({
-              pathname: '/meets/groupDetailPage',
+              pathname: '/groups/groupDetailPage',
               params: { groupId: item.target_id },
             });
           }
@@ -136,7 +136,7 @@ export default function LikeListScreen() {
           <View style={styles.likeCardContent}>
             {/* 태그 행 */}
             <View style={styles.tagRow}>
-              <CommLabel variant="social" />
+              <CommLabel variant={item.target_type === 'M' ? 'social' : item.target_type === 'G' ? 'club' : undefined} />
               <CommLabel variant="category" category={item.target_subj_name} />
             </View>
 
@@ -225,7 +225,8 @@ const styles = StyleSheet.create({
     flexDirection     : 'row',
     backgroundColor   : COLOR.COMM_WHITE,
     borderRadius      : 12,
-    padding           : 12,
+    paddingVertical   : 8,
+    paddingHorizontal : 12,
     borderWidth       : 1,
     borderColor       : COLOR.COMM_GRAY_6,
     alignItems        : 'center',
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
   likeCardContent: {
     flex              : 1,
     marginStart       : 12,
-    justifyContent    : 'center',
+    height            : '100%',
     gap               : 4,
   },
   tagRow: {
@@ -260,7 +261,7 @@ const styles = StyleSheet.create({
   },
   likeCardTitle: {
     fontSize          : 16,
-    fontWeight        : 'bold',
+    fontFamily        : "Pretendard-Medium",
     color             : COLOR.TEXT_3C3C3C,
   },
   infoRow: {
@@ -270,6 +271,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize          : 12,
+    fontFamily        : "Pretendard-Regular",
     color             : COLOR.COMM_SHADOW,
   },
   hostRow: {
@@ -283,7 +285,8 @@ const styles = StyleSheet.create({
     borderRadius      : 10,
   },
   hostText: {
-    fontSize          : 12,
+    fontSize          : 14,
+    fontFamily        : "Pretendard-Regular",
     color             : COLOR.TEXT_DEFAULT,
   },
   emptyContainer: {

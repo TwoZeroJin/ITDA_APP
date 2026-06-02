@@ -9,7 +9,7 @@ import { useEffect } from "react";
 // 공지 목록 조회 (무한 스크롤)
 function useNoticeListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: () => noticeList({ ...searchParams }),
+    queryFn: ({ pageParam }) => noticeList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.NOTICE, QUERY_KEYS.NOTICE_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,

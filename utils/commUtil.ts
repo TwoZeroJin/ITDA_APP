@@ -340,9 +340,9 @@ function parseChatPayload(raw: string): Partial<ChatData> {
 
 function getNextPageParamFromPaging(lastPage?: {
   paging?: {
-    page_no: number;
-    page_size: number;
-    total_count: number;
+    page_no     : number;
+    page_size   : number;
+    total_count : number;
   };
 }) {
   if (!lastPage?.paging) {

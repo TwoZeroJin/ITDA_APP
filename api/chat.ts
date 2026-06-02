@@ -1,4 +1,4 @@
-import { ApiResult, ChatData, RoomData, SearchParams } from '@/types';
+import { ApiResult, ChatData, MemberInfo, RoomData, SearchParams } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
@@ -23,7 +23,7 @@ async function chatList(searchParams: SearchParams & { room_id: string }): Promi
  * 채팅 멤버 조회
  * @param searchParams room_id 포함 검색 파라미터
  */
-async function chatMemberList({ room_id }: { room_id: string }): Promise<ApiResult<ChatData[]>> {
+async function chatMemberList({ room_id }: { room_id: string }): Promise<ApiResult<MemberInfo[]>> {
   const { data } = await axiosInstance.post(API_URL.CHAT_MEMBER_LIST, { room_id });
   return data;
 }

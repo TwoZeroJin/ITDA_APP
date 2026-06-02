@@ -45,11 +45,7 @@ export default function InterestCategoryInput() {
 
         return (
           <>
-            <Text style={styles.title}>관심분야</Text>
-            <Text style={styles.subtitle}>
-              관심있는 취미가 우선적으로 보여져요 {'\n'}(최소 2개)
-            </Text>
-
+            <Text style={styles.label}>관심분야</Text>
             {categoryList.map((category, idx) => (
               <View key={idx} style={styles.categoryBox}>
                 <Text style={styles.categoryTitle}>{category.code_value}</Text>
@@ -82,22 +78,12 @@ export default function InterestCategoryInput() {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize            : 23,
-    fontWeight          : 'bold',
+  label: {
+    fontSize            : 14,
+    fontFamily          : 'Pretendard-Light',
+    lineHeight          : 22,
     color               : COLOR.TEXT_DEFAULT,
-    textAlign           : 'left',
-    marginTop           : 20,
-    marginBottom        : 10,
-    marginHorizontal    : 20,
-  },
-  subtitle: {
-    textAlign           : 'left',
-    color               : COLOR.COMM_GRAY_7,
-    marginBottom        : 22,
-    marginHorizontal    : 20,
-    fontSize            : 16,
-    lineHeight          : 28,
+    marginStart         : 5,
   },
   categoryBox: {
     backgroundColor     : COLOR.COMM_GRAY_5,
@@ -106,7 +92,6 @@ const styles = StyleSheet.create({
     borderColor         : COLOR.COMM_GRAY_6,
     padding             : 16,
     marginBottom        : 14,
-    marginHorizontal    : 16,
   },
   categoryTitle: {
     fontSize            : 20,
