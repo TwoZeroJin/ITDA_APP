@@ -25,12 +25,6 @@ export default function LikeListScreen() {
     page_size : 10,
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch]),
-  );
-
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     await refetch();

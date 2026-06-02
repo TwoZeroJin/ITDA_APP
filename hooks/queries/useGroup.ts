@@ -1,4 +1,4 @@
-import { groupCancelApply, groupApply, groupInsert, groupList, groupMemberList, groupView, groupUpdate } from "@/api/group";
+import { groupCancelApply, groupApply, groupDelete, groupInsert, groupList, groupMemberList, groupView, groupUpdate } from "@/api/group";
 import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
@@ -74,6 +74,25 @@ function useGroupUpdate() {
   });
 }
 
+// 클럽 삭제
+function useGroupDelete() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (groupId: number) => {
+      setLoading(true);
+      return groupDelete(groupId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_DELETE],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
 //3. 소모임에 참여하는 멤버 조회
 function useGroupMemberList(groupId: number) {
 
@@ -127,4 +146,4 @@ function useGroupCancelApply() {
     },
   });
 }
-export { useGroupListPaging, useGroupDetailView, useGroupInsert, useGroupUpdate, useGroupMemberList, useGroupApply, useGroupCancelApply };
+export { useGroupListPaging, useGroupDetailView, useGroupInsert, useGroupUpdate, useGroupDelete, useGroupMemberList, useGroupApply, useGroupCancelApply };

@@ -61,7 +61,9 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
                     {item.mem_image_url ? (
                         <Image source={{ uri: item.mem_image_url }} style={styles.hostImage} />
                       ) : (
-                        <MemDefault width={23} height={23} />
+                        <View style={{ marginEnd: 6 }}>
+                          <MemDefault width={23} height={23} />
+                        </View>
                       )}
                     <Text style={styles.meetHostText}>{item.mem_nick}</Text>
                   </View>)}

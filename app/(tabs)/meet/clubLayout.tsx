@@ -209,7 +209,7 @@ export default function ClubLayout() {
         }    
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>후기를 작성할 수 있는 모임이 없습니다.</Text>
+            <Text style={styles.emptyText}>등록된 클럽이 없습니다.</Text>
           </View>
         } 
       />

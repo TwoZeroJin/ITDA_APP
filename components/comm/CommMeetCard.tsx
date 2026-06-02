@@ -73,20 +73,18 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
     // 현재 경로가 이미 'chooseMeet'을 포함하고 있다면 이동하지 않음
     console.log('아이템 클릭:상세 화면으로 이동', pathname); // 클릭된 아이템 로그
 
-  if (pathname === '/communities/chooseMeet') {
-      router.push({
-        pathname: '/communities/writeFeedback',
-        params: { data: JSON.stringify(item) },
-      });
-  }     
-  else {
-    router.push({ 
-        pathname: '/meets/meetDetailPage',
-        params: { meetId: item.meet_id }
-    })
-  }
-    
-
+    if (pathname === '/communities/chooseMeet') {
+        router.push({
+          pathname: '/communities/writeFeedback',
+          params: { data: JSON.stringify(item) },
+        });
+    }     
+    else {
+      router.push({ 
+          pathname: '/meets/meetDetailPage',
+          params: { meetId: item.meet_id }
+      })
+    }
   };
 
   return (

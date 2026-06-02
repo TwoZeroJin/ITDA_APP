@@ -7,6 +7,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { MeetInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
 import CategoryInput from "@/components/inputs/CategoryInput";
+import CategoryInput2 from "@/components/inputs/CategoryInput2";
 
 /**
  * 모임 생성 - 카테고리 선택 화면
@@ -45,7 +46,7 @@ export default function MeetCreateCategoryScreen() {
             <Text style={COMM_STYLES.commSubtitle}>{'모임의 주제를 선택해보세요.'}</Text>
           </View>
 
-          <CategoryInput name="meet_subj" />
+          <CategoryInput2 name="meet_subj" />
 
         </ScrollView>
 

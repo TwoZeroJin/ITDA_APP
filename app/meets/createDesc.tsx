@@ -61,7 +61,7 @@ export default function MeetCreateDescScreen() {
             <MeetNameInput />
             <MeetDescInput />
             <CommImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
-            <TagInput />
+            {/* <TagInput /> */}
           </FormProvider>
           
         </View>

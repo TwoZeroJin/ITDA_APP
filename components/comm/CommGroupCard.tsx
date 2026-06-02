@@ -2,31 +2,76 @@ import BtnLikeDefault from '@/assets/images/btn_like_default.svg';
 import BtnLikeActive from '@/assets/images/btn_like_active.svg';
 import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
+import ImageDefault from '@/assets/images/no_image.svg';
 import CommLabel from '@/components/comm/CommLabel';
 import { COLOR } from '@/constants';
 import { GroupInfo } from '@/types';
-import { useState } from 'react';
+import { getAccessToken } from '@/utils/commUtil';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MemDefault from '@/assets/images/icon_mem_default.svg';
 import { router } from 'expo-router';
 
+let cachedIsLoggedIn: boolean | null = null;
+
 interface CommGroupCardProps {
   item: GroupInfo;
   onLikePress?: (item: GroupInfo) => void;
+  backgroundColor?: string;
 }
 
 /**
  * 공통 소모임 아이템 카드 컴포넌트
  */
-export default function CommGroupCard({ item, onLikePress }: CommGroupCardProps) {
-  const [imageError, setImageError] = useState(false);
-  const imageSource = imageError || !item.thumb_url
-    ? require('@/assets/images/no_image.png')
-    : { uri: item.thumb_url };
+export default function CommGroupCard({ item, onLikePress, backgroundColor }: CommGroupCardProps) {
+  const [thumbImageError, setThumbImageError] = useState(false);
+  const [profileImageError, setProfileImageError] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(cachedIsLoggedIn ?? false);
+  const dynamicBackgroundColor = backgroundColor === 'grey' ? COLOR.COMM_GRAY_8 : COLOR.COMM_WHITE;
+
+  useEffect(() => {
+    let isMounted = true;
+
+    if (cachedIsLoggedIn !== null) {
+      setIsLoggedIn(cachedIsLoggedIn);
+      return () => {
+        isMounted = false;
+      };
+    }
+
+    getAccessToken()
+      .then((token) => {
+        const nextIsLoggedIn = !!token;
+        cachedIsLoggedIn = nextIsLoggedIn;
+        if (isMounted) {
+          setIsLoggedIn(nextIsLoggedIn);
+        }
+      })
+      .catch(() => {
+        cachedIsLoggedIn = false;
+        if (isMounted) {
+          setIsLoggedIn(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const imageSource = useMemo(
+    () => (thumbImageError || !item.thumb_url ? null : { uri: item.thumb_url }),
+    [thumbImageError, item.thumb_url],
+  );
+
+  const hostImageSource = useMemo(
+    () => (profileImageError || !item.mem_image_url ? null : { uri: item.mem_image_url }),
+    [profileImageError, item.mem_image_url],
+  );
 
   return (
     <TouchableOpacity 
-      style={styles.recommendItemContainer}
+      style={[styles.recommendItemContainer, { backgroundColor: dynamicBackgroundColor }]}
       activeOpacity={0.6}
       onPress={() => router.push({ 
         pathname: '/groups/groupDetailPage',
@@ -34,21 +79,34 @@ export default function CommGroupCard({ item, onLikePress }: CommGroupCardProps)
       })}
     >
       <View>
-        <ImageBackground
-          source={imageSource}
-          style={styles.recommendItemImage}
-          imageStyle={styles.recommendImage}
-          onError={() => setImageError(true)}
-        >
-          <TouchableOpacity style={styles.recommendLikeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
-            {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
-          </TouchableOpacity>
-        </ImageBackground>
+        {imageSource ? (
+          <ImageBackground
+            source={imageSource}
+            style={styles.recommendItemImage}
+            imageStyle={styles.recommendImage}
+            onError={() => setThumbImageError(true)}
+          >
+            {isLoggedIn && (
+              <TouchableOpacity style={styles.recommendLikeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
+                {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
+              </TouchableOpacity>
+            )}
+          </ImageBackground>
+        ) : (
+          <View style={styles.recommendItemImage}>
+            <ImageDefault width={96} height={96} />
+            {isLoggedIn && (
+              <TouchableOpacity style={styles.recommendLikeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
+                {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       </View>
       <View style={styles.contentWrap}>
         <View style={styles.recommendTagContainer}>
           <CommLabel variant="club" />
-          <CommLabel variant="category" category={item.group_subj} />
+          <CommLabel variant="category" category={item.group_subj_name} />
         </View>
         <View style={styles.recommendContentContainer}>
           <Text style={styles.recommendContentTitle} numberOfLines={1} ellipsizeMode="tail">
@@ -61,11 +119,11 @@ export default function CommGroupCard({ item, onLikePress }: CommGroupCardProps)
             <Text style={styles.recommendContentText}>{item.apply_ratio}</Text></>)}
           </View>
           <View style={styles.recommendContentInfoContainer}>
-            {imageSource ? (
+            {hostImageSource ? (
               <Image 
-                source={{ uri: item.mem_image_url }} 
+                source={hostImageSource}
                 style={styles.hostImage}
-                onError={() => setImageError(true)}
+                onError={() => setProfileImageError(true)}
               />
             ) : (
               <MemDefault width={23} height={23} />
@@ -81,7 +139,6 @@ export default function CommGroupCard({ item, onLikePress }: CommGroupCardProps)
 const styles = StyleSheet.create({
   recommendItemContainer: {
     width             : '95%',
-    backgroundColor   : COLOR.COMM_WHITE,
     borderRadius      : 12,
     padding           : 12,
     flexDirection     : 'row',
@@ -91,6 +148,7 @@ const styles = StyleSheet.create({
     width             : 96,
     height            : 96,
     borderRadius      : 12,
+    overflow          : 'hidden',
   },
   recommendImage: {
     width             : '100%',

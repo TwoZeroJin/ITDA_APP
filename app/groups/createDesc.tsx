@@ -62,7 +62,7 @@ export default function GroupCreateDescScreen() {
             <GroupNameInput />
             <GroupDescInput />
             <CommImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
-            <TagInput />
+            {/* <TagInput /> */}
           </FormProvider>
           
         </View>

@@ -200,7 +200,7 @@ export default function SocialClassLayout({ activeType }: { activeType: 'social'
         }    
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>후기를 작성할 수 있는 모임이 없습니다.</Text>
+            <Text style={styles.emptyText}>등록된 모임이 없습니다.</Text>
           </View>
         } 
       />

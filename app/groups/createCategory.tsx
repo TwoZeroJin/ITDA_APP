@@ -7,6 +7,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import CategoryInput from "@/components/inputs/CategoryInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { GroupInfo } from "@/types";
+import CategoryInput2 from "@/components/inputs/CategoryInput2";
 
 /**
  * 클럽 생성 - 카테고리 선택 화면
@@ -46,7 +47,7 @@ export default function GroupCreateCategoryScreen() {
             <Text style={COMM_STYLES.commSubtitle}>{'클럽의 주제를 선택해보세요.'}</Text>
           </View>
 
-          <CategoryInput name="group_subj" />
+          <CategoryInput2 name="group_subj" />
 
         </ScrollView>
 

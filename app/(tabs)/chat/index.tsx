@@ -6,7 +6,7 @@ import { RoomData } from "@/types";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { CategoryTab } from "@/components/CategoryTab";
 import ImageDefault from "@/assets/images/no_image.svg";
 

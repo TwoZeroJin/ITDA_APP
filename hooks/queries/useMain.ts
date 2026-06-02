@@ -1,6 +1,7 @@
 import { mainData, mainEntry } from '@/api/main';
 import { userRefreshToken } from '@/api/user';
 import { QUERY_KEYS, STORE_KEY } from '@/constants';
+import { ApiResult, MainData } from '@/types';
 import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
 import { printDebugLog, setCategoryList, setChurchList, setFeeList, setMainBannerList } from '@/utils/commUtil';
 import { useQuery } from '@tanstack/react-query';
@@ -114,9 +115,9 @@ function useMainEntry() {
 /**
  * 메인 데이터 조회
  */
-function useMainData() {
-  const query = useQuery({
-    queryFn: mainData,
+function useMainData(sch_category?: string, sch_text?: string) {
+  const query = useQuery<ApiResult<MainData>>({
+    queryFn: () => mainData({ sch_category, sch_text }),
     queryKey: [QUERY_KEYS.MAIN , QUERY_KEYS.MAIN_DATA],
   });
 

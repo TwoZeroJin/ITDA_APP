@@ -25,9 +25,9 @@ const deliveredSubscribers = new Map<string, DeliveredCallback>();
 const ensureClient = async (): Promise<Client> => {
   if (client == null) {
     client = new Client(
-      "146.56.105.2", // host
-      9001,           // port
-      "/mqtt",        // path
+      `${process.env.EXPO_PUBLIC_MQTT_URL}`,        // host
+      Number(process.env.EXPO_PUBLIC_MQTT_PORT),    // port
+      "/mqtt",                                      // path
       await getDeviceUid()
     );
   }

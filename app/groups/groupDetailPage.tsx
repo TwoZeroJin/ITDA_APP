@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { TouchableOpacity, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { useGroupApply, useGroupCancelApply} from "@/hooks/queries/useGroup";
+import { useGroupApply, useGroupCancelApply, useGroupDelete } from "@/hooks/queries/useGroup";
 import {  FileInfo, GroupApply, GroupInfo } from "@/types";
 import {  useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
@@ -16,6 +16,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useGroupDetailView, useGroupMemberList } from "@/hooks/queries/useGroup";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import DropdownModal from '@/components/modal/DropdownModal';
+import { router as expoRouter } from 'expo-router';
 
 export default function GroupDetailPage() {
 
@@ -28,9 +29,11 @@ export default function GroupDetailPage() {
 
   const groupApply = useGroupApply();
   const groupCancelApply = useGroupCancelApply();
+  const groupDelete = useGroupDelete();
   const [comment, setComment] = useState('');
   const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
   const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
+  const [isDeleteConfirmVisible, setDeleteConfirmVisible] = useState(false);//삭제확인alert
   const router = useAuthRouter();
   //소모임에 참여하는 멤버 조회
   const { results : memberList,refetch: refetchMemberList, isLoading : isMemberLoading, isError : isMemberError } = useGroupMemberList(Number(groupId));  
@@ -38,6 +41,32 @@ export default function GroupDetailPage() {
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
+
+  const handleDeleteSubmit = () => {
+    setDeleteConfirmVisible(false);
+
+    if (!groupInfo?.group_id) {
+      setErrorMessage('삭제할 클럽 정보가 없습니다.');
+      setIsErrorDialogVisible(true);
+      return;
+    }
+
+    groupDelete.mutate(Number(groupInfo.group_id), {
+      onSuccess: (result) => {
+        if (result.ret_code !== 200) {
+          setErrorMessage(result.ext_msg ? result.ext_msg : result.ret_msg);
+          setIsErrorDialogVisible(true);
+          return;
+        }
+
+        expoRouter.back();
+      },
+      onError: (error) => {
+        setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+        setIsErrorDialogVisible(true);
+      },
+    });
+  };
 
   
   // ✅ 2. 로딩 상태 처리
@@ -179,7 +208,8 @@ export default function GroupDetailPage() {
     {
       label: '클럽 삭제',
       onPress: () => {
-        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+        setIsDetailMenuVisible(false);
+        setDeleteConfirmVisible(true);
       },
     },
   ];  
@@ -391,6 +421,16 @@ export default function GroupDetailPage() {
         confirmLabel="완료"
         onCancel={() => setNotApplyComfirmVisible(false)}
         onConfirm={handleNotApplySubmit}
+      />
+
+      <CustomDialog
+        visible={isDeleteConfirmVisible}
+        title="클럽 삭제"
+        content="정말 삭제하시겠습니까?"
+        cancelLabel="아니오"
+        confirmLabel="예"
+        onCancel={() => setDeleteConfirmVisible(false)}
+        onConfirm={handleDeleteSubmit}
       />
 
         {/* 5. 에러 모달 조립 */}

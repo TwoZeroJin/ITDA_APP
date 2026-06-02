@@ -2,7 +2,7 @@ import CommHeader from '@/components/comm/CommHeader';
 import { COLOR } from '@/constants';
 import { BannerData } from '@/types';
 import { getMainBannerList } from '@/utils/commUtil';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import CommFloatingButton from '@/components/comm/CommFloatingButton';
 import CommCategoryList from '@/components/comm/CommCategoryList';
@@ -20,7 +20,18 @@ import SearchInput from '@/components/SearchInput';
 export default function HomeScreen() {
   const [bannerList, setBannerList] = useState<BannerData[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-  const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, refetch } = useMainData();
+  const [schText, setSchText] = useState('');
+  const [schCategory, setSchCategory] = useState('');
+  const isFirstFilterRender = useRef(true);
+  const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, refetch } = useMainData(schCategory, schText);
+
+  const handleSearchKey = useCallback((keyword: string) => {
+    setSchText(keyword);
+  }, []);
+
+  const handleCategorySelect = useCallback((codeId: string) => {
+    setSchCategory(codeId);
+  }, []);
 
   // 위로 땡겨서 새로고침
   const handleRefresh = useCallback(async () => {
@@ -40,6 +51,15 @@ export default function HomeScreen() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (isFirstFilterRender.current) {
+      isFirstFilterRender.current = false;
+      return;
+    }
+
+    refetch();
+  }, [schCategory, schText, refetch]);
   
   const recommendSections = [
     {
@@ -77,7 +97,7 @@ export default function HomeScreen() {
         }
       >
         {/* 검색 섹션 */}
-        <SearchInput />
+        <SearchInput searchKey={handleSearchKey} />
 
         {/* 공지사항 섹션 */}
         {/* <View style={styles.notiContainer}>
@@ -99,7 +119,7 @@ export default function HomeScreen() {
         <CommUpcomingMeetList upcomingMeetList={upcomingMeetList} />
 
         {/* 카테고리 섹션 */}
-        <CommCategoryList />
+        <CommCategoryList onCategorySelect={handleCategorySelect} />
 
         <DividingLine />
 

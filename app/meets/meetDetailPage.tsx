@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { TouchableOpacity, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply} from "@/hooks/queries/useMeet";
+import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply, useMeetDelete } from "@/hooks/queries/useMeet";
 import { FileInfo, MeetApply, MeetInfo, SearchParams } from "@/types";
 import {  useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
@@ -18,12 +18,16 @@ import DropdownModal from '@/components/modal/DropdownModal';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useReviewList } from "@/hooks/queries/useCommunity";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
+import { router as expoRouter } from 'expo-router';
+import { showToast } from "@/utils/commToast";
 
 export default function MeetDetailPage() {
   const meetApply = useMeetApply();
   const meetCancelApply = useMeetCancelApply();
+  const meetDelete = useMeetDelete();
   const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
   const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
+  const [isDeleteConfirmVisible, setDeleteConfirmVisible] = useState(false);//삭제확인alert
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const router = useAuthRouter();
   // ✅ 1. 모임상세 데이터 조회
@@ -43,6 +47,29 @@ export default function MeetDetailPage() {
 
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  // 모임 삭제
+  const handleDeleteSubmit = () => {
+    setDeleteConfirmVisible(false);
+
+    meetDelete.mutate(Number(meetInfo?.meet_id), {
+      onSuccess: (result) => {
+        if (result.ret_code !== 200) {
+          setErrorMessage(result.ret_msg);
+          setIsErrorDialogVisible(true);
+          return;
+        }
+        else {
+          showToast({ text1: '모임이 삭제되었습니다.' });
+          expoRouter.back();
+        }
+      },
+      onError: (error) => {
+        setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+        setIsErrorDialogVisible(true);
+      },
+    });
+  };
   
   // ✅ 2. 로딩 상태 처리
   if (isDetailLoading || isMemberLoading || isReviewLoading) {
@@ -192,7 +219,8 @@ export default function MeetDetailPage() {
     {
       label: '모임 삭제',
       onPress: () => {
-        Alert.alert('안내', '삭제 기능은 준비중입니다.');
+        setIsDetailMenuVisible(false);
+        setDeleteConfirmVisible(true);
       },
     },
   ];
@@ -405,6 +433,16 @@ export default function MeetDetailPage() {
         confirmLabel="완료"
         onCancel={() => setNotApplyComfirmVisible(false)}
         onConfirm={handleNotApplySubmit}
+      />
+
+      <CustomDialog
+        visible={isDeleteConfirmVisible}
+        title="모임 삭제"
+        content="정말 삭제하시겠습니까?"
+        cancelLabel="아니오"
+        confirmLabel="예"
+        onCancel={() => setDeleteConfirmVisible(false)}
+        onConfirm={() => handleDeleteSubmit()}
       />
 
         {/* 5. 에러 모달 조립 */}

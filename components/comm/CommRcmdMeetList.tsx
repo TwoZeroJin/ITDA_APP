@@ -4,6 +4,7 @@ import { COLOR } from '@/constants';
 import { MeetInfo } from '@/types';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMemberLike } from '@/hooks/queries/useMember';
+import { router } from 'expo-router';
 
 interface RecommendSectionItem {
   key: string;
@@ -53,14 +54,18 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
                 <Text style={styles.title}>{section.title}</Text>
                 <Text style={styles.subTitle}>{section.subTitle}</Text>
               </View>
-              {section.data.map((item2, colIdx) => (
-                <View key={colIdx} style={styles.listContainer}>
-                  <CommMeetCard
-                    item={item2}
-                    onLikePress={(item) => handleLikePress(item)}
-                  />
-                </View>
-              ))}
+              {section.data?.length ? (
+                section.data.map((item2, colIdx) => (
+                  <View key={colIdx} style={styles.listContainer}>
+                    <CommMeetCard
+                      item={item2}
+                      onLikePress={(item) => handleLikePress(item)}
+                    />
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.emptyText}>데이터가 없습니다</Text>
+              )}
             </View>
           );
         }}
@@ -71,7 +76,11 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
       />
 
       <View style={{ alignItems: 'center' }}>
-        <TouchableOpacity style={styles.moreButton} activeOpacity={0.6}>
+        <TouchableOpacity 
+          style={styles.moreButton} 
+          activeOpacity={0.6}
+          onPress={() => router.navigate('/meet')}
+        >
           <Text style={styles.moreButtonText}>더보기</Text>
           <IconArrowRightMore width={12} height={12} />
         </TouchableOpacity>
@@ -97,6 +106,11 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     marginTop         : 16,
+  },
+  emptyText: {
+    marginTop         : 16,
+    fontSize          : 14,
+    color             : COLOR.TEXT_GRAY,
   },
   moreButton: {
     justifyContent    : 'center',

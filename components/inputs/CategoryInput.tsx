@@ -9,6 +9,9 @@ type CategoryInputProps = {
   name: string;
 };
 
+/**
+ * 1depth 카테고리 선택 컴포넌트
+ */
 export default function CategoryInput({ name }: CategoryInputProps) {
   const { control } = useFormContext<FieldValues>();
   const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);

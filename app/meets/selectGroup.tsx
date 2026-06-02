@@ -25,12 +25,6 @@ export default function SelectGroupScreen() {
     page_size : 20,
   });
 
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch]),
-  );
-
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
     await refetch();
