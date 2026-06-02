@@ -1,6 +1,6 @@
 import { COLOR, COMM_CONSTANTS } from "@/constants";
-import React, { useEffect, useState } from "react";
-import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
+import React, { useState } from "react";
+import { TouchableOpacity, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useGroupApply, useGroupCancelApply} from "@/hooks/queries/useGroup";
@@ -12,9 +12,7 @@ import IconCalendar from '@/assets/images/icon_calendar.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
 import DividingLine from "@/components/DividingLine";
 import ProfileIcon from "@/components/ProfileIcon";
-import MeetComment from "@/components/MeetComment";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import * as commUtil from '@/utils/commUtil';
 import { useGroupDetailView, useGroupMemberList } from "@/hooks/queries/useGroup";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import DropdownModal from '@/components/modal/DropdownModal';
@@ -33,27 +31,13 @@ export default function GroupDetailPage() {
   const [comment, setComment] = useState('');
   const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
   const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
-  const [myMemId, setMyMemId] = useState<number>(0);
   const router = useAuthRouter();
-  //내정보 조회
-//  const memId = commUtil.getMemId();
-  //소모임 정보 조회
   //소모임에 참여하는 멤버 조회
   const { results : memberList,refetch: refetchMemberList, isLoading : isMemberLoading, isError : isMemberError } = useGroupMemberList(Number(groupId));  
 
-//  const hostMember = memberList?.find(member => member.host_yn === 'Y');
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
-
-  useEffect(() => {
-    const fetchMyMemberInfo = async () => {
-      const memberInfo = await commUtil.getMemberInfo();
-      setMyMemId(memberInfo.mem_id ?? 0);
-    };
-
-    fetchMyMemberInfo();
-  }, []);
 
   
   // ✅ 2. 로딩 상태 처리
@@ -87,7 +71,6 @@ export default function GroupDetailPage() {
 
     const requestBody = {
       group_id: Number(groupInfo?.group_id),
-      mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함
       group_answer: answer,
       use_stat: (answer.trim() !== '' && groupInfo?.apply_type === 'A') ? '0' : '1', // 신청 상태 (예: 'Y' for 신청, 'N' for 취소)
     } as GroupApply;
@@ -118,7 +101,6 @@ export default function GroupDetailPage() {
 
     const requestBody = {
       group_id: Number(groupInfo?.group_id),
-      mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함      
     } as GroupApply;
     console.log("신청하기 요청 바디:", requestBody);
 
@@ -257,7 +239,6 @@ export default function GroupDetailPage() {
         <View style={styles.commContainer}>
           {/* 소셜링 라벨 */}
           <View style={styles.labelContainer}>
-              <CommLabel variant="social" />
               <CommLabel variant="club" />
               {/* 추후 넘긴 카테고리 값으로 세팅 */}
               <CommLabel variant="category" category="게임" />
@@ -332,7 +313,7 @@ export default function GroupDetailPage() {
 
         {/* 장소 주소 및 지도?? */}
         {/* 6. 댓글 ??---------------------------- */}
-        <DividingLine />
+        {/* <DividingLine />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.commentContainer}
@@ -351,9 +332,8 @@ export default function GroupDetailPage() {
             nestedScrollEnabled={true}    
           />
 
-          {/* 댓글 입력창 */}
+           댓글 입력창 
           <View style={styles.commentInputWrapper}>
-            {/* <View style={styles.myProfileCircle} /> */}
             <ProfileIcon mem_image_url={''} type="MEMBER" />
             <View style={styles.commentInputContainer}>
               <TextInput
@@ -367,7 +347,7 @@ export default function GroupDetailPage() {
               </TouchableOpacity>
             </View>
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView> */}
         
 
       </ScrollView>

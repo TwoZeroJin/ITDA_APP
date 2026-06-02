@@ -1,6 +1,6 @@
-import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
-import React, { useEffect, useState } from "react";
-import { TouchableOpacity, TextInput, Platform, KeyboardAvoidingView, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
+import { COLOR, COMM_STYLES, COMM_CONSTANTS } from "@/constants";
+import React, { useState } from "react";
+import { TouchableOpacity, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply} from "@/hooks/queries/useMeet";
@@ -13,25 +13,19 @@ import CustomDialog from "@/components/modal/CustomDialog";
 import DividingLine from "@/components/DividingLine";
 import ProfileIcon from "@/components/ProfileIcon";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
-import MeetComment from "@/components/MeetComment";
 import CommReviewList from '@/components/CommReviewList';
 import DropdownModal from '@/components/modal/DropdownModal';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useReviewList } from "@/hooks/queries/useCommunity";
-import * as commUtil from '@/utils/commUtil';
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 
 export default function MeetDetailPage() {
   const meetApply = useMeetApply();
   const meetCancelApply = useMeetCancelApply();
-  const [comment, setComment] = useState('');
   const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
   const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
-  const [myMemId, setMyMemId] = useState<number>(0);
   const router = useAuthRouter();
-  //내정보 조회
-//  const memId = commUtil.getMemId();
   // ✅ 1. 모임상세 데이터 조회
   const { meetId } = useLocalSearchParams();
   //소모임 정보 조회
@@ -47,19 +41,8 @@ export default function MeetDetailPage() {
             sch_keyword: Number(meetId), //myMemId, // 실제 mem_id는 로그인 정보에서 가져와야 함
         } as SearchParams); 
 
-//  const hostMember = memberList?.find(member => member.host_yn === 'Y');
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
-  useEffect(() => {
-    const fetchMyMemberInfo = async () => {
-      const memberInfo = await commUtil.getMemberInfo();
-      setMyMemId(memberInfo.mem_id ?? 0);
-    };
-
-    fetchMyMemberInfo();
-  }, []);
-
   
   // ✅ 2. 로딩 상태 처리
   if (isDetailLoading || isMemberLoading || isReviewLoading) {
@@ -92,7 +75,6 @@ export default function MeetDetailPage() {
 
     const requestBody = {
       meet_id: Number(meetInfo?.meet_id),
-      mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함
       meet_answer: answer,
       use_stat: (answer.trim() !== '' && meetInfo?.apply_type === 'A') ? '0' : '1', // 신청 상태 (예: 'Y' for 신청, 'N' for 취소)
     } as MeetApply;
@@ -123,7 +105,6 @@ export default function MeetDetailPage() {
 
     const requestBody = {
       meet_id: Number(meetInfo?.meet_id),
-      mem_id: Number(myMemId || 0), // 실제 mem_id는 로그인 정보에서 가져와야 함      
     } as MeetApply;
     console.log("신청하기 요청 바디:", requestBody);
 
@@ -266,7 +247,6 @@ export default function MeetDetailPage() {
           {/* 소셜링 라벨 */}
           <View style={styles.labelContainer}>
               <CommLabel variant="social" />
-              <CommLabel variant="club" />
               {/* 추후 넘긴 카테고리 값으로 세팅 */}
               <CommLabel variant="category" category="게임" />
           </View>
@@ -342,7 +322,7 @@ export default function MeetDetailPage() {
 
         {/* 장소 주소 및 지도?? */}
         {/* 6. 댓글 ??---------------------------- */}
-        <DividingLine />
+        {/* <DividingLine />
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.commentContainer}
@@ -361,9 +341,8 @@ export default function MeetDetailPage() {
             nestedScrollEnabled={true}    
           />
 
-          {/* 댓글 입력창 */}
+           댓글 입력창 
           <View style={styles.commentInputWrapper}>
-            {/* <View style={styles.myProfileCircle} /> */}
             <ProfileIcon mem_image_url={''} type="MEMBER" />
             <View style={styles.commentInputContainer}>
               <TextInput
@@ -377,7 +356,7 @@ export default function MeetDetailPage() {
               </TouchableOpacity>
             </View>
           </View>
-        </KeyboardAvoidingView>
+        </KeyboardAvoidingView> */}
         
 
 

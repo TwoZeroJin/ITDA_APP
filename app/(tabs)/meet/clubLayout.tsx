@@ -3,6 +3,7 @@ import { COLOR } from '@/constants';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useCallback, useState } from 'react';
 import {  useFocusEffect } from 'expo-router';
+import { GroupInfo } from '@/types';
 import DividingLine from '@/components/DividingLine';
 import { useGroupListPaging } from '@/hooks/queries/useGroup';
 import IconFilter from '@/assets/images/icon_filter.svg';
@@ -87,20 +88,22 @@ export default function ClubLayout() {
   }
 
   // 좋아요 처리
-  const handleLikePress = (groupId: number, like_yn: string) => {
-    if (!groupId) {
+  const handleLikePress = (item: GroupInfo) => {
+    if (!item.group_id) {
       return;
     }
 
     memberLike.mutate(
       {
-        target_id   : groupId,
+        target_id   : item.group_id,
         target_type : 'G',
-        flag        : like_yn === 'N',
+        flag        : item.like_yn === 'N',
       },
       {
+        onSuccess: () => {
+          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+        },
         onError: () => {
-        
         },
       },
     );
@@ -137,7 +140,7 @@ export default function ClubLayout() {
           <View key={index} style={styles.recommendListContainer}>
             <CommGroupCard
               item={item}
-              onLikePress={(item) => handleLikePress(item.group_id, item.like_yn)}            
+              onLikePress={(item) => handleLikePress(item)}            
             />
           </View>
         )}

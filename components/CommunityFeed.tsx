@@ -177,50 +177,7 @@ export default function CommunityFeed({data, memId}: communityFeedProps) {
             />
           </View>
         )}
-        {/* {imageList.length > 0 && (
-          <View style={styles.imageSliderContainer}>
-            <FlatList
-              data={imageList}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onScroll={onScroll}
-              scrollEventThrottle={16}
-              keyExtractor={(_, index) => index.toString()}
-              renderItem={({ item, index }) => {
-                // 여기서 로그가 찍히지 않는다면 imageList 자체가 빈 배열인 것입니다.
-//                console.log(`[디버깅] ${index}번 아이템 전체:`, item);
-//                console.log(`[디버깅] 경로값 확인:`, item?.file_path);
-
-                return (
-          <Image
-                    source={{ uri: item.file_path }}
-                    style={styles.feedImage}
-                    resizeMode="cover"
-                    // 로딩 에러가 발생하면 이유를 알려줍니다.
-                    onError={(e) => console.log(`[에러] ${index}번 이미지 로드 실패:`, e.nativeEvent.error)}
-                  />
-                );
-              }}          
-            />
-            
-            
-          </View>
-        )}
-        {/* ✅ 2. 이미지 밖으로 나온 인디케이터 (이미지 아래, 모임정보 위에 위치) */}
-        {/* {imageList.length > 1 && (
-          <View style={styles.outsideIndicatorContainer}>
-            {imageList.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.indicatorDot,
-                  activeIndex === index ? styles.activeDot : styles.inactiveDot,
-                ]}
-              />
-            ))}
-          </View>
-        )}  */}
+        
 
         {/* 피드에 모임정보가  존재할 때만 컴포넌트를 렌더링 */}
         <View style={styles.meetContainer} >

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,11 +14,9 @@ import {
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useForm, Controller } from 'react-hook-form'; // 추가
-import * as commUtil from '@/utils/commUtil';
 import IconCamera from '@/assets/images/icon_camera.svg';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
-import CommunityMeet from '@/components/CommunityMeet';
 import { FileInfo, MeetReview, MeetInfo } from '@/types';
 import { COLOR } from '@/constants';
 import { useImagesUpload } from "@/hooks/queries/useImageUpload";
@@ -40,7 +38,6 @@ export default function WriteFeedback() {
   const meetData = params.data ? JSON.parse(params.data as string) : null;
   const updFeedData = params.updFeedData ? JSON.parse(params.updFeedData as string) : null;
   const headerTitle = meetData ? '후기 작성' : '피드 작성';
-  const [myMemId, setMyMemId] = useState<number>(0);
   const router = useRouter();
   const imageMutation = useImagesUpload();
   const reviewMutation = useReviewInsert();
@@ -49,15 +46,6 @@ export default function WriteFeedback() {
   // 이미지 관련 상태는 폼 외부에서 관리하는 것이 제어가 편합니다.
   const [images, setImages] = useState<string[]>(updFeedData?.fileInfoVO?.map((file: FileInfo) => file.file_path) || []);
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>(updFeedData?.fileInfoVO || []);
-
-  useEffect(() => {
-    const fetchMyMemberInfo = async () => {
-      const memberInfo = await commUtil.getMemberInfo();
-      setMyMemId(memberInfo.mem_id ?? 0);
-    };
-
-    fetchMyMemberInfo();
-  }, []);
 
   // 1. React Hook Form 초기화
   const { control, handleSubmit, setValue, formState: { errors } } = useForm<ReviewFormData>({
@@ -77,7 +65,6 @@ export default function WriteFeedback() {
       tag: data.tag,
       place_addr: data.place_addr,
       meet_id: meetData?.meet_id || null,
-      mem_id: myMemId,
       fileInfoVO: uploadedImageList,
     };
 

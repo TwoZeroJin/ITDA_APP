@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Image, StyleSheet } from 'react-native';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { MemberInfo } from '@/types';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 import { COLOR } from '@/constants';
 
@@ -71,6 +69,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: 60,
     height: 60,
+    marginRight: 12,
   },
   hostImageFrame: {
     width: 60,
@@ -130,6 +129,8 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
+    borderColor:COLOR.COMM_GRAY_6,
+    borderWidth: 1,
   },
 });
 

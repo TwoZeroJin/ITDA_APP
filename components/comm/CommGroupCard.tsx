@@ -47,7 +47,7 @@ export default function CommGroupCard({ item, onLikePress }: CommGroupCardProps)
       </View>
       <View style={styles.contentWrap}>
         <View style={styles.recommendTagContainer}>
-          <CommLabel variant="social" />
+          <CommLabel variant="club" />
           <CommLabel variant="category" category={item.group_subj} />
         </View>
         <View style={styles.recommendContentContainer}>

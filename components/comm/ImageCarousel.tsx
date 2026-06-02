@@ -1,6 +1,9 @@
 import { COLOR } from "@/constants";
 import React, { useRef, useState } from "react";
-import { Text, View, FlatList, Image, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, Pressable, LayoutChangeEvent } from "react-native";
+import { GestureResponderEvent,
+  PanResponderGestureState, Text, View, FlatList, Dimensions, Image, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent } from "react-native";
+// ✅ 라이브러리 정상 구동을 위한 세팅
+import ImageZoom from 'react-native-image-pan-zoom';
 
 interface ImageCarouselProps  {
   images            : string[];           // 이미지 URL
@@ -10,11 +13,14 @@ interface ImageCarouselProps  {
   onPressImage?     : (idx: number) => void;
 };
 
-/// 이미지 캐러셀 컴포넌트
-function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true, onPressImage }: ImageCarouselProps) {
+export function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true, onPressImage }: ImageCarouselProps) {
   const [index, setIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false); // ✅ 현재 확대 상태인지 체크할 상태 추가
   const ref = useRef<FlatList<string> | null>(null);
+  
+  // ✅ 복잡한 Responder 대신, 현재 스크롤이 머물러 있는 가로 폭을 기준으로 삼습니다.
+  const currentWidth = containerWidth || Dimensions.get('window').width;
   const canSwipe = images.length > 1;
 
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -25,11 +31,10 @@ function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true
   };
 
   const onMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (containerWidth <= 0) {
+    if (currentWidth <= 0) {
       return;
     }
-
-    const newIndex = Math.round(e.nativeEvent.contentOffset.x / containerWidth);
+    const newIndex = Math.round(e.nativeEvent.contentOffset.x / currentWidth);
     setIndex(newIndex);
   };
 
@@ -41,29 +46,52 @@ function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true
         data={images}
         horizontal
         pagingEnabled={canSwipe}
-        scrollEnabled={canSwipe}
+        scrollEnabled={canSwipe} // ✅ 스크롤은 항상 열어둡니다.
         showsHorizontalScrollIndicator={false}
         bounces={false}
         keyExtractor={(_, i) => String(i)}
         onMomentumScrollEnd={onMomentumScrollEnd}
         renderItem={({ item, index: idx }) => (
-          <Pressable
-            style={[
-              { width: containerWidth || "100%", height },
-              imageRadius !== undefined && { borderRadius: imageRadius, overflow: "hidden" },
-            ]}
-            onPress={() => onPressImage?.(idx)}
-          >
-            <Image
-              source={{ uri: item }}
-              style={[
-                styles.image,
-                { width: containerWidth || "100%", height },
-                imageRadius !== undefined && { borderRadius: imageRadius },
-              ]}
-              resizeMode="cover"
-            />
-          </Pressable>
+          <View style={{ width: currentWidth, height, overflow: 'hidden' }}>
+            {/* @ts-ignore */}
+            <ImageZoom 
+              cropWidth={currentWidth}
+              cropHeight={height}
+              imageWidth={currentWidth}
+              imageHeight={height}
+              panToMove={true}
+              pinchToZoom={true}
+              enableDoubleClickZoom={true}
+              // 💡 매개변수 뒤에 각각 : GestureResponderEvent 와 : PanResponderGestureState 를 붙여줍니다.
+              onStartShouldSetPanResponder={(e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+                return false; 
+              }}
+              onMoveShouldSetPanResponder={(e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+                return isZoomed || gestureState.numberActiveTouches >= 2;
+              }}
+              onMoveShouldSetPanResponderCapture={(e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+                if (!isZoomed && gestureState.numberActiveTouches === 1) {
+                  return false;
+                }
+                return true;
+              }}              
+              // 💡 라이브러리 자체 버그 방지: 줌 동작을 무겁게 잡지 않도록 임계값 최소화
+              minScale={1}
+              maxScale={4}
+              // 💡 확대 도중 삐져나가는 현상을 방지하고, 손을 떼면 원래 크기로 자석처럼 돌아오게 유도
+              responderRelease={() => {}}
+            >
+              <Image
+                source={{ uri: item }}
+                style={[
+                  styles.image,
+                  { width: currentWidth, height },
+                  imageRadius !== undefined && { borderRadius: imageRadius },
+                ]}
+                resizeMode="cover"
+              />
+            </ImageZoom>          
+          </View>
         )}
       />)}
       {!images.length && (
