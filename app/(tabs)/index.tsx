@@ -43,22 +43,22 @@ export default function HomeScreen() {
   
   const recommendSections = [
     {
-      key: 'hot',
-      title: '핫한 소셜링',
-      subTitle: '요즘 다 여기서 만나요 👀 지금 참여하기!',
-      data: hotMeetList,
+      key       : 'hot',
+      title     : '핫한 소셜링',
+      subTitle  : '요즘 다 여기서 만나요 👀 지금 참여하기!',
+      data      : hotMeetList,
     },
     {
-      key: 'recommend',
-      title: '추천 소셜링',
-      subTitle: '취향에 맞는 모임을 확인해 보세요.',
-      data: recommendMeetList,
+      key       : 'recommend',
+      title     : '추천 소셜링',
+      subTitle  : '취향에 맞는 모임을 확인해 보세요.',
+      data      : recommendMeetList,
     },
     // {
-    //   key: 'new-class',
-    //   title: '신규 클래스',
-    //   subTitle: '방금 등록된 새로운 클래스를 만나보세요.',
-    //   data: newClassList,
+    //   key       : 'new-class',
+    //   title     : '신규 클래스',
+    //   subTitle  : '방금 등록된 새로운 클래스를 만나보세요.',
+    //   data      : newClassList,
     // },
   ].filter((section) => section.data.length > 0);
 

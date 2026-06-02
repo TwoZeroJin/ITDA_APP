@@ -27,9 +27,9 @@ export default function MeetCreateDetailScreen() {
       meet_min      : prevMeetInfo.meet_min ? Number(prevMeetInfo.meet_min) : undefined,
       meet_max      : prevMeetInfo.meet_max ? Number(prevMeetInfo.meet_max) : undefined,
       meet_question : prevMeetInfo.meet_question as string || undefined,
-      gender_ratio  : prevMeetInfo.gender_ratio ? Number(prevMeetInfo.gender_ratio) : 0.5,
+      gender_ratio  : prevMeetInfo.gender_ratio ? Number(prevMeetInfo.gender_ratio) : undefined,
       age_min       : prevMeetInfo.age_min ? Number(prevMeetInfo.age_min) : AGE_MIN,
-      age_max       : prevMeetInfo.age_max ? Number(prevMeetInfo.age_max) : 30,
+      age_max       : prevMeetInfo.age_max ? Number(prevMeetInfo.age_max) : undefined,
       group_id      : prevMeetInfo.group_id ? Number(prevMeetInfo.group_id) : 0,
     },
   });

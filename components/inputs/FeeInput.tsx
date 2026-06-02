@@ -7,6 +7,11 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+function formatWithComma(value?: number) {
+  if (!value) return '';
+  return value.toLocaleString('ko-KR');
+}
+
 export default function FeeInput() {
   const { control, watch, setValue } = useFormContext<MeetInfo>();
   const [feeList, setFeeList] = useState<CodeInfo[]>([]);
@@ -75,12 +80,12 @@ export default function FeeInput() {
                 >
                   <TextInput
                     ref={feeEntryInputRef}
-                    value={value ? String(value) : ''}
+                    value={formatWithComma(value)}
                     onChangeText={(text) => {
                       const onlyNumber = text.replace(/[^0-9]/g, '');
                       onChange(onlyNumber ? Number(onlyNumber) : 0);
                     }}
-                    maxLength={9}
+                    maxLength={11}
                     keyboardType="number-pad"
                     placeholder="최소 1,000원 이상 입력해 주세요."
                     placeholderTextColor={COLOR.TEXT_GRAY}

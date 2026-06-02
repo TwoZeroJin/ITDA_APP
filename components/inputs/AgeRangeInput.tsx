@@ -29,7 +29,11 @@ export default function AgeRangeInput() {
               value={ageType}
               onChange={(type) => {
                 setAgeType(type as 'none' | 'set');
-                if (type === 'none') onChange(undefined);
+                if (type === 'none') {
+                  onChange(null);
+                } else {
+                  onChange(30);
+                }
               }}
             />
             <AgeSlider

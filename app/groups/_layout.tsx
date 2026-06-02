@@ -58,6 +58,13 @@ export default function GroupLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen
+        name="groupDetailPage"
+        options={{
+          title: "클럽 상세",
+          headerShown: false,
+        }}
+      />
     </Stack>
   )
 }

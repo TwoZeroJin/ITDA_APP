@@ -1,15 +1,12 @@
 import CommHeader from '@/components/comm/CommHeader';
 import { CategoryTab } from '@/components/CategoryTab';
-import CommLabel from '@/components/comm/CommLabel';
+import CommMeetCard2, { MeetCardData } from '@/components/comm/CommMeetCard2';
 import BtnLikeActive from '@/assets/images/btn_like_active.svg';
-import IconMarker from '@/assets/images/icon_marker.svg';
-import IconMembers from '@/assets/images/icon_members.svg';
-import MemDefault from '@/assets/images/icon_mem_default.svg';
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import { useMemberLike, useMemberLikeListPaging } from '@/hooks/queries/useMember';
 import { LikeData } from '@/types';
 import { useCallback, useMemo, useState } from 'react';
-import { FlatList, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import React from 'react';
 import { router } from 'expo-router';
@@ -68,8 +65,6 @@ export default function LikeListScreen() {
     [filteredMeets, removedIds],
   );
 
-  const [imageErrors, setImageErrors] = useState<Record<string | number, boolean>>({});
-
   // 좋아요 취소 — 낙관적으로 즉시 제거, 실패 시 롤백
   const handleLikePress = (targetId: number, targetType: string) => {
     if (!targetId) return;
@@ -91,92 +86,39 @@ export default function LikeListScreen() {
   };
 
   const renderMeetCard = ({ item }: { item: LikeData }) => {
-    const hasError = imageErrors[item.target_id];
-    const imageSource = item.thumb_url && !hasError
-      ? { uri: item.thumb_url }
-      : require('@/assets/images/no_image.png');
+    const cardItem: MeetCardData = {
+      id           : item.target_id,
+      type         : item.target_type,
+      name         : item.target_name,
+      subjectName  : item.target_subj_name,
+      thumbUrl     : item.thumb_url,
+      placeAddr    : item.place_addr,
+      applyRatio   : item.apply_ratio,
+      hostNick     : item.mem_nick,
+      hostImageUrl : item.mem_image_url,
+      likeYn       : 'Y',
+    };
 
     return (
-      <TouchableOpacity 
-        style={styles.cardContainer}
-        activeOpacity={0.6}
-        onPress={() => {
-          if (item.target_type === 'M') {
+      <CommMeetCard2
+        item={cardItem}
+        onPress={(pressedItem) => {
+          if (pressedItem.type === 'M') {
             router.push({
               pathname: '/meets/meetDetailPage',
-              params: { meetId: item.target_id },
+              params: { meetId: pressedItem.id },
             });
             return;
           }
-          else if (item.target_type === 'G') {
+          if (pressedItem.type === 'G') {
             router.push({
               pathname: '/groups/groupDetailPage',
-              params: { groupId: item.target_id },
+              params: { groupId: pressedItem.id },
             });
           }
         }}
-      >
-        <View style={styles.likeCard}>
-          <ImageBackground
-            source={imageSource}
-            style={styles.likeCardImage}
-            imageStyle={styles.likeCardImageStyle}
-            onError={() => setImageErrors((prev) => ({ ...prev, [item.target_id]: true }))}
-          >
-            <TouchableOpacity 
-              style={styles.likeBtn} 
-              activeOpacity={0.6}
-              onPress={() => handleLikePress(item.target_id, item.target_type)}
-            >
-              <BtnLikeActive />
-            </TouchableOpacity>
-          </ImageBackground>
-
-          {/* 콘텐츠 영역 */}
-          <View style={styles.likeCardContent}>
-            {/* 태그 행 */}
-            <View style={styles.tagRow}>
-              <CommLabel variant={item.target_type === 'M' ? 'social' : item.target_type === 'G' ? 'club' : undefined} />
-              <CommLabel variant="category" category={item.target_subj_name} />
-            </View>
-
-            {/* 제목 */}
-            <Text style={styles.likeCardTitle} numberOfLines={1}>
-              {item.target_name}
-            </Text>
-
-            {/* 위치 + 인원 행 */}
-            {(item.place_addr || item.apply_ratio) && (
-              <View style={styles.infoRow}>
-                {!!item.place_addr && (
-                  <>
-                    <IconMarker width={12} height={12} />
-                    <Text style={styles.infoText}>{item.place_addr}</Text>
-                  </>
-                )}
-                {!!item.apply_ratio && (
-                  <>
-                    <IconMembers width={12} height={12} />
-                    <Text style={styles.infoText}>{item.apply_ratio}</Text>
-                  </>
-                )}
-              </View>
-            )}
-
-            {/* 호스트 행 */}
-            {!!item.mem_nick && (
-              <View style={styles.hostRow}>
-                {item.mem_image_url ? (
-                  <Image source={{ uri: item.mem_image_url }} style={styles.hostImage} />
-                ) : (
-                  <MemDefault width={20} height={20} />
-                )}
-                <Text style={styles.hostText}>{item.mem_nick}</Text>
-              </View>
-            )}
-          </View>
-        </View>
-      </TouchableOpacity>
+        onLikePress={() => handleLikePress(item.target_id, item.target_type)}
+      />
     );
   };
 
@@ -217,77 +159,6 @@ const styles = StyleSheet.create({
   },
   listContainerEmpty: {
     flexGrow          : 1,
-  },
-  cardContainer: {
-    marginBottom      : 12,
-  },
-  likeCard: {
-    flexDirection     : 'row',
-    backgroundColor   : COLOR.COMM_WHITE,
-    borderRadius      : 12,
-    paddingVertical   : 8,
-    paddingHorizontal : 12,
-    borderWidth       : 1,
-    borderColor       : COLOR.COMM_GRAY_6,
-    alignItems        : 'center',
-  },
-  likeCardImage: {
-    width             : 86,
-    height            : 86,
-    borderRadius      : 10,
-  },
-  likeCardImageStyle: {
-    borderRadius      : 10,
-  },
-  likeBtn: {
-    position          : 'absolute',
-    bottom            : 0,
-    right             : 0,
-    width             : 35,
-    height            : 35,
-    justifyContent    : 'center',
-    alignItems        : 'center',
-  },
-  likeCardContent: {
-    flex              : 1,
-    marginStart       : 12,
-    height            : '100%',
-    gap               : 4,
-  },
-  tagRow: {
-    flexDirection     : 'row',
-    flexWrap          : 'wrap',
-    gap               : 6,
-  },
-  likeCardTitle: {
-    fontSize          : 16,
-    fontFamily        : "Pretendard-Medium",
-    color             : COLOR.TEXT_3C3C3C,
-  },
-  infoRow: {
-    flexDirection     : 'row',
-    alignItems        : 'center',
-    gap               : 4,
-  },
-  infoText: {
-    fontSize          : 12,
-    fontFamily        : "Pretendard-Regular",
-    color             : COLOR.COMM_SHADOW,
-  },
-  hostRow: {
-    flexDirection     : 'row',
-    alignItems        : 'center',
-    gap               : 6,
-  },
-  hostImage: {
-    width             : 20,
-    height            : 20,
-    borderRadius      : 10,
-  },
-  hostText: {
-    fontSize          : 14,
-    fontFamily        : "Pretendard-Regular",
-    color             : COLOR.TEXT_DEFAULT,
   },
   emptyContainer: {
     flex              : 1,

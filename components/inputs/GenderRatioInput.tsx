@@ -1,6 +1,6 @@
 import { COMM_STYLES } from '@/constants';
 import { MeetInfo } from '@/types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
@@ -27,7 +27,11 @@ export default function GenderRatioInput() {
               value={genderType}
               onChange={(type) => {
                 setGenderType(type as 'none' | 'set');
-                if (type === 'none') onChange(undefined);
+                if (type === 'none') {
+                  onChange(null);
+                } else {
+                  onChange(0.5);
+                }
               }}
             />
             <GenderSlider

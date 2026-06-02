@@ -179,8 +179,8 @@ interface MeetInfo {
   meet_max        : number;
   meet_question   : string;
   age_min         : number;
-  age_max         : number;
-  gender_ratio    : number;
+  age_max?        : number;
+  gender_ratio?   : number;
   apply_type      : string;
   apply_stat      : string;
   apply_ratio     : string;
