@@ -12,6 +12,7 @@ interface CommCategoryListProps {
  */
 export default function CommCategoryList({ onCategorySelect }: CommCategoryListProps) {
   const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string>('');
 
   useEffect(() => {
     const fetchCategoryList = async () => {
@@ -41,19 +42,26 @@ export default function CommCategoryList({ onCategorySelect }: CommCategoryListP
                     .fill(0)
                     .map((_, rowIdx) => (
                       <View key={rowIdx} style={styles.row}>
-                        {pageItems.slice(rowIdx * 2, rowIdx * 2 + 2).map((item, colIdx) => (
-                          <TouchableOpacity 
-                            key={colIdx} 
-                            style={{ alignItems: 'center' }} 
-                            onPress={() => onCategorySelect?.(item.code_id)}
-                            activeOpacity={0.6}
-                          >
-                            <View style={styles.cell}>
-                              <Image source={{ uri: item.code_image_url }} style={styles.image} />
-                            </View>
-                            <Text style={styles.categoryText}>{item.code_value}</Text>
-                          </TouchableOpacity>
-                        ))}
+                        {pageItems.slice(rowIdx * 2, rowIdx * 2 + 2).map((item, colIdx) => {
+                          const isSelected = selectedCategoryId === item.code_id;
+
+                          return (
+                            <TouchableOpacity 
+                              key={colIdx} 
+                              style={{ alignItems: 'center' }} 
+                              onPress={() => {
+                                setSelectedCategoryId(item.code_id);
+                                onCategorySelect?.(item.code_id);
+                              }}
+                              activeOpacity={0.6}
+                            >
+                              <View style={[styles.cell, isSelected && styles.cellSelected]}>
+                                <Image source={{ uri: item.code_image_url }} style={styles.image} />
+                              </View>
+                              <Text style={[styles.categoryText, isSelected && styles.categoryTextSelected]}>{item.code_value}</Text>
+                            </TouchableOpacity>
+                          );
+                        })}
                       </View>
                     ))}
                 </View>
@@ -96,7 +104,13 @@ const styles = StyleSheet.create({
     height            : 64,
     marginHorizontal  : 10,
     backgroundColor   : COLOR.COMM_GRAY_5,
+    borderWidth       : 1,
+    borderColor       : COLOR.COMM_GRAY_5,
     borderRadius      : 10,
+  },
+  cellSelected: {
+    borderColor       : COLOR.APP_ACTIVE_4,
+    backgroundColor   : COLOR.COMM_WHITE,
   },
   image: {
     width             : '55%',
@@ -109,5 +123,9 @@ const styles = StyleSheet.create({
     fontFamily        : 'Pretendard-Regular',
     marginTop         : 6,
     color             : COLOR.TEXT_DEFAULT,
+  },
+  categoryTextSelected: {
+    color             : COLOR.APP_ACTIVE_5,
+    fontFamily        : 'Pretendard-Medium',
   },
 });
