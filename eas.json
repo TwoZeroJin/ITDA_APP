@@ -4,17 +4,17 @@
   },
   "build": {
     "development": {
-      "channel": "development",
+      "channel": "local",
       "distribution": "internal",
       "env": { "APP_ENV": "local" }
     },
     "preview": {
-      "channel": "preview",
+      "channel": "develop",
       "distribution": "internal",
       "env": { "APP_ENV": "dev" }
     },
     "production": {
-      "channel": "production",
+      "channel": "prod",
       "distribution": "store",
       "env": { "APP_ENV": "prod" }
     }
