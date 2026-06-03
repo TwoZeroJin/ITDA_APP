@@ -2,10 +2,11 @@ import { QUERY_KEYS } from '@/constants';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { memberApplyGroupList, memberApplyList, memberApplyMeetList, memberDetail, memberLike, memberLikeList, memberMyGroupList, memberMyMeetList, memberUpdate, pushTest } from '@/api/member';
+import { memberApplyGroupList, memberApplyList, memberApplyMeetList, memberDetail, memberLike, memberLikeList, memberMyGroupList, memberMyMeetList, memberUpdate, memberWithdrawal } from '@/api/member';
 import { getNextPageParamFromPaging, printDebugLog } from '@/utils/commUtil';
 import { MemberInfo, MemberLike, SearchParams } from '@/types';
 import queryClient from '@/api/queryClient';
+import { useAuth } from './useAuth';
 
 /**
  * 회원 상세 정보 조회 (다가올 모임, 모임 내역, 후기 목록)
@@ -69,8 +70,6 @@ function useMemberLike() {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_LIKE],
       });
-    },
-    onSettled: () => {
     },
   });
 }
@@ -147,18 +146,24 @@ function useMemberApplyGroupListPaging(searchParams: SearchParams) {
 }
 
 /**
- * 푸시 테스트
+ * 회원 탈퇴
  */
-function usePushTest({ push_title, push_message }: { push_title: string, push_message: string }) {
+function useMemberWithdrawl() {
+  const { setLoading } = useLoading();
+  const { logout } = useAuth();
+
   return useMutation({
     mutationFn: async () => {
-      return pushTest({ push_title, push_message });
+      setLoading(true);
+      return memberWithdrawal();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await logout();
     },
     onSettled: () => {
+      setLoading(false);
     },
   });
 }
 
-export { useMemberDetail, useMemberUpdate, useMemberLike, useMemberLikeListPaging, useMemberApplyList, useMemberMyMeetListPaging, useMemberApplyMeetListPaging, useMemberMyGroupListPaging, useMemberApplyGroupListPaging, usePushTest }
+export { useMemberDetail, useMemberUpdate, useMemberLike, useMemberLikeListPaging, useMemberApplyList, useMemberMyMeetListPaging, useMemberApplyMeetListPaging, useMemberMyGroupListPaging, useMemberApplyGroupListPaging, useMemberWithdrawl }

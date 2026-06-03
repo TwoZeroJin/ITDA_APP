@@ -171,6 +171,8 @@ const API_URL = {
   USER_REFRESH_TOKEN      : "/user/refresh_token",
   MEMBER_DETAIL           : "/member/detail",
   MEMBER_UPDATE           : "/member/update",
+  MEMBER_LOGOUT           : "/member/logout",
+  MEMBER_WITHDRAWAL       : "/member/withdrawal",
   MEMBER_LIKE             : "/member/like",
   MEMBER_LIKE_LIST        : "/member/like/list",
   MEMBER_PUSH_LIST        : "/member/push/list",
@@ -179,7 +181,6 @@ const API_URL = {
   MEMBER_APPLY_MEET_LIST  : "/member/apply/meet/list",
   MEMBER_MY_GROUP_LIST    : "/member/my/group/list",
   MEMBER_APPLY_GROUP_LIST : "/member/apply/group/list",
-  PUSH_INSERT             : "/push/insert", // 푸시 테스트 용
   CHAT_LIST               : "/chat/list",
   CHAT_VIEW               : "/chat/view",
   CHAT_INSERT             : "/chat/insert",

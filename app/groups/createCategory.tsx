@@ -1,19 +1,20 @@
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router, useLocalSearchParams } from "expo-router";
-import CategoryInput from "@/components/inputs/CategoryInput";
 import { FormProvider, useForm } from "react-hook-form";
 import { GroupInfo } from "@/types";
 import CategoryInput2 from "@/components/inputs/CategoryInput2";
+import { getCategoryName } from "@/utils/commUtil";
 
 /**
  * 클럽 생성 - 카테고리 선택 화면
  */
 export default function GroupCreateCategoryScreen() {
   const prevGroupInfo = useLocalSearchParams();
+
   const formValues = useForm<GroupInfo>({
     defaultValues: {
       group_subj: prevGroupInfo.group_subj as string || undefined,
@@ -23,12 +24,13 @@ export default function GroupCreateCategoryScreen() {
   const groupSubj = formValues.watch('group_subj');
   const canMoveNext = !!groupSubj;
 
-  const onNext = formValues.handleSubmit((data) => {
+  const onNext = formValues.handleSubmit(async (data) => {
     router.navigate({
       pathname: '/groups/createDesc',
       params: {
         ...prevGroupInfo,
-        group_subj: data.group_subj,
+        group_subj      : data.group_subj,
+        group_subj_name : data.group_subj ? await getCategoryName(data.group_subj) : '',
       },
     });
   });

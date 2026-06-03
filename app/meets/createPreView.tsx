@@ -84,7 +84,7 @@ export default function MeetCreatePreViewScreen() {
           {/* 소셜링 라벨 */}
           <View style={styles.labelContainer}>
             <CommLabel variant="social" />
-            <CommLabel variant="category" category={prevMeetInfo.meet_subj} />
+            <CommLabel variant="category" category={prevMeetInfo.meet_subj_name} />
           </View>
 
           {/* 소셜링 제목 */}

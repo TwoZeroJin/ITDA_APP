@@ -129,7 +129,7 @@ export default function HomeScreen() {
         <DividingLine />
 
         {/* 함께한 이야기 섹션 */}
-        <CommReviewList reviewList={reviewList} />
+        <CommReviewList title="함께한 이야기" subTitle="우리가 함께한 순간, 진심이 담긴 후기 📝" reviewList={reviewList} />
 
       </ScrollView>
       {/* Floating 버튼, 소셜링/클럽 생성 버튼 (화면에 고정) */}

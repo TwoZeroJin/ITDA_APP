@@ -5,14 +5,23 @@ import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react
 import { useState } from 'react';
 
 interface CommReviewListProps {
+  title?: string;
+  subTitle?: string;
   reviewList: MeetReview[];
 }
 
-export default function CommReviewList({ reviewList }: CommReviewListProps) {
+export default function CommReviewList({ title = '피드', subTitle = '', reviewList }: CommReviewListProps) {
   const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
 
   if (reviewList.length === 0) {
-    return null;
+    return (
+      <View style={styles.container}>
+        <View style={styles.headerRow}>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+        <Text style={styles.subTitle}>등록된 후기가 없습니다.</Text>
+      </View>
+    );
   }
 
   const handleImageError = (reviewId: number | undefined) => {
@@ -24,12 +33,12 @@ export default function CommReviewList({ reviewList }: CommReviewListProps) {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={styles.title}>함께한 이야기</Text>
+        <Text style={styles.title}>{title}</Text>
         <TouchableOpacity style={styles.moreButton}>
           <ArrowRight width={11} height={16} />
         </TouchableOpacity>
       </View>
-      <Text style={styles.subTitle}>우리가 함께한 순간, 진심이 담긴 후기 📝</Text>
+      {subTitle && <Text style={styles.subTitle}>{subTitle}</Text>}
 
       <FlatList<MeetReview>
         data={reviewList}
@@ -75,7 +84,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize            : 20,
-    fontWeight          : 'bold',
+    fontFamily          : 'Pretendard-SemiBold',
     color               : COLOR.TEXT_TITLE,
   },
   moreButton: {
@@ -84,8 +93,9 @@ const styles = StyleSheet.create({
   subTitle: {
     textAlign           : 'center',
     alignSelf           : 'flex-start',
-    marginTop           : 4,
     fontSize            : 14,
+    fontFamily          : 'Pretendard-Regular',
+    marginTop           : 4,
     marginBottom        : 16,
     paddingHorizontal   : 16,
     color               : COLOR.TEXT_2F2F2F,

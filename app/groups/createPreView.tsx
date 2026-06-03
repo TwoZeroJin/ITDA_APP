@@ -92,7 +92,7 @@ export default function GroupCreatePreViewScreen() {
           {/* 클럽 라벨 */}
           <View style={styles.labelContainer}>
               <CommLabel variant="club" />
-              <CommLabel variant="category" category={prevGroupInfo.group_subj} />
+              <CommLabel variant="category" category={prevGroupInfo.group_subj_name} />
           </View>
 
           {/* 클럽 제목 */}

@@ -11,6 +11,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
+import { memberLogout } from '@/api/member';
 
 type ResponseError = AxiosError<{
   statusCode  : number;
@@ -231,8 +232,9 @@ function useAuth() {
 
   // 토큰 및 회원정보 삭제
   const logout = async () => {
-    MqttUtil.disconnect();
+    await memberLogout();
     await deleteSecureStoreForMember();
+    MqttUtil.disconnect();
     queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
     router.replace("/" as any);
   }

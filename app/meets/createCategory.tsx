@@ -1,19 +1,20 @@
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router, useLocalSearchParams } from "expo-router";
 import { MeetInfo } from "@/types";
 import { FormProvider, useForm } from "react-hook-form";
-import CategoryInput from "@/components/inputs/CategoryInput";
 import CategoryInput2 from "@/components/inputs/CategoryInput2";
+import { getCategoryName } from "@/utils/commUtil";
 
 /**
  * 모임 생성 - 카테고리 선택 화면
  */
 export default function MeetCreateCategoryScreen() {
   const prevMeetInfo = useLocalSearchParams();
+
   const formValues = useForm<MeetInfo>({
     defaultValues: {
       meet_subj: prevMeetInfo.meet_subj as string || undefined,
@@ -23,12 +24,13 @@ export default function MeetCreateCategoryScreen() {
   const meetSubj = formValues.watch('meet_subj');
   const canMoveNext = !!meetSubj;
 
-  const onNext = formValues.handleSubmit((data) => {
+  const onNext = formValues.handleSubmit(async (data) => {
     router.navigate({
       pathname: '/meets/createDesc',
       params: {
         ...prevMeetInfo,
-        meet_subj: data.meet_subj,
+        meet_subj      : data.meet_subj,
+        meet_subj_name : data.meet_subj ? await getCategoryName(data.meet_subj) : '',
       },
     });
   });

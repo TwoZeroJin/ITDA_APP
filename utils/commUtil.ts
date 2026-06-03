@@ -233,6 +233,29 @@ async function setCategoryList(data?: any) {
 async function getCategoryList(): Promise<CodeInfo[]> {
   return await getAsyncData<CodeInfo[]>(STORE_KEY.CATEGORY_LIST, JSON.parse) ?? [];
 }
+
+async function getCategoryName(code_id: string): Promise<string> {
+  if (!code_id) {
+    return '';
+  }
+
+  const categoryList = await getCategoryList();
+
+  for (const category of categoryList) {
+    if (category.sub_list?.length) {
+      const found = category.sub_list.find((sub) => sub.code_id === code_id);
+      if (found) {
+        return found.code_value;
+      }
+    }
+
+    if (category.code_id === code_id) {
+      return category.code_value;
+    }
+  }
+
+  return '';
+}
 // 참가비 정보
 async function setFeeList(data: any) {
   if (data) {
@@ -399,4 +422,4 @@ function formatRelativeMeetDatetime(meetDatetime: string) {
   return `D-${diffDays}`;
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime };

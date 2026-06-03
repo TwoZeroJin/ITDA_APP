@@ -4,6 +4,7 @@ import { GestureResponderEvent,
   PanResponderGestureState, Text, View, FlatList, Dimensions, Image, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent } from "react-native";
 // ✅ 라이브러리 정상 구동을 위한 세팅
 import ImageZoom from 'react-native-image-pan-zoom';
+import NoImage from '@/assets/images/no_image.svg';
 
 interface ImageCarouselProps  {
   images            : string[];           // 이미지 URL
@@ -96,7 +97,7 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
       />)}
       {!images.length && (
         <View style={styles.noImageContainer}>
-          <Text style={styles.noImageText}>이미지가 없습니다.</Text>
+          <NoImage />
         </View>
       )}
   
@@ -127,6 +128,7 @@ const styles = StyleSheet.create({
     flex            : 1,
     justifyContent  : 'center',
     alignItems      : 'center',
+    overflow        : 'hidden',
   },
   noImageText: {
     color: COLOR.TEXT_GRAY,

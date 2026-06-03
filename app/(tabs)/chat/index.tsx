@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
   chatRow: {
     flexDirection     : "row",
     alignItems        : "center",
-    paddingVertical   : 16,
+    paddingVertical   : 12,
   },
   roomImageWrapper: {
     width             : 65,

@@ -78,11 +78,19 @@ async function memberApplyGroupList(searchParams: SearchParams): Promise<ApiResu
 }
 
 /**
- * 푸시 테스트
+ * 회원 로그아웃
  */
-async function pushTest({ push_title, push_message }: { push_title: string, push_message: string }): Promise<ApiResult<null>> {
-  const { data } = await axiosInstance.post(API_URL.PUSH_INSERT, { push_title, push_message });
+async function memberLogout() {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_LOGOUT, {});
   return data;
 }
 
-export { memberDetail, memberUpdate, memberLike, memberLikeList, memberApplyList, memberMyMeetList, memberApplyMeetList, memberMyGroupList, memberApplyGroupList, pushTest };
+/**
+ * 회원 탈퇴
+ */
+async function memberWithdrawal() {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_WITHDRAWAL, {});
+  return data;
+}
+
+export { memberDetail, memberUpdate, memberLike, memberLikeList, memberApplyList, memberMyMeetList, memberApplyMeetList, memberMyGroupList, memberApplyGroupList, memberLogout, memberWithdrawal };
