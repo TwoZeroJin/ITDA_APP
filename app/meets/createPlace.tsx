@@ -16,21 +16,18 @@ export default function MeetCreatePlaceScreen() {
   const prevMeetInfo = useLocalSearchParams();
   const formValues = useForm<MeetInfo>({
     defaultValues: {
-      place_type   : prevMeetInfo.place_type as string || 'F',
+      place_type   : prevMeetInfo.place_type as string || 'O',
       place_name   : prevMeetInfo.place_name as string || undefined,
       place_addr   : prevMeetInfo.place_addr as string || undefined,
       meet_datetime: prevMeetInfo.meet_datetime as string || undefined,
     },
   });
 
-  const placeType = formValues.watch('place_type');
-  const placeName = formValues.watch('place_name');
-  const meetDatetime = formValues.watch('meet_datetime');
-
   const canMoveNext =
     !!prevMeetInfo.meet_type
     && !!prevMeetInfo.apply_type
-    && (placeType === 'O' || (!!placeName && !!meetDatetime));
+    && (formValues.watch('place_type') === 'O' || !!formValues.watch('place_name'))
+    && !!formValues.watch('meet_datetime');
 
   const onNext = formValues.handleSubmit((data) => {
     router.navigate({

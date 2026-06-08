@@ -16,7 +16,7 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const searchInputRef = useRef<TextInput>(null);
 
-  // 💡 1. [로드] 앱이 켜질 때 로컬 스토리지에서 기존 검색어 가져오기
+  // 로컬 스토리지에서 기존 검색어 가져오기
   useEffect(() => {
     const loadRecentSearches = async () => {
       try {
@@ -25,29 +25,29 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
           setRecentSearches(JSON.parse(savedSearches));
         }
       } catch (e) {
-        console.error('최근 검색어 로드 실패:', e);
+        // console.error('최근 검색어 로드 실패:', e);
       }
     };
     loadRecentSearches();
   }, []);
 
-  // 💡 실시간 글자 변경 감지 (다 지웠을 때 즉시 전체조회 유발)
+  // 실시간 글자 변경 감지 (다 지웠을 때 즉시 전체조회 유발)
   const handleInputChange = (text: string) => {
     setInputText(text);
     
-    // ✅ 유저가 글자를 완전히 지우면 상위 컴포넌트에 빈 값을 보내 즉시 전체 조회가 되도록 만듭니다.
+    // 유저가 글자를 완전히 지우면 상위 컴포넌트에 빈 값을 보내 즉시 전체 조회가 되도록 만듭니다.
     if (text.trim() === '') {
       searchKey?.('');
     }
   };
 
-  // 💡 2. [검색 기능 통합] 중복 제거 및 단일 요청 보장
+  // 검색 기능 통합: 중복 제거 및 단일 요청 보장
   const handleSearch = async (keyword: string) => {
     const trimmedKeyword = keyword.trim();
     // 화면 입력창 동기화
     setInputText(trimmedKeyword);
 
-    // ✅ 검색어가 아예 없는 빈 값 상태라면 유효성 검사를 건너뛰고 전체 조회를 처리합니다.
+    // 검색어가 아예 없는 빈 값 상태라면 유효성 검사를 건너뛰고 전체 조회를 처리합니다.
     if (!trimmedKeyword) {
       searchKey?.('');
       return;
@@ -62,7 +62,6 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
 
     
     // ✅ [핵심] 부모 컴포넌트의 페이징 리셋 및 API 요청은 여기서 '딱 한 번만' 호출합니다.
-    console.log('Selected category1 :', trimmedKeyword); 
     searchKey?.(trimmedKeyword);
 
     // 로컬 스토리지 최근 검색어 저장 처리
@@ -73,7 +72,7 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
       setRecentSearches(newSearches);
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newSearches));
     } catch (e) {
-      console.error('최근 검색어 저장 실패:', e);
+      // console.error('최근 검색어 저장 실패:', e);
     }
   };
 
@@ -91,7 +90,7 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
         searchKey?.('');
       }
     } catch (e) {
-      console.error('최근 검색어 삭제 실패:', e);
+      // console.error('최근 검색어 삭제 실패:', e);
     }
   };
 
@@ -135,11 +134,11 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
         <TextInput
           ref={searchInputRef}
           style={styles.searchText}
-          placeholder="참여하고 싶은 모임이나 클럽을 검색해 보세요."
+          placeholder="검색어를 입력해 주세요."
           placeholderTextColor={COLOR.COMM_GRAY_2}
           value={inputText}
-          onChangeText={handleInputChange} // ✅ 실시간 감지 핸들러로 변경
-          onSubmitEditing={() => handleSearch(inputText)} // ✅ 엔터 칠 때도 정상 작동하도록 주석 해제
+          onChangeText={handleInputChange}
+          onSubmitEditing={() => handleSearch(inputText)}
           returnKeyType="search"
         />
         <TouchableOpacity style={{zIndex: 1}} onPress={() => handleSearch(inputText)}>
@@ -147,6 +146,7 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
         </TouchableOpacity>
       </TouchableOpacity>
 
+      {/* 최근 검색어 리스트 */}
       {recentSearches.length > 0 && (
         <View style={styles.recentSearchContainer}>
           <FlatList
@@ -173,41 +173,42 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLOR.COMM_WHITE,
+    backgroundColor   : COLOR.COMM_WHITE,
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFF',
-    borderWidth: 2,
-    borderColor: '#F2A399', // 이미지 속 살구색 톤 예시 테두리
-    borderRadius: 30,
-    paddingHorizontal: 20,
-    height: 54,
-    justifyContent: 'space-between',
-    marginTop: 10,
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    backgroundColor   : COLOR.COMM_WHITE,
+    borderWidth       : 2,
+    borderColor       : COLOR.APP_ACTIVE_4,
+    borderRadius      : 25,
+    paddingHorizontal : 20,
+    height            : 54,
+    justifyContent    : 'space-between',
+    marginTop         : 10,
   },
   searchText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
+    flex              : 1,
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COMM_BLACK,
   },
   recentSearchContainer: {
-    marginTop: 14,
-    flexDirection: 'row',
+    marginTop         : 14,
+    flexDirection     : 'row',
   },
   recentSearchItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    marginRight: 10,
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    backgroundColor   : COLOR.COMM_GRAY_5,
+    borderRadius      : 10,
+    paddingHorizontal : 14,
+    paddingVertical   : 8,
+    marginRight       : 10,
   },
   recentSearchText: {
-    fontSize: 14,
-    color: '#666',
-    fontWeight: '500',
+    fontSize          : 12,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COLOR_6B6B6B,
   },
 });

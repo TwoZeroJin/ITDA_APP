@@ -3,6 +3,7 @@ import { COLOR } from '@/constants';
 import { MeetReview } from '@/types';
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
+import { router } from 'expo-router';
 
 interface CommReviewListProps {
   title?: string;
@@ -34,7 +35,11 @@ export default function CommReviewList({ title = '피드', subTitle = '', review
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.title}>{title}</Text>
-        <TouchableOpacity style={styles.moreButton}>
+        <TouchableOpacity 
+          style={styles.moreButton}
+          onPress={() => router.navigate('/community')}
+          activeOpacity={0.6}
+        >
           <ArrowRight width={11} height={16} />
         </TouchableOpacity>
       </View>

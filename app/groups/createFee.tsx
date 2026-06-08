@@ -24,13 +24,10 @@ export default function GroupCreateFeeScreen() {
     },
   });
 
-  const feeYn = formValues.watch('fee_yn');
-  const feeEntry = formValues.watch('fee_entry');
   const feeInfo = formValues.watch('fee_info');
-
   const canMoveNext =
     !!prevGroupInfo.apply_type
-    && (feeYn === 'N' || (!!feeEntry && !!feeInfo));
+    && (formValues.watch('fee_yn') === 'N' || (!!formValues.watch('fee_entry') && (feeInfo === 'FEE_INFO_99' ? !!formValues.watch('fee_desc') : !!feeInfo)));
 
   const onNext = formValues.handleSubmit((data) => {
     router.navigate({
@@ -39,8 +36,8 @@ export default function GroupCreateFeeScreen() {
         ...prevGroupInfo,
         fee_yn   : data.fee_yn,
         fee_entry: data.fee_yn === 'Y' ? data.fee_entry : undefined,
-        fee_info : data.fee_yn === 'Y' ? data.fee_info : '',
-        fee_desc : data.fee_yn === 'Y' ? data.fee_desc : '',
+        fee_info : data.fee_yn === 'Y' ? data.fee_info : undefined,
+        fee_desc : data.fee_yn === 'Y' ? data.fee_desc : undefined,
       },
     });
   });

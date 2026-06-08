@@ -28,8 +28,8 @@ function IdInput({ focusField = "" }: IdInputProps) {
       render={({field: {ref, onChange, value}, fieldState: {error}}) => (
         <InputField
           ref={ref}
-          label="아이디" 
-          placeholder="아이디를 입력하세요."
+          label="로그인 아이디" 
+          placeholder="로그인 아이디를 입력하세요."
           inputMode="email"
           autoCapitalize='none'
           returnKeyType={focusField ? 'next' : 'done'}

@@ -47,6 +47,8 @@ const COLOR = {
   COLOR_E6E6E6        : '#E6E6E6',
   COLOR_1A1A1A        : '#1A1A1A',
   COLOR_BABABA        : '#BABABA',
+  COLOR_838383        : '#838383',
+  COLOR_D9D9D9        : '#D9D9D9',
 };
 
 /**
@@ -94,6 +96,7 @@ const QUERY_KEYS = {
   GROUP_MEMBER_LIST       : "group_member_list",
   GROUP_APPLY             : "group_apply",
   GROUP_CANCEL_APPLY      : "group_cancel_apply",
+  GROUP_CONFIRM           : "group_confirm",
   COMMUNITY               : "community",
   COMMUNITY_REVIEW_LIST   : "community_review_list",
   MY_MEET_LIST_NO_REVIEW  : "my_meet_list_no_review",
@@ -227,6 +230,9 @@ const COMM_STYLES = StyleSheet.create({
     flex                : 1,
     backgroundColor     : COLOR.COMM_WHITE,
   },
+  errorBorder: {
+    borderColor         : COLOR.TEXT_WARN,
+  },
   // 소모임/클럽 생성시 주의 사항 스타일
   infoContainer: {
     marginTop           : 10,
@@ -252,6 +258,16 @@ const COMM_STYLES = StyleSheet.create({
     fontSize            : 12,
     fontFamily          : 'Pretendard-Light',
     color               : COLOR.TEXT_DEFAULT,
+  },
+  dataText: {
+    fontSize          : 16,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COLOR_323232,
+  },
+  placeholderText: {
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.COMM_GRAY_7,
   },
   // 소모임/클럽 공통 스타일
   commTitleContainer: {

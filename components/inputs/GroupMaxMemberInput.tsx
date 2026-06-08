@@ -51,8 +51,8 @@ export default function GroupMaxMemberInput() {
           <IconInfoMark />
           <Text style={COMM_STYLES.infoTitle}>모임 설정시 참고해 주세요.</Text>
         </View>
-        <Text style={styles.infoDesc}>· 모임에 맞는 최대 인원으로 설정해주세요.</Text>
-        <Text style={styles.infoDesc}>· 최대 인원은 호스트를 포함한 숫자예요.</Text>
+        <Text style={COMM_STYLES.infoDesc}>· 모임에 맞는 최대 인원으로 설정해주세요.</Text>
+        <Text style={COMM_STYLES.infoDesc}>· 최대 인원은 호스트를 포함한 숫자예요.</Text>
       </View>
     </View>
   );
@@ -113,9 +113,5 @@ const styles = StyleSheet.create({
     fontSize            : 14,
     color               : COLOR.TEXT_DEFAULT,
     marginStart         : 10,
-  },
-  infoDesc: {
-    fontSize            : 12,
-    color               : COLOR.TEXT_DEFAULT,
   },
 });

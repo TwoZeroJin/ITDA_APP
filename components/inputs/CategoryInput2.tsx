@@ -27,7 +27,14 @@ export default function CategoryInput2({ name }: CategoryInput2Props) {
     <Controller
       name={name as Path<FieldValues>}
       control={control}
-      render={({ field: { value, onChange } }) => (
+      rules={{
+        validate: (value?: string) => {
+          if (!value?.trim()) {
+            return '카테고리를 선택해 주세요.';
+          }
+        },
+      }}
+      render={({ field: { value, onChange }, fieldState: { error } }) => (
         <View style={styles.commContainer}>
           {categoryList.map((category) => {
             const subItems = category.sub_list?.length
@@ -56,6 +63,7 @@ export default function CategoryInput2({ name }: CategoryInput2Props) {
               </View>
             );
           })}
+          {error && <Text style={styles.errorText}>{error.message}</Text>}
         </View>
       )}
     />
@@ -67,7 +75,7 @@ const styles = StyleSheet.create({
     marginTop           : 30,
     marginHorizontal    : 16,
     marginBottom        : 30,
-    gap                 : 16,
+    gap                 : 4,
   },
   categoryBox: {
     backgroundColor     : COLOR.COMM_GRAY_5,
@@ -110,5 +118,12 @@ const styles = StyleSheet.create({
   },
   itemTextSelected: {
     color               : COLOR.APP_ACTIVE_5,
+  },
+  errorText: {
+    marginTop           : -6,
+    marginHorizontal    : 4,
+    marginBottom        : 4,
+    color               : COLOR.TEXT_WARN,
+    fontSize            : 12,
   },
 });

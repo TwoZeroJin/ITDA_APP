@@ -63,8 +63,8 @@ async function groupCancelApply(body: GroupApply): Promise<ApiResult<GroupApply>
 /**
  * 클럽 신청 승인
  */
-async function groupConfirm(): Promise<ApiResult<null>> {
-  const { data } = await axiosInstance.post(API_URL.GROUP_CONFIRM);
+async function groupConfirm(body: GroupApply): Promise<ApiResult<null>> {
+  const { data } = await axiosInstance.post(API_URL.GROUP_CONFIRM, body);
   return data;
 }
 

@@ -1,17 +1,19 @@
 import CalendarModal from '@/components/CalendarModal';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconCalendar from '@/assets/images/icon_calendar.svg';
 
 interface DateInputProps {
+  type? : string;
+  isError?: boolean;
   onDateChange?: (dateValue: string, dateLabel: string) => void;
 }
 
 /**
  * 모임 날짜 입력 컴포넌트
  */
-export default function DateInput({ onDateChange }: DateInputProps) {
+export default function DateInput({ type = 'M', isError = false, onDateChange }: DateInputProps) {
   const [dateModalVisible, setDateModalVisible] = useState(false);
   const [selectedDateValue, setSelectedDateValue] = useState('');
   const [selectedDateLabel, setSelectedDateLabel] = useState('');
@@ -26,15 +28,15 @@ export default function DateInput({ onDateChange }: DateInputProps) {
   return (
     <>
       <View style={styles.dateContainer}>
-        <Text style={styles.commContainerSubTitle}>모임 날짜</Text>
+        <Text style={styles.commContainerSubTitle}>{type === 'M' ? '모임 날짜' : '모임 시작날짜'}</Text>
         <TouchableOpacity
-          style={styles.placeInfoContainer}
+          style={[styles.placeInfoContainer, isError && COMM_STYLES.errorBorder]}
           activeOpacity={0.6}
           onPress={() => setDateModalVisible(true)}
         >
           <IconCalendar width={15} height={13} />
-          <Text style={[styles.infoDesc, !selectedDateLabel && styles.placeholderText]}>
-            {selectedDateLabel || '언제 만날까요?'}
+          <Text style={[COMM_STYLES.dataText, !selectedDateLabel && COMM_STYLES.placeholderText]}>
+            {selectedDateLabel || (type === 'M' ? '언제 만날까요?' : '모임 시작날짜를 선택하세요.')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -69,15 +71,5 @@ const styles = StyleSheet.create({
     flexDirection     : 'row',
     alignItems        : 'center',
     gap               : 8,
-  },
-  infoDesc: {
-    fontSize          : 16,
-    fontWeight        : 'bold',
-    color             : COLOR.COLOR_323232,
-  },
-  placeholderText: {
-    fontSize          : 14,
-    fontWeight        : 'normal',
-    color             : COLOR.COMM_GRAY_7,
   },
 });

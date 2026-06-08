@@ -1,17 +1,18 @@
 import TimePickerModal from '@/components/modal/TimePickerModal';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconTime from '@/assets/images/icon_time.svg';
 
 interface TimeInputProps {
+  isError?: boolean;
   onTimeChange?: (timeLabel: string) => void;
 }
 
 /**
  * 모임 시간 입력 컴포넌트
  */
-export default function TimeInput({ onTimeChange }: TimeInputProps) {
+export default function TimeInput({ isError = false, onTimeChange }: TimeInputProps) {
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [selectedTimeLabel, setSelectedTimeLabel] = useState('');
 
@@ -43,11 +44,11 @@ export default function TimeInput({ onTimeChange }: TimeInputProps) {
       <View style={styles.timeContainer}>
         <Text style={styles.commContainerSubTitle}>모임 시간</Text>
         <TouchableOpacity
-          style={styles.placeInfoContainer}
+          style={[styles.placeInfoContainer, isError && COMM_STYLES.errorBorder]}
           onPress={handleOpenTimeModal}
         >
           <IconTime width={14} height={14} />
-          <Text style={[styles.infoDesc, !selectedTimeLabel && styles.placeholderText]}>
+          <Text style={[COMM_STYLES.dataText, !selectedTimeLabel && COMM_STYLES.placeholderText]}>
             {selectedTimeLabel || '몇시에 만날까요?'}
           </Text>
         </TouchableOpacity>
@@ -87,15 +88,5 @@ const styles = StyleSheet.create({
     flexDirection     : 'row',
     alignItems        : 'center',
     gap               : 8,
-  },
-  infoDesc: {
-    fontSize          : 16,
-    fontWeight        : 'bold',
-    color             : COLOR.COLOR_323232,
-  },
-  placeholderText: {
-    fontSize          : 14,
-    fontWeight        : 'normal',
-    color             : COLOR.COMM_GRAY_7,
   },
 });

@@ -8,6 +8,7 @@ import { MemberApply } from '@/types';
 import React, { useCallback, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { useGroupConfirm } from '@/hooks/queries/useGroup';
 
 /**
  * 가입승인 리스트 화면
@@ -18,6 +19,7 @@ export default function ApplyListScreen() {
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ item: MemberApply; use_stat: '1' | '2' } | null>(null);
   const meetConfirm = useMeetConfirm();
+  const groupConfirm = useGroupConfirm();
 
   const { results, refetch } = useMemberApplyList({
     target_id   : target_id ? Number(target_id) : 0,
@@ -33,13 +35,21 @@ export default function ApplyListScreen() {
 
   // 함수 메모리 관리를 위한 useCallback 사용, 승인/거절 버튼 클릭 시 호출
   const handleConfirmPress = useCallback(async (item: MemberApply, use_stat: '1' | '2') => {
-    await meetConfirm.mutateAsync({
-      meet_id   : target_id ? Number(target_id) : 0,
-      mem_id    : item.mem_id,
-      use_stat,
-    });
+    if (target_type === 'M') {
+      await meetConfirm.mutateAsync({
+        meet_id   : target_id ? Number(target_id) : 0,
+        mem_id    : item.mem_id,
+        use_stat,
+      });
+    } else if (target_type === 'G') {
+      await groupConfirm.mutateAsync({
+        group_id : target_id ? Number(target_id) : 0,
+        mem_id   : item.mem_id,
+        use_stat,
+      });
+    }
     await refetch();
-  }, [meetConfirm, refetch]);
+  }, [meetConfirm, groupConfirm, refetch]);
 
   const handleOpenConfirmDialog = useCallback((item: MemberApply, use_stat: '1' | '2') => {
     setPendingAction({ item, use_stat });
@@ -76,13 +86,13 @@ export default function ApplyListScreen() {
           {
             label    : '거절',
             variant  : 'outline',
-            disabled : meetConfirm.isPending,
+            disabled : target_type === 'M' ? meetConfirm.isPending : groupConfirm.isPending,
             onPress  : () => handleOpenConfirmDialog(item, '2'),
           },
           {
             label    : '승인',
             variant  : 'solid',
-            disabled : meetConfirm.isPending,
+            disabled : target_type === 'M' ? meetConfirm.isPending : groupConfirm.isPending,
             onPress  : () => handleOpenConfirmDialog(item, '1'),
           },
         ]}

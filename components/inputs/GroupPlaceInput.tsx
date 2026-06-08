@@ -25,9 +25,10 @@ export default function GroupPlaceInput() {
 
   useEffect(() => {
     if (freqType === 'I') {
-      setValue('freq_desc', '');
+      setValue('freq_desc', '', { shouldValidate: true, shouldDirty: true });
     } else {
-      setValue('freq_desc', `${tempFreqType}${tempFreqDesc ? ' ' + tempFreqDesc : ''}`);
+      const nextFreqDesc = tempFreqDesc ? `${tempFreqType}${tempFreqDesc} ${tempFreqDesc}` : '';
+      setValue('freq_desc', nextFreqDesc, { shouldValidate: true, shouldDirty: true });
     }
   }, [tempFreqType, tempFreqDesc, freqType, setValue]);
 
@@ -35,7 +36,7 @@ export default function GroupPlaceInput() {
   const [postcodeKey, setPostcodeKey] = useState(0);
 
   const { handleDateChange, handleTimeChange } = useCombinedDateTime({
-    onChangeCombined: (value) => setValue('group_datetime', value),
+    onChangeCombined: (value) => setValue('group_datetime', value, { shouldValidate: true, shouldDirty: true }),
   });
 
   const freqDescInputRef = useRef<TextInput>(null);
@@ -63,7 +64,7 @@ export default function GroupPlaceInput() {
     const nextPlaceAddr = data.roadAddress || data.address || data.jibunAddress || '';
     const nextPlaceName = data.buildingName || nextPlaceAddr;
 
-    setValue('place_name', nextPlaceName);
+    setValue('place_name', nextPlaceName, { shouldValidate: true, shouldDirty: true });
     setValue('place_addr', nextPlaceAddr);
     setPlaceModalVisible(false);
   };
@@ -86,7 +87,7 @@ export default function GroupPlaceInput() {
                 onChange(nextPlaceType);
 
                 if (nextPlaceType === 'O') {
-                  setValue('place_name', '');
+                  setValue('place_name', '', { shouldValidate: true, shouldDirty: true });
                   setValue('place_addr', '');
                 }
               }}
@@ -96,15 +97,37 @@ export default function GroupPlaceInput() {
 
         <View style={styles.placeContainer}>
           {placeType === 'F' && (
-            <>
-              <Text style={styles.commContainerSubTitle}>주요 모임 장소</Text>
-              <TouchableOpacity style={styles.placeInfoContainer} onPress={handleSelectPlacePress} activeOpacity={0.6}>
-                <IconPlace width={13} height={17} />
-                <Text style={[styles.infoDesc, !selectedPlace && styles.placeholderText]}>
-                  {selectedPlace ? selectedPlace.name : '어디서 만날까요?'}
-                </Text>
-              </TouchableOpacity>
-            </>
+            <Controller
+              name="place_name"
+              control={control}
+              rules={{
+                validate: (value) => {
+                  if (placeType !== 'F') {
+                    return true;
+                  }
+
+                  if (!value?.trim()) {
+                    return '주요 모임 장소를 선택해 주세요.';
+                  }
+                },
+              }}
+              render={({ fieldState: { error } }) => (
+                <>
+                  <Text style={styles.commContainerSubTitle}>주요 모임 장소</Text>
+                  <TouchableOpacity
+                    style={[styles.placeInfoContainer, error && COMM_STYLES.errorBorder]}
+                    onPress={handleSelectPlacePress}
+                    activeOpacity={0.6}
+                  >
+                    <IconPlace width={13} height={17} />
+                    <Text style={[COMM_STYLES.dataText, !selectedPlace && COMM_STYLES.placeholderText]}>
+                      {selectedPlace ? selectedPlace.name : '어디서 만날까요?'}
+                    </Text>
+                  </TouchableOpacity>
+                  {error && <Text style={styles.errorText}>{error.message}</Text>}
+                </>
+              )}
+            />
           )}
 
           <Controller
@@ -144,28 +167,65 @@ export default function GroupPlaceInput() {
                   setTempFreqType(tempFreqType);
                 }}
               />
-              <TouchableOpacity
-                style={styles.memberInputContainer}
-                activeOpacity={0.6}
-                onPress={() => freqDescInputRef.current?.focus()}
-              >
-                <TextInput
-                  ref={freqDescInputRef}
-                  value={tempFreqDesc}
-                  onChangeText={(text) => {
-                    setTempFreqDesc(text);
-                  }}
-                  placeholder='주기 요일을 입력해 주세요. (ex)마지막주 월요일'
-                  placeholderTextColor={COLOR.TEXT_GRAY}
-                  style={styles.memberInput}
-                />
-              </TouchableOpacity>
+              <Controller
+                name="freq_desc"
+                control={control}
+                rules={{
+                  validate: (value) => {
+                    if (freqType !== 'R') {
+                      return true;
+                    }
+
+                    if (!value?.trim()) {
+                      return '주기 요일을 입력해 주세요.';
+                    }
+                  },
+                }}
+                render={({ fieldState: { error } }) => (
+                  <>
+                    <TouchableOpacity
+                      style={[styles.memberInputContainer, error && COMM_STYLES.errorBorder]}
+                      activeOpacity={0.6}
+                      onPress={() => freqDescInputRef.current?.focus()}
+                    >
+                      <TextInput
+                        ref={freqDescInputRef}
+                        value={tempFreqDesc}
+                        onChangeText={(text) => {
+                          setTempFreqDesc(text);
+                        }}
+                        placeholder='주기 요일을 입력해 주세요. (ex)마지막주 월요일'
+                        placeholderTextColor={COLOR.TEXT_GRAY}
+                        style={styles.memberInput}
+                      />
+                    </TouchableOpacity>
+                    {error && <Text style={styles.errorText}>{error.message}</Text>}
+                  </>
+                )}
+              />
             </View>
           )}
 
-          <MeetDateInput onDateChange={handleDateChange} />
+          <Controller
+            name="group_datetime"
+            control={control}
+            rules={{
+              validate: (value) => {
+                if (!value?.trim()) {
+                  return '모임 시작날짜와 시간을 선택해 주세요.';
+                }
 
-          <TimeInput onTimeChange={handleTimeChange} />
+                return true;
+              },
+            }}
+            render={({ fieldState: { error } }) => (
+              <>
+                <MeetDateInput type='G' onDateChange={handleDateChange} isError={!!error} />
+                <TimeInput onTimeChange={handleTimeChange} isError={!!error} />
+                {error && <Text style={styles.errorText}>{error.message}</Text>}
+              </>
+            )}
+          />
 
           <View style={COMM_STYLES.infoContainer}>
             <View style={COMM_STYLES.infoTitleRow}>
@@ -211,16 +271,6 @@ const styles = StyleSheet.create({
     alignItems        : 'center',
     gap               : 8,
   },
-  infoDesc: {
-    fontSize          : 16,
-    fontWeight        : 'bold',
-    color             : COLOR.COLOR_323232,
-  },
-  placeholderText: {
-    fontSize          : 14,
-    fontWeight        : 'normal',
-    color             : COLOR.COMM_GRAY_7,
-  },
   memberInputContainer: {
     flexDirection       : 'row',
     alignItems          : 'center',
@@ -231,11 +281,18 @@ const styles = StyleSheet.create({
     borderRadius        : 12,
     paddingHorizontal   : 16,
     marginTop           : 16,
+    marginBottom        : 12,
   },
   memberInput: {
     flex                : 1,
     fontSize            : 16,
     color               : COLOR.COLOR_323232,
     padding             : 0,
+  },
+  errorText: {
+    fontSize            : 12,
+    color               : COLOR.TEXT_WARN,
+    marginTop           : -4,
+    marginStart         : 4,
   },
 });

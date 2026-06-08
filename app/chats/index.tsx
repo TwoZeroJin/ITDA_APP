@@ -267,7 +267,7 @@ export default function IndexScreen() {
       <View style={styles.myMessageWrap}>
         {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
         <View style={[styles.bubble, styles.myBubble]}>
-          <Text style={styles.myBubbleText}>{item.chat_msg}</Text>
+          <Text style={[styles.otherBubbleText, styles.myBubbleText]}>{item.chat_msg}</Text>
         </View>
       </View>
     ) : (
@@ -278,10 +278,10 @@ export default function IndexScreen() {
             <Image source={{ uri: item.mem_image_url }} style={styles.avatar} />
           ) : (
             <View style={styles.avatarDefaultWrap}>
-              <IconProfileDefault width={28} height={28} />
+              <IconProfileDefault width={40} height={40} />
             </View>
           )}
-          <View style={styles.otherMessageContent}>
+          <View>
             <Text style={styles.senderText}>{getSenderText(item)}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
               <View style={[styles.bubble, styles.otherBubble]}>
@@ -319,7 +319,7 @@ export default function IndexScreen() {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 45 : 16}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
       >
         <View style={styles.container}>
           <CommHeader 
@@ -402,6 +402,7 @@ export default function IndexScreen() {
                 style={styles.inputBox}
                 returnKeyType="send"
                 onSubmitEditing={handleSubmitChat}
+                maxLength={500}
               />
             </TouchableOpacity>
 
@@ -414,6 +415,7 @@ export default function IndexScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
+      
       <CustomDialog
         visible={!isConnected}
         title="연결 실패"
@@ -471,7 +473,7 @@ const styles = StyleSheet.create({
     paddingTop        : 18,
     paddingHorizontal : 18,
     paddingBottom     : 10,
-    gap               : 6,
+    gap               : 10,
   },
   otherMessageWrap: {
     flexDirection     : 'row',
@@ -490,14 +492,10 @@ const styles = StyleSheet.create({
     marginEnd         : 8,
     overflow          : 'hidden',
   },
-  otherMessageContent: {
-    maxWidth          : '80%',
-  },
   otherMessageOnlyWrap: {
     flexDirection     : 'row',
     alignItems        : 'flex-end',
-    marginStart       : 36,
-    maxWidth          : '80%',
+    marginStart       : 48,
   },
   senderText: {
     fontSize          : 14,
@@ -528,12 +526,10 @@ const styles = StyleSheet.create({
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_DEFAULT,
     lineHeight        : 23,
+    maxWidth          : 180,
   },
   myBubbleText: {
-    fontSize          : 16,
-    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.COMM_WHITE,
-    lineHeight        : 23,
   },
   timeText: {
     color             : COLOR.TEXT_GRAY,

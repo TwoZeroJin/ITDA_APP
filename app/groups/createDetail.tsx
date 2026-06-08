@@ -1,6 +1,6 @@
-import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
+import { COMM_CONSTANTS, COMM_STYLES } from "@/constants";
 import React from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import DividingLine from "@/components/DividingLine";
@@ -44,8 +44,8 @@ export default function GroupCreateDetailScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
+          style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}
           enableOnAndroid={true}
         >
           <View style={COMM_STYLES.detailTitleContainer}>

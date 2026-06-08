@@ -1,4 +1,4 @@
-import { groupCancelApply, groupApply, groupDelete, groupInsert, groupList, groupMemberList, groupView, groupUpdate } from "@/api/group";
+import { groupCancelApply, groupApply, groupDelete, groupInsert, groupList, groupMemberList, groupView, groupUpdate, groupConfirm } from "@/api/group";
 import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
@@ -108,7 +108,7 @@ function useGroupMemberList(groupId: number) {
   return { ...query, results };    
 }
 
-//4.소모임 신청
+//4.그룹 신청
 function useGroupApply() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -128,7 +128,7 @@ function useGroupApply() {
 }
 
 
-//4.소모임 신청 취소
+//4.그룹 신청 취소
 function useGroupCancelApply() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -146,4 +146,26 @@ function useGroupCancelApply() {
     },
   });
 }
-export { useGroupListPaging, useGroupDetailView, useGroupInsert, useGroupUpdate, useGroupDelete, useGroupMemberList, useGroupApply, useGroupCancelApply };
+
+/**
+ * 클럽 승인
+ */
+function useGroupConfirm() {
+  const { setLoading } = useLoading();
+  return useMutation({
+    mutationFn: async (body : GroupApply) => {
+      setLoading(true);
+      return groupConfirm(body);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CONFIRM],
+      });
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+}
+
+export { useGroupListPaging, useGroupDetailView, useGroupInsert, useGroupUpdate, useGroupDelete, useGroupMemberList, useGroupApply, useGroupCancelApply, useGroupConfirm };

@@ -56,10 +56,9 @@ export default function MeetCreateDetailScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
+          style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}
           enableOnAndroid={true}
-          extraScrollHeight={24}
         >
           {/* 소모임 생성 타이틀 */}
           <View style={COMM_STYLES.detailTitleContainer}>

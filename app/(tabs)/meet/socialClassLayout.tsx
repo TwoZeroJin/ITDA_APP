@@ -11,7 +11,7 @@ import CommMeetCard from '@/components/comm/CommMeetCard';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import CommCategoryList from '@/components/comm/CommCategoryList';
 
-export default function SocialClassLayout({ activeType }: { activeType: 'social' | 'class' }) {
+export default function SocialClassLayout({ activeType }: { activeType: string }) {
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const activeTypeLabel = activeType === 'social' ? '소셜링' : '클래스';

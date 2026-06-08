@@ -79,7 +79,7 @@ export default function CommCategoryList({ onCategorySelect }: CommCategoryListP
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex              : 1,
     marginTop         : 8,
     paddingTop        : 16,
     paddingBottom     : 8,

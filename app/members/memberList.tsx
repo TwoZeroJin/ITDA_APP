@@ -4,11 +4,13 @@ import MemberActionList from '@/components/members/MemberActionList';
 import { COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import { useMeetCancelApply } from '@/hooks/queries/useMeet';
 import { useMemberApplyList } from '@/hooks/queries/useMember';
-import { MeetApply, MemberApply } from '@/types';
-import React, { useCallback, useState } from 'react';
+import { GroupApply, MeetApply, MemberApply } from '@/types';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
+import { useGroupCancelApply } from '@/hooks/queries/useGroup';
+import { getMemberInfo } from '@/utils/commUtil';
 
 /**
  * 멤버 관리 리스트 화면
@@ -19,13 +21,24 @@ export default function MemberListScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isConfirmDialogVisible, setIsConfirmDialogVisible] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ item: MemberApply } | null>(null);
+  const [myMemId, setMyMemId] = useState<number>(0);
   const meetCancelApply = useMeetCancelApply();
+  const groupCancelApply = useGroupCancelApply();
 
   const { results, refetch } = useMemberApplyList({
     target_id   : target_id ? Number(target_id) : 0,
     target_type : target_type || 'M',
     use_stat    : '1'
   });
+
+  useEffect(() => {
+    const fetchMyMemberInfo = async () => {
+      const memberInfo = await getMemberInfo();
+      setMyMemId(memberInfo.mem_id ?? 0);
+    };
+
+    fetchMyMemberInfo();
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
@@ -35,13 +48,21 @@ export default function MemberListScreen() {
 
   // 함수 메모리 관리를 위한 useCallback 사용, 승인/거절 버튼 클릭 시 호출
   const handleConfirmPress = useCallback(async (item: MemberApply) => {
-    const body = {
-      meet_id   : target_id ? Number(target_id) : 0,
-      mem_id    : item.mem_id,
-    } as MeetApply;
-    await meetCancelApply.mutateAsync(body);
+    if (target_type === 'M') {
+      const body = {
+        meet_id   : target_id ? Number(target_id) : 0,
+        mem_id    : item.mem_id,
+      } as MeetApply;
+      await meetCancelApply.mutateAsync(body);
+    } else if (target_type === 'G') {
+      const body = {
+        group_id : target_id ? Number(target_id) : 0,
+        mem_id   : item.mem_id,
+      } as GroupApply;
+      await groupCancelApply.mutateAsync(body);
+    }
     await refetch();
-  }, [meetCancelApply, refetch]);
+  }, [meetCancelApply, groupCancelApply, refetch]);
 
   const handleOpenDialog = useCallback((item: MemberApply) => {
     setPendingAction({ item });
@@ -78,17 +99,16 @@ export default function MemberListScreen() {
             return [];
           }
 
-          return [
-            {
-              label    : '내보내기',
-              variant  : 'outline',
-              disabled : meetCancelApply.isPending,
-              onPress  : () => handleOpenDialog(item),
-            },
+          const actions: Array<{
+            label: string;
+            variant: 'solid' | 'outline';
+            disabled: boolean;
+            onPress: () => void;
+          }> = [
             {
               label    : '채팅',
               variant  : 'solid',
-              disabled : meetCancelApply.isPending,
+              disabled : target_type === 'M' ? meetCancelApply.isPending : groupCancelApply.isPending,
               onPress  : () => router.push({
                 pathname: '/chats',
                 params: {
@@ -100,6 +120,18 @@ export default function MemberListScreen() {
               }),
             },
           ];
+          
+          // 내가 호스트일 경우에만 내보내기
+          if (item.host_yn === 'Y' && item.mem_id === myMemId) {
+            actions.push({
+              label    : '내보내기',
+              variant  : 'outline',
+              disabled : target_type === 'M' ? meetCancelApply.isPending : groupCancelApply.isPending,
+              onPress  : () => handleOpenDialog(item),
+            })
+          }
+
+          return actions;
         }}
       />
 

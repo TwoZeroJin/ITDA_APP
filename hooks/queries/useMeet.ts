@@ -150,6 +150,9 @@ function useMeetCancelApply() {
   });
 }
 
+/**
+ * 소셜링 승인
+ */
 function useMeetConfirm() {
   const { setLoading } = useLoading();
   return useMutation({

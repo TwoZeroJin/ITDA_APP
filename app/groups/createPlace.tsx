@@ -16,22 +16,20 @@ export default function GroupCreatePlaceScreen() {
   const prevGroupInfo = useLocalSearchParams();
   const formValues = useForm<GroupInfo>({
     defaultValues: {
-      place_type    : prevGroupInfo.place_type as string || 'F',
+      place_type    : prevGroupInfo.place_type as string || 'O',
       place_name    : prevGroupInfo.place_name as string || undefined,
       place_addr    : prevGroupInfo.place_addr as string || undefined,
       group_datetime: prevGroupInfo.group_datetime as string || undefined,
-      freq_type     : prevGroupInfo.freq_type as string || 'O',
+      freq_type     : prevGroupInfo.freq_type as string || 'I',
       freq_desc     : prevGroupInfo.freq_desc as string || undefined,
     },
   });
 
-  const placeType = formValues.watch('place_type');
-  const placeName = formValues.watch('place_name');
-  const groupDatetime = formValues.watch('group_datetime');
-
   const canMoveNext =
     !!prevGroupInfo.apply_type
-    && (placeType === 'O' || (!!placeName && !!groupDatetime));
+    && (formValues.watch('place_type') === 'O' || !!formValues.watch('place_name'))
+    && !!formValues.watch('group_datetime')
+    && (formValues.watch('freq_type') === 'I' || !!formValues.watch('freq_desc'));
 
   const onNext = formValues.handleSubmit((data) => {
     router.navigate({

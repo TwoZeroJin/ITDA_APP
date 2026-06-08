@@ -64,12 +64,11 @@ export default function FeeInput() {
             name="fee_entry"
             control={control}
             rules={{
-              required: '최소 1,000원 이상 입력해 주세요..',
+              required: '최소 1,000원 이상 입력해 주세요.',
               validate: (value) => {
                 if ((value ?? 0) < 1000) {
                   return '최소 1,000원 이상 입력해 주세요.';
                 }
-                return true;
               }
             }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
@@ -101,7 +100,15 @@ export default function FeeInput() {
           <Controller
             name="fee_info"
             control={control}
-            render={({ field: { onChange } }) => (
+            rules={{
+              required: '참가비 정보를 선택해 주세요.',
+              validate: (value) => {
+                if (!value) {
+                  return '참가비 정보를 선택해 주세요.';
+                }
+              }
+            }}
+            render={({ field: { onChange }, fieldState: { error } }) => (
               <>
                 <View style={styles.feeInfoTypeContainer}>
                   {feeList.map((item) => {
@@ -121,7 +128,7 @@ export default function FeeInput() {
                     );
                   })}
                 </View>
-
+                {error && <Text style={styles.errorText}>{error.message}</Text>}
               </>
             )}
           />
@@ -130,16 +137,29 @@ export default function FeeInput() {
             <Controller
               name="fee_desc"
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <TextInput
-                  value={value}
-                  onChangeText={onChange}
-                  multiline
-                  textAlignVertical="top"
-                  placeholder="참가비 정보를 자세하게 작성해 주세요."
-                  placeholderTextColor={COLOR.TEXT_GRAY}
-                  style={styles.feeInfoDescInput}
-                />
+              rules={{
+                validate: (value) => {
+                  if (feeType !== 'FEE_INFO_99') {
+                    return true;
+                  }
+                  if (!value?.trim()) {
+                    return '참가비 정보를 자세하게 작성해 주세요.';
+                  }
+                }
+              }}
+              render={({ field: { value, onChange }, fieldState: { error } }) => (
+                <>
+                  <TextInput
+                    value={value}
+                    onChangeText={onChange}
+                    multiline
+                    textAlignVertical="top"
+                    placeholder="참가비 정보를 자세하게 작성해 주세요."
+                    placeholderTextColor={COLOR.TEXT_GRAY}
+                    style={styles.feeInfoDescInput}
+                  />
+                  {error && <Text style={styles.errorText}>{error.message}</Text>}
+                </>
               )}
             />
           )}
@@ -149,8 +169,8 @@ export default function FeeInput() {
               <IconInfoMark />
               <Text style={COMM_STYLES.infoTitle}>참가비 설정시 참고해 주세요.</Text>
             </View>
-            <Text style={styles.infoDesc}>· 참가비와 관련된 입금 안내는 클럽 소개시 작성해 주세요.</Text>
-            <Text style={styles.infoDesc}>· 참가비와 관련된 금전적 거래에 대해 잇다는 책임을 지지 않습니다.</Text>
+            <Text style={COMM_STYLES.infoDesc}>· 참가비와 관련된 입금 안내는 클럽 소개시 작성해 주세요.</Text>
+            <Text style={COMM_STYLES.infoDesc}>· 참가비와 관련된 금전적 거래에 대해 잇다는 책임을 지지 않습니다.</Text>
           </View>
         </View>
       )}
@@ -229,10 +249,6 @@ const styles = StyleSheet.create({
   },
   memberInputContainerError: {
     borderColor         : COLOR.TEXT_WARN,
-  },
-  infoDesc: {
-    fontSize            : 12,
-    color               : COLOR.TEXT_DEFAULT,
   },
   errorText: {
     fontSize            : 12,

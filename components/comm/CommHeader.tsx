@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     height            : '100%',
-    paddingHorizontal : 10,
+    paddingHorizontal : 6,
     justifyContent    : 'center',
     alignItems        : 'center'
   },

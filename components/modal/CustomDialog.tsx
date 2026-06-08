@@ -33,7 +33,7 @@ function CustomDialog({ visible, title, content, textInput, onConfirm, onCancel,
             {/* 변경: JSX 내부에서는 삼항 연산자나 &&를 사용해 조건부 렌더링을 해야 합니다 */}
             {textInput !== undefined && textInput !== null && (
               <TextInput
-                style={styles.textInput} // 주석 해제 및 스타일에 추가
+                style={styles.textInput}
                 placeholder={textInput}
                 placeholderTextColor="#B0B0B0"
                 value={answer}
@@ -135,18 +135,17 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width             : '100%',
-    height            : 50, // 입력창 높이
+    height            : 50,
     backgroundColor   : '#FFFFFF',
     borderWidth       : 1,
     borderColor       : '#E5E5EA',
     borderRadius      : 12,
     paddingHorizontal : 16,
-    paddingTop        : 12, // multiline 대응용 위쪽 패딩
+    paddingTop        : 12,
     paddingBottom     : 12,
     marginTop         : 12,
     fontSize          : 15,
     color             : '#1C1C1E',
-    textAlignVertical : 'top', // Android에서 텍스트가 상단부터 찍히도록 설정
   },  
 });
 

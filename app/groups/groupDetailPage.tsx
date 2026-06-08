@@ -103,8 +103,6 @@ export default function GroupDetailPage() {
       group_answer: answer,
       use_stat: (answer.trim() !== '' && groupInfo?.apply_type === 'A') ? '0' : '1', // 신청 상태 (예: 'Y' for 신청, 'N' for 취소)
     } as GroupApply;
-    console.log("신청하기 요청 바디:", requestBody);
-
 
     // 실제 신청 로직은 여기에 추가 (API 호출 등)
     groupApply.mutate(requestBody, {
@@ -403,7 +401,7 @@ export default function GroupDetailPage() {
       {/* 4. 클럽 가입 모달 조립 */}
       <CustomDialog
         visible={isApplyComfirmVisible}
-        title="소셜링 가입 질문"
+        title="클럽 가입 질문"
         content={groupInfo?.apply_type === 'A' && groupInfo.group_question ? groupInfo.group_question : "이 모임에 신청하시겠어요?"}        
         textInput={groupInfo?.apply_type === 'A' && groupInfo.group_question ? "답변을 작성해주세요." : null}
         cancelLabel="취소"
@@ -412,10 +410,9 @@ export default function GroupDetailPage() {
         onConfirm={handleApplySubmit}
       />
 
-      {/* 4. 클럽 가입 취소 */}
       <CustomDialog
         visible={isNotApplyComfirmVisible}
-        title="소셜링 참여 취소"
+        title="클럽 참여 취소"
         content="이 모임에 참여를 취소하시겠어요?"
         cancelLabel="취소"
         confirmLabel="완료"
@@ -433,7 +430,6 @@ export default function GroupDetailPage() {
         onConfirm={handleDeleteSubmit}
       />
 
-        {/* 5. 에러 모달 조립 */}
       <CustomDialog
         visible={isErrorDialogVisible}
         title="처리 실패"
@@ -441,12 +437,10 @@ export default function GroupDetailPage() {
         cancelLabel="닫기"
         onCancel={() => {
           setIsErrorDialogVisible(false)
-          refetchMemberList(); //참여멤버 재조회
+          refetchMemberList();
         }}
         onConfirm={() => {
           setIsErrorDialogVisible(false);
-          handleApplySubmit //빈값으로 신청 시도하여 재신청 처리 유도 (API에서 빈값은 질문 없는 경우로 처리)
-
         }}
       />
     </View>
