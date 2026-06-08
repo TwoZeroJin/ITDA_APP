@@ -22,15 +22,11 @@ export default function GroupDetailPage() {
 
   const { groupId } = useLocalSearchParams();
   // ✅ 1. 모임상세 데이터 조회
-  //소모임 정보 조회
   const { results : groupInfo, isLoading : isDetailLoading, isError : isDetailError } = useGroupDetailView(Number(groupId));  
   const imageList = groupInfo?.img_list? groupInfo.img_list : [];
-
-
   const groupApply = useGroupApply();
   const groupCancelApply = useGroupCancelApply();
   const groupDelete = useGroupDelete();
-  const [comment, setComment] = useState('');
   const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
   const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
   const [isDeleteConfirmVisible, setDeleteConfirmVisible] = useState(false);//삭제확인alert
@@ -129,7 +125,6 @@ export default function GroupDetailPage() {
     const requestBody = {
       group_id: Number(groupInfo?.group_id),
     } as GroupApply;
-    console.log("신청하기 요청 바디:", requestBody);
 
 
     // 실제 신청 로직은 여기에 추가 (API 호출 등)
@@ -145,25 +140,6 @@ export default function GroupDetailPage() {
     });
   }
 
-  // 가상의 댓글 데이터
-  const COMMENT_DATA = [
-    {
-      mem_id: '1',
-      comment_id: '1',
-      mem_name: '정현수',
-      time: '00:40',
-      content: '정말 재밌는 모임이 될 것 같아요!',
-      profile_image_url: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png', // 실제 이미지 URL로 교체
-    },
-    {
-      mem_id: '2',
-      comment_id: '2',
-      mem_name: '정현수',
-      time: '00:40',
-      content: '정말 재밌는 모임이 될 것 같아요!',
-      profile_image_url: '',
-    },
-  ];
   const DETAIL_MENU_ITEMS = [
     {
       label: '클럽 수정',
@@ -211,14 +187,7 @@ export default function GroupDetailPage() {
       },
     },
   ];  
-  interface CommentTypeProps {
-    mem_id: string;
-    comment_id: string;
-    mem_name: string;
-    time: string;
-    content: string;
-    profile_image_url: string;
-  };
+
   return (
     <View style={styles.container}>
       <CommHeader 
@@ -381,13 +350,21 @@ export default function GroupDetailPage() {
       </ScrollView>
 
       {groupInfo?.apply_stat === '-1' && (
-        <CommBottomButton label="신청하기" onPress={() => setApplyComfirmVisible(true)} />
+        <CommBottomButton 
+          label="신청하기" 
+          onPress={() => router.checkAndNavigate(() => setApplyComfirmVisible(true), '/groups/groupDetailPage')}
+        />
       )}
       {groupInfo?.apply_stat === '0' && (
-        <CommBottomButton label="신청 취소하기" onPress={() => setNotApplyComfirmVisible(true)} />
+        <CommBottomButton 
+          label="신청 취소하기" 
+          onPress={() => setNotApplyComfirmVisible(true)} 
+        />
       )}
       {groupInfo?.apply_stat === '1' && (
-        <CommBottomButton label="채팅하기" onPress={() => {router.push({
+        <CommBottomButton 
+          label="채팅하기" 
+          onPress={() => {router.push({
           pathname: "/chats",
           params: {
             room_id   : `${COMM_CONSTANTS.CHAT_TYPE_GROUP}_${groupInfo.group_id}`,

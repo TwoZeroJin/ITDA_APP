@@ -10,7 +10,7 @@ import { getAccessToken } from '@/utils/commUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MemDefault from '@/assets/images/icon_mem_default.svg';
-import { router } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 
 let cachedIsLoggedIn: boolean | null = null;
 
@@ -28,16 +28,11 @@ export default function CommGroupCard({ item, onLikePress, backgroundColor }: Co
   const [profileImageError, setProfileImageError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(cachedIsLoggedIn ?? false);
   const dynamicBackgroundColor = backgroundColor === 'grey' ? COLOR.COMM_GRAY_8 : COLOR.COMM_WHITE;
-
+  const pathname = usePathname();
+  
+  // 좋아요 버튼 여부
   useEffect(() => {
     let isMounted = true;
-
-    if (cachedIsLoggedIn !== null) {
-      setIsLoggedIn(cachedIsLoggedIn);
-      return () => {
-        isMounted = false;
-      };
-    }
 
     getAccessToken()
       .then((token) => {
@@ -57,7 +52,7 @@ export default function CommGroupCard({ item, onLikePress, backgroundColor }: Co
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [pathname]);
 
   const imageSource = useMemo(
     () => (thumbImageError || !item.thumb_url ? null : { uri: item.thumb_url }),

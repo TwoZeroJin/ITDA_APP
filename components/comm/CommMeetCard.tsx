@@ -28,17 +28,12 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
   const [profileImageError, setProfileImageError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(cachedIsLoggedIn ?? false);
   const dynamicBackgroundColor = backgroundColor === 'grey' ? COLOR.COMM_GRAY_8 : COLOR.COMM_WHITE;
-  const pathname = usePathname();  
+  const pathname = usePathname();
 
   // 좋아요 버튼 여부
   useEffect(() => {
     let isMounted = true;
-    if (cachedIsLoggedIn !== null) {
-      setIsLoggedIn(cachedIsLoggedIn);
-      return () => {
-        isMounted = false;
-      };
-    }
+
     getAccessToken()
       .then((token) => {
         const nextIsLoggedIn = !!token;
@@ -57,7 +52,7 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [pathname]);
 
   const imageSource = useMemo(
     () => (thumbImageError || !item.thumb_url ? null : { uri: item.thumb_url }),
@@ -70,9 +65,6 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
   );
 
   const movePage = () => {
-    // 현재 경로가 이미 'chooseMeet'을 포함하고 있다면 이동하지 않음
-    console.log('아이템 클릭:상세 화면으로 이동', pathname); // 클릭된 아이템 로그
-
     if (pathname === '/communities/chooseMeet') {
         router.push({
           pathname: '/communities/writeFeedback',

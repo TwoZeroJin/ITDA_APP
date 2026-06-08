@@ -11,7 +11,7 @@ export default function CommFloatingButton() {
   const router = useAuthRouter();
   return (
     <TouchableOpacity
-      style={[styles.floatingButton]}
+      style={styles.floatingButton}
       activeOpacity={0.6}
       onPress={() => router.navigate('/meets/create')}
     >

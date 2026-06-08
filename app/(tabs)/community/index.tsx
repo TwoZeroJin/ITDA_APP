@@ -5,13 +5,14 @@ import { COLOR } from '@/constants';
 import IconPencil from '@/assets/images/icon_community.svg';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
-import { router, useFocusEffect } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useFocusEffect } from 'expo-router';
 import { useReviewList } from "@/hooks/queries/useCommunity";
 import { SearchParams } from '@/types';
 import * as commUtil from '@/utils/commUtil';
+import { useAuthRouter } from '@/components/comm/AuthRoute';
 
 export default function community() {
+  const router = useAuthRouter();
   const [activeType, setActiveType] = useState<string>('latest');
   const [refreshing, setRefreshing] = useState(false);
   const [myMemId, setMyMemId] = useState<number>(0);

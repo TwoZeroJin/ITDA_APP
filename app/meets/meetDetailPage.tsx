@@ -25,9 +25,9 @@ export default function MeetDetailPage() {
   const meetApply = useMeetApply();
   const meetCancelApply = useMeetCancelApply();
   const meetDelete = useMeetDelete();
-  const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);//신청alert
-  const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);//신청취소alert
-  const [isDeleteConfirmVisible, setDeleteConfirmVisible] = useState(false);//삭제확인alert
+  const [isApplyComfirmVisible, setApplyComfirmVisible] = useState(false);
+  const [isNotApplyComfirmVisible, setNotApplyComfirmVisible] = useState(false);
+  const [isDeleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const router = useAuthRouter();
   // ✅ 1. 모임상세 데이터 조회
@@ -395,13 +395,21 @@ export default function MeetDetailPage() {
       </ScrollView>
 
       {meetInfo?.apply_stat === '-1' && (
-        <CommBottomButton label="신청하기" onPress={() => setApplyComfirmVisible(true)} />
+        <CommBottomButton
+          label="신청하기"
+          onPress={() => router.checkAndNavigate(() => setApplyComfirmVisible(true), '/meets/meetDetailPage')}
+        />
       )}
       {meetInfo?.apply_stat === '0' && (
-        <CommBottomButton label="신청 취소하기" onPress={() => setNotApplyComfirmVisible(true)} />
+        <CommBottomButton 
+          label="신청 취소하기" 
+          onPress={() => setNotApplyComfirmVisible(true)} 
+        />
       )}
       {meetInfo?.apply_stat === '1' && (
-        <CommBottomButton label="채팅하기" onPress={() => {router.push({
+        <CommBottomButton 
+          label="채팅하기" 
+          onPress={() => {router.push({
           pathname: "/chats",
           params: {
             room_id   : `${COMM_CONSTANTS.CHAT_TYPE_MEET}_${meetInfo.meet_id}`,
@@ -445,20 +453,12 @@ export default function MeetDetailPage() {
         onConfirm={() => handleDeleteSubmit()}
       />
 
-        {/* 5. 에러 모달 조립 */}
       <CustomDialog
         visible={isErrorDialogVisible}
-        title="처리 실패"
-        content={`정상 처리되지 않았습니다. \n${errorMessage}`}
+        content={`${errorMessage}`}
         cancelLabel="닫기"
         onCancel={() => {
           setIsErrorDialogVisible(false)
-          refetchMemberList(); //참여멤버 재조회
-        }}
-        onConfirm={() => {
-          setIsErrorDialogVisible(false);
-          handleApplySubmit //빈값으로 신청 시도하여 재신청 처리 유도 (API에서 빈값은 질문 없는 경우로 처리)
-
         }}
       />
     </View>
