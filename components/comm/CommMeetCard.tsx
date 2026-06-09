@@ -5,7 +5,7 @@ import IconMembers from '@/assets/images/icon_members.svg';
 import ImageDefault from '@/assets/images/no_image.svg';
 import CommLabel from '@/components/comm/CommLabel';
 import { COLOR } from '@/constants';
-import { MeetInfo } from '@/types';
+import { GroupInfo, MeetInfo } from '@/types';
 import { getAccessToken } from '@/utils/commUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -15,9 +15,13 @@ import { router, usePathname } from 'expo-router';
 let cachedIsLoggedIn: boolean | null = null;
 
 interface CommMeetCardProps {
-  item: MeetInfo;
-  onLikePress?: (item: MeetInfo) => void;
+  item: MeetInfo | GroupInfo;
+  onLikePress?: (item: MeetInfo | GroupInfo) => void;
   backgroundColor?: string;
+}
+
+function isMeetItem(item: MeetInfo | GroupInfo): item is MeetInfo {
+  return 'meet_id' in item;
 }
 
 /**
@@ -64,18 +68,27 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
     [profileImageError, item.mem_image_url],
   );
 
+  const isMeet = isMeetItem(item);
+  const title = isMeet ? item.meet_name : item.group_name;
+  const categoryName = isMeet ? item.meet_subj_name : item.group_subj_name;
+  const labelVariant = isMeet ? 'social' : 'club';
+
   const movePage = () => {
-    if (pathname === '/communities/chooseMeet') {
+    if (pathname === '/communities/chooseMeet' && isMeet) {
         router.push({
           pathname: '/communities/writeFeedback',
           params: { data: JSON.stringify(item) },
         });
-    }     
-    else {
+    } else if (isMeet) {
       router.push({ 
           pathname: '/meets/meetDetailPage',
           params: { meetId: item.meet_id }
       })
+    } else {
+      router.push({
+        pathname: '/groups/groupDetailPage',
+        params: { groupId: item.group_id },
+      });
     }
   };
 
@@ -100,7 +113,7 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
         )}
         </ImageBackground>) : (
           <View style={styles.itemImage}>
-            <ImageDefault width={96} height={96} />
+            <ImageDefault width={110} height={110} />
             {isLoggedIn && (
               <TouchableOpacity style={styles.likeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
                 {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
@@ -111,16 +124,18 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
       </View>
       <View style={styles.contentWrap}>
         <View style={styles.tagContainer}>
-          <CommLabel variant="social" />
-          <CommLabel variant="category" category={item.meet_subj_name} />
+          <CommLabel variant={labelVariant} />
+          <CommLabel variant="category" category={categoryName} />
         </View>
         <View style={styles.contentContainer}>
           <Text style={styles.contentTitle} numberOfLines={1} ellipsizeMode="tail">
-            {item.meet_name}
+            {title}
           </Text>
           <View style={styles.contentInfoContainer}>
             {item.place_addr && (<><IconMarker width={12} height={12} />
             <Text style={styles.contentText}>{item.place_addr}</Text></>)}
+          </View>
+          <View style={styles.contentInfoContainer}>
             {item.apply_ratio && (<><IconMembers width={12} height={12} />
             <Text style={styles.contentText}>{item.apply_ratio}</Text></>)}
           </View>
@@ -149,11 +164,11 @@ const styles = StyleSheet.create({
     borderRadius      : 12,
     padding           : 12,
     flexDirection     : 'row',
-    marginEnd         : 30,
+    marginEnd         : 20,
   },
   itemImage: {
-    width             : 96,
-    height            : 96,
+    width             : 110,
+    height            : 110,
     borderRadius      : 12,
     overflow          : 'hidden',
   },

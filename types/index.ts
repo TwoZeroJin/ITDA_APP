@@ -49,6 +49,8 @@ interface MainData {
   upcoming_meet_list?   : MeetInfo[];
   hot_meet_list?        : MeetInfo[];
   recommend_meet_list?  : MeetInfo[];
+  hot_group_list?       : GroupInfo[];
+  recommend_group_list? : GroupInfo[];
   new_class_list?       : MeetInfo[];
   review_list?          : MeetReview[];
 }

@@ -6,7 +6,6 @@ import { useState } from 'react';
 import ClubLayout from './clubLayout';
 import SocialClassLayout from './socialClassLayout';
 
-
 export default function Meet() {
   const [activeType, setActiveType] = useState<string>('social');
   const tabs: Array<{ label: string; value: string }> = [

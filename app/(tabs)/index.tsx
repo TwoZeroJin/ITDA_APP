@@ -23,7 +23,7 @@ export default function HomeScreen() {
   const [schText, setSchText] = useState('');
   const [schCategory, setSchCategory] = useState('');
   const isFirstFilterRender = useRef(true);
-  const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, refetch } = useMainData(schCategory, schText);
+  const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, hotGroupList, recommendGroupList, refetch } = useMainData(schCategory, schText);
 
   const handleSearchKey = useCallback((keyword: string) => {
     setSchText(keyword);
@@ -62,16 +62,28 @@ export default function HomeScreen() {
   
   const recommendSections = [
     {
-      key       : 'hot',
+      key       : 'hotMeet',
       title     : '핫한 소셜링',
       subTitle  : '요즘 다 여기서 만나요 👀 지금 참여하기!',
       data      : hotMeetList,
     },
     {
-      key       : 'recommend',
+      key       : 'recommendMeet',
       title     : '추천 소셜링',
       subTitle  : '취향에 맞는 모임을 확인해 보세요.',
       data      : recommendMeetList,
+    },
+    {
+      key       : 'hotGroup',
+      title     : '핫한 클럽',
+      subTitle  : '요즘 다 여기서 만나요 👀 지금 참여하기!',
+      data      : hotGroupList,
+    },
+    {
+      key       : 'recommendGroup',
+      title     : '추천 클럽',
+      subTitle  : '취향에 맞는 클럽을 확인해 보세요.',
+      data      : recommendGroupList,
     },
     // {
     //   key       : 'new-class',

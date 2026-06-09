@@ -1,7 +1,7 @@
 import IconArrowRightMore from '@/assets/images/icon_arrow_right_more.svg';
 import CommMeetCard from '@/components/comm/CommMeetCard';
 import { COLOR } from '@/constants';
-import { MeetInfo } from '@/types';
+import { GroupInfo, MeetInfo } from '@/types';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import { router } from 'expo-router';
@@ -10,7 +10,7 @@ interface RecommendSectionItem {
   key: string;
   title: string;
   subTitle: string;
-  data: MeetInfo[];
+  data: MeetInfo[] | GroupInfo[];
 }
 
 interface CommRcmdMeetListProps {
@@ -24,15 +24,15 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
   const memberLike = useMemberLike();
 
   // 좋아요 처리
-  const handleLikePress = (item: MeetInfo) => {
-    if (!item.meet_id) {
-      return;
-    }
+  const handleLikePress = (item: MeetInfo | GroupInfo) => {
+    const isMeet = 'meet_id' in item;
+    const targetId = isMeet ? item.meet_id : item.group_id;
+    const targetType = isMeet ? 'M' : 'G';
 
     memberLike.mutate(
       {
-        target_id   : item.meet_id,
-        target_type : 'M',
+        target_id   : targetId,
+        target_type : targetType,
         flag        : item.like_yn === 'N',
       },
       {
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     marginTop         : 4,
   },
   listContainer: {
-    marginTop         : 16,
+    marginTop         : 12,
   },
   emptyText: {
     marginTop         : 16,

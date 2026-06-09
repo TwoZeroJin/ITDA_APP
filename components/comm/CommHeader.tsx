@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   right: {
     marginStart     : "auto",
-    marginEnd       : 8,
+    marginEnd       : 12,
   },
    titleWrapper: {
     position        : 'absolute',

@@ -132,6 +132,8 @@ function useMainData(sch_category?: string, sch_text?: string) {
     upcomingMeetList    : query.data?.data?.upcoming_meet_list ?? [],
     hotMeetList         : query.data?.data?.hot_meet_list ?? [],
     recommendMeetList   : query.data?.data?.recommend_meet_list ?? [],
+    hotGroupList        : query.data?.data?.hot_group_list ?? [],
+    recommendGroupList  : query.data?.data?.recommend_group_list ?? [],
     newClassList        : query.data?.data?.new_class_list ?? [],
     reviewList          : query.data?.data?.review_list ?? [],
   };
