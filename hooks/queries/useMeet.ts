@@ -8,12 +8,14 @@ import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 // 모임 목록 조회 (무한 스크롤)
-function useMeetListPaging(searchParams: SearchParams) {
+function useMeetListPaging(searchParams: SearchParams, options?: { enabled?: boolean }) {
+  const { enabled = true } = options ?? {};
   const query = useInfiniteQuery({
     queryFn: ({ pageParam }) => meetList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
+    enabled,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
   return { ...query, results };
@@ -93,7 +95,7 @@ function useMeetDelete() {
   });
 }
 
-// 소모임에 참여하는 멤버 조회
+// 소셜링에 참여하는 멤버 조회
 function useMeetMemberList(meetId: number) {
   const query = useQuery({
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_MEMBER_LIST, meetId],
@@ -104,7 +106,7 @@ function useMeetMemberList(meetId: number) {
   return { ...query, results };    
 }
 
-// 소모임 신청
+// 소셜링 신청
 function useMeetApply() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -124,7 +126,7 @@ function useMeetApply() {
 }
 
 
-// 소모임 신청 취소
+// 소셜링 신청 취소
 function useMeetCancelApply() {
   const { setLoading } = useLoading();
   return useMutation({

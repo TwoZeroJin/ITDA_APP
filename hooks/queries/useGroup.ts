@@ -8,12 +8,14 @@ import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 // 클럽 목록 조회 (무한 스크롤)
-function useGroupListPaging(searchParams: SearchParams) {
+function useGroupListPaging(searchParams: SearchParams, options?: { enabled?: boolean }) {
+  const { enabled = true } = options ?? {};
   const query = useInfiniteQuery({
     queryFn: ({ pageParam }) => groupList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
+    enabled,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
   return { ...query, results };
@@ -91,7 +93,7 @@ function useGroupDelete() {
   });
 }
 
-// 소모임에 참여하는 멤버 조회
+// 소셜링에 참여하는 멤버 조회
 function useGroupMemberList(groupId: number) {
   const query = useQuery({
     queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_MEMBER_LIST, groupId],
@@ -101,7 +103,7 @@ function useGroupMemberList(groupId: number) {
   return { ...query, results };    
 }
 
-// 그룹 신청
+// 클럽 신청
 function useGroupApply() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -120,7 +122,7 @@ function useGroupApply() {
   });
 }
 
-// 그룹 신청 취소
+// 클럽 신청 취소
 function useGroupCancelApply() {
   const { setLoading } = useLoading();
   return useMutation({

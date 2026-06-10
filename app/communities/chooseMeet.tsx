@@ -89,7 +89,7 @@ export default function chooseMeet() {
         <View style={{ width: 40 }} />
       </View> */}
 
-      {/* 소모임 생성 타이틀 */}
+      {/* 소셜링 생성 타이틀 */}
       <View style={styles.titleContainer}>
         <Text style={styles.titleBig}>후기를 작성할 모임을 선택해주세요.</Text>
       </View>

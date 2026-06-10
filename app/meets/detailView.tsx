@@ -1,6 +1,6 @@
 import { COLOR, COMM_STYLES, COMM_CONSTANTS } from "@/constants";
 import React, { useState } from "react";
-import { TouchableOpacity, ActivityIndicator, FlatList, ScrollView, StyleSheet, Text, View, Alert } from 'react-native';
+import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply, useMeetDelete } from "@/hooks/queries/useMeet";
@@ -16,7 +16,6 @@ import IconDetailMembers from '@/assets/images/icon_detail_members.svg';
 import IconDetailFee from '@/assets/images/icon_detail_fee.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
 import DividingLine from "@/components/DividingLine";
-import ProfileIcon from "@/components/ProfileIcon";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import CommReviewList from '@/components/CommReviewList';
 import DropdownModal from '@/components/modal/DropdownModal';
@@ -26,6 +25,7 @@ import { router as expoRouter } from 'expo-router';
 import { showToast } from "@/utils/commToast";
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
 import { formatNumberWithComma } from "@/utils/commUtil";
+import HostMemberSection from "@/components/comm/HostMemberSection";
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'delete' | 'error';
 
@@ -303,37 +303,12 @@ export default function DetailViewScreen() {
         <DividingLine />
 
         {/* 모임장 및 참여 멤버 */}
-        <View style={styles.membersContainer}>
-          {/* 모임장 소개 섹션 */}
-          <View style={styles.membersSection}>
-            <Text style={styles.membersSectionTitle}>모임장 소개</Text>
-            <View style={styles.hostContainer}>
-                <ProfileIcon mem_image_url={meetInfo?.mem_image_url || ''} type="HOST" />
-              <View style={styles.hostInfo}>
-                <Text style={styles.hostName}>{meetInfo?.mem_nick}</Text>
-                {/* <Text style={styles.hostGreeting}>{meetInfo?.mem_interest}</Text> */}
-              </View>
-            </View>
-          </View>
-
-          {/* 참여 멤버 섹션 */}
-          <View style={[styles.membersSection, { marginBottom: 0 }]}> 
-            <Text style={styles.membersSectionTitle}>참여 멤버</Text>
-            <FlatList
-              data={memberList}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, index) => item?.mem_id?.toString() ?? String(index)}
-              contentContainerStyle={styles.memberListContent}
-              renderItem={({ item }) => 
-                item.host_yn === 'Y' ? (
-                  <ProfileIcon mem_image_url={item?.mem_image_url || ''} type="HOST" />
-                ) : (
-                  <ProfileIcon mem_image_url={item?.mem_image_url || ''} type="MEMBER" />
-                )}
-            />
-          </View>
-        </View>
+        <HostMemberSection
+          hostImageUrl={meetInfo?.mem_image_url}
+          hostName={meetInfo?.mem_nick}
+          hostInfo={meetInfo?.mem_info}
+          members={memberList}
+        />
 
         <DividingLine />
 
@@ -391,40 +366,3 @@ export default function DetailViewScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  membersContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 25,
-  },
-  membersSection: {
-    marginBottom: 30,
-  },
-  membersSectionTitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 15,
-    fontWeight: '700',
-  },
-  memberListContent: {
-    alignItems: 'center',
-  },
-  hostContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  hostInfo: {
-    marginLeft: 15,
-  },
-  hostName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  hostGreeting: {
-    fontSize: 14,
-    color: '#888',
-  },
-});

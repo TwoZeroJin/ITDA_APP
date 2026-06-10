@@ -33,7 +33,7 @@ export default function MeetCreateTypeScreen() {
   return (
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
-        {/* 소모임 생성 타이틀 */}
+        {/* 소셜링 생성 타이틀 */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{'어떤 소셜링을 열어볼까요?'}</Text>
           <Text style={styles.subtitle}>{'소셜링은 번개처럼 원데이로 만나는 자유로운 활동입니다.\n장기간 함께하는 활동은 \'클럽\'으로 개설해 주세요.'}</Text>

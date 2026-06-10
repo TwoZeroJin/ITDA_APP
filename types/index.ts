@@ -73,7 +73,7 @@ interface User {
 interface ChurchData {
   church_id       : number;
   church_name     : string;
-  church_addr?     : string;
+  church_addr?    : string;
 }
 
 /**
@@ -179,7 +179,7 @@ interface FileInfo {
 }
 
 /**
- * 소모임 정보
+ * 소셜링 정보
  */
 interface MeetInfo {
   meet_id         : number;
@@ -208,17 +208,16 @@ interface MeetInfo {
   place_name      : string;
   place_addr      : string;
   mem_id          : number;
-  mem_name        : string;
-  mem_nick        : string;
+  mem_nick?       : string;
+  mem_info?       : string;
   mem_image_url?  : string;
   group_id        : number;
   thumb_url?      : string;
-  // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
   img_list_json?  : string;
 }
 
 /**
- * 소모임 신청
+ * 소셜링 신청
  */
 interface MeetApply {
   meet_id       : number;
@@ -228,7 +227,7 @@ interface MeetApply {
 }
 
 /**
- * 소모임 후기 정보
+ * 소셜링 후기 정보
  */
 interface MeetReview {
   review_id?      : number;
@@ -244,11 +243,8 @@ interface MeetReview {
   mod_sdate       : string;
   use_stat        : string;
   thumb_url?      : string;
-
-  // 중첩된 VO 객체 처리
-  memMeetListVO?: MeetInfo;
-
-  fileInfoVO? : FileInfo[];
+  memMeetListVO?  : MeetInfo;
+  fileInfoVO?     : FileInfo[];
 }
 
 /**
@@ -278,14 +274,11 @@ interface GroupInfo {
   freq_type       : string;
   freq_desc       : string;
   thumb_url?      : string;
-
-  mem_id        : number;
-  mem_name      : string;
-  mem_nick      : string;
-  mem_image_url? : string;
-
-  // 서버에 넘기기 위한 이미지 데이터 json 문자열 (프론트에서만 사용)
-  img_list_json? : string;
+  mem_id          : number;
+  mem_nick?       : string;
+  mem_info?       : string;
+  mem_image_url?  : string;
+  img_list_json?  : string;
 
 }
 

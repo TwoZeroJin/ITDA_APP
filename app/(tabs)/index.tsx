@@ -24,6 +24,12 @@ export default function HomeScreen() {
   const [schCategory, setSchCategory] = useState('');
   const isFirstFilterRender = useRef(true);
   const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, hotGroupList, recommendGroupList, refetch } = useMainData(schCategory, schText);
+  // 화면 재진입시 재조회
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     refetch();
+  //   }, [refetch])
+  // );
 
   const handleSearchKey = useCallback((keyword: string) => {
     setSchText(keyword);

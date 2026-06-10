@@ -205,8 +205,8 @@ const API_URL = {
   REVIEW_LIST             : "/review/list",
   REVIEW_INSERT           : "/review/insert",
   MY_MEET_LIST_NO_REVIEW  : "/review/my_meet_list_no_review",
-  REVIEW_DELETE           : "/review/delete", // 추가된 후기 삭제 API
-  REVIEW_UPDATE           : "/review/update", // 추가된 후기 수정 API
+  REVIEW_DELETE           : "/review/delete",
+  REVIEW_UPDATE           : "/review/update",
   GROUP_LIST              : "/group/list",
   GROUP_MEMBER_LIST       : "/group/member_list",
   GROUP_VIEW              : "/group/view",
@@ -237,7 +237,7 @@ const COMM_STYLES = StyleSheet.create({
   errorBorder: {
     borderColor         : COLOR.TEXT_WARN,
   },
-  // 소모임/클럽 생성시 주의 사항 스타일
+  // 소셜링/클럽 생성시 주의 사항 스타일
   infoContainer: {
     marginTop           : 10,
     borderRadius        : 12,
@@ -273,7 +273,7 @@ const COMM_STYLES = StyleSheet.create({
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.COMM_GRAY_7,
   },
-  // 소모임/클럽 공통 스타일
+  // 소셜링/클럽 공통 스타일
   commTitleContainer: {
     marginTop           : 12,
     marginBottom        : 5,

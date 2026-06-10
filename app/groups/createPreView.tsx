@@ -1,6 +1,6 @@
-import { COLOR, COMM_STYLES } from "@/constants";
-import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { COMM_STYLES } from "@/constants";
+import React, { useState } from "react";
+import { ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { GroupInfo, CodeInfo, ApiResult } from "@/types";
@@ -121,10 +121,6 @@ export default function GroupCreatePreViewScreen() {
           {/* 하단 지도 정보 카드 */}
           <PlaceLocationBox data={prevGroupInfo as GroupInfo} />
         </View>
-        {/* 장소 주소 및 지도?? */}
-        {/* 댓글 ?? */}
-        {/* 후기 */}
-
       </ScrollView>
 
       <CommBottomButton label={`클럽 ${prevGroupInfo.group_id ? '수정' : '열기'}`} onPress={handleCreateGroup}/>

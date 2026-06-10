@@ -161,7 +161,6 @@ const styles = StyleSheet.create({
     paddingVertical   : 10,
     paddingHorizontal : 12,
     flexDirection     : 'row',
-    marginEnd         : 20,
   },
   itemImage: {
     width             : 110,

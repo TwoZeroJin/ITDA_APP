@@ -62,7 +62,7 @@ function parseMeetDateTimeLabel(meetDatetime?: string) {
 }
 
 /**
- * 소모임 모임 장소, 날짜, 시간 입력 컴포넌트
+ * 소셜링 모임 장소, 날짜, 시간 입력 컴포넌트
  */
 export default function MeetPlaceInput() {
   const { control, setValue, watch } = useFormContext<MeetInfo>();

@@ -14,8 +14,6 @@ interface CommRadioGroupProps {
 }
 
 /**
- * 
- * @param param
  * @returns 모임 생성시 사용하는 공통 라디오 그룹 컴포넌트
  */
 function CommRadioGroup({ items, value, onChange }: CommRadioGroupProps) {

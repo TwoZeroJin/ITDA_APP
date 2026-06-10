@@ -50,8 +50,9 @@ export default function CommCategoryList({ onCategorySelect }: CommCategoryListP
                               key={colIdx} 
                               style={{ alignItems: 'center' }} 
                               onPress={() => {
-                                setSelectedCategoryId(item.code_id);
-                                onCategorySelect?.(item.code_id);
+                                const nextCategoryId = selectedCategoryId === item.code_id ? '' : item.code_id;
+                                setSelectedCategoryId(nextCategoryId);
+                                onCategorySelect?.(nextCategoryId);
                               }}
                               activeOpacity={0.6}
                             >

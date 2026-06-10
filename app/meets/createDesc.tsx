@@ -49,7 +49,7 @@ export default function MeetCreateDescScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
       >
-        {/* 소모임 생성 타이틀 */}
+        {/* 소셜링 생성 타이틀 */}
         <View style={COMM_STYLES.commTitleContainer}>
           <Text style={COMM_STYLES.commTitle}>{'나의 소셜링을 소개해주세요.'}</Text>
         </View>

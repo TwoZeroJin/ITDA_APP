@@ -42,7 +42,7 @@ export default function MeetCreateScreen() {
   return (
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
-        {/* 소모임 생성 타이틀 */}
+        {/* 소셜링 생성 타이틀 */}
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{'잇다에서 함께 이어갈 모임을\n만들어주세요.'}</Text>
           <Text style={styles.subtitle}>어떤 유형의 모임인지 선택해주세요.</Text>

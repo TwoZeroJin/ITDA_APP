@@ -4,45 +4,33 @@ import CommunityFeed from '@/components/CommunityFeed';
 import { COLOR } from '@/constants';
 import IconPencil from '@/assets/images/icon_community.svg';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator } from 'react-native';
-import { useCallback, useEffect, useState } from 'react';
-import { useFocusEffect } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { useReviewList } from "@/hooks/queries/useCommunity";
-import * as commUtil from '@/utils/commUtil';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
 
-export default function community() {
+export default function CommunityListScreen() {
   const router = useAuthRouter();
   const [activeType, setActiveType] = useState<string>('latest');
   const [refreshing, setRefreshing] = useState(false);
   const [myMemId, setMyMemId] = useState<number>(0);
-  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } = useReviewList({
+  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useReviewList({
     page_no       : 0,
     page_size     : 5,
     sch_condition : activeType, 
     sch_keyword   : String(3) 
   });
-
-  useEffect(() => {
-    const fetchMyMemberInfo = async () => {
-      const memberInfo = await commUtil.getMemberInfo();
-      setMyMemId(memberInfo.mem_id ?? 0);
-    };
-
-    fetchMyMemberInfo();
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
+  // 화면 재진입시 재조회
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     refetch();
+  //   }, [refetch])
+  // );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await refetch(); 
     setRefreshing(false);
   }, [refetch]);
-
   const loadMore = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage(); 
@@ -54,18 +42,10 @@ export default function community() {
     { label: '모임 후기', value: 'meet_review' },
     { label: '내가 쓴 글', value: 'mypost' },
   ];
-
-  if (isLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={COLOR.APP_ACTIVE_3} />
-      </View>
-    );
-  }
   
   return (
     <View style={{ flex: 1 }}>
-      <CommHeader isNoti={true} isSetting={false} isLike={true} />
+      <CommHeader />
       <TopTabButton
         tabs={tabs}
         activeValue={activeType}

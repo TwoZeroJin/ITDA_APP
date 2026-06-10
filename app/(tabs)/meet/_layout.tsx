@@ -15,7 +15,7 @@ export default function MeetLayout() {
         name="index"
         options={
           {
-            title:"소모임 보기",
+            title:"소셜링 보기",
             headerShown: false
           }
         }
