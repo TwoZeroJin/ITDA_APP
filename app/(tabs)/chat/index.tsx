@@ -9,36 +9,11 @@ import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react
 import { useFocusEffect } from "expo-router";
 import { CategoryTab } from "@/components/CategoryTab";
 import ImageDefault from "@/assets/images/no_image.svg";
+import { formatRelativeTime } from "@/utils/commUtil";
 
-function formatUpdatedText(dateText?: string): string {
-  if (!dateText) {
-    return "방금전";
-  }
-
-  const date = new Date(dateText);
-  if (Number.isNaN(date.getTime())) {
-    return dateText;
-  }
-
-  const diffMs = Date.now() - date.getTime();
-  const minuteMs = 1000 * 60;
-  const hourMs = minuteMs * 60;
-  const dayMs = hourMs * 24;
-
-  if (diffMs < hourMs) {
-    const minutes = Math.max(1, Math.floor(diffMs / minuteMs));
-    return `${minutes}분전`;
-  }
-
-  if (diffMs < dayMs) {
-    const hours = Math.max(1, Math.floor(diffMs / hourMs));
-    return `${hours}시간전`;
-  }
-
-  const days = Math.max(1, Math.floor(diffMs / dayMs));
-  return `${days}일전`;
-}
-
+/**
+ * 채팅 리스트 화면
+ */
 export default function ChatListScreen() {
   const router = useAuthRouter();
   const [activeCategory, setActiveCategory] = useState<string>("");
@@ -93,7 +68,7 @@ export default function ChatListScreen() {
   }, [activeCategory, results]);
 
   const renderChatRoom = ({ item }: { item: RoomData }) => {
-    const updatedText = formatUpdatedText(item.mod_sdate || item.reg_sdate);
+    const updatedText = formatRelativeTime(item.mod_sdate || item.reg_sdate);
     const messagePreview = item.last_msg || "대화를 시작해 보세요.";
     const roomImageSource = item.thumb_url && !imageErrors[item.room_id]
       ? { uri: item.thumb_url }

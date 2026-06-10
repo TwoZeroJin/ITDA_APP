@@ -71,6 +71,8 @@ const QUERY_KEYS = {
   MEMBER_APPLY_MEET_LIST  : "member_apply_meet_list",
   MEMBER_MY_GROUP_LIST    : "member_my_group_list",
   MEMBER_APPLY_GROUP_LIST : "member_apply_group_list",
+  PUSH                    : "push",
+  PUSH_PAGING             : "push_paging",
   CHAT                    : "chat",
   CHAT_LIST               : "chat_list",
   CHAT_PAGING             : "chat_paging",
@@ -134,6 +136,7 @@ const STORE_KEY = {
   MEM_CHURCH_TM_NM    : "mem_church_tm_nm",
   PUSH_SEND_YN        : "push_send_yn",
   PUSH_TOKEN          : "push_token",
+  PUSH_COUNT          : "push_count",
   DEVICE_UID          : "device_uid",
 }
 
@@ -184,6 +187,7 @@ const API_URL = {
   MEMBER_APPLY_MEET_LIST  : "/member/apply/meet/list",
   MEMBER_MY_GROUP_LIST    : "/member/my/group/list",
   MEMBER_APPLY_GROUP_LIST : "/member/apply/group/list",
+  PUSH_LIST               : "/push/list",
   CHAT_LIST               : "/chat/list",
   CHAT_VIEW               : "/chat/view",
   CHAT_INSERT             : "/chat/insert",

@@ -1,193 +1,144 @@
-import { COLOR, COMM_STYLES } from "@/constants";
-import React, { useState } from "react";
-import { Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { COLOR, COMM_STYLES, STORE_KEY } from "@/constants";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
-import CommBottomButton from "@/components/comm/CommBottomButton";
-import CustomButton from "@/components/comm/CustomButton";
-import CustomDialog from "@/components/modal/CustomDialog";
-import { useAuth } from "@/hooks/queries/useAuth";
-import IconMore from '@/assets/images/arrow_right.svg';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import WebView from "react-native-webview";
-import { router } from "expo-router";
-
-type SettingsMenuItem = {
-  label   : string;
-  onPress : () => void;
-};
+import { usePushListPaging } from "@/hooks/queries/usePush";
+import { PushData } from "@/types";
+import { CategoryTab } from "@/components/CategoryTab";
+import { COMM_CONSTANTS } from "@/constants";
+import { formatRelativeTime } from "@/utils/commUtil";
+import { saveAsyncStore } from "@/utils/asyncStoreUtil";
 
 /**
  * 마이페이지 - 알림 화면
  */
 export default function NotiListScreen() {
-  const insets = useSafeAreaInsets();
-  const { logout } = useAuth();
-  const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
-  const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
-  const [isWebViewVisible, setIsWebViewVisible] = useState(false);
-  const [termUrl, setTermUrl] = useState<string>('');
+  const [activeCategory, setActiveCategory] = useState<string>('');
+  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch, isRefetching } = usePushListPaging({
+    page_no   : 0,
+    page_size : 10,
+  });
 
-  const openTermWebView = (url: string) => {
-    setTermUrl(url);
-    setIsWebViewVisible(true);
+  // 푸시화면으로 올 시 push count 초기화
+  useEffect(() => {
+      saveAsyncStore(STORE_KEY.PUSH_COUNT, '0');
+    }, []);
+
+  const getCategoryFromItem = (item: PushData): string => {
+    if (item.push_type.includes('MEET')) {
+      return COMM_CONSTANTS.CHAT_TYPE_MEET;
+    }
+    if (item.push_type.includes('GROUP')) {
+      return COMM_CONSTANTS.CHAT_TYPE_GROUP;
+    }
+
+    return '';
   };
 
-  const handleConfirmLogout = () => {
-    setIsLogoutDialogVisible(false);
-    logout();
-  };
+  const filteredResults = useMemo(() => {
+    if (!activeCategory) return results;
 
-  const SETTINGS_MENU: SettingsMenuItem[] = [
-    {
-      label: '공지사항',
-      onPress: () => router.navigate('/mypage/notice'),
-    },
-    // {
-    //   label: '상세 설정',
-    //   onPress: () => {},
-    // },
-    // {
-    //   label: '자주 묻는 질문',
-    //   onPress: () => {},
-    // },
-    {
-      label: '개선 및 의견 남기기',
-      onPress: () => router.navigate('/mypage/feedbackCreate'),
-    },
-    // {
-    //   label: '호스트 가이드',
-    //   onPress: () => {},
-    // },
-    // {
-    //   label: '멤버 관리',
-    //   onPress: () => {},
-    // },
-    // {
-    //   label: '계정 관리',
-    //   onPress: () => {},
-    // },
-    {
-      label: '서비스 이용 약관',
-      onPress: () => openTermWebView(process.env.EXPO_PUBLIC_TERMS_SERVICE_URL ?? ''),
-    },
-    {
-      label: '개인정보 처리방침',
-      onPress: () => openTermWebView(process.env.EXPO_PUBLIC_TERMS_PRIVACY_URL ?? ''),
-    },
-  ];
+    return results.filter((item) => getCategoryFromItem(item) === activeCategory);
+  }, [results, activeCategory]);
 
   return (
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="알림"/>
+      <CategoryTab data={activeCategory} onPress={setActiveCategory} />
 
-      <View style={styles.menuContainer}>
-        <View style={styles.switchRow}>
-          <Text style={styles.menuText}>알림받기</Text>
-          <Switch
-            value={isNotificationEnabled}
-            onValueChange={setIsNotificationEnabled}
-            trackColor={{ false: COLOR.COMM_GRAY_6, true: COLOR.APP_MAIN }}
-            thumbColor={COLOR.COMM_WHITE}
-          />
-        </View>
-
-        {SETTINGS_MENU.map((item) => (
-          <TouchableOpacity 
-            key={item.label} 
-            style={styles.menuRow} 
-            activeOpacity={0.6} 
-            onPress={item.onPress}
+      <FlatList
+        data={filteredResults}
+        keyExtractor={(item, index) => `${item.push_type}-${item.sent_date}-${index}`}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.notiRow}
+            activeOpacity={0.6}
           >
-            <Text style={styles.menuText}>{item.label}</Text>
-            <IconMore width={11} height={16} />
+            <View style={styles.notificationTextWrap}>
+              <View style={styles.titleRow}>
+                <Text style={styles.notiTitle} numberOfLines={1}>{item.push_title}</Text>
+                <Text style={styles.timeText}>{formatRelativeTime(item.sent_date)}</Text>
+              </View>
+              <Text style={styles.notificationSubText} numberOfLines={1}>
+                {item.push_message}
+              </Text>
+            </View>
           </TouchableOpacity>
-        ))}
-      </View>
-
-      <CommBottomButton label="로그아웃" onPress={() => setIsLogoutDialogVisible(true)} />
-
-      <CustomDialog
-        visible={isLogoutDialogVisible}
-        title="로그아웃"
-        content="로그아웃 하시겠어요?"
-        cancelLabel="취소"
-        confirmLabel="로그아웃"
-        onCancel={() => setIsLogoutDialogVisible(false)}
-        onConfirm={handleConfirmLogout}
+        )}
+        onRefresh={refetch}
+        refreshing={isRefetching}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
+        onEndReachedThreshold={0.4}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          isLoading ? (
+            <View style={styles.emptyContainer}>
+              <ActivityIndicator size="small" color={COLOR.APP_MAIN} />
+            </View>
+          ) : (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>받은 알림이 없습니다.</Text>
+            </View>
+          )
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator size="small" color={COLOR.APP_MAIN} />
+            </View>
+          ) : null
+        }
       />
-      <Modal
-        visible={isWebViewVisible}
-        animationType="slide"
-        onRequestClose={() => setIsWebViewVisible(false)}
-      >
-        <View
-          style={[
-            styles.webViewContainer,
-            {
-              paddingTop: insets.top,
-              paddingBottom: insets.bottom + 25,
-              paddingLeft: insets.left,
-              paddingRight: insets.right,
-            },
-          ]}
-        >
-          <WebView style={styles.webView} source={{ uri: termUrl }} startInLoadingState />
-          <View style={styles.webViewFooter}>
-            <CustomButton
-              label="닫기"
-              variant="filled"
-              style={styles.webViewCloseButton}
-              onPress={() => setIsWebViewVisible(false)}
-            />
-          </View>
-        </View>
-      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  menuContainer: {
+  notiRow: {
+    borderBottomWidth : 1,
+    borderBottomColor : COLOR.COMM_GRAY_6,
+    paddingVertical   : 18,
+    marginHorizontal  : 16,
+  },
+  notificationTextWrap: {
     flex              : 1,
-    paddingHorizontal : 16,
   },
-  switchRow: {
-    borderBottomWidth : 1,
-    borderBottomColor : COLOR.COMM_GRAY_6,
+  titleRow: {
     flexDirection     : 'row',
-    alignItems        : 'center',
-    justifyContent    : 'space-between',
-    paddingBottom     : 12,
-    marginVertical    : 12,
   },
-  menuRow: {
-    borderBottomWidth : 1,
-    borderBottomColor : COLOR.COMM_GRAY_6,
-    flexDirection     : 'row',
-    alignItems        : 'center',
-    justifyContent    : 'space-between',
-    marginVertical    : 12,
-    paddingBottom     : 12,
-  },
-  menuText: {
+  notiTitle: {
     fontSize          : 16,
-    fontWeight        : 'medium',
-    color             : COLOR.TEXT_DEFAULT,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COLOR_323232,
   },
-  webViewContainer: {
-    flex              : 1,
+  timeText: {
+    fontSize          : 12,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.COLOR_6B6B6B,
+    alignSelf         : 'center',
+    marginStart       : 4,
   },
-  webView: {
-    flex              : 1,
+  notificationSubText: {
+    marginTop         : 8,
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.COLOR_6B6B6B,
   },
-  webViewFooter: {
-    paddingTop        : 12,
-    paddingHorizontal : 20,
-    paddingBottom     : 12,
-    backgroundColor   : COLOR.COMM_WHITE,
+  emptyContainer: {
+    paddingVertical   : 32,
+    alignItems        : 'center',
+    justifyContent    : 'center',
   },
-  webViewCloseButton: {
-    height            : 52,
-    borderRadius      : 12,
+  emptyText: {
+    fontSize          : 14,
+    color             : COLOR.TEXT_GRAY,
+  },
+  footerLoader: {
+    paddingVertical   : 16,
+    alignItems        : 'center',
   },
 });

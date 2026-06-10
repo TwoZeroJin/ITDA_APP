@@ -324,12 +324,21 @@ function getDefaultBirthDate() {
 }
 function formatDisplayBirthDate(value?: string) {
   const parsed = parseYmdDate(value);
-
   if (!parsed) {
     return '';
   }
-
   return formatYmdDateFromParts(parsed.year, parsed.month, parsed.day);
+}
+function formatRelativeTime(dateText: string): string {
+  const date = new Date(dateText);
+  const diffMs = Date.now() - date.getTime();
+  const minuteMs = 1000 * 60;
+  const hourMs = minuteMs * 60;
+  const dayMs = hourMs * 24;
+
+  if (diffMs < hourMs) return `${Math.max(1, Math.floor(diffMs / minuteMs))}분전`;
+  if (diffMs < dayMs) return `${Math.max(1, Math.floor(diffMs / hourMs))}시간전`;
+  return `${Math.max(1, Math.floor(diffMs / dayMs))}일전`;
 }
 
 // 이미지 리스트 JSON 문자열을 FileInfo[] 타입으로 파싱하는 함수
@@ -361,13 +370,13 @@ function parseChatPayload(raw: string): Partial<ChatData> {
   return { chat_msg: raw };
 }
 
+// 페이징 공통 함수
 function getNextPageParamFromPaging(lastPage?: {
   paging?: {
     page_no     : number;
     page_size   : number;
     total_count : number;
-  };
-}) {
+  }}) {
   if (!lastPage?.paging) {
     return undefined;
   }
@@ -377,49 +386,19 @@ function getNextPageParamFromPaging(lastPage?: {
   return isLast ? undefined : page_no + 1;
 }
 
+// D-Day 계산 함수
 function formatRelativeMeetDatetime(meetDatetime: string) {
-  if (!meetDatetime) {
-    return '';
-  }
-
-  const normalized = meetDatetime.trim().replace(' ', 'T');
-  let targetDate = new Date(normalized);
-
-  if (Number.isNaN(targetDate.getTime())) {
-    const match = meetDatetime.match(/^(\d{4})-(\d{2})-(\d{2})\s(\d{2}):(\d{2})$/);
-
-    if (!match) {
-      return meetDatetime;
-    }
-
-    const [, year, month, day, hour, minute] = match;
-    targetDate = new Date(
-      Number(year),
-      Number(month) - 1,
-      Number(day),
-      Number(hour),
-      Number(minute),
-    );
-
-    if (Number.isNaN(targetDate.getTime())) {
-      return meetDatetime;
-    }
-  }
-
+  let targetDate = new Date(meetDatetime);
   const diffMs = targetDate.getTime() - Date.now();
-
   if (diffMs <= 0) {
     return '0시간 전';
   }
-
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
   if (diffHours < 24) {
     return `${Math.max(diffHours, 1)}시간 전`;
   }
-
   const diffDays = Math.floor(diffHours / 24);
   return `D-${diffDays}`;
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime };

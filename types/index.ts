@@ -53,6 +53,7 @@ interface MainData {
   recommend_group_list? : GroupInfo[];
   new_class_list?       : MeetInfo[];
   review_list?          : MeetReview[];
+  push_count            : number;
 }
 
 /**
@@ -144,11 +145,21 @@ interface LikeData {
   target_type       : string;
   target_name       : string;
   target_subj_name  : string;
+  reg_sdate?        : string;
+  mod_sdate?        : string;
   thumb_url?        : string;
   place_addr?       : string;
   apply_ratio?      : string;
   mem_nick?         : string;
   mem_image_url?    : string;
+}
+
+interface PushData {
+  push_title       : string;
+  push_message     : string;
+  push_type        : string;
+  sent_date        : string;
+  read_yn          : string;
 }
 
 /**
@@ -363,4 +374,4 @@ interface BannerData {
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply };
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply, PushData };

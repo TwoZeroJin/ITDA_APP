@@ -1,13 +1,11 @@
 import CommHeader from '@/components/comm/CommHeader';
 import { CategoryTab } from '@/components/CategoryTab';
 import CommMeetCard2, { MeetCardData } from '@/components/comm/CommMeetCard2';
-import BtnLikeActive from '@/assets/images/btn_like_active.svg';
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import { useMemberLike, useMemberLikeListPaging } from '@/hooks/queries/useMember';
 import { LikeData } from '@/types';
 import { useCallback, useMemo, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
 import React from 'react';
 import { router } from 'expo-router';
 

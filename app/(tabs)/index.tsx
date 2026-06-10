@@ -95,7 +95,7 @@ export default function HomeScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <CommHeader/>
+      <CommHeader />
       <ScrollView 
         showsVerticalScrollIndicator={false}
         bounces={true}
