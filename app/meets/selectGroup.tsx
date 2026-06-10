@@ -1,5 +1,5 @@
 import CommHeader from '@/components/comm/CommHeader';
-import CommMeetCard2, { MeetCardData } from '@/components/comm/CommMeetCard2';
+import CommCard2, { CardData } from '@/components/comm/CommCard2';
 import { COLOR, COMM_STYLES } from '@/constants';
 import { useMemberMyGroupListPaging } from '@/hooks/queries/useMember';
 import { GroupInfo } from '@/types';
@@ -38,7 +38,7 @@ export default function SelectGroupScreen() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const renderMeetCard = ({ item }: { item: GroupInfo }) => {
-    const cardItem: MeetCardData = {
+    const cardItem: CardData = {
       id           : item.group_id,
       type         : 'G',
       name         : item.group_name,
@@ -51,7 +51,7 @@ export default function SelectGroupScreen() {
     };
 
     return (
-      <CommMeetCard2
+      <CommCard2
         item={cardItem}
         selected={group_id === item.group_id}
         onPress={(pressedItem) => setGroupId(Number(pressedItem.id))}
@@ -79,7 +79,7 @@ export default function SelectGroupScreen() {
         ListEmptyComponent={
           !isLoading ? (
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>만든 클럽이 없습니다.</Text>
+              <Text style={styles.emptyText}>클럽이 없습니다.</Text>
             </View>
           ) : null
         }

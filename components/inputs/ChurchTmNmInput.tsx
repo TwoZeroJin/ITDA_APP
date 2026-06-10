@@ -26,6 +26,7 @@ function ChurchTmNmInput() {
           onSubmitEditing={() => setFocus("mem_name")}
           value={value}
           onChangeText={onChange}
+          maxLength={20}
           error={error?.message}
         />
       )}

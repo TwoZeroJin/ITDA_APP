@@ -14,7 +14,6 @@ export default function Meet() {
     // { label: '클래스', value: 'class' },
   ];
 
-
   return (
     <View style={styles.container}>
       <CommHeader isNoti={true} isSetting={false} isLike={true} />

@@ -20,6 +20,7 @@ interface SearchParams {
   sch_condition?  : string;
   sch_category?   : string;
   sch_text?       : string;
+  sch_keyword?    : string;
   mem_id?         : number;
 }
 

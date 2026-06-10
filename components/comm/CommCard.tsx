@@ -14,7 +14,7 @@ import { router, usePathname } from 'expo-router';
 
 let cachedIsLoggedIn: boolean | null = null;
 
-interface CommMeetCardProps {
+interface CommCardProps {
   item: MeetInfo | GroupInfo;
   onLikePress?: (item: MeetInfo | GroupInfo) => void;
   backgroundColor?: string;
@@ -25,9 +25,9 @@ function isMeetItem(item: MeetInfo | GroupInfo): item is MeetInfo {
 }
 
 /**
- * 공통 소모임 아이템 카드 컴포넌트
+ * 공통 아이템 카드 컴포넌트
  */
-export default function CommMeetCard({ item, onLikePress, backgroundColor }: CommMeetCardProps) {
+export default function CommCard({ item, onLikePress, backgroundColor }: CommCardProps) {
   const [thumbImageError, setThumbImageError] = useState(false);
   const [profileImageError, setProfileImageError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(cachedIsLoggedIn ?? false);
@@ -81,12 +81,12 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
         });
     } else if (isMeet) {
       router.push({ 
-          pathname: '/meets/meetDetailPage',
+          pathname: '/meets/detailView',
           params: { meetId: item.meet_id }
       })
     } else {
       router.push({
-        pathname: '/groups/groupDetailPage',
+        pathname: '/groups/detailView',
         params: { groupId: item.group_id },
       });
     }
@@ -128,16 +128,14 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
           <CommLabel variant="category" category={categoryName} />
         </View>
         <View style={styles.contentContainer}>
-          <Text style={styles.contentTitle} numberOfLines={1} ellipsizeMode="tail">
-            {title}
-          </Text>
+          <Text style={styles.contentTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
           <View style={styles.contentInfoContainer}>
             {item.place_addr && (<><IconMarker width={12} height={12} />
-            <Text style={styles.contentText}>{item.place_addr}</Text></>)}
+            <Text style={styles.contentText} numberOfLines={1} ellipsizeMode="tail">{item.place_addr}</Text></>)}
           </View>
           <View style={styles.contentInfoContainer}>
             {item.apply_ratio && (<><IconMembers width={12} height={12} />
-            <Text style={styles.contentText}>{item.apply_ratio}</Text></>)}
+            <Text style={styles.contentText} numberOfLines={1} ellipsizeMode="tail">{item.apply_ratio}</Text></>)}
           </View>
           <View style={styles.contentInfoContainer}>
             {hostImageSource ? (
@@ -149,7 +147,7 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
             ) : (
               <MemDefault width={23} height={23} />
             )}
-            <Text style={styles.hostText}>{item.mem_nick}</Text>
+            <Text style={styles.hostText} numberOfLines={1} ellipsizeMode="tail">{item.mem_nick}</Text>
           </View>
         </View>
       </View>
@@ -159,10 +157,9 @@ export default function CommMeetCard({ item, onLikePress, backgroundColor }: Com
 
 const styles = StyleSheet.create({
   itemContainer: {
-    width             : '95%',
-//    backgroundColor   : COLOR.COMM_WHITE,
     borderRadius      : 12,
-    padding           : 12,
+    paddingVertical   : 10,
+    paddingHorizontal : 12,
     flexDirection     : 'row',
     marginEnd         : 20,
   },
@@ -205,11 +202,13 @@ const styles = StyleSheet.create({
   },
   contentTitle: {
     fontSize          : 16,
-    fontWeight        : 'bold',
-    color             : COLOR.TEXT_3C3C3C,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COLOR_323232,
+    width             : 200,
   },
   contentText: {
     fontSize          : 12,
+    fontFamily        : 'Pretendard-Regular',
     marginStart       : -8,
     color             : COLOR.COMM_SHADOW,
   },
@@ -221,8 +220,8 @@ const styles = StyleSheet.create({
   },
   hostText: {
     fontSize          : 14,
+    fontFamily        : 'Pretendard-Medium',
     marginStart       : -8,
-    fontWeight        : 'bold',
     color             : COLOR.COMM_SHADOW,
   },
 });

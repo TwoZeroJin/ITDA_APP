@@ -30,6 +30,7 @@ function GroupNameInput() {
         value={value}
         ref={ref}
         onChangeText={onChange}
+        maxLength={100}
         error={error?.message}
       />
     )}

@@ -43,7 +43,7 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
           }
         </View>
         <View style={styles.titleWrapper}>
-          {title && <Text style={styles.title}>{title}</Text>}
+          {title && <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">{title}</Text>}
         </View>
         <View style={[styles.container, styles.right]}>
           {isLike && 
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     fontSize        : 18,
     fontFamily      : 'Pretendard-Bold',
     color           : COLOR.COMM_BLACK,
+    width           : '70%',
   },
   iconContainer: {
     height            : '100%',

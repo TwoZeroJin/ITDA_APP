@@ -17,10 +17,6 @@ export default function MemberCountInput() {
   return (
     <View style={styles.container}>
       <Text style={styles.containerTitle}>참여 인원(호스트 포함)</Text>
-      <View style={styles.memberTitleContainer}>
-        <Text style={styles.memberTitle}>최소인원</Text>
-        <Text style={styles.memberTitle}>최대인원</Text>
-      </View>
       <View style={styles.memberInputRow}>
         <Controller
           name="meet_min"
@@ -41,6 +37,7 @@ export default function MemberCountInput() {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View style={styles.memberInputWrap}>
               <InputField
+                label='최소인원'
                 ref={minMemberInputRef}
                 value={value?.toString()}
                 onChangeText={(text) => onChange((text))}
@@ -75,6 +72,7 @@ export default function MemberCountInput() {
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View style={styles.memberInputWrap}>
               <InputField
+                label='최대인원'
                 ref={maxMemberInputRef}
                 value={value?.toString()}
                 onChangeText={(text) => onChange((text))}
@@ -110,19 +108,8 @@ const styles = StyleSheet.create({
   },
   containerTitle: {
     fontSize            : 20,
-    fontWeight          : 'bold',
+    fontFamily          : 'Pretendard-SemiBold',
     marginBottom        : 8,
-  },
-  memberTitleContainer: {
-    flexDirection       : 'row',
-    justifyContent      : 'space-between',
-    paddingHorizontal   : 4,
-  },
-  memberTitle: {
-    flex                : 1,
-    fontSize            : 14,
-    color               : COLOR.TEXT_DEFAULT,
-    marginStart         : 8,
   },
   memberInputRow: {
     flexDirection       : 'row',
@@ -148,6 +135,9 @@ const styles = StyleSheet.create({
   },
   memberRangeText: {
     fontSize            : 16,
+    fontFamily          : 'Pretendard-Medium',
     color               : COLOR.TEXT_DEFAULT,
+    alignSelf           : 'center',
+    marginTop           : 25,
   },
 });

@@ -10,16 +10,30 @@ import { useEffect } from "react";
 // 모임 목록 조회 (무한 스크롤)
 function useMeetListPaging(searchParams: SearchParams) {
   const query = useInfiniteQuery({
-    queryFn: ({pageParam}) => meetList({ ...searchParams, page_no: pageParam }),
+    queryFn: ({ pageParam }) => meetList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
   });
-  
-  // 데이터만 담은 result 객체
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
-
   return { ...query, results };
+}
+
+// 모임 상세 조회
+function useMeetDetailView(meetId: number) {
+  const { setLoading } = useLoading();
+  const query = useQuery({
+    queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_VIEW, meetId],
+    queryFn: () => meetView(meetId),
+  });  
+
+  useEffect(() => {
+    setLoading(query.isFetching);
+  }, [query.isFetching, setLoading]);
+
+  const results = query.data?.data;
+
+  return { ...query, results };    
 }
 
 // 모임 생성
@@ -79,39 +93,18 @@ function useMeetDelete() {
   });
 }
 
-// 소모임 상세 조회
-function useMeetDetailView(meetId: number) {
-  const { setLoading } = useLoading();
-  const query = useQuery({
-    queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_VIEW, meetId],
-    queryFn: () => meetView(meetId),
-  });  
-
-  useEffect(() => {
-    setLoading(query.isFetching);
-  }, [query.isFetching, setLoading]);
-
-  const results = query.data?.data;
-
-  return { ...query, results };    
-}
-
-//3. 소모임에 참여하는 멤버 조회
+// 소모임에 참여하는 멤버 조회
 function useMeetMemberList(meetId: number) {
-
   const query = useQuery({
-    // queryKey에 params를 넣어 조건이 바뀔 때마다 다시 조회되도록 합니다.
     queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_MEMBER_LIST, meetId],
     queryFn: () => meetMemberList(meetId),
   });  
-  // useInfiniteQuery의 'pages' 구조가 아니므로 바로 data를 추출합니다.
-  // 서버 응답 구조가 { data: [...] } 형태라면 아래와 같이 가공합니다.
   const results = query.data?.data;
 
   return { ...query, results };    
 }
 
-//4.소모임 신청
+// 소모임 신청
 function useMeetApply() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -131,7 +124,7 @@ function useMeetApply() {
 }
 
 
-//4.소모임 신청 취소
+// 소모임 신청 취소
 function useMeetCancelApply() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -150,9 +143,7 @@ function useMeetCancelApply() {
   });
 }
 
-/**
- * 소셜링 승인
- */
+// 소셜링 승인
 function useMeetConfirm() {
   const { setLoading } = useLoading();
   return useMutation({

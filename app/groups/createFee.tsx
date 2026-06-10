@@ -47,8 +47,8 @@ export default function GroupCreateFeeScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
+          style={{ paddingBottom: 80 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}
           enableOnAndroid={true}
           extraScrollHeight={24}
         >

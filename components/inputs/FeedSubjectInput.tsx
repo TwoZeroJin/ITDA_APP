@@ -26,6 +26,7 @@ function FeedSubjectInput() {
                 onSubmitEditing={() => setFocus("feed_content")}
                 value={value}
                 onChangeText={onChange}
+                maxLength={100}
                 error={error?.message}
             />
         )}

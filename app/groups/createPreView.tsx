@@ -7,9 +7,18 @@ import { GroupInfo, CodeInfo, ApiResult } from "@/types";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
+import IconCalendar from '@/assets/images/icon_calendar.svg';
+import IconInfoMark from '@/assets/images/icon_info_mark.svg';
+import IconDetailMarker from '@/assets/images/icon_detail_marker.svg';
+import IconDetailCategory from '@/assets/images/icon_detail_category.svg';
+import IconDetailMembers from '@/assets/images/icon_detail_members.svg';
+import IconDetailFee from '@/assets/images/icon_detail_fee.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
-import { parseImageList, getCategoryList } from "@/utils/commUtil";
+import { parseImageList, formatNumberWithComma } from "@/utils/commUtil";
 import { useGroupInsert, useGroupUpdate } from "@/hooks/queries/useGroup";
+import DividingLine from "@/components/DividingLine";
+import PlaceLocationBox from "@/components/PlaceLocationBox";
+import DetailInfoRow from "@/components/comm/DetailInfoRow";
 
 /**
  * 클럽 생성 - 최종 미리보기 및 생성 화면
@@ -21,16 +30,6 @@ export default function GroupCreatePreViewScreen() {
   const groupUpdate = useGroupUpdate();
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
-
-  useEffect(() => {
-    getCategoryList().then(setCategoryList);
-  }, []);
-
-  const getCategoryValue = (code_id: string) => {
-    const found = categoryList.find(item => item.code_id === code_id);
-    return found?.code_value ?? code_id;
-  };
 
   const handleMutationSuccess = (result: ApiResult<null>) => {
     if (result.ret_code !== 200) {
@@ -74,40 +73,54 @@ export default function GroupCreatePreViewScreen() {
   return (
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="미리 보기"/>
-      <ScrollView 
+      <ScrollView
+        style={{ marginBottom: 100 }}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 80 }}
       >
         {/* 이미지 캐러슬 */}
         <View>
           <ImageCarousel
             images={imageList.map((file) => file.file_path)}
             height={280}
-            // onPressImage={(i) => console.log("pressed image", i)} // 추후 이미지 수정 기능 추가 시 활용
           />
         </View>
 
         {/* 클럽 정보 */}
-        <View style={styles.commContainer}>
+        <View style={COMM_STYLES.commContainer}>
           {/* 클럽 라벨 */}
-          <View style={styles.labelContainer}>
+          <View style={COMM_STYLES.labelContainer}>
               <CommLabel variant="club" />
               <CommLabel variant="category" category={prevGroupInfo.group_subj_name} />
           </View>
 
           {/* 클럽 제목 */}
-          <Text style={styles.commContainerTitle}>{prevGroupInfo.group_name}</Text>
+          <Text style={COMM_STYLES.commContainerTitle}>{prevGroupInfo.group_name}</Text>
 
-          {/* 클럽 장소, 날짜, 시간 */}
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Text style={styles.contentInfoText}>{getCategoryValue(prevGroupInfo.group_subj)}</Text>
-          </View>
           {/* 설명 */}
-          <Text style={styles.contentDesc}>{prevGroupInfo.group_desc}</Text>
+          <Text style={COMM_STYLES.contentDesc}>{prevGroupInfo.group_desc}</Text>
         </View>
-        {/* 추후 작업 */}
+
+        <DividingLine />
+        
         {/* 모임장 및 참여 멤버 */}
         {/* 클럽 상세 소개 */}
+        <View style={COMM_STYLES.detailContainer}>
+          {/* 상단 타이틀 */}
+          <Text style={COMM_STYLES.detailSubTitle}>클럽 상세 소개</Text>
+          <Text style={COMM_STYLES.detailMainTitle}>클럽에 대해 자세히 알려드려요.</Text>
+          {/* 정보 박스 */}
+          <View style={COMM_STYLES.detailInfoBox}>
+            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${prevGroupInfo?.group_subj_name}`} />
+            <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`클럽 · ${prevGroupInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} />
+            <DetailInfoRow icon={<IconDetailMembers width={18} height={18} />} text={`최대 ${prevGroupInfo?.group_max}명`} />
+            {prevGroupInfo?.fee_entry && <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(prevGroupInfo?.fee_entry)}원`} />}
+            <DetailInfoRow icon={<IconCalendar width={18} height={18} />} text={`${prevGroupInfo?.group_datetime}`} />
+            {prevGroupInfo?.place_name && <DetailInfoRow icon={<IconDetailMarker width={18} height={18} />} text={`${prevGroupInfo?.place_name}`} />}
+          </View>
+
+          {/* 하단 지도 정보 카드 */}
+          <PlaceLocationBox data={prevGroupInfo as GroupInfo} />
+        </View>
         {/* 장소 주소 및 지도?? */}
         {/* 댓글 ?? */}
         {/* 후기 */}
@@ -131,31 +144,3 @@ export default function GroupCreatePreViewScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  commContainerTitle: {
-    fontSize          : 20,
-    fontWeight        : 'bold', 
-    marginBottom      : 8,
-  },
-  commContainer: {
-    marginHorizontal  : 16,
-    marginBottom      : 30,
-    gap               : 16,
-  },
-  labelContainer: {
-    flexDirection     : 'row',
-    gap               : 6,
-    marginTop         : 12,
-    marginBottom      : 4,
-  },
-  contentInfoText: {
-    fontSize          : 16,
-    marginStart       : -8,
-    color             : COLOR.TEXT_DEFAULT,
-  },
-  contentDesc: {
-    fontSize          : 16,
-    color             : COLOR.TEXT_DEFAULT,
-  },
-});

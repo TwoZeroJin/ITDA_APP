@@ -4,6 +4,7 @@ import { GroupInfo } from '@/types';
 import React, { useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import InputField from '../InputField';
 
 /**
  * 클럽 최대인원 입력 컴포넌트
@@ -15,35 +16,24 @@ export default function GroupMaxMemberInput() {
   return (
     <View style={styles.container}>
       <Text style={styles.containerTitle}>참여 인원(호스트 포함)</Text>
-      <View style={styles.memberTitleContainer}>
-        <Text style={styles.memberTitle}>최대인원</Text>
-      </View>
       <Controller
         name="group_max"
         control={control}
         rules={{ validate: (v) => (v >= 2) || '최소 2인 이상이어야 합니다.' }}
         render={({ field: { value, onChange }, fieldState: { error } }) => (
-          <>
-            <TouchableOpacity
-              style={[styles.memberInputContainer, error && styles.memberInputContainerError]}
-              activeOpacity={0.6}
-              onPress={() => maxInputRef.current?.focus()}
-            >
-              <TextInput
-                ref={maxInputRef}
-                value={value?.toString()}
-                onChangeText={(text) => {
-                  const nextValue = text.replace(/[^0-9]/g, '').slice(0, 3);
-                  onChange(nextValue ? Number(nextValue) : 0);
-                }}
-                keyboardType="number-pad"
-                maxLength={3}
-                style={styles.memberInput}
-              />
-              <Text style={styles.memberSuffix}>명</Text>
-            </TouchableOpacity>
-            {error && <Text style={styles.errorText}>{error.message}</Text>}
-          </>
+          <View style={styles.memberInputWrap}> 
+            <InputField
+              label='최대인원'
+              ref={maxInputRef}
+              value={value?.toString()}
+              onChangeText={(text) => onChange((text))}
+              keyboardType="number-pad"
+              maxLength={3}
+              error={error?.message}
+              rightChild={<Text style={styles.memberSuffix}>명</Text>}
+              style={styles.memberInput}
+            />
+          </View>
         )}
       />
       <View style={COMM_STYLES.infoContainer}>
@@ -67,40 +57,14 @@ const styles = StyleSheet.create({
   },
   containerTitle: {
     fontSize            : 20,
-    fontWeight          : 'bold',
+    fontFamily          : 'Pretendard-SemiBold',
     marginBottom        : 8,
   },
-  memberTitleContainer: {
-    flexDirection       : 'row',
-    justifyContent      : 'space-between',
-    paddingHorizontal   : 4,
-  },
-  memberTitle: {
+  memberInputWrap: {
     flex                : 1,
-    fontSize            : 14,
-    color               : COLOR.TEXT_DEFAULT,
-    marginStart         : 8,
-    textAlign           : 'right',
-  },
-  memberInputContainer: {
-    flexDirection       : 'row',
-    alignItems          : 'center',
-    alignSelf           : 'flex-end',
-    height              : 50,
+    alignSelf           : 'flex-start',
     width               : 150,
-    borderWidth         : 1,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderRadius        : 12,
-    paddingHorizontal   : 16,
-  },
-  memberInputContainerError: {
-    borderColor         : COLOR.TEXT_WARN,
-  },
-  errorText: {
-    alignSelf           : 'flex-end',
-    fontSize            : 12,
-    color               : COLOR.TEXT_WARN,
-    marginTop           : -8,
+    minHeight           : 50,
   },
   memberInput: {
     flex                : 1,

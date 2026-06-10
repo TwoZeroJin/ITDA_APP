@@ -43,7 +43,7 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
                   style={styles.meetCell}
                   activeOpacity={0.6}
                   onPress={() => router.push({ 
-                    pathname: '/meets/meetDetailPage',
+                    pathname: '/meets/detailView',
                     params: { meetId: item.meet_id }
                   })}
                 >

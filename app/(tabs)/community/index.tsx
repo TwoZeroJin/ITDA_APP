@@ -7,7 +7,6 @@ import { StyleSheet, Text, FlatList, View, ActivityIndicator } from 'react-nativ
 import { useCallback, useEffect, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useReviewList } from "@/hooks/queries/useCommunity";
-import { SearchParams } from '@/types';
 import * as commUtil from '@/utils/commUtil';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
 
@@ -16,13 +15,12 @@ export default function community() {
   const [activeType, setActiveType] = useState<string>('latest');
   const [refreshing, setRefreshing] = useState(false);
   const [myMemId, setMyMemId] = useState<number>(0);
-
   const { results, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } = useReviewList({
     page_no       : 0,
     page_size     : 5,
     sch_condition : activeType, 
-    sch_keyword   : 3 
-  } as SearchParams);
+    sch_keyword   : String(3) 
+  });
 
   useEffect(() => {
     const fetchMyMemberInfo = async () => {

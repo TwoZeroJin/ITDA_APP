@@ -1,24 +1,36 @@
 import TimePickerModal from '@/components/modal/TimePickerModal';
 import { COLOR, COMM_STYLES } from '@/constants';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconTime from '@/assets/images/icon_time.svg';
 
 interface TimeInputProps {
   isError?: boolean;
   onTimeChange?: (timeLabel: string) => void;
+  initialTimeLabel?: string;
 }
 
 /**
  * 모임 시간 입력 컴포넌트
  */
-export default function TimeInput({ isError = false, onTimeChange }: TimeInputProps) {
+export default function TimeInput({ isError = false, onTimeChange, initialTimeLabel = '' }: TimeInputProps) {
   const [timeModalVisible, setTimeModalVisible] = useState(false);
   const [selectedTimeLabel, setSelectedTimeLabel] = useState('');
 
   const [timeMeridiem, setTimeMeridiem] = useState('오전');
   const [timeHour, setTimeHour] = useState('01');
   const [timeMinute, setTimeMinute] = useState('00');
+
+  useEffect(() => {
+    setSelectedTimeLabel(initialTimeLabel);
+
+    const parsedTime = initialTimeLabel.match(/^(오전|오후)\s(\d{1,2}):(\d{2})$/);
+    if (parsedTime) {
+      setTimeMeridiem(parsedTime[1]);
+      setTimeHour(parsedTime[2].padStart(2, '0'));
+      setTimeMinute(parsedTime[3].padStart(2, '0'));
+    }
+  }, [initialTimeLabel]);
 
   const handleConfirmTime = () => {
     const nextLabel = `${timeMeridiem} ${timeHour}:${timeMinute}`;

@@ -41,6 +41,7 @@ function MemEmailInput({ focusField = "" }: MemEmailInputProps) {
           value={value ?? ''}
           onChangeText={(text) => onChange(sanitizeEmail(text))}
           onSubmitEditing={() => focusField ? setFocus(focusField) : undefined}
+          maxLength={30}
           error={error?.message}
         />
       )}

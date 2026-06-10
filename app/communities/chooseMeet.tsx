@@ -15,7 +15,7 @@ import { COLOR } from '@/constants';
 import { getCategoryList } from '@/utils/commUtil';
 import { useMyMeetListNoReview } from '@/hooks/queries/useCommunity';
 import CommHeader from '@/components/comm/CommHeader';
-import CommMeetCard from '@/components/comm/CommMeetCard';
+import CommCard from '@/components/comm/CommCard';
 import { useMemberLike } from '@/hooks/queries/useMember';
 
 const { width } = Dimensions.get('window');
@@ -106,7 +106,7 @@ export default function chooseMeet() {
             })}
           >
           <View style={styles.meetContainer} >
-              <CommMeetCard item={item as MeetInfo} onLikePress={(item) => handleLikePress(item)} backgroundColor="grey"/>
+              <CommCard item={item as MeetInfo} onLikePress={(item) => handleLikePress(item as MeetInfo)} backgroundColor="grey"/>
           </View>
           </TouchableOpacity>
         )}

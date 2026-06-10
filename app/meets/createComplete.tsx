@@ -1,6 +1,6 @@
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 import React from "react";
-import { StyleSheet, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router, useLocalSearchParams } from "expo-router";
@@ -28,10 +28,10 @@ export default function MeetCreateCompleteScreen() {
           <IconClubCompl width={120} height={120} />
         )}
         <Text style={COMM_STYLES.completeTitleText}>
-          {meet_type === 'N' ? `소셜링이 ${meet_id ? '수정' : '오픈'} 되었어요!` : `클럽 소셜링이 ${meet_id ? '수정' : '오픈'} 되었어요!`}
+          {`${meet_type === 'N' ? '일반' : '클럽'} 소셜링이 ${meet_id ? '수정' : '오픈'} 되었어요!`}
         </Text>
         <Text style={COMM_STYLES.completeDescText}>
-          {`개설한 소셜링이 ${meet_id ? '수정' : '오픈'}되었어요.\n멤버 모집을 위해 소셜링을 홍보해보세요.`}
+          {`개설한 ${meet_type === 'N' ? '일반' : '클럽'} 소셜링이 ${meet_id ? '수정' : '오픈'}되었어요.\n멤버 모집을 위해 소셜링을 홍보해보세요.`}
         </Text>
       </View>
       <CommBottomButton label="완료" onPress={handleComplete}/>

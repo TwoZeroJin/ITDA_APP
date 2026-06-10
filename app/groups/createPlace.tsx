@@ -51,8 +51,9 @@ export default function GroupCreatePlaceScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <ScrollView
+          style={{ paddingBottom: 80 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}>
+        >
           <View style={COMM_STYLES.detailTitleContainer}>
             <Text style={COMM_STYLES.commTitle}>{'모임의 정기 일정을 설정해 주세요.'}</Text>
             <Text style={COMM_STYLES.commSubtitle}>{'멤버들이 반복되는 일정을 확인하고 참여할 수 있습니다.'}</Text>

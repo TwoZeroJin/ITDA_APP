@@ -1,6 +1,6 @@
 import CommHeader from '@/components/comm/CommHeader';
 import { CategoryTab } from '@/components/CategoryTab';
-import CommMeetCard2, { MeetCardData } from '@/components/comm/CommMeetCard2';
+import CommCard2, { CardData } from '@/components/comm/CommCard2';
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import { useMemberLike, useMemberLikeListPaging } from '@/hooks/queries/useMember';
 import { LikeData } from '@/types';
@@ -78,7 +78,7 @@ export default function LikeListScreen() {
   };
 
   const renderMeetCard = ({ item }: { item: LikeData }) => {
-    const cardItem: MeetCardData = {
+    const cardItem: CardData = {
       id           : item.target_id,
       type         : item.target_type,
       name         : item.target_name,
@@ -92,19 +92,19 @@ export default function LikeListScreen() {
     };
 
     return (
-      <CommMeetCard2
+      <CommCard2
         item={cardItem}
         onPress={(pressedItem) => {
           if (pressedItem.type === 'M') {
             router.push({
-              pathname: '/meets/meetDetailPage',
+              pathname: '/meets/detailView',
               params: { meetId: pressedItem.id },
             });
             return;
           }
           if (pressedItem.type === 'G') {
             router.push({
-              pathname: '/groups/groupDetailPage',
+              pathname: '/groups/detailView',
               params: { groupId: pressedItem.id },
             });
           }

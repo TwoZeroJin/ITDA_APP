@@ -25,6 +25,7 @@ function PasswordConfirmInput() {
           textContentType='oneTimeCode'
           value={value}
           onChangeText={onChange}
+          maxLength={30}
           error={error?.message}
         />
       )}

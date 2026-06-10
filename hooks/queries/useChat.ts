@@ -14,10 +14,7 @@ function useChatRoomListPaging(searchParams: SearchParams) {
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
   });
-  
-  // 데이터만 담은 result 객체
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
-
   return { ...query, results };
 }
 
@@ -31,10 +28,7 @@ function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
   });
-  
-  // 데이터만 담은 result 객체
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
-
   return { ...query, results };
 }
 
@@ -56,9 +50,7 @@ function useChatMemberList({ room_id }: { room_id: string }) {
     queryFn: () => chatMemberList({ room_id }),
     queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_MEMBER_LIST, { room_id }],
   });
-
   const results = query.data?.data ?? [];
-    
   return { ...query, results };
 }
 

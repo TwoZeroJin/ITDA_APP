@@ -31,6 +31,7 @@ function NameInput({ focusField = "mem_telno" }: NameInputProps) {
           onSubmitEditing={() => setFocus(focusField)}
           value={value}
           onChangeText={onChange}
+          maxLength={20}
           error={error?.message}
         />
       )}

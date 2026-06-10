@@ -1,5 +1,5 @@
 import { COLOR } from '@/constants';
-import { StyleSheet, Text, TouchableOpacity, View, Image, Dimensions, NativeSyntheticEvent, NativeScrollEvent, FlatList, Alert} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions, NativeSyntheticEvent, NativeScrollEvent, FlatList, Alert} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { MeetInfo, MeetReview} from '@/types';
@@ -7,7 +7,7 @@ import { useReviewDelete } from '@/hooks/queries/useCommunity';
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import { router } from 'expo-router';
 import PlaceLocationBox from './PlaceLocationBox';
-import CommMeetCard from './comm/CommMeetCard';
+import CommCard from '@/components/comm/CommCard';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import ProfileIcon from "@/components/ProfileIcon";
 
@@ -178,10 +178,9 @@ export default function CommunityFeed({data, memId}: communityFeedProps) {
           </View>
         )}
         
-
         {/* 피드에 모임정보가  존재할 때만 컴포넌트를 렌더링 */}
         <View style={styles.meetContainer} >
-          {data.memMeetListVO && <CommMeetCard item={data.memMeetListVO} onLikePress={(item) => handleLikePress(item)} backgroundColor="grey"/>}
+          {data.memMeetListVO && <CommCard item={data.memMeetListVO} onLikePress={(item) => handleLikePress(item as MeetInfo)} backgroundColor="grey"/>}
         </View>
 
           {/* 하단 지도 정보 카드 */}

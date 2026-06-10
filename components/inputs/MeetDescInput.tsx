@@ -28,6 +28,7 @@ function MeetDescInput() {
           returnKeyType='next'
           submitBehavior='newline'
           numberOfLines={10}
+          maxLength={1000}
           value={value}
           onChangeText={onChange}
           textArea={true}

@@ -35,6 +35,7 @@ function PasswordInput({submitBehavior = 'blurAndSubmit', returnKeyType = 'defau
           onSubmitEditing={() => returnKeyType == 'next' ? setFocus("passwordConfirm") : null}
           value={value}
           onChangeText={(text) => onChange(removeWhitespace(text))}
+          maxLength={30}
           error={error?.message}
         />
       )}

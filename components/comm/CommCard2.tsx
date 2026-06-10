@@ -9,7 +9,7 @@ import { COLOR } from '@/constants';
 import React, { useEffect, useState } from 'react';
 import { Image, ImageBackground, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
-export interface MeetCardData {
+export interface CardData {
   id            : number;
   type?         : string;
   name          : string;
@@ -22,15 +22,15 @@ export interface MeetCardData {
   likeYn?       : string;
 }
 
-interface CommMeetCard2Props {
-  item          : MeetCardData;
-  onPress?      : (item: MeetCardData) => void;
-  onLikePress?  : (item: MeetCardData) => void;
+interface CommCard2Props {
+  item          : CardData;
+  onPress?      : (item: CardData) => void;
+  onLikePress?  : (item: CardData) => void;
   selected?     : boolean;
   style?        : StyleProp<ViewStyle>;
 }
 
-export default function CommMeetCard2({ item, onPress, onLikePress, selected = false, style }: CommMeetCard2Props) {
+export default function CommCard2({ item, onPress, onLikePress, selected = false, style }: CommCard2Props) {
   const [hasImageError, setHasImageError] = useState(false);
 
   useEffect(() => {
@@ -86,24 +86,18 @@ export default function CommMeetCard2({ item, onPress, onLikePress, selected = f
             {!!item.subjectName && <CommLabel variant="category" category={item.subjectName} />}
           </View>
 
-          <Text style={styles.cardTitle} numberOfLines={1}>
-            {item.name}
-          </Text>
+          <Text style={styles.cardTitle} numberOfLines={1} ellipsizeMode="tail">{item.name}</Text>
 
-          {(item.placeAddr || item.applyRatio) && (
-            <View style={styles.infoRow}>
-              {!!item.placeAddr && (
-                <>
-                  <IconMarker width={12} height={12} />
-                  <Text style={styles.infoText}>{item.placeAddr}</Text>
-                </>
-              )}
-              {!!item.applyRatio && (
-                <>
-                  <IconMembers width={12} height={12} />
-                  <Text style={styles.infoText}>{item.applyRatio}</Text>
-                </>
-              )}
+          {!!item.placeAddr && (
+            <View style={styles.infoRowItem}>
+              <IconMarker width={12} height={12} />
+              <Text style={styles.infoText}>{item.placeAddr}</Text>
+            </View>
+          )}
+          {!!item.applyRatio && (
+            <View style={styles.infoRowItem}>
+              <IconMembers width={12} height={12} />
+              <Text style={styles.infoText}>{item.applyRatio}</Text>
             </View>
           )}
 
@@ -131,7 +125,7 @@ const styles = StyleSheet.create({
     flexDirection     : 'row',
     backgroundColor   : COLOR.COMM_WHITE,
     borderRadius      : 12,
-    paddingVertical   : 8,
+    paddingVertical   : 10,
     paddingHorizontal : 12,
     borderWidth       : 1,
     borderColor       : COLOR.COMM_GRAY_6,
@@ -141,8 +135,8 @@ const styles = StyleSheet.create({
     borderColor       : COLOR.APP_ACTIVE_3,
   },
   cardImage: {
-    width             : 86,
-    height            : 86,
+    width             : 106,
+    height            : 106,
     borderRadius      : 10,
   },
   cardImageStyle: {
@@ -173,8 +167,8 @@ const styles = StyleSheet.create({
     fontFamily        : 'Pretendard-Medium',
     color             : COLOR.TEXT_3C3C3C,
   },
-  infoRow: {
-    flexDirection     : 'row',
+  infoRowItem: {
+    flexDirection     : 'row', 
     alignItems        : 'center',
     gap               : 4,
   },

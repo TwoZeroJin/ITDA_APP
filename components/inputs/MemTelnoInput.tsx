@@ -53,6 +53,7 @@ function MemTelnoInput() {
           value={value ?? ''}
           onChangeText={(text) => onChange(formatPhoneNumber(text))}
           onSubmitEditing={() => setFocus("mem_email")}
+          maxLength={20}
           error={error?.message}
         />
       )}

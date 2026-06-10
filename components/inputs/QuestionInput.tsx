@@ -33,6 +33,7 @@ function QuestionInput({ name = '' }) {
             value={value}
             onChangeText={onChange}
             textArea={true}
+            maxLength={1000}
             error={error?.message}
           />
         )}

@@ -23,7 +23,7 @@ import { useImagesUpload } from "@/hooks/queries/useImageUpload";
 import { useReviewInsert, useReviewUpdate } from '@/hooks/queries/useCommunity';
 import { getFormDataImages } from '@/utils/imageUtil';
 import CommHeader from '@/components/comm/CommHeader';
-import CommMeetCard from '@/components/comm/CommMeetCard';
+import CommMeetCard from '@/components/comm/CommCard';
 import { useMemberLike } from '@/hooks/queries/useMember';
 
 // 폼 데이터 타입 정의

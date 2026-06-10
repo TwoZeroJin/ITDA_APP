@@ -314,11 +314,55 @@ const COMM_STYLES = StyleSheet.create({
     marginTop           : 12,
     color               : COLOR.TEXT_DEFAULT,
   },
-  //
+  // 소셜링/클럽 상세 공통 스타일
   commContainer: {
     marginHorizontal    : 16,
     marginBottom        : 30,
     gap                 : 16,
+  },
+  commContainerTitle: {
+    fontSize            : 24,
+    fontFamily          : 'Pretendard-Bold',
+    color               : COLOR.TEXT_1C1C1C,
+  },
+  labelContainer: {
+    flexDirection       : 'row',
+    marginTop           : 12,
+    marginBottom        : 4,
+    gap                 : 6,
+  },
+  contentInfoText: {
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Medium',
+    marginStart         : -8,
+    color               : COLOR.TEXT_DEFAULT,
+  },
+  contentDesc: {
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Regular',
+    color               : COLOR.TEXT_DEFAULT,
+  },
+  detailContainer: {
+    padding             : 20,
+    gap                 : 10,
+  },
+  detailSubTitle: {
+    fontSize            : 14,
+    fontFamily          : 'Pretendard-Light',
+    color               : COLOR.TEXT_DEFAULT,
+    marginTop           : 6,
+  },
+  detailMainTitle: {
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Regular',
+    color               : COLOR.TEXT_DEFAULT,
+  },  
+  detailInfoBox: {
+    backgroundColor     : COLOR.COMM_GRAY_5,
+    borderRadius        : 8,
+    paddingHorizontal   : 20,
+    paddingVertical     : 17,
+    marginBottom        : 16,
   },
   //
   detailTitleContainer: {

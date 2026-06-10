@@ -1,6 +1,6 @@
 import { COMM_STYLES } from '@/constants';
 import { MeetInfo } from '@/types';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
@@ -9,7 +9,6 @@ import GenderSlider from '@/components/GenderSlider';
 
 export default function GenderRatioInput() {
   const { control } = useFormContext<MeetInfo>();
-  const [genderType, setGenderType] = useState<'none' | 'set'>('none');
 
   return (
     <View style={COMM_STYLES.commInputContainer}>
@@ -19,26 +18,33 @@ export default function GenderRatioInput() {
         control={control}
         render={({ field: { onChange, value } }) => (
           <>
-            <CommRadioGroup
-              items={[
-                { label: '성비 무관', value: 'none' },
-                { label: '성비 지정', value: 'set' },
-              ]}
-              value={genderType}
-              onChange={(type) => {
-                setGenderType(type as 'none' | 'set');
-                if (type === 'none') {
-                  onChange(null);
-                } else {
-                  onChange(0.5);
-                }
-              }}
-            />
-            <GenderSlider
-              value={value ?? 0.5}
-              onChange={onChange}
-              disabled={genderType === 'none'}
-            />
+            {(() => {
+              const genderType: 'none' | 'set' = value !== null && value !== undefined ? 'set' : 'none';
+
+              return (
+                <>
+                  <CommRadioGroup
+                    items={[
+                      { label: '성비 무관', value: 'none' },
+                      { label: '성비 지정', value: 'set' },
+                    ]}
+                    value={genderType}
+                    onChange={(type) => {
+                      if (type === 'none') {
+                        onChange(null);
+                      } else if (value === null || value === undefined) {
+                        onChange(0.5);
+                      }
+                    }}
+                  />
+                  <GenderSlider
+                    value={value ?? 0.5}
+                    onChange={onChange}
+                    disabled={genderType === 'none'}
+                  />
+                </>
+              );
+            })()}
           </>
         )}
       />

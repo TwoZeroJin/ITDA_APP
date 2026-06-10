@@ -3,11 +3,11 @@ import { COLOR } from '@/constants';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useCallback, useEffect, useState } from 'react';
 import { useMeetListPaging } from "@/hooks/queries/useMeet";
-import { MeetInfo, SearchParams } from '@/types';
+import { MeetInfo } from '@/types';
 import DividingLine from '@/components/DividingLine';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconFilter from '@/assets/images/icon_filter.svg';
-import CommMeetCard from '@/components/comm/CommMeetCard';
+import CommCard from '@/components/comm/CommCard';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import CommCategoryList from '@/components/comm/CommCategoryList';
 
@@ -18,26 +18,14 @@ export default function SocialClassLayout({ activeType }: { activeType: string }
   const [sortType, setSortType] = useState<'latest' | 'oldest'>('latest');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchKey, setSearchKey] = useState<string>('');
-  const memberLike = useMemberLike();
-  // ✅ activeType이 변경되면 모달을 닫아주는 이펙트 추가
-  useEffect(() => {
-    setIsDetailMenuVisible(false);
-  }, [activeType]); // 👈 activeType이 바뀔 때마다 이 안의 함수가 실행됩니다.
-  
-  const { 
-    results, 
-    fetchNextPage, 
-    hasNextPage, 
-    isFetchingNextPage, 
-    isLoading, 
-    refetch 
-  } = useMeetListPaging({
+  const memberLike = useMemberLike();  
+  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch } = useMeetListPaging({
     page_no : 0,
     page_size : 5,
     sch_condition: activeType,
     sch_category: selectedCategory,
     sch_text: searchKey
-  } as SearchParams);
+  });
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -67,7 +55,10 @@ export default function SocialClassLayout({ activeType }: { activeType: string }
       },
     },
   ];
-  // 3. FlatList에 데이터를 밀어 넣기 전에 원본 복사 후 정렬 처리하기
+
+  useEffect(() => {
+    setIsDetailMenuVisible(false);
+  }, [activeType]);
   const sortedResults = results ? [...results].sort((a, b) => {
     if (sortType === 'latest') {
       return b.meet_id - a.meet_id; // meet_id 역순 (최신순)
@@ -108,23 +99,23 @@ export default function SocialClassLayout({ activeType }: { activeType: string }
   };
   //카테고리 조회 
   const handlePressSearch = (code_id: string) => {
-    console.log('Selected category code_id:', code_id); // ✅ 선택된 카테고리 코드 확인 로그
     if (!code_id) {
       return;
     }
     if (selectedCategory === code_id) {
-      refetch(); // 👈 리액트 쿼리에게 강제로 새로고침하라고 명령합니다 (0번 페이지부터 다시 조회)
+      refetch();
       return;
     }
     setSelectedCategory(code_id);
   };
   //키워드 조회 
   const handleKeySearch = (searchKey: string) => {
-    console.log('Selected category code_id:', searchKey); // ✅ 선택된 카테고리 코드 확인 로그
-
     setSelectedCategory('');
+    if (searchKey === searchKey) {
+      refetch();
+      return;
+    }
     setSearchKey(searchKey);
-    refetch(); // 👈 리액트 쿼리에게 강제로 새로고침하라고 명령합니다 (0번 페이지부터 다시 조회)
   };
 
   return (
@@ -133,9 +124,9 @@ export default function SocialClassLayout({ activeType }: { activeType: string }
         data={sortedResults}
         renderItem={({ item, index }) => (
           <View key={index} style={styles.recommendListContainer}>
-            <CommMeetCard
+            <CommCard
               item={item}
-              onLikePress={(item) => handleLikePress(item)} />
+              onLikePress={(item) => handleLikePress(item as MeetInfo)} />
           </View>
         )}
         keyExtractor={(item) => item.meet_id.toString()} 
@@ -143,10 +134,7 @@ export default function SocialClassLayout({ activeType }: { activeType: string }
         refreshing={refreshing}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
-        // 👇 1. 헤더 자체의 레이어 순서를 리스트 아이템보다 위로 강제 격상시킵니다.
         ListHeaderComponentStyle={{ zIndex: 10 }} 
-
-        // 👇 2. 리스트 아이템들이 헤더 위로 덮어쓰지 못하도록 아이템 레이어를 낮춥니다.
         CellRendererComponent={({ children, ...props }) => (
           <View {...props} style={[props.style, { zIndex: 1 }]}>
             {children}
@@ -160,7 +148,7 @@ export default function SocialClassLayout({ activeType }: { activeType: string }
             <DividingLine />
             <View style={styles.titleWrapper}>
               <Text style={styles.listTitle}>전체 {activeTypeLabel}</Text>
-              {/* ✅ 아이콘과 모달을 감싸는 기준점 뷰 생성 */}
+              {/* 아이콘과 모달을 감싸는 기준점 뷰 생성 */}
               <View style={styles.filterWrapper}>
                 <TouchableOpacity 
                   activeOpacity={0.6} 
@@ -178,7 +166,7 @@ export default function SocialClassLayout({ activeType }: { activeType: string }
                     onPress={() => setIsDetailMenuVisible(false)}
                   />
                 )}
-                {/* ✅ 드롭다운 모달을 전체 화면 레이어에서 이 자리로 이동 */}
+                {/* 드롭다운 모달을 전체 화면 레이어에서 이 자리로 이동 */}
                 {isDetailMenuVisible && (
                   <View style={styles.dropdownContainer}>
                     <DropdownModal

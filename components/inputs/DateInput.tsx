@@ -1,6 +1,6 @@
 import CalendarModal from '@/components/CalendarModal';
 import { COLOR, COMM_STYLES } from '@/constants';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconCalendar from '@/assets/images/icon_calendar.svg';
 
@@ -8,15 +8,22 @@ interface DateInputProps {
   type? : string;
   isError?: boolean;
   onDateChange?: (dateValue: string, dateLabel: string) => void;
+  initialDateValue?: string;
+  initialDateLabel?: string;
 }
 
 /**
  * 모임 날짜 입력 컴포넌트
  */
-export default function DateInput({ type = 'M', isError = false, onDateChange }: DateInputProps) {
+export default function DateInput({ type = 'M', isError = false, onDateChange, initialDateValue = '', initialDateLabel = '' }: DateInputProps) {
   const [dateModalVisible, setDateModalVisible] = useState(false);
   const [selectedDateValue, setSelectedDateValue] = useState('');
   const [selectedDateLabel, setSelectedDateLabel] = useState('');
+
+  useEffect(() => {
+    setSelectedDateValue(initialDateValue);
+    setSelectedDateLabel(initialDateLabel);
+  }, [initialDateValue, initialDateLabel]);
 
   const handleConfirmDate = (item: { value: string; label: string }) => {
     setSelectedDateValue(item.value);

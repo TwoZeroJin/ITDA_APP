@@ -1,5 +1,5 @@
 import IconArrowRightMore from '@/assets/images/icon_arrow_right_more.svg';
-import CommMeetCard from '@/components/comm/CommMeetCard';
+import CommCard from '@/components/comm/CommCard';
 import { COLOR } from '@/constants';
 import { GroupInfo, MeetInfo } from '@/types';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -47,17 +47,21 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
     <View style={styles.container}>
       <FlatList<RecommendSectionItem>
         data={sections}
+        keyExtractor={(item) => item.key}
+        horizontal
+        decelerationRate="fast"
+        showsHorizontalScrollIndicator={false}
         renderItem={({ item: section }) => {
           return (
-            <View style={{ width: 320 }}>
+            <View style={{ marginEnd: 15 }}>
               <View>
-                <Text style={styles.title}>{section.title}</Text>
+                <Text style={styles.title} >{section.title}</Text>
                 <Text style={styles.subTitle}>{section.subTitle}</Text>
               </View>
               {section.data?.length ? (
                 section.data.map((item2, colIdx) => (
                   <View key={colIdx} style={styles.listContainer}>
-                    <CommMeetCard
+                    <CommCard
                       item={item2}
                       onLikePress={(item) => handleLikePress(item)}
                     />
@@ -69,10 +73,6 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
             </View>
           );
         }}
-        keyExtractor={(item) => item.key}
-        horizontal
-        decelerationRate="fast"
-        showsHorizontalScrollIndicator={false}
       />
 
       <View style={{ alignItems: 'center' }}>

@@ -37,6 +37,7 @@ function IdInput({ focusField = "" }: IdInputProps) {
           onSubmitEditing={() => focusField ? setFocus(focusField) : undefined}
           value={value}
           onChangeText={(text) => onChange(sanitizeLoginId(text))}
+          maxLength={20}
           error={error?.message}
         />
       )}

@@ -110,19 +110,12 @@ export default function HomeScreen() {
         {/* 검색 섹션 */}
         <SearchInput searchKey={handleSearchKey} />
 
-        {/* 공지사항 섹션 */}
-        {/* <View style={styles.notiContainer}>
-          <Noti width={12} height={13}/>
-          <Text style={styles.notiMessage}>잇다에서 공지사항을 등록했어요.</Text>
-        </View> */}
-
         {/* 메인 배너 리스트 */}
         <View style={styles.bannerContainer}>
           <ImageCarousel
             images={bannerList.map((banner) => banner.banner_image_url)}
             height={250}
             imageRadius={12}
-            // onPressImage={(i) => console.log("pressed image", i)} // 추후 배너 클릭 시 상세 페이지 이동 기능 추가 시 활용
           />
         </View>
 
@@ -153,21 +146,5 @@ const styles = StyleSheet.create({
   bannerContainer: {
     padding           : 16,
     backgroundColor   : COLOR.COMM_WHITE,
-  },
-  notiContainer: {
-    flexDirection     : 'row',
-    alignItems        : 'center',
-    alignSelf         : 'center',
-    width             : '80%',
-    height            : 30,
-    bottom            : 14,
-    backgroundColor   : COLOR.COMM_WHITE,
-    borderRadius      : 20,
-    paddingHorizontal : 14,
-  },
-  notiMessage: {
-    fontSize          : 12,
-    marginStart       : 6,
-    color             : COLOR.TEXT_DEFAULT,
   },
 });

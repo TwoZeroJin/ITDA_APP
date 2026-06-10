@@ -23,7 +23,7 @@ export default function GroupCreateCompleteScreen() {
       <View style={{ flex: 1, marginTop: 120, alignItems: 'center' }}>
           <IconClubCompl width={120} height={120} />
         <Text style={COMM_STYLES.completeTitleText}>
-          클럽 소셜링이 {group_id ? '수정' : '오픈'} 되었어요!
+          클럽이 {group_id ? '수정' : '오픈'} 되었어요!
         </Text>
         <Text style={COMM_STYLES.completeDescText}>
           {`개설한 클럽이 ${group_id ? '수정' : '오픈'}되었어요.\n멤버 모집을 위해 클럽을 홍보해보세요.`}

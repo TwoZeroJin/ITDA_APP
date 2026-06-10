@@ -19,6 +19,7 @@ function NickNameInput() {
           submitBehavior='submit'
           onSubmitEditing={() => setFocus("login_pwd")}
           value={value}
+          maxLength={20}
           onChangeText={onChange}
         />
       )}

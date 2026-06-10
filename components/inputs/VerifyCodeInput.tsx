@@ -26,6 +26,7 @@ function VerifyCodeInput() {
           submitBehavior='submit'
           value={value}
           onChangeText={onChange}
+          maxLength={10}
           error={error?.message}
         />
       )}

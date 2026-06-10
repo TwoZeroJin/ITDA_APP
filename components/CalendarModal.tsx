@@ -17,7 +17,6 @@ type CalendarModalProps = {
   onChangeValue: (value: string) => void;
   onClose: () => void;
   onConfirm: (item: DateOption) => void;
-  title?: string;
 };
 
 const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
@@ -46,7 +45,7 @@ function getMonthCells(viewDate: Date) {
   });
 }
 
-function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfirm, title }: CalendarModalProps) {
+function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfirm }: CalendarModalProps) {
   const today = useMemo(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -135,61 +134,60 @@ function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfi
           onPress={onClose} 
         />
         <View style={styles.modalContainer}>
-          {!!title && <Text style={styles.modalTitle}>{title}</Text>}
+          <View style={{ paddingHorizontal : 16}}>
+            <View style={styles.calendarHeader}>
+              <Text style={styles.monthTitle}>{`${displayMonth.getFullYear()}년 ${displayMonth.getMonth() + 1}월`}</Text>
+              <View style={styles.monthNavRow}>
+                <TouchableOpacity
+                  style={styles.monthNavButton}
+                  activeOpacity={0.6}
+                  onPress={() => moveMonth(-1)}
+                  disabled={isPrevMonthDisabled}
+                >
+                  <Text style={[styles.monthNavText, isPrevMonthDisabled && styles.monthNavTextDisabled]}>‹</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  style={styles.monthNavButton}
+                  activeOpacity={0.6}
+                  onPress={() => moveMonth(1)}
+                >
+                  <Text style={styles.monthNavText}>›</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
 
-          <View style={styles.calendarHeader}>
-            <Text style={styles.monthTitle}>{`${displayMonth.getFullYear()}년 ${displayMonth.getMonth() + 1}월`}</Text>
-            <View style={styles.monthNavRow}>
-              <TouchableOpacity
-                style={styles.monthNavButton}
-                activeOpacity={0.6}
-                onPress={() => moveMonth(-1)}
-                disabled={isPrevMonthDisabled}
-              >
-                <Text style={[styles.monthNavText, isPrevMonthDisabled && styles.monthNavTextDisabled]}>‹</Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                style={styles.monthNavButton}
-                activeOpacity={0.6}
-                onPress={() => moveMonth(1)}
-              >
-                <Text style={styles.monthNavText}>›</Text>
-              </TouchableOpacity>
+            <View style={styles.weekdayRow}>
+              {WEEKDAY_LABELS.map((weekday) => (
+                <View key={weekday} style={styles.weekdayCell}>
+                  <Text style={styles.weekdayText}>{weekday}</Text>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.calendarGrid}>
+              {monthCells.map((day, index) => {
+                if (day === null) {
+                  return <View key={`empty-${index}`} style={styles.dayCell} />;
+                }
+
+                const selected = isSelectedDate(day);
+                const isDisabled = isPastDate(day);
+
+                return (
+                  <View key={`day-${day}`} style={styles.dayCell}>
+                    <TouchableOpacity
+                      style={[styles.dayButton, selected && styles.dayButtonSelected]}
+                      activeOpacity={0.6}
+                      onPress={() => handleSelectDay(day)}
+                      disabled={isDisabled}
+                    >
+                      <Text style={[styles.dayText, isDisabled && styles.dayTextDisabled, selected && styles.dayTextSelected]}>{day}</Text>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
             </View>
           </View>
-
-          <View style={styles.weekdayRow}>
-            {WEEKDAY_LABELS.map((weekday) => (
-              <View key={weekday} style={styles.weekdayCell}>
-                <Text style={styles.weekdayText}>{weekday}</Text>
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.calendarGrid}>
-            {monthCells.map((day, index) => {
-              if (day === null) {
-                return <View key={`empty-${index}`} style={styles.dayCell} />;
-              }
-
-              const selected = isSelectedDate(day);
-              const isDisabled = isPastDate(day);
-
-              return (
-                <View key={`day-${day}`} style={styles.dayCell}>
-                  <TouchableOpacity
-                    style={[styles.dayButton, selected && styles.dayButtonSelected]}
-                    activeOpacity={0.6}
-                    onPress={() => handleSelectDay(day)}
-                    disabled={isDisabled}
-                  >
-                    <Text style={[styles.dayText, isDisabled && styles.dayTextDisabled, selected && styles.dayTextSelected]}>{day}</Text>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-          </View>
-
           <View style={styles.buttonRow}>
             <TouchableOpacity 
               style={styles.cancelButton}
@@ -227,22 +225,17 @@ const styles = StyleSheet.create({
     backgroundColor     : COLOR.COMM_WHITE,
     paddingTop          : 16,
   },
-  modalTitle: {
-    fontSize            : 14,
-    color               : COLOR.TEXT_DEFAULT,
-    marginBottom        : 8,
-  },
   calendarHeader: {
     flexDirection       : 'row',
     justifyContent      : 'space-between',
     alignItems          : 'center',
     marginBottom        : 16,
-    paddingHorizontal   : 16,
   },
   monthTitle: {
     fontSize            : 20,
-    fontWeight          : 'bold',
+    fontFamily          : 'Pretendard-Bold',
     color               : COLOR.COLOR_323232,
+    marginStart         : 8,
   },
   monthNavRow: {
     flexDirection       : 'row',
@@ -257,16 +250,15 @@ const styles = StyleSheet.create({
     borderRadius        : 14,
   },
   monthNavText: {
-    fontSize            : 28,
+    fontSize            : 32,
     color               : COLOR.TEXT_DEFAULT,
-    lineHeight          : 28,
+    lineHeight          : 32,
   },
   monthNavTextDisabled: {
     color               : COLOR.COMM_GRAY_6,
   },
   weekdayRow: {
     flexDirection       : 'row',
-    marginBottom        : 4,
   },
   weekdayCell: {
     width               : '14.2857%',
@@ -276,17 +268,16 @@ const styles = StyleSheet.create({
   },
   weekdayText: {
     fontSize            : 14,
-    fontWeight          : 'bold',
+    fontFamily          : 'Pretendard-Medium',
     color               : COLOR.TEXT_DEFAULT,
   },
   calendarGrid: {
     flexDirection       : 'row',
     flexWrap            : 'wrap',
-    marginBottom        : 6,
   },
   dayCell: {
     width               : '14.2857%',
-    height              : 55,
+    height              : 50,
     alignItems          : 'center',
     justifyContent      : 'center',
   },
@@ -324,8 +315,8 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize        : 16,
+    fontFamily      : 'Pretendard-Medium',
     color           : COLOR.TEXT_DEFAULT,
-    fontWeight      : "medium",
     alignSelf       : "center",
   },
   confirmButton: {
@@ -338,8 +329,8 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     fontSize        : 16,
+    fontFamily      : 'Pretendard-Medium',
     color           : COLOR.COMM_WHITE,
-    fontWeight      : "medium",
     alignSelf       : "center",
   },
 });

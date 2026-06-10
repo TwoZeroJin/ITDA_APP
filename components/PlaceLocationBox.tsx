@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
-import { MeetInfo } from '@/types';
+import { GroupInfo, MeetInfo } from '@/types';
 import { COLOR } from '@/constants';
 
 /**
  * 네이버 지도 컴포넌트
  */
-export default function PlaceLocationBox({ data }: { data: MeetInfo }) {
+export default function PlaceLocationBox({ data }: { data: MeetInfo | GroupInfo }) {
   // 클릭 시 네이버 지도로 이동시키는 함수
   const openNaverMap = async () => {
     if (!data.place_name || !data.place_addr) return;

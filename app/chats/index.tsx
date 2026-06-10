@@ -230,7 +230,7 @@ export default function IndexScreen() {
       label: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? '소셜링 정보' : '클럽 정보',
       onPress: () => {
         router.push({
-          pathname: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? `/meets/meetDetailPage` : `/groups/groupDetailPage`,
+          pathname: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? `/meets/detailView` : `/groups/detailView`,
           params: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ?
             { meetId: chat_id } : { groupId: chat_id },
         });

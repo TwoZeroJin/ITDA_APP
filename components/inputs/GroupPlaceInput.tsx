@@ -11,6 +11,56 @@ import TimeInput from '@/components/inputs/TimeInput';
 import KakaoPostcodeModal, { PostcodeAddress } from '@/components/modal/KakaoPostcodeModal';
 import useCombinedDateTime from '@/hooks/useCombinedDateTime';
 
+const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
+
+function parseGroupDateTimeLabel(groupDatetime?: string) {
+  if (!groupDatetime) {
+    return {
+      dateValue: '',
+      dateLabel: '',
+      timeLabel: '',
+    };
+  }
+
+  const parsed = groupDatetime.match(/^(\d{4}-\d{2}-\d{2})\s(\d{2}):(\d{2})$/);
+  if (!parsed) {
+    return {
+      dateValue: '',
+      dateLabel: '',
+      timeLabel: '',
+    };
+  }
+
+  const dateValue = parsed[1];
+  const hour24 = Number(parsed[2]);
+  const minute = parsed[3];
+
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) {
+    return {
+      dateValue: '',
+      dateLabel: '',
+      timeLabel: '',
+    };
+  }
+
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const weekday = WEEKDAY_LABELS[date.getDay()];
+  const dateLabel = `${year}년 ${month}월 ${day}일 (${weekday})`;
+
+  const isPm = hour24 >= 12;
+  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+  const timeLabel = `${isPm ? '오후' : '오전'} ${String(hour12).padStart(2, '0')}:${minute}`;
+
+  return {
+    dateValue,
+    dateLabel,
+    timeLabel,
+  };
+}
+
 /**
  * 클럽 모임 장소, 날짜, 시간 입력 컴포넌트
  */
@@ -19,6 +69,7 @@ export default function GroupPlaceInput() {
 
   const placeType = (watch('place_type') as 'F' | 'O' | undefined) || 'F';
   const freqType = (watch('freq_type') as 'R' | 'I' | undefined) || 'I';
+  const groupDatetime = watch('group_datetime');
 
   const [tempFreqType = '매주', setTempFreqType] = useState<'매주' | '격주' | '매월'>('매주');
   const [tempFreqDesc, setTempFreqDesc] = useState('');
@@ -35,8 +86,11 @@ export default function GroupPlaceInput() {
   const [placeModalVisible, setPlaceModalVisible] = useState(false);
   const [postcodeKey, setPostcodeKey] = useState(0);
 
+  const initialDateTime = useMemo(() => parseGroupDateTimeLabel(groupDatetime), [groupDatetime]);
+
   const { handleDateChange, handleTimeChange } = useCombinedDateTime({
     onChangeCombined: (value) => setValue('group_datetime', value, { shouldValidate: true, shouldDirty: true }),
+    initialCombinedValue: groupDatetime,
   });
 
   const freqDescInputRef = useRef<TextInput>(null);
@@ -214,14 +268,22 @@ export default function GroupPlaceInput() {
                 if (!value?.trim()) {
                   return '모임 시작날짜와 시간을 선택해 주세요.';
                 }
-
-                return true;
               },
             }}
             render={({ fieldState: { error } }) => (
               <>
-                <MeetDateInput type='G' onDateChange={handleDateChange} isError={!!error} />
-                <TimeInput onTimeChange={handleTimeChange} isError={!!error} />
+                <MeetDateInput
+                  type='G'
+                  onDateChange={handleDateChange}
+                  isError={!!error}
+                  initialDateValue={initialDateTime.dateValue}
+                  initialDateLabel={initialDateTime.dateLabel}
+                />
+                <TimeInput
+                  onTimeChange={handleTimeChange}
+                  isError={!!error}
+                  initialTimeLabel={initialDateTime.timeLabel}
+                />
                 {error && <Text style={styles.errorText}>{error.message}</Text>}
               </>
             )}

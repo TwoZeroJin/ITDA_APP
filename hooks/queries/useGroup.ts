@@ -5,6 +5,7 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { GroupApply, GroupInfo, SearchParams } from "@/types";
 import { getNextPageParamFromPaging } from "@/utils/commUtil";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 // 클럽 목록 조회 (무한 스크롤)
 function useGroupListPaging(searchParams: SearchParams) {
@@ -14,27 +15,24 @@ function useGroupListPaging(searchParams: SearchParams) {
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
   });
-  
-  // 데이터만 담은 result 객체
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
-
   return { ...query, results };
 }
 
+// 클럽 상세 조회
 function useGroupDetailView(groupId: number) {
-
+  const { setLoading } = useLoading();
   const query = useQuery({
-    // queryKey에 params를 넣어 조건이 바뀔 때마다 다시 조회되도록 합니다.
     queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_VIEW, groupId],
     queryFn: () => groupView(groupId),
-  });  
-  // useInfiniteQuery의 'pages' 구조가 아니므로 바로 data를 추출합니다.
-  // 서버 응답 구조가 { data: [...] } 형태라면 아래와 같이 가공합니다.
-  const results = query.data?.data;
+  });
+  useEffect(() => {
+    setLoading(query.isFetching);
+  }, [query.isFetching, setLoading]);
 
+  const results = query.data?.data;
   return { ...query, results };    
 }
-
 
 // 클럽 생성
 function useGroupInsert() {
@@ -93,22 +91,17 @@ function useGroupDelete() {
   });
 }
 
-//3. 소모임에 참여하는 멤버 조회
+// 소모임에 참여하는 멤버 조회
 function useGroupMemberList(groupId: number) {
-
   const query = useQuery({
-    // queryKey에 params를 넣어 조건이 바뀔 때마다 다시 조회되도록 합니다.
     queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_MEMBER_LIST, groupId],
     queryFn: () => groupMemberList(groupId),
-  });  
-  // useInfiniteQuery의 'pages' 구조가 아니므로 바로 data를 추출합니다.
-  // 서버 응답 구조가 { data: [...] } 형태라면 아래와 같이 가공합니다.
+  });
   const results = query.data?.data;
-
   return { ...query, results };    
 }
 
-//4.그룹 신청
+// 그룹 신청
 function useGroupApply() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -127,8 +120,7 @@ function useGroupApply() {
   });
 }
 
-
-//4.그룹 신청 취소
+// 그룹 신청 취소
 function useGroupCancelApply() {
   const { setLoading } = useLoading();
   return useMutation({
@@ -147,9 +139,7 @@ function useGroupCancelApply() {
   });
 }
 
-/**
- * 클럽 승인
- */
+// 클럽 승인
 function useGroupConfirm() {
   const { setLoading } = useLoading();
   return useMutation({

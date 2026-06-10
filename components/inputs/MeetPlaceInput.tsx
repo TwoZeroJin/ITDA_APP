@@ -11,6 +11,56 @@ import TimeInput from '@/components/inputs/TimeInput';
 import KakaoPostcodeModal, { PostcodeAddress } from '@/components/modal/KakaoPostcodeModal';
 import useCombinedDateTime from '@/hooks/useCombinedDateTime';
 
+const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
+
+function parseMeetDateTimeLabel(meetDatetime?: string) {
+  if (!meetDatetime) {
+    return {
+      dateValue: '',
+      dateLabel: '',
+      timeLabel: '',
+    };
+  }
+
+  const parsed = meetDatetime.match(/^(\d{4}-\d{2}-\d{2})\s(\d{2}):(\d{2})$/);
+  if (!parsed) {
+    return {
+      dateValue: '',
+      dateLabel: '',
+      timeLabel: '',
+    };
+  }
+
+  const dateValue = parsed[1];
+  const hour24 = Number(parsed[2]);
+  const minute = parsed[3];
+
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) {
+    return {
+      dateValue: '',
+      dateLabel: '',
+      timeLabel: '',
+    };
+  }
+
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const weekday = WEEKDAY_LABELS[date.getDay()];
+  const dateLabel = `${year}년 ${month}월 ${day}일 (${weekday})`;
+
+  const isPm = hour24 >= 12;
+  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
+  const timeLabel = `${isPm ? '오후' : '오전'} ${String(hour12).padStart(2, '0')}:${minute}`;
+
+  return {
+    dateValue,
+    dateLabel,
+    timeLabel,
+  };
+}
+
 /**
  * 소모임 모임 장소, 날짜, 시간 입력 컴포넌트
  */
@@ -20,12 +70,16 @@ export default function MeetPlaceInput() {
   const placeType = (watch('place_type') as 'F' | 'O' | undefined) || 'F';
   const placeName = watch('place_name');
   const placeAddr = watch('place_addr');
+  const meetDatetime = watch('meet_datetime');
 
   const [placeModalVisible, setPlaceModalVisible] = useState(false);
   const [postcodeKey, setPostcodeKey] = useState(0);
 
+  const initialDateTime = useMemo(() => parseMeetDateTimeLabel(meetDatetime), [meetDatetime]);
+
   const { handleDateChange, handleTimeChange } = useCombinedDateTime({
     onChangeCombined: (value) => setValue('meet_datetime', value, { shouldValidate: true, shouldDirty: true }),
+    initialCombinedValue: meetDatetime,
   });
 
   const selectedPlace = useMemo(() => {
@@ -130,8 +184,15 @@ export default function MeetPlaceInput() {
             }}
             render={({ fieldState: { error } }) => (
               <>
-                <MeetDateInput onDateChange={handleDateChange} />
-                <TimeInput onTimeChange={handleTimeChange} />
+                <MeetDateInput
+                  onDateChange={handleDateChange}
+                  initialDateValue={initialDateTime.dateValue}
+                  initialDateLabel={initialDateTime.dateLabel}
+                />
+                <TimeInput
+                  onTimeChange={handleTimeChange}
+                  initialTimeLabel={initialDateTime.timeLabel}
+                />
                 {error && <Text style={styles.errorText}>{error.message}</Text>}
               </>
             )}

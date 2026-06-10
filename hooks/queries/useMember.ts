@@ -18,7 +18,6 @@ function useMemberDetail() {
         queryKey: [QUERY_KEYS.MEMBER , QUERY_KEYS.MEMBER_DETAIL],
     });
 
-    // 로딩 상태 관리
     useEffect(() => {
         setLoading(query.isFetching);
     }, [query.isFetching, setLoading]);

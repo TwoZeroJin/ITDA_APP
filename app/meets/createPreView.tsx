@@ -1,6 +1,6 @@
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, FlatList } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetInsert, useMeetUpdate } from "@/hooks/queries/useMeet";
@@ -19,6 +19,7 @@ import { formatNumberWithComma, parseImageList } from "@/utils/commUtil";
 import DividingLine from "@/components/DividingLine";
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
+import ProfileIcon from "@/components/ProfileIcon";
 
 /**
  * 모임 생성 - 최종 미리보기 및 생성 화면
@@ -84,35 +85,65 @@ export default function MeetCreatePreViewScreen() {
           <ImageCarousel
             images={imageList.map((file) => file.file_path)}
             height={280}
-            // onPressImage={(i) => console.log("pressed image", i)} // 추후 이미지 수정 기능 추가 시 활용
           />
         </View>
 
         {/* 소셜링 정보 */}
-        <View style={styles.commContainer}>
+        <View style={COMM_STYLES.commContainer}>
           {/* 소셜링 라벨 */}
-          <View style={styles.labelContainer}>
+          <View style={COMM_STYLES.labelContainer}>
             <CommLabel variant="social" />
             <CommLabel variant="category" category={prevMeetInfo.meet_subj_name} />
           </View>
 
           {/* 소셜링 제목 */}
-          <Text style={styles.commContainerTitle}>{prevMeetInfo.meet_name}</Text>
+          <Text style={COMM_STYLES.commContainerTitle}>{prevMeetInfo.meet_name}</Text>
 
           {/* 설명 */}
-          <Text style={styles.contentDesc}>{prevMeetInfo.meet_desc}</Text>
+          <Text style={COMM_STYLES.contentDesc}>{prevMeetInfo.meet_desc}</Text>
         </View>
+
+        <DividingLine />
+
         {/* 모임장 및 참여 멤버 */}
 
-        {/* 소셜링 상세 소개 */}
-        <DividingLine />
-        <View style={styles.meetDetailContainer}>
-          {/* 상단 타이틀 */}
-          <Text style={styles.meetDetailSubTitle}>소셜링 상세 소개</Text>
-          <Text style={styles.meetDetailMainTitle}>모임에 대해 자세히 알려드려요.</Text>
+        <View style={styles.membersContainer}>
+          {/* 모임장 소개 섹션 */}
+          <View style={styles.membersSection}>
+            <Text style={styles.membersSectionTitle}>모임장 소개</Text>
+            <View style={styles.hostContainer}>
+                <ProfileIcon mem_image_url={prevMeetInfo?.mem_image_url || ''} type="HOST" />
+              <View style={styles.hostInfo}>
+                <Text style={styles.hostName}>{prevMeetInfo?.mem_nick}</Text>
+              </View>
+            </View>
+          </View>
 
+          {/* 참여 멤버 섹션 */}
+          <View style={[styles.membersSection, { marginBottom: 0 }]}> 
+            <Text style={styles.membersSectionTitle}>참여 멤버</Text>
+            <FlatList
+              data={[]}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(item, index) => prevMeetInfo?.mem_id?.toString() ?? String(index)}
+              contentContainerStyle={styles.memberListContent}
+              renderItem={({ item }) => (
+                <ProfileIcon mem_image_url={prevMeetInfo?.mem_image_url || ''} type="HOST" />
+              )}
+            />
+          </View>
+        </View>
+
+        <DividingLine />
+
+        {/* 소셜링 상세 소개 */}
+        <View style={COMM_STYLES.detailContainer}>
+          {/* 상단 타이틀 */}
+          <Text style={COMM_STYLES.detailSubTitle}>소셜링 상세 소개</Text>
+          <Text style={COMM_STYLES.detailMainTitle}>모임에 대해 자세히 알려드려요.</Text>
           {/* 정보 박스 */}
-          <View style={styles.meetDetailInfoBox}>
+          <View style={COMM_STYLES.detailInfoBox}>
             <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${prevMeetInfo?.meet_subj_name}`} />
             <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`1회성 ${prevMeetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${prevMeetInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} />
             <DetailInfoRow icon={<IconDetailMembers width={18} height={18} />} text={`최소 ${prevMeetInfo?.meet_min}명 ~ 최대 ${prevMeetInfo?.meet_max}명`} />
@@ -146,53 +177,38 @@ export default function MeetCreatePreViewScreen() {
 }
 
 const styles = StyleSheet.create({
-  commContainer: {
-    marginHorizontal  : 16,
-    marginBottom      : 30,
-    gap               : 8,
+  membersContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 25,
   },
-  commContainerTitle: {
-    fontSize          : 24,
-    fontFamily        : 'Pretendard-Bold',
-    color             : COLOR.TEXT_1C1C1C,
+  membersSection: {
+    marginBottom: 30,
   },
-  labelContainer: {
-    flexDirection     : 'row',
-    gap               : 6,
-    marginTop         : 12,
-    marginBottom      : 4,
+  membersSectionTitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 15,
+    fontWeight: '700',
   },
-  contentInfoText: {
-    fontSize          : 16,
-    fontFamily        : 'Pretendard-Medium',
-    marginStart       : -8,
-    color             : COLOR.TEXT_DEFAULT,
+  memberListContent: {
+    alignItems: 'center',
   },
-  contentDesc: {
-    fontSize          : 16,
-    fontFamily        : 'Pretendard-Regular',
-    color             : COLOR.TEXT_DEFAULT,
+  hostContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  meetDetailContainer: {
-    padding           : 20,
-    gap               : 10,
+  hostInfo: {
+    marginLeft: 15,
   },
-  meetDetailSubTitle: {
-    fontSize          : 14,
-    fontFamily        : 'Pretendard-Light',
-    color             : COLOR.TEXT_DEFAULT,
-    marginTop         : 6,
+  hostName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
   },
-  meetDetailMainTitle: {
-    fontSize          : 16,
-    fontFamily        : 'Pretendard-Regular',
-    color             : COLOR.TEXT_DEFAULT,
-  },  
-  meetDetailInfoBox: {
-    backgroundColor   : COLOR.COMM_GRAY_5,
-    borderRadius      : 8,
-    paddingHorizontal : 20,
-    paddingVertical   : 17,
-    marginBottom      : 16,
+  hostGreeting: {
+    fontSize: 14,
+    color: '#888',
   },
 });
