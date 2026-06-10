@@ -1,16 +1,12 @@
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
 import CommRadioGroup from '@/components/comm/CommRadioGroup';
+import InputField from '@/components/InputField';
 import { COLOR, COMM_STYLES } from '@/constants';
 import { CodeInfo, MeetInfo } from '@/types';
-import { getFeeList } from '@/utils/commUtil';
+import { formatNumberWithComma, getFeeList } from '@/utils/commUtil';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-function formatWithComma(value?: number) {
-  if (!value) return '';
-  return value.toLocaleString('ko-KR');
-}
 
 export default function FeeInput() {
   const { control, watch, setValue } = useFormContext<MeetInfo>();
@@ -73,25 +69,18 @@ export default function FeeInput() {
             }}
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <>
-                <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]}
-                  activeOpacity={0.6}
-                  onPress={() => feeEntryInputRef.current?.focus()}
-                >
-                  <TextInput
-                    ref={feeEntryInputRef}
-                    value={formatWithComma(value)}
-                    onChangeText={(text) => {
-                      const onlyNumber = text.replace(/[^0-9]/g, '');
-                      onChange(onlyNumber ? Number(onlyNumber) : 0);
-                    }}
-                    maxLength={11}
-                    keyboardType="number-pad"
-                    placeholder="최소 1,000원 이상 입력해 주세요."
-                    placeholderTextColor={COLOR.TEXT_GRAY}
-                    style={styles.feeInput}
-                  />
-                </TouchableOpacity>
-              {error && <Text style={styles.errorText}>{error.message}</Text>}
+                <InputField
+                  ref={feeEntryInputRef}
+                  value={formatNumberWithComma(value)}
+                  onChangeText={(text) => {
+                    const onlyNumber = text.replace(/[^0-9]/g, '');
+                    onChange(onlyNumber ? Number(onlyNumber) : 0);
+                  }}
+                  maxLength={11}
+                  keyboardType="number-pad"
+                  placeholder="최소 1,000원 이상 입력해 주세요."
+                  error={error?.message}
+                />
               </>
             )}
           />
@@ -149,16 +138,14 @@ export default function FeeInput() {
               }}
               render={({ field: { value, onChange }, fieldState: { error } }) => (
                 <>
-                  <TextInput
+                  <InputField
                     value={value}
                     onChangeText={onChange}
-                    multiline
-                    textAlignVertical="top"
+                    textArea
+                    numberOfLines={4}
                     placeholder="참가비 정보를 자세하게 작성해 주세요."
-                    placeholderTextColor={COLOR.TEXT_GRAY}
-                    style={styles.feeInfoDescInput}
+                    error={error?.message}
                   />
-                  {error && <Text style={styles.errorText}>{error.message}</Text>}
                 </>
               )}
             />
@@ -192,12 +179,6 @@ const styles = StyleSheet.create({
     fontSize            : 14,
     color               : COLOR.TEXT_DEFAULT,
   },
-  feeInput: {
-    flex                : 1,
-    fontSize            : 16,
-    color               : COLOR.COLOR_323232,
-    padding             : 0,
-  },
   feeInfoTypeContainer: {
     flexDirection       : 'row',
     flexWrap            : 'wrap',
@@ -225,30 +206,6 @@ const styles = StyleSheet.create({
   },
   feeInfoTypeTextSelected: {
     color               : COLOR.APP_ACTIVE_5,
-  },
-  feeInfoDescInput: {
-    minHeight           : 86,
-    borderRadius        : 12,
-    borderWidth         : 1,
-    borderColor         : COLOR.COMM_GRAY_6,
-    paddingHorizontal   : 16,
-    paddingVertical     : 14,
-    fontSize            : 16,
-    color               : COLOR.COLOR_323232,
-  },
-  memberInputContainer: {
-    flexDirection       : 'row',
-    justifyContent      : 'space-between',
-    alignItems          : 'center',
-    height              : 50,
-    flex                : 1,
-    borderWidth         : 1,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderRadius        : 12,
-    paddingHorizontal   : 16,
-  },
-  memberInputContainerError: {
-    borderColor         : COLOR.TEXT_WARN,
   },
   errorText: {
     fontSize            : 12,

@@ -9,19 +9,22 @@ import {  useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
 import IconCalendar from '@/assets/images/icon_calendar.svg';
+import IconPencil from '@/assets/images/icon_pencil.svg';
+import IconInfoMark from '@/assets/images/icon_info_mark.svg';
+import IconMembers from '@/assets/images/icon_members.svg';
+import IconMarker from '@/assets/images/icon_marker.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
 import DividingLine from "@/components/DividingLine";
 import ProfileIcon from "@/components/ProfileIcon";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useGroupDetailView, useGroupMemberList } from "@/hooks/queries/useGroup";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import DropdownModal from '@/components/modal/DropdownModal';
 import { router as expoRouter } from 'expo-router';
+import DetailInfoRow from "@/components/comm/DetailInfoRow";
 
 export default function GroupDetailPage() {
 
   const { groupId } = useLocalSearchParams();
-  // ✅ 1. 모임상세 데이터 조회
   const { results : groupInfo, isLoading : isDetailLoading, isError : isDetailError } = useGroupDetailView(Number(groupId));  
   const imageList = groupInfo?.img_list? groupInfo.img_list : [];
   const groupApply = useGroupApply();
@@ -32,8 +35,7 @@ export default function GroupDetailPage() {
   const [isDeleteConfirmVisible, setDeleteConfirmVisible] = useState(false);//삭제확인alert
   const router = useAuthRouter();
   //소모임에 참여하는 멤버 조회
-  const { results : memberList,refetch: refetchMemberList, isLoading : isMemberLoading, isError : isMemberError } = useGroupMemberList(Number(groupId));  
-
+  const { results : memberList, refetch: refetchMemberList, isLoading : isMemberLoading, isError : isMemberError } = useGroupMemberList(Number(groupId));  
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
@@ -298,12 +300,12 @@ export default function GroupDetailPage() {
 
           {/* 정보 박스 */}
           <View style={styles.meetDetailInfoBox}>
-            <InfoRow icon="pencil-outline" text={`취미 > ${groupInfo?.group_subj || ''}`} />
-            {/* <InfoRow icon="information-outline" text={`타입 > ${groupInfo?.group_type || ''}`} /> */}
-            <InfoRow icon="account-group-outline" text={`인원 > 최대 ${groupInfo?.group_max || ''}명`} />
-            {/* <InfoRow icon="currency-krw" text={`비용 > ${groupInfo?.fee_info || ''}`} /> */}
-            {/* <InfoRow icon="calendar-month-outline" text={`날짜 > ${groupInfo?.group_datetime || ''}`} /> */}
-            {/* <InfoRow icon="map-marker-outline" text={`장소 > ${groupInfo?.place_name || ''}`} /> */}
+            <DetailInfoRow icon={<IconPencil width={20} height={20} />} text={`취미 > ${groupInfo?.group_subj || ''}`} />
+            {/* <DetailInfoRow icon={<IconInfoMark width={20} height={20} />} text={`타입 > ${groupInfo?.group_type || ''}`} /> */}
+            <DetailInfoRow icon={<IconMembers width={20} height={20} />} text={`인원 > 최대 ${groupInfo?.group_max || ''}명`} />
+            {/* <DetailInfoRow icon={<IconInfoMark width={20} height={20} />} text={`비용 > ${groupInfo?.fee_info || ''}`} /> */}
+            {/* <DetailInfoRow icon={<IconCalendar width={20} height={20} />} text={`날짜 > ${groupInfo?.group_datetime || ''}`} /> */}
+            {/* <DetailInfoRow icon={<IconMarker width={20} height={20} />} text={`장소 > ${groupInfo?.place_name || ''}`} /> */}
           </View>
 
         </View>         
@@ -424,14 +426,6 @@ export default function GroupDetailPage() {
   );
 }
 
-// 정보 한 줄을 렌더링하는 컴포넌트
-const InfoRow = ({ icon, text }: { icon: string; text: string }) => (
-  <View style={styles.meetDetailInfoRow}>
-    <MaterialCommunityIcons name={icon as any} size={20} color="#444" style={styles.meetDetailIcon} />
-    <Text style={styles.meetDetailInfoText}>{text}</Text>
-  </View>
-);
-
 const styles = StyleSheet.create({
   detailMenuBackdrop: {
     position: 'absolute',
@@ -521,19 +515,6 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     marginBottom: 20,
-  },
-  meetDetailInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  meetDetailIcon: {
-    marginRight: 15,
-    width: 20,
-  },
-  meetDetailInfoText: {
-    fontSize: 16,
-    color: '#444',
   },
   reviewContainer: {
     paddingVertical: 20,

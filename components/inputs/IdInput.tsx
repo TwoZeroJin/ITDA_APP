@@ -17,19 +17,19 @@ function IdInput({ focusField = "" }: IdInputProps) {
       rules={{
         validate: (data: string) => {
           if (!data || data.length === 0) {
-            return '아이디를 입력해주세요.';
+            return 'ID를 입력해주세요.';
           }
 
           if (!/^[a-zA-Z0-9]+$/.test(data)) {
-            return '아이디는 영어/숫자 만 입력할 수 있습니다.';
+            return 'ID는 영어/숫자 만 입력할 수 있습니다.';
           }
         }
       }}
       render={({field: {ref, onChange, value}, fieldState: {error}}) => (
         <InputField
           ref={ref}
-          label="로그인 아이디" 
-          placeholder="로그인 아이디를 입력하세요."
+          label="로그인 ID" 
+          placeholder="ID를 입력하세요."
           inputMode="email"
           autoCapitalize='none'
           returnKeyType={focusField ? 'next' : 'done'}

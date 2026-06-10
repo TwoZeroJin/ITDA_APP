@@ -91,7 +91,7 @@ export default function HomeScreen() {
     //   subTitle  : '방금 등록된 새로운 클래스를 만나보세요.',
     //   data      : newClassList,
     // },
-  ].filter((section) => section.data.length > 0);
+  ];
 
   return (
     <View style={{ flex: 1 }}>

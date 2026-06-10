@@ -9,7 +9,6 @@ import MeetNameInput from "@/components/inputs/MeetNameInput";
 import { FileInfo, MeetInfo } from "@/types";
 import MeetDescInput from "@/components/inputs/MeetDescInput";
 import CommImagePicker from "@/components/comm/CommImagePicker";
-import TagInput from "@/components/inputs/TagInput";
 
 /**
  * 모임 생성 - 모임 설명 및 이미지 등록 화면

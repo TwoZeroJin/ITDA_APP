@@ -1,4 +1,5 @@
 import { COLOR } from "@/constants";
+import * as Haptics from 'expo-haptics';
 import React, { useEffect, useRef } from "react";
 import { FlatList, InteractionManager, Modal, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -26,7 +27,7 @@ type WheelColumnItemProps = WheelColumnConfig & {
   visible: boolean;
 };
 
-const WHEEL_ITEM_HEIGHT = 42;
+const WHEEL_ITEM_HEIGHT = 35;
 const WHEEL_VISIBLE_ROWS = 5;
 const WHEEL_CONTAINER_HEIGHT = WHEEL_ITEM_HEIGHT * WHEEL_VISIBLE_ROWS;
 
@@ -35,6 +36,11 @@ const WHEEL_CONTAINER_HEIGHT = WHEEL_ITEM_HEIGHT * WHEEL_VISIBLE_ROWS;
  */
 function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelColumnItemProps) {
   const listRef = useRef<FlatList<WheelOption>>(null);
+  const lastHapticValueRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    lastHapticValueRef.current = selectedValue;
+  }, [selectedValue]);
 
   useEffect(() => {
     if (!visible) {
@@ -68,7 +74,27 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
       return;
     }
 
+    // 같은 값에 대한 중복 햅틱은 방지
+    if (lastHapticValueRef.current !== nextOption.value) {
+      Haptics.selectionAsync();
+      lastHapticValueRef.current = nextOption.value;
+    }
+
     onChange(nextOption.value);
+  };
+
+  // 휠이 도는 중에도 선택 칸이 바뀌면 햅틱 발생
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const rawIndex = Math.round(event.nativeEvent.contentOffset.y / WHEEL_ITEM_HEIGHT);
+    const normalizedIndex = Math.min(Math.max(rawIndex, 0), options.length - 1);
+    const nextOption = options[normalizedIndex];
+
+    if (!nextOption || lastHapticValueRef.current === nextOption.value) {
+      return;
+    }
+
+    Haptics.selectionAsync();
+    lastHapticValueRef.current = nextOption.value;
   };
 
   // 스크롤이 완전히 멈췄을 때 선택된 아이템을 확정
@@ -97,6 +123,7 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
           snapToInterval={WHEEL_ITEM_HEIGHT}
           snapToAlignment="center"
           bounces={true}
+          onScroll={handleScroll}
           onMomentumScrollEnd={handleMomentumScrollEnd}
           onScrollEndDrag={handleScrollEndDrag}
           scrollEventThrottle={16}
@@ -182,13 +209,14 @@ const styles = StyleSheet.create({
     justifyContent      : "center",
   },
   itemText: {
-    fontSize            : 22,
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Regular',
     color               : COLOR.COMM_GRAY_2,
-    fontWeight          : 300,
   },
   itemTextSelected: {
+    fontSize            : 20,
+    fontFamily          : 'Pretendard-Medium',
     color               : COLOR.COMM_BLACK,
-    fontWeight          : 500,
   },
   highlight: {
     position            : "absolute",
@@ -218,8 +246,8 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     fontSize        : 16,
+    fontFamily      : 'Pretendard-Medium',
     color           : COLOR.TEXT_DEFAULT,
-    fontWeight      : 'medium',
     alignSelf       : "center",
   },
   confirmButton: {
@@ -232,8 +260,8 @@ const styles = StyleSheet.create({
   },
   confirmButtonText: {
     fontSize        : 16,
+    fontFamily      : 'Pretendard-Medium',
     color           : COLOR.COMM_WHITE,
-    fontWeight      : 'medium',
     alignSelf       : "center",
   },
 });

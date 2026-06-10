@@ -51,11 +51,11 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
                   <Text style={styles.meetSubTitle} numberOfLines={1} ellipsizeMode="tail">{item.meet_name}</Text>
                   {item.place_addr && (<View style={styles.meetInfoRow}>
                     <IconMarker width={12} height={12} />
-                    <Text style={styles.meetInfoText}>{item.place_addr}</Text>
+                    <Text style={styles.meetInfoText} numberOfLines={1} ellipsizeMode="tail">{item.place_addr}</Text>
                   </View>)}
                   {item.apply_ratio && (<View style={styles.meetInfoRow}>
                     <IconMembers width={12} height={12} />
-                    <Text style={styles.meetInfoText}>{item.apply_ratio}</Text>
+                    <Text style={styles.meetInfoText} numberOfLines={1} ellipsizeMode="tail">{item.apply_ratio}</Text>
                   </View>)}
                   {item.mem_nick && (<View style={styles.meetInfoRow}>
                     {item.mem_image_url ? (
@@ -65,7 +65,7 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
                           <MemDefault width={23} height={23} />
                         </View>
                       )}
-                    <Text style={styles.meetHostText}>{item.mem_nick}</Text>
+                    <Text style={styles.meetHostText} numberOfLines={1} ellipsizeMode="tail">{item.mem_nick}</Text>
                   </View>)}
                 </TouchableOpacity>
               );
@@ -83,68 +83,68 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
 
 const styles = StyleSheet.create({
   container: {
-    padding         : 16,
-    backgroundColor : COLOR.COMM_GRAY_5,
+    padding           : 16,
+    backgroundColor   : COLOR.COMM_GRAY_5,
   },
   titleContainer: {
-    flexDirection   : 'row',
-    justifyContent  : 'space-between',
-    alignItems      : 'center',
-    height          : 32,
-    marginBottom    : 12,
+    flexDirection     : 'row',
+    justifyContent    : 'space-between',
+    alignItems        : 'center',
+    height            : 32,
+    marginBottom      : 12,
   },
   title: {
-    fontSize        : 20,
-    fontWeight      : 'bold',
-    fontFamily      : 'Pretendard-SemiBold',
+    fontSize          : 20,
+    fontFamily        : 'Pretendard-SemiBold',
   },
   listContainer: {
-    flexDirection   : 'row',
-    alignItems      : 'center',
+    flexDirection     : 'row',
+    alignItems        : 'center',
   },
   emptyContainer: {
-    justifyContent  : 'center',
-    alignItems      : 'center',
-    paddingVertical : 32,
+    justifyContent    : 'center',
+    alignItems        : 'center',
+    paddingVertical   : 32,
   },
   emptyText: {
-    fontSize        : 16,
-    color           : COLOR.COMM_GRAY_2,
-    textAlign       : 'center',
+    fontSize          : 16,
+    color             : COLOR.COMM_GRAY_2,
+    textAlign         : 'center',
   },
   meetDay: {
-    fontSize        : 14,
-    fontFamily      : 'Pretendard-SemiBold',
-    color           : COLOR.BG_MEET,
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-SemiBold',
+    color             : COLOR.BG_MEET,
   },
   meetSubTitle: {
-    fontSize        : 16,
-    fontFamily      : 'Pretendard-Medium',
-    color           : COLOR.TEXT_3C3C3C,
+    fontSize          : 16,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.TEXT_3C3C3C,
   },
   meetInfoRow: {
-    flexDirection   : 'row',
-    alignItems      : 'center',
-    marginVertical  : 2,
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    marginVertical    : 2,
   },
   meetInfoText: {
-    fontSize        : 12,
-    fontFamily      : 'Pretendard-Regular',
-    color           : COLOR.COMM_SHADOW,
+    fontSize          : 12,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.COMM_SHADOW,
+    marginStart       : 4,
   },
   meetHostText: {
-    fontSize        : 14,
-    fontFamily      : 'Pretendard-Medium',
-    color           : COLOR.COMM_SHADOW,
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COMM_SHADOW,
   },
   meetCell: {
-    width               : 160,
-    height              : 140,
-    marginHorizontal    : 6,
-    padding             : 12,
-    backgroundColor     : COLOR.COMM_WHITE,
-    borderRadius        : 12,
-    gap                 : 5,
+    width             : 160,
+    height            : 140,
+    marginHorizontal  : 6,
+    padding           : 12,
+    backgroundColor   : COLOR.COMM_WHITE,
+    borderRadius      : 12,
+    gap               : 5,
   },
   hostImage: {
     width             : 20,

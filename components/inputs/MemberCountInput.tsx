@@ -1,8 +1,9 @@
 import { COLOR, COMM_STYLES } from '@/constants';
+import InputField from '@/components/InputField';
 import { MeetInfo } from '@/types';
 import React, { useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';
 
 /**
@@ -12,8 +13,6 @@ export default function MemberCountInput() {
   const { control, getValues } = useFormContext<MeetInfo>();
   const minMemberInputRef = useRef<TextInput>(null);
   const maxMemberInputRef = useRef<TextInput>(null);
-
-  const filterNumeric = (value: string) => value.replace(/[^0-9]/g, '').slice(0, 2);
 
   return (
     <View style={styles.container}>
@@ -41,23 +40,18 @@ export default function MemberCountInput() {
           }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View style={styles.memberInputWrap}>
-              <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]}
-                activeOpacity={0.6}
-                onPress={() => minMemberInputRef.current?.focus()}
-              >
-                <TextInput
-                  ref={minMemberInputRef}
-                  value={value?.toString()}
-                  onChangeText={(text) => onChange(filterNumeric(text))}
-                  keyboardType="number-pad"
-                  maxLength={2}
-                  returnKeyType="next"
-                  onSubmitEditing={() => maxMemberInputRef.current?.focus()}
-                  style={styles.memberInput}
-                />
-                <Text style={styles.memberSuffix}>명</Text>
-              </TouchableOpacity>
-              {error && <Text style={styles.errorText}>{error.message}</Text>}
+              <InputField
+                ref={minMemberInputRef}
+                value={value?.toString()}
+                onChangeText={(text) => onChange((text))}
+                keyboardType="number-pad"
+                maxLength={2}
+                returnKeyType="next"
+                onSubmitEditing={() => maxMemberInputRef.current?.focus()}
+                error={error?.message}
+                rightChild={<Text style={styles.memberSuffix}>명</Text>}
+                style={styles.memberInput}
+              />
             </View>
           )}
         />
@@ -80,22 +74,17 @@ export default function MemberCountInput() {
           }}
           render={({ field: { onChange, value }, fieldState: { error } }) => (
             <View style={styles.memberInputWrap}>
-              <TouchableOpacity style={[styles.memberInputContainer, error && styles.memberInputContainerError]}
-                activeOpacity={0.6}
-                onPress={() => maxMemberInputRef.current?.focus()}
-              >
-                <TextInput
-                  ref={maxMemberInputRef}
-                  value={value?.toString()}
-                  onChangeText={(text) => onChange(filterNumeric(text))}
-                  keyboardType="number-pad"
-                  maxLength={2}
-                  returnKeyType="done"
-                  style={styles.memberInput}
-                />
-                <Text style={styles.memberSuffix}>명</Text>
-              </TouchableOpacity>
-              {error && <Text style={styles.errorText}>{error.message}</Text>}
+              <InputField
+                ref={maxMemberInputRef}
+                value={value?.toString()}
+                onChangeText={(text) => onChange((text))}
+                keyboardType="number-pad"
+                maxLength={2}
+                returnKeyType="done"
+                error={error?.message}
+                rightChild={<Text style={styles.memberSuffix}>명</Text>}
+                style={styles.memberInput}
+              />
             </View>
           )}
         />
@@ -143,20 +132,7 @@ const styles = StyleSheet.create({
   },
   memberInputWrap: {
     flex                : 1,
-    height              : 50,
-    gap                 : 6,
-  },
-  memberInputContainer: {
-    flexDirection       : 'row',
-    alignItems          : 'center',
-    borderWidth         : 1,
-    borderColor         : COLOR.COMM_GRAY_6,
-    borderRadius        : 12,
-    paddingHorizontal   : 16,
-    height              : 50,
-  },
-  memberInputContainerError: {
-    borderColor         : COLOR.TEXT_WARN,
+    minHeight           : 50,
   },
   memberInput: {
     flex                : 1,
@@ -173,10 +149,5 @@ const styles = StyleSheet.create({
   memberRangeText: {
     fontSize            : 16,
     color               : COLOR.TEXT_DEFAULT,
-  },
-  errorText: {
-    fontSize            : 12,
-    color               : COLOR.TEXT_WARN,
-    marginStart         : 4,
   },
 });

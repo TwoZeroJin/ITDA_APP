@@ -82,7 +82,7 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
           onPress={() => router.navigate('/meet')}
         >
           <Text style={styles.moreButtonText}>더보기</Text>
-          <IconArrowRightMore width={12} height={12} />
+          <IconArrowRightMore width={7} height={10} />
         </TouchableOpacity>
       </View>
     </View>
@@ -108,9 +108,11 @@ const styles = StyleSheet.create({
     marginTop         : 12,
   },
   emptyText: {
-    marginTop         : 16,
+    marginTop         : 30,
+    marginBottom      : 10,
     fontSize          : 14,
     color             : COLOR.TEXT_GRAY,
+    alignSelf         : 'center',
   },
   moreButton: {
     justifyContent    : 'center',
@@ -123,9 +125,9 @@ const styles = StyleSheet.create({
     height            : 50,
   },
   moreButtonText: {
-    fontSize          : 16,
-    fontWeight        : 'bold',
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
     marginEnd         : 5,
-    color             : COLOR.COMM_GRAY_2,
+    color             : COLOR.TEXT_DEFAULT,
   },
 });

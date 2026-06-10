@@ -9,17 +9,21 @@ import {  useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
 import IconCalendar from '@/assets/images/icon_calendar.svg';
+import IconPencil from '@/assets/images/icon_pencil.svg';
+import IconInfoMark from '@/assets/images/icon_info_mark.svg';
+import IconMembers from '@/assets/images/icon_members.svg';
+import IconMarker from '@/assets/images/icon_marker.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
 import DividingLine from "@/components/DividingLine";
 import ProfileIcon from "@/components/ProfileIcon";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import CommReviewList from '@/components/CommReviewList';
 import DropdownModal from '@/components/modal/DropdownModal';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useReviewList } from "@/hooks/queries/useCommunity";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import { router as expoRouter } from 'expo-router';
 import { showToast } from "@/utils/commToast";
+import DetailInfoRow from "@/components/comm/DetailInfoRow";
 
 export default function MeetDetailPage() {
   const meetApply = useMeetApply();
@@ -261,7 +265,7 @@ export default function MeetDetailPage() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
       >
-        {/* 1. 이미지 캐러슬---------------------------- */}
+        {/* 이미지 캐러슬 */}
         <View>
           {/* onPressImage={(i) => console.log("pressed image", i)}  추후 이미지 수정 기능 추가 시 활용 */}
           <ImageCarousel
@@ -270,13 +274,12 @@ export default function MeetDetailPage() {
           />
         </View>
 
-        {/* 2. 소셜링 정보---------------------------- */}
+        {/* 소셜링 정보 */}
         <View style={styles.commContainer}>
           {/* 소셜링 라벨 */}
           <View style={styles.labelContainer}>
               <CommLabel variant="social" />
-              {/* 추후 넘긴 카테고리 값으로 세팅 */}
-              <CommLabel variant="category" category="게임" />
+              <CommLabel variant="category" category={meetInfo?.meet_subj_name} />
           </View>
 
           {/* 소셜링 제목 */}
@@ -292,8 +295,8 @@ export default function MeetDetailPage() {
         </View>
         
         <DividingLine />
-        {/* 3. 모임장 및 참여 멤버---------------------------- */}
-        {/* 모임장 소개 섹션 */}
+
+        {/* 모임장 및 참여 멤버 */}
         <View style={styles.membersContainer}>
           {/* 모임장 소개 섹션 */}
           <View style={styles.membersSection}>
@@ -307,7 +310,7 @@ export default function MeetDetailPage() {
             </View>
           </View>
 
-          {/* 참여 멤버 섹션: 하단 여백을 제거하여 위쪽 여백과 균형을 맞춤 */}
+          {/* 참여 멤버 섹션 */}
           <View style={[styles.membersSection, { marginBottom: 0 }]}> 
             <Text style={styles.membersSectionTitle}>참여 멤버</Text>
             <FlatList
@@ -326,27 +329,26 @@ export default function MeetDetailPage() {
           </View>
         </View>
 
-
-        {/* 4. 소셜링 상세 소개---------------------------- */}
         <DividingLine />
+
+        {/* 소셜링 상세 소개 */}
         <View style={styles.meetDetailContainer}>
           {/* 상단 타이틀 */}
           <Text style={styles.meetDetailSubTitle}>소셜링 상세 소개</Text>
           <Text style={styles.meetDetailMainTitle}>모임에 대해 자세히 알려드려요.</Text>
-
           {/* 정보 박스 */}
           <View style={styles.meetDetailInfoBox}>
-            <InfoRow icon="pencil-outline" text={`취미 > ${meetInfo?.meet_subj || ''}`} />
-            <InfoRow icon="information-outline" text={`타입 > ${meetInfo?.meet_type || ''}`} />
-            <InfoRow icon="account-group-outline" text={`인원 > ${meetInfo?.meet_min || ''} ~ ${meetInfo?.meet_max || ''}`} />
-            <InfoRow icon="currency-krw" text={`비용 > ${meetInfo?.fee_info || ''}`} />
-            <InfoRow icon="calendar-month-outline" text={`날짜 > ${meetInfo?.meet_datetime || ''}`} />
-            <InfoRow icon="map-marker-outline" text={`장소 > ${meetInfo?.place_name || ''}`} />
+            <DetailInfoRow icon={<IconPencil width={20} height={20} />} text={`취미 > ${meetInfo?.meet_subj || ''}`} />
+            <DetailInfoRow icon={<IconInfoMark width={20} height={20} />} text={`타입 > ${meetInfo?.meet_type || ''}`} />
+            <DetailInfoRow icon={<IconMembers width={20} height={20} />} text={`인원 > ${meetInfo?.meet_min || ''} ~ ${meetInfo?.meet_max || ''}`} />
+            <DetailInfoRow icon={<IconInfoMark width={20} height={20} />} text={`비용 > ${meetInfo?.fee_info || ''}`} />
+            <DetailInfoRow icon={<IconCalendar width={20} height={20} />} text={`날짜 > ${meetInfo?.meet_datetime || ''}`} />
+            <DetailInfoRow icon={<IconMarker width={20} height={20} />} text={`장소 > ${meetInfo?.place_name || ''}`} />
           </View>
 
           {/* 하단 지도 정보 카드 */}
           <PlaceLocationBox data={meetInfo as MeetInfo} />
-        </View>         
+        </View>
 
         {/* 장소 주소 및 지도?? */}
         {/* 6. 댓글 ??---------------------------- */}
@@ -465,14 +467,6 @@ export default function MeetDetailPage() {
   );
 }
 
-// 정보 한 줄을 렌더링하는 컴포넌트
-const InfoRow = ({ icon, text }: { icon: string; text: string }) => (
-  <View style={styles.meetDetailInfoRow}>
-    <MaterialCommunityIcons name={icon as any} size={20} color="#444" style={styles.meetDetailIcon} />
-    <Text style={styles.meetDetailInfoText}>{text}</Text>
-  </View>
-);
-
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#fff' },
   container: {
@@ -507,10 +501,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 25,
-    // paddingBottom을 추가해 ScrollView 끝에서 답답하지 않게 조절 가능합니다.
   },
   membersSection: {
-    marginBottom: 30, // 섹션 간 간격
+    marginBottom: 30,
   },
   membersSectionTitle: {
     fontSize: 16,
@@ -537,23 +530,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },  
   meetDetailInfoBox: {
-    backgroundColor: '#F5F5F5', // 연한 회색 배경
+    backgroundColor: '#F5F5F5',
     borderRadius: 15,
     padding: 20,
     marginBottom: 20,
-  },
-  meetDetailInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  meetDetailIcon: {
-    marginRight: 15,
-    width: 20,
-  },
-  meetDetailInfoText: {
-    fontSize: 16,
-    color: '#444',
   },
   reviewContainer: {
     paddingVertical: 20,
@@ -632,7 +612,7 @@ commentInputContainer: {
     color: '#333',
   },
   commentSendButton: {
-    backgroundColor: '#FF5A5F', // 이미지의 주황/빨강 버튼 색상
+    backgroundColor: '#FF5A5F',
     width: 34,
     height: 34,
     borderRadius: 17,

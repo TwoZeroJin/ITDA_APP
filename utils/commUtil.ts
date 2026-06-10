@@ -341,6 +341,11 @@ function formatRelativeTime(dateText: string): string {
   return `${Math.max(1, Math.floor(diffMs / dayMs))}일전`;
 }
 
+function formatNumberWithComma(value?: number) {
+  if (!value) return '';
+  return value.toLocaleString('ko-KR');
+}
+
 // 이미지 리스트 JSON 문자열을 FileInfo[] 타입으로 파싱하는 함수
 function parseImageList(imgListJson?: string): FileInfo[] {
   if (!imgListJson) {
@@ -401,4 +406,4 @@ function formatRelativeMeetDatetime(meetDatetime: string) {
   return `D-${diffDays}`;
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma };

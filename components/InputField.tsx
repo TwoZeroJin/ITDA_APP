@@ -1,5 +1,5 @@
 import { COLOR } from '@/constants';
-import React, { ForwardedRef, forwardRef, MutableRefObject, ReactNode, RefObject, useRef } from 'react';
+import React, { ForwardedRef, forwardRef, ReactNode, RefObject, useRef } from 'react';
 import { InputAccessoryView, Keyboard, Platform, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 
 interface InputFieldProps extends TextInputProps {
@@ -10,9 +10,9 @@ interface InputFieldProps extends TextInputProps {
   textArea?   : boolean;
 }
 
-const InputField = ({label, variant = "filled", error, rightChild = null, textArea = false, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
+const InputField = ({label, variant = "filled", error, rightChild = null, textArea = false, style, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
   const innerRef = useRef<TextInput>(null);
-  const accessoryIDRef = useRef(label);
+  const accessoryIDRef = useRef(label ? `input-accessory-${label}` : `input-accessory-${Math.random().toString(3)}`);
   const isIOS = Platform.OS === 'ios';
   const isTextArea = textArea || Boolean(props.multiline);
   const multilineLines = isTextArea ? (props.numberOfLines ?? 5) : 1;
@@ -33,20 +33,21 @@ const InputField = ({label, variant = "filled", error, rightChild = null, textAr
         activeOpacity={0.6}
         onPress={() => innerRef.current?.focus()} 
       >
-        <TextInput 
+        <TextInput
           ref={(node) => {
             innerRef.current = node;
             if (typeof ref === 'function') ref(node);
             else if (ref) (ref as RefObject<TextInput | null>).current = node;
           }}
           
-          {...props} 
+          {...props}
           placeholderTextColor={COLOR.TEXT_GRAY} 
           style={[
             styles.input,
             styles[`${variant}Text`],
             isTextArea && styles.multilineInput,
-            isTextArea && { height: multilineInputHeight }
+            isTextArea && { height: multilineInputHeight },
+            style,
           ]} 
           multiline={isTextArea}
           numberOfLines={isTextArea ? multilineLines : props.numberOfLines}
@@ -150,7 +151,6 @@ const styles = StyleSheet.create({
     fontSize            : 16,
     fontFamily          : 'Pretendard-Regular',
     color               : COLOR.APP_MAIN,
-    fontWeight          : '600',
   }
 });
 
