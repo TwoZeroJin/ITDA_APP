@@ -80,30 +80,31 @@ function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = fa
 
 const styles = StyleSheet.create({
   container : {
-    flexDirection   : "row",
-    alignItems      : "center",
-    height          : 50,
-    backgroundColor : COLOR.COMM_WHITE
+    flexDirection     : "row",
+    alignItems        : "center",
+    height            : 50,
+    backgroundColor   : COLOR.COMM_WHITE
   },
   right: {
-    marginStart     : "auto",
-    marginEnd       : 12,
+    marginStart       : "auto",
+    marginEnd         : 12,
   },
    titleWrapper: {
-    position        : 'absolute',
-    left            : 0,
-    right           : 0,
-    top             : 5,
-    bottom          : 0,
-    justifyContent  : 'center',
-    alignItems      : 'center',
-    pointerEvents   : 'none',
+    position          : 'absolute',
+    left              : 0,
+    right             : 0,
+    top               : 5,
+    bottom            : 0,
+    justifyContent    : 'center',
+    alignItems        : 'center',
+    pointerEvents     : 'none',
   },
   title: {
-    fontSize        : 18,
-    fontFamily      : 'Pretendard-Bold',
-    color           : COLOR.COMM_BLACK,
-    width           : '70%',
+    fontSize          : 18,
+    fontFamily        : 'Pretendard-Bold',
+    color             : COLOR.COMM_BLACK,
+    width             : '70%',
+    textAlign         : 'center',
   },
   iconContainer: {
     height            : '100%',

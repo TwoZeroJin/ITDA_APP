@@ -104,9 +104,7 @@ export default function ChatListScreen() {
 
       <View style={styles.chatTextContainer}>
         <View style={styles.titleRow}>
-          <Text numberOfLines={1} style={styles.roomTitle}>
-            {item.room_name}
-          </Text>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.roomTitle}>{item.room_name}</Text>
           <Text style={styles.updatedText}>{updatedText}</Text>
         </View>
         <Text numberOfLines={1} style={styles.previewText}>

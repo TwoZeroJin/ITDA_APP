@@ -20,7 +20,6 @@ import { Keyboard, View, Text } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { COMM_STYLES } from "@/constants";
 import MemEmailInput from "@/components/inputs/MemEmailInput";
-import MemTelnoInput from "@/components/inputs/MemTelnoInput";
 import InterestCategoryInput from "@/components/inputs/InterestCategoryInput";
 
 /**

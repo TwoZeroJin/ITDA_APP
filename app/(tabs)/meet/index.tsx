@@ -8,7 +8,7 @@ import DividingLine from '@/components/DividingLine';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconFilter from '@/assets/images/icon_filter.svg';
 import { COLOR } from '@/constants';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMeetListPaging } from '@/hooks/queries/useMeet';
 import { useGroupListPaging } from '@/hooks/queries/useGroup';
@@ -32,22 +32,21 @@ export default function MeetGroupListScreen() {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchKey, setSearchKey] = useState<string>('');
   const memberLike = useMemberLike();
-  const meetQuery = useMeetListPaging({
+  const isClub = activeType === 'club';
+    const meetQuery = useMeetListPaging({
     page_no       : 0,
     page_size     : 10,
     sch_category  : selectedCategory,
     sch_text      : searchKey,
-  }, { enabled: false });
+  }, { enabled: !isClub });
   const groupQuery = useGroupListPaging({
     page_no       : 0,
     page_size     : 10,
     sch_category  : selectedCategory,
     sch_text      : searchKey,
-  }, { enabled: false });
+  }, { enabled: isClub });
 
-  const isClub = activeType === 'club';
   const currentQuery = isClub ? groupQuery : meetQuery;
-
   const listTitle = activeType === 'club' ? '전체 클럽' : '전체 소셜링';
   const emptyText = activeType === 'club' ? '등록된 클럽이 없습니다.' : '등록된 모임이 없습니다.';
 

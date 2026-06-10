@@ -11,6 +11,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
 import { useGroupCancelApply } from '@/hooks/queries/useGroup';
 import { getMemberInfo } from '@/utils/commUtil';
+import { showToast } from '@/utils/commToast';
 
 /**
  * 멤버 관리 리스트 화면
@@ -24,12 +25,17 @@ export default function MemberListScreen() {
   const [myMemId, setMyMemId] = useState<number>(0);
   const meetCancelApply = useMeetCancelApply();
   const groupCancelApply = useGroupCancelApply();
-
   const { results, refetch } = useMemberApplyList({
     target_id   : target_id ? Number(target_id) : 0,
     target_type : target_type || 'M',
     use_stat    : '1'
   });
+  const [isHostYn, setIsHostYn] = useState<'Y' | 'N'>('N');
+
+  useEffect(() => {
+    const hostMember = results.find(member => member.host_yn === 'Y');
+    setIsHostYn(hostMember?.mem_id === myMemId ? 'Y' : 'N');
+  }, [results, myMemId]);
 
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
@@ -40,48 +46,61 @@ export default function MemberListScreen() {
     fetchMyMemberInfo();
   }, []);
 
-  const handleRefresh = useCallback(async () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
     await refetch();
     setIsRefreshing(false);
-  }, [refetch]);
+  };
 
-  // 함수 메모리 관리를 위한 useCallback 사용, 승인/거절 버튼 클릭 시 호출
-  const handleConfirmPress = useCallback(async (item: MemberApply) => {
+  const handleMutationError = (error: unknown) => {
+    const message = error instanceof Error ? error.message : '요청 처리중 오류가 발생했습니다.';
+    showToast({ type: 'error', text1: message });
+  };
+
+  const handleConfirmPress = (item: MemberApply) => {
     if (target_type === 'M') {
       const body = {
         meet_id   : target_id ? Number(target_id) : 0,
         mem_id    : item.mem_id,
       } as MeetApply;
-      await meetCancelApply.mutateAsync(body);
+      meetCancelApply.mutateAsync(body, {
+        onSuccess: () => {
+          showToast({ text1: '회원을 내보냈습니다.' });
+          refetch();
+        },
+        onError: handleMutationError,
+      });
     } else if (target_type === 'G') {
       const body = {
         group_id : target_id ? Number(target_id) : 0,
         mem_id   : item.mem_id,
       } as GroupApply;
-      await groupCancelApply.mutateAsync(body);
+      groupCancelApply.mutateAsync(body, {
+        onSuccess: () => {
+          showToast({ text1: '회원을 내보냈습니다.' });
+          refetch();
+        },
+        onError: handleMutationError,
+      });
     }
-    await refetch();
-  }, [meetCancelApply, groupCancelApply, refetch]);
+  };
 
-  const handleOpenDialog = useCallback((item: MemberApply) => {
+  const handleOpenDialog = (item: MemberApply) => {
     setPendingAction({ item });
     setIsConfirmDialogVisible(true);
-  }, []);
-
-  const handleCancelConfirmDialog = useCallback(() => {
+  };
+  const handleCancelConfirmDialog = () => {
     setIsConfirmDialogVisible(false);
     setPendingAction(null);
-  }, []);
-
-  const handleDialogConfirm = useCallback(async () => {
+  };
+  const handleDialogConfirm = () => {
     if (!pendingAction) {
       return;
     }
-    await handleConfirmPress(pendingAction.item);
+    handleConfirmPress(pendingAction.item);
     setIsConfirmDialogVisible(false);
     setPendingAction(null);
-  }, [handleConfirmPress, pendingAction]);
+  };
 
   return (
     <View style={COMM_STYLES.container}>
@@ -95,7 +114,7 @@ export default function MemberListScreen() {
         onRefresh={handleRefresh}
         emptyText="참여 중인 멤버가 없습니다."
         getActions={(item) => {
-          if (item.my_yn !== 'N') {
+          if (item.my_yn === 'Y') {
             return [];
           }
 
@@ -122,7 +141,7 @@ export default function MemberListScreen() {
           ];
           
           // 내가 호스트일 경우에만 내보내기
-          if (item.host_yn === 'Y' && item.mem_id === myMemId) {
+          if (isHostYn === 'Y') {
             actions.push({
               label    : '내보내기',
               variant  : 'outline',

@@ -1,5 +1,5 @@
 import { COLOR, COMM_STYLES, COMM_CONSTANTS } from "@/constants";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
@@ -49,6 +49,11 @@ export default function DetailViewScreen() {
     sch_keyword: String(meetId),
   }); 
   const [errorMessage, setErrorMessage] = useState('');
+  const [applyStatus, setApplyStatus] = useState<string | undefined>(undefined);
+  
+  useEffect(() => {
+    setApplyStatus(meetInfo?.apply_stat);
+  }, [meetInfo?.apply_stat]);
 
   // 모임 삭제
   const handleDeleteSubmit = () => {
@@ -112,7 +117,8 @@ export default function DetailViewScreen() {
           setErrorMessage(result.ext_msg? result.ext_msg : result.ret_msg);
           setActiveDialog('error');
         }else{
-          Alert.alert('모임에 신청되었습니다.');   
+          Alert.alert('모임에 신청되었습니다.');
+          setApplyStatus('0');
           refetchMemberList(); //참여멤버 재조회
         }
         
@@ -135,6 +141,7 @@ export default function DetailViewScreen() {
     meetCancelApply.mutate(requestBody, {
       onSuccess: () => {
         Alert.alert('모임에 취소되었습니다.');    
+        setApplyStatus('-1');
         refetchMemberList(); //참여멤버 재조회
       },
       onError: (error) => {
@@ -199,9 +206,9 @@ export default function DetailViewScreen() {
           visible     : true,
           title       : '소셜링 가입 질문',
           content     : meetInfo?.apply_type === 'A' && meetInfo.meet_question ? meetInfo.meet_question : '이 모임에 신청하시겠어요?',
-          textInput   : meetInfo?.apply_type === 'A' && meetInfo.meet_question ? '답변을 작성해주세요.' : null,
+          textInput   : meetInfo?.apply_type === 'A' && meetInfo.meet_question ? '답변을 작성해주세요.' : undefined,
           cancelLabel : '취소',
-          confirmLabel: '완료',
+          confirmLabel: '확인',
           onCancel    : () => setActiveDialog('none'),
           onConfirm   : handleApplySubmit,
         };
@@ -211,7 +218,7 @@ export default function DetailViewScreen() {
           title       : '소셜링 참여 취소',
           content     : '이 모임에 참여를 취소하시겠어요?',
           cancelLabel : '취소',
-          confirmLabel: '완료',
+          confirmLabel: '확인',
           onCancel    : () => setActiveDialog('none'),
           onConfirm   : () => handleNotApplySubmit(),
         };
@@ -337,26 +344,26 @@ export default function DetailViewScreen() {
 
       </ScrollView>
 
-      {meetInfo?.apply_stat === '-1' && (
+      {applyStatus === '-1' && (
         <CommBottomButton
           label="신청하기"
           onPress={() => router.checkAndNavigate(() => setActiveDialog('apply'), '/meets/detailView')}
         />
       )}
-      {meetInfo?.apply_stat === '0' && (
+      {applyStatus === '0' && (
         <CommBottomButton 
           label="신청 취소하기" 
           onPress={() => setActiveDialog('cancelApply')} 
         />
       )}
-      {meetInfo?.apply_stat === '1' && (
+      {applyStatus === '1' && (
         <CommBottomButton 
           label="채팅하기" 
           onPress={() => {router.push({
           pathname: "/chats",
           params: {
-            room_id   : `${COMM_CONSTANTS.CHAT_TYPE_MEET}_${meetInfo.meet_id}`,
-            room_name : meetInfo.meet_name,
+            room_id   : `${COMM_CONSTANTS.CHAT_TYPE_MEET}_${meetInfo?.meet_id}`,
+            room_name : meetInfo?.meet_name,
             room_type : COMM_CONSTANTS.CHAT_TYPE_MEET,
           },
         })}} />

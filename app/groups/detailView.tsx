@@ -1,5 +1,5 @@
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
@@ -41,6 +41,11 @@ export default function GroupDetailViewScreen() {
   const { results : memberList, refetch: refetchMemberList, isLoading : isMemberLoading, isError : isMemberError } = useGroupMemberList(Number(groupId));  
   const [errorMessage, setErrorMessage] = useState('');
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
+  const [applyStatus, setApplyStatus] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setApplyStatus(groupInfo?.apply_stat);
+  }, [groupInfo?.apply_stat]);
 
   const handleDeleteSubmit = () => {
     setActiveDialog('none');
@@ -100,15 +105,15 @@ export default function GroupDetailViewScreen() {
       use_stat: (answer.trim() !== '' && groupInfo?.apply_type === 'A') ? '0' : '1',
     } as GroupApply;
 
-    // 실제 신청 로직은 여기에 추가 (API 호출 등)
     groupApply.mutate(requestBody, {
       onSuccess: (result) => {
         if(result.ret_code != 200){
           setErrorMessage(result.ext_msg? result.ext_msg : result.ret_msg);
           setActiveDialog('error');
         }else{
-          Alert.alert('모임에 신청되었습니다.');   
-          refetchMemberList(); //참여멤버 재조회  
+          Alert.alert('클럽에 신청되었습니다.');   
+          setApplyStatus('0');
+          refetchMemberList();
         }
         
       },
@@ -129,8 +134,9 @@ export default function GroupDetailViewScreen() {
 
     groupCancelApply.mutate(requestBody, {
       onSuccess: () => {
-        Alert.alert('모임에 취소되었습니다.');    
-        refetchMemberList(); //참여멤버 재조회
+        Alert.alert('클럽에 취소되었습니다.');    
+        setApplyStatus('-1');
+        refetchMemberList();
       },
       onError: (error) => {
         setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
@@ -194,7 +200,7 @@ export default function GroupDetailViewScreen() {
           visible     : true,
           title       : '클럽 가입 질문',
           content     : groupInfo?.apply_type === 'A' && groupInfo.group_question ? groupInfo.group_question : '이 모임에 신청하시겠어요?',
-          textInput   : groupInfo?.apply_type === 'A' && groupInfo.group_question ? '답변을 작성해주세요.' : null,
+          textInput   : groupInfo?.apply_type === 'A' && groupInfo.group_question ? '답변을 작성해주세요.' : undefined,
           cancelLabel : '취소',
           confirmLabel: '완료',
           onCancel    : () => setActiveDialog('none'),
@@ -331,26 +337,26 @@ export default function GroupDetailViewScreen() {
         </View>         
       </ScrollView>
 
-      {groupInfo?.apply_stat === '-1' && (
+      {applyStatus === '-1' && (
         <CommBottomButton 
           label="신청하기" 
           onPress={() => router.checkAndNavigate(() => setActiveDialog('apply'), '/groups/groupDetailPage')}
         />
       )}
-      {groupInfo?.apply_stat === '0' && (
+      {applyStatus === '0' && (
         <CommBottomButton 
           label="신청 취소하기" 
           onPress={() => setActiveDialog('cancelApply')} 
         />
       )}
-      {groupInfo?.apply_stat === '1' && (
+      {applyStatus === '1' && (
         <CommBottomButton 
           label="채팅하기" 
           onPress={() => {router.push({
           pathname: "/chats",
           params: {
-            room_id   : `${COMM_CONSTANTS.CHAT_TYPE_GROUP}_${groupInfo.group_id}`,
-            room_name : groupInfo.group_name,
+            room_id   : `${COMM_CONSTANTS.CHAT_TYPE_GROUP}_${groupInfo?.group_id}`,
+            room_name : groupInfo?.group_name,
             room_type : COMM_CONSTANTS.CHAT_TYPE_GROUP,
           },
         })}} />

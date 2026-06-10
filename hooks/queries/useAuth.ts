@@ -229,13 +229,31 @@ function useCheckDup() {
 function useAuth() {
   const loginMutation     = useLogin();
   const signupMutation    = useSignup();
+  const QUERY_KEYS_TO_RESET = [
+    QUERY_KEYS.USER,
+    QUERY_KEYS.MAIN,
+    QUERY_KEYS.MEMBER,
+    QUERY_KEYS.PUSH,
+    QUERY_KEYS.CHAT,
+    QUERY_KEYS.MEET,
+    QUERY_KEYS.GROUP,
+    QUERY_KEYS.COMMUNITY,
+    QUERY_KEYS.FEEDBACK,
+    QUERY_KEYS.NOTICE,
+  ];
 
   // 토큰 및 회원정보 삭제
   const logout = async () => {
     await memberLogout();
     await deleteSecureStoreForMember();
     MqttUtil.disconnect();
-    queryClient.resetQueries({ queryKey: [QUERY_KEYS.USER]});
+
+    await Promise.all(
+      QUERY_KEYS_TO_RESET.map((queryKey) =>
+        queryClient.removeQueries({ queryKey: [queryKey], exact: false })
+      )
+    );
+
     router.replace("/" as any);
   }
 

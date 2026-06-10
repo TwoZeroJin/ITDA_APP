@@ -1,12 +1,13 @@
 import { COLOR } from '@/constants';
 import React, { ReactNode, useState } from 'react';
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import InputField from '../InputField';
 
 interface CustomDialogProps {
   visible       : boolean;
   title?        : string;
   content       : string;
-  textInput?    : string| null |undefined;
+  textInput?    : string;
   onConfirm?    : (answer: string) => void;
   onCancel?     : () => void;
   child?        : ReactNode;
@@ -30,16 +31,14 @@ function CustomDialog({ visible, title, content, textInput, onConfirm, onCancel,
             {title && <Text style={styles.titleText}>{title}</Text>}
             <Text style={styles.contentText}>{content}</Text>
 
-            {/* 변경: JSX 내부에서는 삼항 연산자나 &&를 사용해 조건부 렌더링을 해야 합니다 */}
-            {textInput !== undefined && textInput !== null && (
-              <TextInput
-                style={styles.textInput}
+            {textInput && (
+              <InputField
                 placeholder={textInput}
-                placeholderTextColor="#B0B0B0"
                 value={answer}
                 onChangeText={setAnswer}
                 multiline={true}
                 maxLength={100}
+                numberOfLines={2}
               />
             )}
 
@@ -110,6 +109,7 @@ const styles = StyleSheet.create({
     fontSize          : 24,
     fontFamily        : "Pretendard-Bold",
     alignSelf         : "center",
+    marginBottom      : 10,
   },
   buttonContainer: {
     flexDirection     : "row",
@@ -133,20 +133,6 @@ const styles = StyleSheet.create({
     color             : COLOR.COMM_WHITE,
     alignSelf         : "center",
   },
-  textInput: {
-    width             : '100%',
-    height            : 50,
-    backgroundColor   : '#FFFFFF',
-    borderWidth       : 1,
-    borderColor       : '#E5E5EA',
-    borderRadius      : 12,
-    paddingHorizontal : 16,
-    paddingTop        : 12,
-    paddingBottom     : 12,
-    marginTop         : 12,
-    fontSize          : 15,
-    color             : '#1C1C1E',
-  },  
 });
 
 export default CustomDialog;
