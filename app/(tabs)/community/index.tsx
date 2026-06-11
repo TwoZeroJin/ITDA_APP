@@ -17,7 +17,7 @@ export default function CommunityListScreen() {
   const hasHandledInitialLoadingRef = useRef(false);
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useReviewList({
     page_no       : 0,
-    page_size     : 5,
+    page_size     : 10,
     sch_condition : activeType, 
     sch_keyword   : String(3) 
   });
@@ -43,7 +43,7 @@ export default function CommunityListScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await refetch(); 
+    await refetch();
     setRefreshing(false);
   }, [refetch]);
   const loadMore = () => {

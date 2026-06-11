@@ -126,17 +126,21 @@ export default function CommunityFeed({ data }: communityFeedProps) {
 
         {/* 이미지 슬라이더 영역 */}
         {imageList.length > 0 && (
-          <ImageCarousel
-            images={imageList?.length ? imageList.map((file) => file.file_path) : []}
-            height={390}
-          />
+          <View style={styles.commMargin}>
+            <ImageCarousel
+              images={imageList?.length ? imageList.map((file) => file.file_path) : []}
+              height={390}
+            />
+          </View>
         )}
         
-        {/* 피드에 모임정보가  존재할 때만 컴포넌트를 렌더링 */}
-        {data.memMeetListVO && <CommCard item={data.memMeetListVO} onLikePress={(item) => handleLikePress(item as MeetInfo)} backgroundColor="grey"/>}
-
-        {/* 하단 지도 정보 카드 */}
-        <PlaceLocationBox data={data.memMeetListVO as MeetInfo}/>
+        {/* 피드에 모임정보가 존재할 때만 컴포넌트를 렌더링 */}
+        {data.memMeetListVO && 
+          <View style={styles.commMargin}>
+            <CommCard item={data.memMeetListVO} onLikePress={(item) => handleLikePress(item as MeetInfo)} backgroundColor="grey"/>
+            <PlaceLocationBox data={data.memMeetListVO as MeetInfo}/>
+          </View>
+        }
 
         {/* 본문 영역 */}
         <View style={styles.feedContent}>
@@ -148,25 +152,25 @@ export default function CommunityFeed({ data }: communityFeedProps) {
             {data.review_content}
           </Text>
 
-          {/* '더보기' 버튼: 2줄 이상일 가능성이 있고 아직 펼쳐지지 않았을 때만 표시 */}
-          {!isExpanded && (
-            <TouchableOpacity 
-              style={styles.moreButton}
-              onPress={() => setIsExpanded(true)}
-            >
-              <Text style={styles.moreText}>더보기</Text>
-            </TouchableOpacity>
-          )}
-
-          {/* (선택사항) '접기' 버튼이 필요하다면 아래 추가 */}
-          {isExpanded && (
-            <TouchableOpacity 
-              style={styles.moreButton}
-              onPress={() => setIsExpanded(false)}
-            >
-              <Text style={styles.moreText}>접기</Text>
-            </TouchableOpacity>
-          )}
+          {data.review_content.length > 30 && 
+            (
+              !isExpanded ? (
+                <TouchableOpacity 
+                  style={styles.moreButton}
+                  onPress={() => setIsExpanded(true)}
+                >
+                  <Text style={styles.moreText}>더보기</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity 
+                  style={styles.moreButton}
+                  onPress={() => setIsExpanded(false)}
+                >
+                  <Text style={styles.moreText}>접기</Text>
+                </TouchableOpacity>
+              )
+            )
+          }
         </View>
       </View>
     </View>    
@@ -174,8 +178,8 @@ export default function CommunityFeed({ data }: communityFeedProps) {
 }
 
 const styles = StyleSheet.create({
-  imageCarousel: {
-    marginBottom:10
+  commMargin: {
+    marginBottom        : 12
   },
   feedContainer: {
     backgroundColor     : COLOR.COMM_WHITE,
@@ -184,6 +188,7 @@ const styles = StyleSheet.create({
   },
   feedCard: {
     backgroundColor     : COLOR.COMM_WHITE,
+    marginTop           : 4,
     marginBottom        : 16,
   },
   feedHeader: {
@@ -207,9 +212,8 @@ const styles = StyleSheet.create({
     marginTop           : 4,
   },
   feedContent: {
-    flexDirection       : 'row',
+    width               : '90%',
     paddingHorizontal   : 16,
-    paddingVertical     : 12,
   },
   feedText: {
     fontSize            : 16,
@@ -220,44 +224,43 @@ const styles = StyleSheet.create({
     fontSize            : 14,
     fontFamily          : 'Pretendard-Medium',
     color               : COLOR.COLOR_BABABA,
-    marginStart         : 4,
   },
   moreButton: {
-    marginTop: 4,
+    paddingVertical     : 4,
   }, 
   menuTrigger: {
-    marginLeft: 'auto',
-    padding: 4,
+    marginStart         : 'auto',
+    padding             : 4,
   },
   menuPopup: {
-    position: 'absolute',
-    top: 45,
-    right: 16,
-    backgroundColor: COLOR.COMM_WHITE,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: COLOR.COMM_GRAY_4,
-    width: 80,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    zIndex: 100,
+    position            : 'absolute',
+    top                 : 45,
+    right               : 16,
+    backgroundColor     : COLOR.COMM_WHITE,
+    borderRadius        : 8,
+    borderWidth         : 1,
+    borderColor         : COLOR.COMM_GRAY_4,
+    width               : 80,
+    elevation           : 5,
+    shadowColor         : '#000',
+    shadowOffset        : { width: 0, height: 2 },
+    shadowOpacity       : 0.2,
+    shadowRadius        : 4,
+    zIndex              : 100,
   },
   menuItem: {
-    paddingVertical: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingVertical     : 10,
+    alignItems          : 'center',
+    justifyContent      : 'center',
   },
   menuText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: COLOR.COMM_BLACK,
+    fontSize            : 14,
+    fontWeight          : '500',
+    color               : COLOR.COMM_BLACK,
   },
   menuDivider: {
-    height: 1,
-    backgroundColor: COLOR.COMM_GRAY_4,
-    marginHorizontal: 8,
+    height              : 1,
+    backgroundColor     : COLOR.COMM_GRAY_4,
+    marginHorizontal    : 8,
   },  
 }); 

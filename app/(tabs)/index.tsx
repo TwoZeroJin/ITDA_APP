@@ -58,11 +58,8 @@ export default function HomeScreen() {
   // 위로 땡겨서 새로고침
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    try {
-      await refetch();
-    } finally {
-      setRefreshing(false);
-    }
+    await refetch();
+    setRefreshing(false);
   }, [refetch]);
 
   useEffect(() => {
