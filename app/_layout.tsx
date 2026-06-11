@@ -19,13 +19,8 @@ import * as Notifications from 'expo-notifications';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    // shouldPlaySound: true,
-    // shouldSetBadge: true,
-    // shouldShowAlert: true,
-    // shouldShowBanner: true,
-    // shouldShowList: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
     shouldShowBanner: true,
     shouldShowList: true,
   }),
@@ -140,11 +135,6 @@ const styles = StyleSheet.create({
     backgroundColor : COLOR.APP_MAIN, 
     padding         : 16, 
     borderRadius    : 16,
-  },
-  toastText: {
-    color           : 'white',
-    fontSize        : 16, 
-    fontWeight      : 'bold',
   },
   splashContainer: {
     flex            : 1,

@@ -40,7 +40,7 @@ export default function GroupCreateCategoryScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <ScrollView 
-          style={{ paddingBottom: 80 }}
+          style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
         >
           {/* 클럽 생성 타이틀 */}

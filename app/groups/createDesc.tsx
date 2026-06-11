@@ -10,6 +10,7 @@ import CommImagePicker from "@/components/comm/CommImagePicker";
 import TagInput from "@/components/inputs/TagInput";
 import GroupDescInput from "@/components/inputs/GroupDescInput";
 import GroupNameInput from "@/components/inputs/GroupNameInput";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 /**
  * 클럽 생성 - 클럽 설명 및 이미지 등록 화면
@@ -47,8 +48,7 @@ export default function GroupCreateDescScreen() {
   return (
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
-      <ScrollView 
-        style={{ paddingBottom: 80 }}
+      <KeyboardAwareScrollView 
         showsVerticalScrollIndicator={false}
       >
         {/* 클럽 생성 타이틀 */}
@@ -67,7 +67,7 @@ export default function GroupCreateDescScreen() {
           
         </View>
 
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <CommBottomButton 
         label="미리보기" 

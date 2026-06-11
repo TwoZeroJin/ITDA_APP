@@ -56,7 +56,7 @@ export default function TimeInput({ isError = false, onTimeChange, initialTimeLa
       <View style={styles.timeContainer}>
         <Text style={styles.commContainerSubTitle}>모임 시간</Text>
         <TouchableOpacity
-          style={[styles.placeInfoContainer, isError && COMM_STYLES.errorBorder]}
+          style={[COMM_STYLES.placeInfoContainer, isError && COMM_STYLES.errorBorder]}
           onPress={handleOpenTimeModal}
         >
           <IconTime width={14} height={14} />
@@ -89,16 +89,5 @@ const styles = StyleSheet.create({
     fontSize          : 14,
     color             : COLOR.TEXT_DEFAULT,
     marginTop         : 10,
-  },
-  placeInfoContainer: {
-    height            : 50,
-    borderRadius      : 12,
-    borderWidth       : 1,
-    borderColor       : COLOR.COMM_GRAY_6,
-    paddingHorizontal : 16,
-    color             : COLOR.COMM_BLACK,
-    flexDirection     : 'row',
-    alignItems        : 'center',
-    gap               : 8,
   },
 });

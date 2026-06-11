@@ -37,7 +37,7 @@ export default function DateInput({ type = 'M', isError = false, onDateChange, i
       <View style={styles.dateContainer}>
         <Text style={styles.commContainerSubTitle}>{type === 'M' ? '모임 날짜' : '모임 시작날짜'}</Text>
         <TouchableOpacity
-          style={[styles.placeInfoContainer, isError && COMM_STYLES.errorBorder]}
+          style={[COMM_STYLES.placeInfoContainer, isError && COMM_STYLES.errorBorder]}
           activeOpacity={0.6}
           onPress={() => setDateModalVisible(true)}
         >
@@ -67,16 +67,5 @@ const styles = StyleSheet.create({
     fontSize          : 14,
     color             : COLOR.TEXT_DEFAULT,
     marginTop         : 10,
-  },
-  placeInfoContainer: {
-    height            : 50,
-    borderRadius      : 12,
-    borderWidth       : 1,
-    borderColor       : COLOR.COMM_GRAY_6,
-    paddingHorizontal : 16,
-    color             : COLOR.COMM_BLACK,
-    flexDirection     : 'row',
-    alignItems        : 'center',
-    gap               : 8,
   },
 });

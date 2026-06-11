@@ -125,7 +125,7 @@ export default function GroupPlaceInput() {
 
   return (
     <>
-      <View style={styles.commContainer}>
+      <View style={COMM_STYLES.commContainer2}>
         <Controller
           name="place_type"
           control={control}
@@ -309,12 +309,6 @@ export default function GroupPlaceInput() {
 }
 
 const styles = StyleSheet.create({
-  commContainer: {
-    marginTop         : 30,
-    marginHorizontal  : 16,
-    marginBottom      : 30,
-    gap               : 16,
-  },
   placeContainer: {
     gap               : 14,
   },

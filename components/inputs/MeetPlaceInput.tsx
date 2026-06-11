@@ -109,7 +109,7 @@ export default function MeetPlaceInput() {
 
   return (
     <>
-      <View style={styles.commContainer}>
+      <View style={COMM_STYLES.commContainer2}>
         <Controller
           name="place_type"
           control={control}
@@ -155,7 +155,7 @@ export default function MeetPlaceInput() {
                 <>
                   <Text style={styles.commContainerSubTitle}>모임 장소</Text>
                   <TouchableOpacity
-                    style={[styles.placeInfoContainer, error && COMM_STYLES.errorBorder]}
+                    style={[COMM_STYLES.placeInfoContainer, error && COMM_STYLES.errorBorder]}
                     onPress={handleSelectPlacePress}
                     activeOpacity={0.6}
                   >
@@ -219,29 +219,12 @@ export default function MeetPlaceInput() {
 }
 
 const styles = StyleSheet.create({
-  commContainer: {
-    marginTop         : 30,
-    marginHorizontal  : 16,
-    marginBottom      : 30,
-    gap               : 16,
-  },
   placeContainer: {
     gap               : 14,
   },
   commContainerSubTitle: {
     fontSize          : 14,
     color             : COLOR.TEXT_DEFAULT,
-  },
-  placeInfoContainer: {
-    height            : 50,
-    borderRadius      : 12,
-    borderWidth       : 1,
-    borderColor       : COLOR.COMM_GRAY_6,
-    paddingHorizontal : 16,
-    color             : COLOR.COMM_BLACK,
-    flexDirection     : 'row',
-    alignItems        : 'center',
-    gap               : 8,
   },
   errorText: {
     fontSize          : 12,

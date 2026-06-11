@@ -9,6 +9,7 @@ import MeetNameInput from "@/components/inputs/MeetNameInput";
 import { FileInfo, MeetInfo } from "@/types";
 import MeetDescInput from "@/components/inputs/MeetDescInput";
 import CommImagePicker from "@/components/comm/CommImagePicker";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 /**
  * 모임 생성 - 모임 설명 및 이미지 등록 화면
@@ -45,9 +46,8 @@ export default function MeetCreateDescScreen() {
   return (
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
-      <ScrollView 
+      <KeyboardAwareScrollView 
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 80 }}
       >
         {/* 소셜링 생성 타이틀 */}
         <View style={COMM_STYLES.commTitleContainer}>
@@ -65,7 +65,7 @@ export default function MeetCreateDescScreen() {
           
         </View>
 
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <CommBottomButton 
         label="미리보기" 

@@ -4,16 +4,18 @@ import CommunityFeed from '@/components/CommunityFeed';
 import { COLOR } from '@/constants';
 import IconPencil from '@/assets/images/icon_community.svg';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator } from 'react-native';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useReviewList } from "@/hooks/queries/useCommunity";
 import { useAuthRouter } from '@/components/comm/AuthRoute';
+import { useLoading } from '@/contexts/LoadingContext';
 
 export default function CommunityListScreen() {
   const router = useAuthRouter();
   const [activeType, setActiveType] = useState<string>('latest');
   const [refreshing, setRefreshing] = useState(false);
-  const [myMemId, setMyMemId] = useState<number>(0);
-  const { results, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useReviewList({
+  const { setLoading } = useLoading();
+  const hasHandledInitialLoadingRef = useRef(false);
+  const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useReviewList({
     page_no       : 0,
     page_size     : 5,
     sch_condition : activeType, 
@@ -25,6 +27,19 @@ export default function CommunityListScreen() {
   //     refetch();
   //   }, [refetch])
   // );
+
+  // 초기 진입시 로딩 관리
+  useEffect(() => {
+    if (hasHandledInitialLoadingRef.current) {
+      return;
+    }
+    if (isLoading) {
+      setLoading(true);
+      return;
+    }
+    setLoading(false);
+    hasHandledInitialLoadingRef.current = true;
+  }, [isLoading, setLoading]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -51,14 +66,13 @@ export default function CommunityListScreen() {
         activeValue={activeType}
         onTabPress={setActiveType}
         rightAction={{
-          element: <IconPencil width={20} height={20} />,
+          element: <IconPencil width={22} height={22} />,
           onPress: () => router.navigate('/communities/chooseWriteType'),
         }}
       />
-
         <FlatList 
           data={results}
-          renderItem={({item}) => <CommunityFeed data={item} memId={myMemId}/>}
+          renderItem={({item}) => <CommunityFeed data={item} />}
           keyExtractor={(item) => item.review_id?.toString() || ''} 
           onRefresh={onRefresh} 
           refreshing={refreshing} 
@@ -80,10 +94,6 @@ export default function CommunityListScreen() {
 }
 
 const styles = StyleSheet.create({
-  pencilButton: {
-    paddingRight          : 16,
-    paddingBottom         : 15,
-  },
   emptyContainer: {
     alignItems            : 'center',
     justifyContent        : 'center',

@@ -1,8 +1,8 @@
-import { ApiResult, MeetReview, SearchParams, MyMeetInfo } from '@/types';
+import { ApiResult, MeetReview, SearchParams, MeetInfo } from '@/types';
 import axiosInstance from './axios';
 import { API_URL } from '@/constants';
 
-//후기 조회 
+//후기 목록
 async function reviewList(searchParams: SearchParams): Promise<ApiResult<MeetReview[]>> {
   const { data } = await axiosInstance.post(API_URL.REVIEW_LIST, searchParams);
   return data;
@@ -13,7 +13,7 @@ async function reviewInsert(body: MeetReview): Promise<ApiResult<MeetReview>> {
   return data;
 }
 //사용자가 후기 작성 가능한 신청한 모임 조회
-async function myMeetListNoReview(searchParams: SearchParams): Promise<ApiResult<MyMeetInfo[]>> {
+async function myMeetListNoReview(searchParams: SearchParams): Promise<ApiResult<MeetInfo[]>> {
   const { data } = await axiosInstance.post(API_URL.MY_MEET_LIST_NO_REVIEW, searchParams);
   return data;
 } 

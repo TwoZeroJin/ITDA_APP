@@ -8,13 +8,14 @@ import DividingLine from '@/components/DividingLine';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconFilter from '@/assets/images/icon_filter.svg';
 import { COLOR } from '@/constants';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMeetListPaging } from '@/hooks/queries/useMeet';
 import { useGroupListPaging } from '@/hooks/queries/useGroup';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import { GroupInfo, MeetInfo } from '@/types';
 import { useFocusEffect } from 'expo-router';
+import { useLoading } from '@/contexts/LoadingContext';
 
 type SortType = 'latest' | 'oldest';
 type MeetTabType = 'social' | 'club';
@@ -31,6 +32,8 @@ export default function MeetGroupListScreen() {
   const [sortType, setSortType] = useState<SortType>('latest');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchKey, setSearchKey] = useState<string>('');
+  const { setLoading } = useLoading();
+  const hasHandledInitialLoadingRef = useRef(false);
   const memberLike = useMemberLike();
   const isClub = activeType === 'club';
     const meetQuery = useMeetListPaging({
@@ -86,6 +89,19 @@ export default function MeetGroupListScreen() {
   //     meetQuery.refetch();
   //   }, [isClub, selectedCategory, searchKey, groupQuery.refetch, meetQuery.refetch])
   // );
+
+  // 초기 진입시 로딩 관리
+  useEffect(() => {
+    if (hasHandledInitialLoadingRef.current) {
+      return;
+    }
+    if (currentQuery.isLoading) {
+      setLoading(true);
+      return;
+    }
+    setLoading(false);
+    hasHandledInitialLoadingRef.current = true;
+  }, [currentQuery.isLoading, setLoading]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

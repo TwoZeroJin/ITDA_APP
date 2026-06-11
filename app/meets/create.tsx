@@ -43,12 +43,12 @@ export default function MeetCreateScreen() {
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
         {/* 소셜링 생성 타이틀 */}
-        <View style={styles.titleContainer}>
+        <View style={COMM_STYLES.titleContainer}>
           <Text style={styles.title}>{'잇다에서 함께 이어갈 모임을\n만들어주세요.'}</Text>
           <Text style={styles.subtitle}>어떤 유형의 모임인지 선택해주세요.</Text>
         </View>
 
-        <View style={styles.meetTypeContainer}>
+        <View style={COMM_STYLES.typeContainer}>
           {MEET_OPTIONS.map(({ value, title, description, color, Icon }) => {
             const isSelected = meet === value;
 
@@ -78,11 +78,6 @@ export default function MeetCreateScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    marginTop         : 12,
-    marginBottom      : 30,
-    paddingStart      : 16,
-  },
   title: {
     fontSize          : 22,
     fontWeight        : 'bold',
@@ -92,11 +87,6 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize          : 16,
     color             : COLOR.COMM_GRAY_2,
-  },
-  meetTypeContainer: {
-    marginHorizontal  : 16,
-    marginBottom      : 24,
-    gap               : 16,
   },
   meetTypeSubContainer: {
     marginStart       : 6,

@@ -106,7 +106,7 @@ export default function CommCard({ item, onLikePress, backgroundColor }: CommCar
             imageStyle={styles.image}
             onError={() => setThumbImageError(true)}
           >
-        {isLoggedIn && (
+        {isLoggedIn && onLikePress && (
           <TouchableOpacity style={styles.likeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
             {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
           </TouchableOpacity>
@@ -114,7 +114,7 @@ export default function CommCard({ item, onLikePress, backgroundColor }: CommCar
         </ImageBackground>) : (
           <View style={styles.itemImage}>
             <ImageDefault width={110} height={110} />
-            {isLoggedIn && (
+            {isLoggedIn && onLikePress && (
               <TouchableOpacity style={styles.likeBtnContainer} activeOpacity={0.6} onPress={() => onLikePress?.(item)}>
                 {item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
               </TouchableOpacity>

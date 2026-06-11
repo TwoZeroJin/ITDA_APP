@@ -33,16 +33,15 @@ export default function ChatListScreen() {
     }, [refetch]),
   );
 
+  // 초기 진입시 로딩 관리
   useEffect(() => {
     if (hasHandledInitialLoadingRef.current) {
       return;
     }
-
     if (isLoading) {
       setLoading(true);
       return;
     }
-
     setLoading(false);
     hasHandledInitialLoadingRef.current = true;
   }, [isLoading, setLoading]);

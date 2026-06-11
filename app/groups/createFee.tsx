@@ -47,10 +47,9 @@ export default function GroupCreateFeeScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`클럽 ${prevGroupInfo.group_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
-          style={{ paddingBottom: 80 }}
+          style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
           enableOnAndroid={true}
-          extraScrollHeight={24}
         >
           <View style={COMM_STYLES.detailTitleContainer}>
             <Text style={COMM_STYLES.commTitle}>{'참가비가 있다면 설정해주세요.'}</Text>

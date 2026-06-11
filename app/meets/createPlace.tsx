@@ -47,8 +47,9 @@ export default function MeetCreatePlaceScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
         <ScrollView
+          style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}>
+        >
           <View style={COMM_STYLES.detailTitleContainer}>
             <Text style={COMM_STYLES.commTitle}>{'언제 어디서 만날까요?'}</Text>
             <Text style={COMM_STYLES.commSubtitle}>{'모임을 만날 장소와 시간을 기입해 주세요.'}</Text>

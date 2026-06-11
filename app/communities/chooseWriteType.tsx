@@ -1,18 +1,9 @@
-import React, { ReactNode, useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Platform,
-} from 'react-native';
-import { useRouter, Stack } from 'expo-router';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 import IconFeed from '@/assets/images/navi_community.svg';
 import IconClub from '@/assets/images/icon_club.svg';
-
-import { COLOR, COMM_CONSTANTS } from '@/constants';
+import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import CommBottomButton from '@/components/comm/CommBottomButton';
 import CommHeader from '@/components/comm/CommHeader';
 import { SvgProps } from 'react-native-svg';
@@ -40,29 +31,24 @@ export default function chooseWriteType() {
 
   const onNext = () => {
     if (!selected) return;
-    // 1. 선택된 옵션이 '피드 작성'('feed')인 경우 이동 로직 추가
     if (selected === 'feed') {
-      // 파일 구조가 app/community/writeFeedback.tsx 인 경우 아래와 같이 경로를 지정합니다.
-      // 실제 프로젝트의 폴더 경로에 맞춰 수정해 주세요.
       router.navigate('/communities/writeFeedback'); 
     } else if (selected === 'review') {
-      // 모임 후기 클릭 시 이동할 경로가 있다면 여기에 추가
       router.navigate('/communities/chooseMeet'); 
     }    
   };
 
-
   return (
-    <View style={styles.container}>
+    <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="커뮤니티 작성"/>
-        <View style={styles.meetTypeContainer}>
+        <View style={[COMM_STYLES.typeContainer, { marginBottom: 20 }]}>
            {OPTIONS.map(opt => {
              const active = selected === opt.key;
              return (
               <TouchableOpacity style={[styles.meetContainer, active && styles.meetSelected]}
                 key={opt.key}
                 onPress={() => setSelected(opt.key)}
-                activeOpacity={0.85}>
+                activeOpacity={0.6}>
                   <View style={[styles.iconBox]}><opt.icon width={20} color={active ? COLOR.COMM_WHITE : COLOR.COMM_GRAY_7}/></View>
                 <View style={styles.meetTypeSubContainer}>
                   <Text style={[styles.meetTypeTitle, active && styles.meetSelectedText]}>{opt.title}</Text>
@@ -81,17 +67,6 @@ export default function chooseWriteType() {
 }
 
 const styles = StyleSheet.create({
-
-  container: {
-    flex: 1,
-    backgroundColor: COLOR.COMM_WHITE,
-  },
-  meetTypeContainer: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-    marginTop: 24,
-    gap: 16,
-  },
   meetContainer: {
     flexDirection: 'row',
     alignItems: 'center',

@@ -239,12 +239,11 @@ interface MeetReview {
   mem_nick        : string;
   mem_image_url   : string;
   mem_id          : number;
+  my_yn           : string;
   reg_sdate       : string;
-  mod_sdate       : string;
-  use_stat        : string;
   thumb_url?      : string;
   memMeetListVO?  : MeetInfo;
-  fileInfoVO?     : FileInfo[];
+  img_list?       : FileInfo[];
 }
 
 /**

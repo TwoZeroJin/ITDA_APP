@@ -13,6 +13,7 @@ import ImageCarousel from "@/components/comm/ImageCarousel";
 import { useMainData } from '@/hooks/queries/useMain';
 import DividingLine from '@/components/DividingLine';
 import SearchInput from '@/components/SearchInput';
+import { useLoading } from '@/contexts/LoadingContext';
 
 /**
  * 메인 화면
@@ -23,13 +24,28 @@ export default function HomeScreen() {
   const [schText, setSchText] = useState('');
   const [schCategory, setSchCategory] = useState('');
   const isFirstFilterRender = useRef(true);
-  const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, hotGroupList, recommendGroupList, refetch } = useMainData(schCategory, schText);
+  const { setLoading } = useLoading();
+  const hasHandledInitialLoadingRef = useRef(false);
+  const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, hotGroupList, recommendGroupList, isLoading, refetch } = useMainData(schCategory, schText);
   // 화면 재진입시 재조회
   // useFocusEffect(
   //   useCallback(() => {
   //     refetch();
   //   }, [refetch])
   // );
+
+  // 초기 진입시 로딩 관리
+  useEffect(() => {
+    if (hasHandledInitialLoadingRef.current) {
+      return;
+    }
+    if (isLoading) {
+      setLoading(true);
+      return;
+    }
+    setLoading(false);
+    hasHandledInitialLoadingRef.current = true;
+  }, [isLoading, setLoading]);
 
   const handleSearchKey = useCallback((keyword: string) => {
     setSchText(keyword);

@@ -237,6 +237,17 @@ const COMM_STYLES = StyleSheet.create({
   errorBorder: {
     borderColor         : COLOR.TEXT_WARN,
   },
+  //
+  titleContainer: {
+    marginTop         : 12,
+    marginBottom      : 24,
+    paddingStart      : 16,
+  },
+  typeContainer: {
+    marginHorizontal  : 16,
+    marginBottom      : 24,
+    gap               : 16,
+  },
   // 소셜링/클럽 생성시 주의 사항 스타일
   infoContainer: {
     marginTop           : 10,
@@ -320,6 +331,12 @@ const COMM_STYLES = StyleSheet.create({
     marginBottom        : 30,
     gap                 : 16,
   },
+  commContainer2: {
+    marginTop           : 30,
+    marginHorizontal    : 16,
+    marginBottom        : 30,
+    gap                 : 16,
+  },
   commContainerTitle: {
     fontSize            : 24,
     fontFamily          : 'Pretendard-Bold',
@@ -330,6 +347,17 @@ const COMM_STYLES = StyleSheet.create({
     marginTop           : 12,
     marginBottom        : 4,
     gap                 : 6,
+  },
+  placeInfoContainer: {
+    height            : 50,
+    borderRadius      : 12,
+    borderWidth       : 1,
+    borderColor       : COLOR.COMM_GRAY_6,
+    paddingHorizontal : 16,
+    color             : COLOR.COMM_BLACK,
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    gap               : 8,
   },
   contentInfoText: {
     fontSize            : 16,

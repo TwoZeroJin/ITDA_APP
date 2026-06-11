@@ -47,8 +47,8 @@ export default function MeetCreateFeeScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
         <KeyboardAwareScrollView
+          style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}
           enableOnAndroid={true}
         >
           <View style={COMM_STYLES.detailTitleContainer}>

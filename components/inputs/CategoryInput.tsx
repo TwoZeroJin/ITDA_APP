@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { CodeInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
 import React, { useEffect, useState } from 'react';
@@ -24,7 +24,7 @@ export default function CategoryInput({ name }: CategoryInputProps) {
   }, []);
 
   return (
-    <View style={styles.commContainer}>
+    <View style={COMM_STYLES.commContainer2}>
       <Controller
         name={name as Path<FieldValues>}
         control={control}
@@ -51,12 +51,6 @@ export default function CategoryInput({ name }: CategoryInputProps) {
 }
 
 const styles = StyleSheet.create({
-  commContainer: {
-    marginTop           : 30,
-    marginHorizontal    : 16,
-    marginBottom        : 30,
-    gap                 : 16,
-  },
   categoryContainer: {
     flexDirection       : 'row',
     flexWrap            : 'wrap',

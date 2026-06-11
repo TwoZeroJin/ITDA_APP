@@ -40,8 +40,8 @@ export default function MeetCreateCategoryScreen() {
       <View style={COMM_STYLES.container}>
         <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`모임 ${prevMeetInfo.meet_id ? '수정' : '생성'}`}/>
         <ScrollView
+          style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 80 }}
         >
           <View style={COMM_STYLES.commTitleContainer}>
             <Text style={COMM_STYLES.commTitle}>{'만남 주제를 선택해볼까요?'}</Text>
