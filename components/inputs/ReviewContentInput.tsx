@@ -21,7 +21,7 @@ function ReviewContentInput() {
       render={({field: {ref, onChange, value}, fieldState: {error}}) => (
         <InputField
           ref={ref}
-          label="후기 작성" 
+          label="후기 내용" 
           placeholder="후기 내용을 입력해 주세요.(10글자 이상)"
           inputMode='text'
           autoCapitalize='none'

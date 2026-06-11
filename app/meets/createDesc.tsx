@@ -62,9 +62,7 @@ export default function MeetCreateDescScreen() {
             <CommImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
             {/* <TagInput /> */}
           </FormProvider>
-          
         </View>
-
       </KeyboardAwareScrollView>
 
       <CommBottomButton 

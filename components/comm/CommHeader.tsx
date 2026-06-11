@@ -23,7 +23,7 @@ interface CommHeaderProps {
   onPressDetail?  : () => void;
 }
 
-function CommHeader({isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, isDetail = false, title, onPressDetail}: CommHeaderProps) {
+function CommHeader({ isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, isDetail = false, title, onPressDetail }: CommHeaderProps) {
   const authRouter = useAuthRouter();
   const [notiCount, setNotiCount] = useState(0);
 

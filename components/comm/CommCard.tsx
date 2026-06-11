@@ -15,9 +15,10 @@ import { router, usePathname } from 'expo-router';
 let cachedIsLoggedIn: boolean | null = null;
 
 interface CommCardProps {
-  item: MeetInfo | GroupInfo;
-  onLikePress?: (item: MeetInfo | GroupInfo) => void;
-  backgroundColor?: string;
+  item              : MeetInfo | GroupInfo;
+  onLikePress?      : (item: MeetInfo | GroupInfo) => void;
+  backgroundColor?  : string;
+  preventEvt?       : boolean;
 }
 
 function isMeetItem(item: MeetInfo | GroupInfo): item is MeetInfo {
@@ -27,7 +28,7 @@ function isMeetItem(item: MeetInfo | GroupInfo): item is MeetInfo {
 /**
  * 공통 아이템 카드 컴포넌트
  */
-export default function CommCard({ item, onLikePress, backgroundColor }: CommCardProps) {
+export default function CommCard({ item, onLikePress, backgroundColor, preventEvt = false }: CommCardProps) {
   const [thumbImageError, setThumbImageError] = useState(false);
   const [profileImageError, setProfileImageError] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(cachedIsLoggedIn ?? false);
@@ -96,7 +97,7 @@ export default function CommCard({ item, onLikePress, backgroundColor }: CommCar
     <TouchableOpacity 
       style={[styles.itemContainer, { backgroundColor: dynamicBackgroundColor }]}
       activeOpacity={0.6}
-      onPress={movePage}
+      onPress={preventEvt ? undefined : movePage}
     >
       <View>
         {imageSource ? (

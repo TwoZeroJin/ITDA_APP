@@ -19,7 +19,6 @@ export default function GroupCreateDescScreen() {
   const prevGroupInfo = useLocalSearchParams();
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>([]);
 
-  // 폼 관리를 위한 useForm 훅 초기화
   const formValues = useForm<GroupInfo>({
     defaultValues: {
       group_name: prevGroupInfo.group_name as string || undefined,

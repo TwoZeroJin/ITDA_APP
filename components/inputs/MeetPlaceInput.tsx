@@ -147,8 +147,6 @@ export default function MeetPlaceInput() {
                   if (!value?.trim()) {
                     return '모임 장소를 선택해 주세요.';
                   }
-
-                  return true;
                 },
               }}
               render={({ fieldState: { error } }) => (

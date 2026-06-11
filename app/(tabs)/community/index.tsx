@@ -54,7 +54,7 @@ export default function CommunityListScreen() {
 
   const tabs: Array<{ label: string; value: string }> = [
     { label: '최신', value: 'latest' },
-    { label: '모임 후기', value: 'meet_review' },
+    { label: '모임 후기', value: 'review' },
     { label: '내가 쓴 글', value: 'mypost' },
   ];
   
