@@ -125,7 +125,10 @@ interface MemberInfo {
  */
 interface MemberDetail extends MemberInfo {
   upcoming_meet_list?   : MeetInfo[];
-  meet_history_list?    : MeetInfo[];
+  my_meet_list?         : MeetInfo[];
+  apply_meet_list?      : MeetInfo[];
+  my_group_list?        : GroupInfo[];
+  apply_group_list?     : GroupInfo[];
   review_list?          : MeetReview[];
 }
 

@@ -52,6 +52,13 @@ export default function MyPageLayout() {
           }}
         />
         <Stack.Screen
+          name="historyList"
+          options={{
+            title: "내가 만든/참여한 소셜링/클럽 목록",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="notiList"
           options={{
             title: "알림 리스트",

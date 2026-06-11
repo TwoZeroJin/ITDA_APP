@@ -31,7 +31,10 @@ function useMemberDetail() {
     return {
         ...query,
         upcomingMeetList    : query.data?.data?.upcoming_meet_list ?? [],
-        newClassList        : query.data?.data?.meet_history_list ?? [],
+        myMeetList          : query.data?.data?.my_meet_list ?? [],
+        applyMeetList       : query.data?.data?.apply_meet_list ?? [],
+        myGroupList         : query.data?.data?.my_group_list ?? [],
+        applyGroupList      : query.data?.data?.apply_group_list ?? [],
         reviewList          : query.data?.data?.review_list ?? [],
     };
 }

@@ -6,7 +6,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import CommFloatingButton from '@/components/comm/CommFloatingButton';
 import CommCategoryList from '@/components/comm/CommCategoryList';
-import CommRcmdMeetList from '@/components/comm/CommRcmdMeetList';
 import CommUpcomingMeetList from '@/components/CommUpcomingMeetList';
 import CommReviewList from '@/components/CommReviewList';
 import ImageCarousel from "@/components/comm/ImageCarousel";
@@ -14,6 +13,7 @@ import { useMainData } from '@/hooks/queries/useMain';
 import DividingLine from '@/components/DividingLine';
 import SearchInput from '@/components/SearchInput';
 import { useLoading } from '@/contexts/LoadingContext';
+import CommHorizontalList from '@/components/comm/CommHorizontalList';
 
 /**
  * 메인 화면
@@ -23,7 +23,6 @@ export default function HomeScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [schText, setSchText] = useState('');
   const [schCategory, setSchCategory] = useState('');
-  const isFirstFilterRender = useRef(true);
   const { setLoading } = useLoading();
   const hasHandledInitialLoadingRef = useRef(false);
   const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, hotGroupList, recommendGroupList, isLoading, refetch } = useMainData(schCategory, schText);
@@ -71,11 +70,6 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
-    if (isFirstFilterRender.current) {
-      isFirstFilterRender.current = false;
-      return;
-    }
-
     refetch();
   }, [schCategory, schText, refetch]);
   
@@ -147,7 +141,7 @@ export default function HomeScreen() {
         <DividingLine />
 
         {/* 추천 소셜링 섹션 */}
-        <CommRcmdMeetList sections={recommendSections} />
+        <CommHorizontalList sections={recommendSections} />
 
         <DividingLine />
 

@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import CommHeader from "@/components/comm/CommHeader";
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, RefreshControl } from "react-native";
 import { COLOR, COMM_STYLES } from "@/constants";
 import MemDefault from '@/assets/images/icon_mem_default.svg';
 import IconPencil from '@/assets/images/icon_pencil.svg';
@@ -12,6 +12,9 @@ import CommUpcomingMeetList from "@/components/CommUpcomingMeetList";
 import { useMemberDetail } from "@/hooks/queries/useMember";
 import CommReviewList from "@/components/CommReviewList";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
+import { useLoading } from "@/contexts/LoadingContext";
+import { CategoryTab } from "@/components/CategoryTab";
+import CommHorizontalList from "@/components/comm/CommHorizontalList";
 
 /**
  * 마이페이지 - 내 정보 화면
@@ -19,8 +22,11 @@ import { useAuthRouter } from "@/components/comm/AuthRoute";
 export default function MyPageScreen() {
   const router = useAuthRouter();
   const [memberInfo, setMemberInfo] = useState<MemberInfo>();
+  const [refreshing, setRefreshing] = useState(false);
+  const { setLoading } = useLoading();
+  const hasHandledInitialLoadingRef = useRef(false);
   const [interestCategories, setInterestCategories] = useState<{ label: string; id: string }[]>([]);
-  const { upcomingMeetList, newClassList, reviewList } = useMemberDetail();
+  const { upcomingMeetList, myMeetList, myGroupList, applyMeetList, applyGroupList, reviewList, isLoading, refetch } = useMemberDetail();
   const profileImageUrl = memberInfo?.mem_image_url;
 
   const fetchMyMemberInfo = useCallback(async () => {
@@ -51,15 +57,68 @@ export default function MyPageScreen() {
     }, [fetchMyMemberInfo])
   );
 
+  // 초기 진입시 로딩 관리
+  useEffect(() => {
+    if (hasHandledInitialLoadingRef.current) {
+      return;
+    }
+    if (isLoading) {
+      setLoading(true);
+      return;
+    }
+    setLoading(false);
+    hasHandledInitialLoadingRef.current = true;
+  }, [isLoading, setLoading]);
+
+  // 위로 땡겨서 새로고침
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
+
+  const recommendSections = [
+    {
+      key       : 'myMeet',
+      title     : '내가 만든 소셜링',
+      subTitle  : '내가 만든 소셜링이에요.',
+      data      : myMeetList,
+    },
+    {
+      key       : 'applyMeet',
+      title     : '내가 참여한 소셜링',
+      subTitle  : '내가 참여한 소셜링이에요.',
+      data      : applyMeetList,
+    },
+    {
+      key       : 'myGroup',
+      title     : '내가 만든 클럽',
+      subTitle  : '내가 만든 클럽이에요.',
+      data      : myGroupList,
+    },
+    {
+      key       : 'applyGroup',
+      title     : '내가 참여한 클럽',
+      subTitle  : '내가 참여한 클럽이에요.',
+      data      : applyGroupList,
+    },
+  ];
+
   return (
-    <View style={COMM_STYLES.container}>
+    <View style={{ flex: 1 }}>
       <CommHeader isNoti={false} isSetting={true} isLike={false} />
 
       <ScrollView 
         contentContainerStyle={styles.content} 
         showsVerticalScrollIndicator={false}
-        bounces={false}
+        bounces={true}
         overScrollMode="never"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+          />
+        }
       >
         {/* 프로필 섹션 */}
         <View style={styles.profileContainer}>
@@ -87,9 +146,11 @@ export default function MyPageScreen() {
           <View style={styles.churchTeamChip}>
             <Text style={styles.churchTeamChipText}>{memberInfo?.mem_church_nm || '한성교회'}</Text>
           </View>
-          <View style={styles.churchTeamChip}>
-            <Text style={styles.churchTeamChipText}>{memberInfo?.mem_church_tm_nm || '기회팀'}</Text>
-          </View>
+          {memberInfo?.mem_church_tm_nm && (
+            <View style={styles.churchTeamChip}>
+              <Text style={styles.churchTeamChipText}>{memberInfo?.mem_church_tm_nm}</Text>
+            </View>
+          )}
         </View>
 
         <DividingLine />
@@ -121,7 +182,10 @@ export default function MyPageScreen() {
 
         <DividingLine />
 
-        {/* 모임 내역 추후 작업 */}
+        {/* 모임 내역 */}
+        <CommHorizontalList sections={recommendSections} isMember={true} />
+
+        <DividingLine />
 
         {/* 내가 쓴글 섹션 */}
         <CommReviewList reviewList={reviewList} />
@@ -134,6 +198,7 @@ export default function MyPageScreen() {
 
 const styles = StyleSheet.create({
   content: {
+    backgroundColor   : COLOR.COMM_WHITE,
     paddingVertical   : 12,
     paddingBottom     : 40,
   },
@@ -220,54 +285,29 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize          : 20,
-    fontWeight        : "bold",
+    fontFamily        : 'Pretendard-SemiBold',
     color             : COLOR.TEXT_1C1C1C,
     marginBottom      : 10,
   },
-  sectionHeaderRow: {
-    flexDirection     : "row",
-    justifyContent    : "space-between",
-    alignItems        : "center",
-    marginBottom      : 10,
-  },
-  seeMore: {
-    fontSize          : 16,
-    color             : COLOR.TEXT_GRAY,
-  },
-  meetTitleContainer: {
-    height            : 32,
-    flexDirection     : 'row',
-    justifyContent    : 'space-between',
-    alignItems        : 'center',
-    marginBottom      : 12,
-  }, 
-  meetTitle: {
-    fontSize          : 20,
-    fontWeight        : 'bold',
-  },
-  meetListContainer: {
-    flexDirection     : 'row',
-    alignItems        : 'center',
-  },
   interestScroll: {
-    paddingRight      : 16,
     gap               : 8,
   },
   interestChip: {
     borderWidth       : 1,
     borderColor       : COLOR.COMM_GRAY_6,
-    borderRadius      : 20,
+    borderRadius      : 8,
     paddingHorizontal : 14,
     paddingVertical   : 7,
     backgroundColor   : COLOR.COMM_WHITE,
   },
   interestText: {
-    fontSize          : 12,
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_DEFAULT,
-    fontWeight        : "500",
   },
   interestEmptyText: {
-    fontSize          : 13,
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_GRAY,
     paddingVertical   : 8,
     paddingHorizontal : 4,

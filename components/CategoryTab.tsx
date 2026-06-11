@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
     backgroundColor   : COLOR.APP_MAIN,
   },
   categoryChipText: {
-    fontSize          : 16,
-    fontWeight        : '600',
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Medium',
     color             : COLOR.TEXT_GRAY,
   },
   categoryChipTextActive: {

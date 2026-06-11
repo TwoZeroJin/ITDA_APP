@@ -6,21 +6,22 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import { useMemberLike } from '@/hooks/queries/useMember';
 import { router } from 'expo-router';
 
-interface RecommendSectionItem {
-  key: string;
-  title: string;
-  subTitle: string;
-  data: MeetInfo[] | GroupInfo[];
+interface SectionItem {
+  key       : string;
+  title     : string;
+  subTitle  : string;
+  data      : MeetInfo[] | GroupInfo[];
 }
 
-interface CommRcmdMeetListProps {
-  sections: RecommendSectionItem[];
+interface CommHorizontalListProps {
+  sections  : SectionItem[];
+  isMember? : boolean;
 }
 
 /**
- * 추천 소셜링 리스트 컴포넌트
+ * 공통 수평 리스트 컴포넌트
  */
-export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
+export default function CommHorizontalList({ sections, isMember = false }: CommHorizontalListProps) {
   const memberLike = useMemberLike();
 
   // 좋아요 처리
@@ -45,7 +46,7 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
 
   return (
     <View style={styles.container}>
-      <FlatList<RecommendSectionItem>
+      <FlatList<SectionItem>
         data={sections}
         keyExtractor={(item) => item.key}
         horizontal
@@ -53,7 +54,7 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
         showsHorizontalScrollIndicator={false}
         renderItem={({ item: section }) => {
           return (
-            <View style={{ marginEnd: 15 }}>
+            <View style={{ minWidth: 200, marginEnd: 15 }}>
               <View>
                 <Text style={styles.title} >{section.title}</Text>
                 <Text style={styles.subTitle}>{section.subTitle}</Text>
@@ -79,7 +80,7 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
         <TouchableOpacity 
           style={styles.moreButton} 
           activeOpacity={0.6}
-          onPress={() => router.navigate('/meet')}
+          onPress={() => router.navigate(`${isMember ? '/mypage/historyList' : '/meet'}`)}
         >
           <Text style={styles.moreButtonText}>더보기</Text>
           <IconArrowRightMore width={7} height={10} />
@@ -91,16 +92,16 @@ export default function CommRcmdMeetList({ sections }: CommRcmdMeetListProps) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical   : 32,
-    paddingHorizontal : 16,
+    padding           : 16,
   },
   title: {
     fontSize          : 20,
-    fontWeight        : 'bold',
-    color             : COLOR.TEXT_TITLE,
+    fontFamily        : 'Pretendard-SemiBold',
+    color             : COLOR.TEXT_1C1C1C,
   },
   subTitle: {
     fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_2F2F2F,
     marginTop         : 4,
   },
@@ -120,6 +121,8 @@ const styles = StyleSheet.create({
     flexDirection     : 'row',
     marginTop         : 20,
     backgroundColor   : COLOR.COMM_WHITE,
+    borderWidth       : 2,
+    borderColor       : COLOR.COMM_GRAY_5,
     borderRadius      : 25,
     width             : '100%',
     height            : 50,
@@ -128,6 +131,6 @@ const styles = StyleSheet.create({
     fontSize          : 14,
     fontFamily        : 'Pretendard-Regular',
     marginEnd         : 5,
-    color             : COLOR.TEXT_DEFAULT,
+    color             : COLOR.COLOR_323232,
   },
 });
