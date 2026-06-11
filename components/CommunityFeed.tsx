@@ -136,7 +136,7 @@ export default function CommunityFeed({ data }: communityFeedProps) {
         
         {/* 피드에 모임정보가 존재할 때만 컴포넌트를 렌더링 */}
         {data.memMeetListVO && 
-          <View style={styles.commMargin}>
+          <View style={[styles.commMargin, { paddingHorizontal: 16, gap: 16 }]}>
             <CommCard item={data.memMeetListVO} onLikePress={(item) => handleLikePress(item as MeetInfo)} backgroundColor="grey"/>
             <PlaceLocationBox data={data.memMeetListVO as MeetInfo}/>
           </View>
@@ -179,7 +179,7 @@ export default function CommunityFeed({ data }: communityFeedProps) {
 
 const styles = StyleSheet.create({
   commMargin: {
-    marginBottom        : 12
+    marginBottom        : 16
   },
   feedContainer: {
     backgroundColor     : COLOR.COMM_WHITE,

@@ -40,7 +40,6 @@ export default function CommunityListScreen() {
     setLoading(false);
     hasHandledInitialLoadingRef.current = true;
   }, [isLoading, setLoading]);
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await refetch();
