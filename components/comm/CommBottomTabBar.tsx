@@ -3,11 +3,13 @@ import Community from '@/assets/images/navi_community.svg';
 import Main from '@/assets/images/navi_main.svg';
 import Meet from '@/assets/images/navi_meet.svg';
 import My from '@/assets/images/navi_my.svg';
-import { COLOR } from '@/constants';
+import { COLOR, STORE_KEY } from '@/constants';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { getAsyncStore } from '@/utils/asyncStoreUtil';
 
 // 탭 이름 → 경로 매핑 (EXCLUDE_PATHS 기준으로 protected 여부 판단)
 const TAB_PATHS: Record<string, string> = {
@@ -25,6 +27,13 @@ const TAB_PATHS: Record<string, string> = {
  */
 function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
   const { checkAndNavigate } = useAuthRouter();
+  const [ isChatYn, setIsChatYn] = useState('N');
+
+  useEffect(() => {
+    getAsyncStore(STORE_KEY.CHAT_BADGE).then((val) => {
+      setIsChatYn(val ?? 'N');
+    });
+  }, []);
   return (
     <View style={styles.tabContainer}>
       {state.routes.map((route, index) => {
@@ -33,6 +42,7 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
         const name = route.name;
 
         const onPress = () => {
+          Haptics.selectionAsync();
           const event = navigation.emit({
             type: 'tabPress',
             target: route.key,
@@ -51,7 +61,7 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
             activeOpacity={0.6}
           >
             <View style={styles.iconContainer}>
-              {getIcon(name, isFocused)}
+              {getIcon(name, isFocused, "Y")}
               <Text style={[styles.tabButtonText, { color: isFocused ? COLOR.APP_MAIN : COLOR.TEXT_DEFAULT }]}>
                 {options.title}
               </Text>
@@ -63,7 +73,7 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
   )
 }
 
-const getIcon = (name: string, isFocused: boolean) => {
+const getIcon = (name: string, isFocused: boolean, isChatYn: string) => {
   switch (name) {
     case 'index':
       return <Main color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW} />;
@@ -72,7 +82,22 @@ const getIcon = (name: string, isFocused: boolean) => {
     case 'meet':
       return <Meet color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW}/>;
     case 'chat':
-      return <Chat color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW} />;
+      return (
+        <View style={{ position: 'relative' }}>
+          <Chat color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW} />
+          {isChatYn === 'Y' && (
+            <View style={{
+              position: 'absolute',
+              top: -4,
+              right: -4,
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: COLOR.APP_MAIN,
+            }} />
+          )}
+        </View>
+      );
     case 'my':
       return <My color={isFocused ? COLOR.APP_ACTIVE_3 : COLOR.COMM_SHADOW} />;
     default:

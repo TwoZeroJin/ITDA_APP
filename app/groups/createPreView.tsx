@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { GroupInfo, CodeInfo, ApiResult } from "@/types";
+import { GroupInfo, ApiResult } from "@/types";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";

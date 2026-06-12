@@ -5,7 +5,7 @@ import { COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import { useMeetCancelApply } from '@/hooks/queries/useMeet';
 import { useMemberApplyList } from '@/hooks/queries/useMember';
 import { GroupApply, MeetApply, MemberApply } from '@/types';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
@@ -133,7 +133,7 @@ export default function MemberListScreen() {
                 params: {
                   room_id   : item.room_id,
                   room_name : item.mem_nick,
-                  room_type : COMM_CONSTANTS.CHAT_TYPE_MEMBER,
+                  room_type : COMM_CONSTANTS.COMM_MEMBER,
                   mem_id    : item.mem_id,
                 },
               }),

@@ -137,6 +137,7 @@ const STORE_KEY = {
   PUSH_SEND_YN        : "push_send_yn",
   PUSH_TOKEN          : "push_token",
   PUSH_COUNT          : "push_count",
+  CHAT_BADGE          : "chat_badge",
   DEVICE_UID          : "device_uid",
 }
 

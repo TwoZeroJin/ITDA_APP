@@ -100,9 +100,9 @@ interface SignupInfo extends User {
  */
 interface MemberInfo {
   mem_id?           : number;
-  mem_name          : string;
+  mem_name?         : string;
   mem_nick?         : string;
-  mem_gender        : string;
+  mem_gender?       : string;
   mem_birth?        : string;
   mem_telno?        : string;
   mem_email?        : string;
@@ -111,12 +111,12 @@ interface MemberInfo {
   mem_church_id?    : number;
   mem_church_nm?    : string;
   mem_church_tm_nm? : string;
-  push_send_yn      : string;
+  push_send_yn?     : string;
   push_token?       : string;
   mem_image_url?    : string;
   mem_image_id?     : string;
   new_image_name?   : string;
-  host_yn           : string;
+  host_yn?          : string;
   topic_list?       : string[];
 }
 

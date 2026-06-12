@@ -1,6 +1,6 @@
 import { COMM_STYLES } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router, useLocalSearchParams } from "expo-router";

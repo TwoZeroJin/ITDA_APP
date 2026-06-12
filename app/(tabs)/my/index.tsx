@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import CommHeader from "@/components/comm/CommHeader";
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, RefreshControl } from "react-native";
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COLOR } from "@/constants";
 import MemDefault from '@/assets/images/icon_mem_default.svg';
 import IconPencil from '@/assets/images/icon_pencil.svg';
 import { getMemberInfo, getCategoryList } from '@/utils/commUtil';
@@ -13,7 +13,6 @@ import { useMemberDetail } from "@/hooks/queries/useMember";
 import CommReviewList from "@/components/comm/CommReviewList";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import { useLoading } from "@/contexts/LoadingContext";
-import { CategoryTab } from "@/components/CategoryTab";
 import CommHorizontalList from "@/components/comm/CommHorizontalList";
 
 /**

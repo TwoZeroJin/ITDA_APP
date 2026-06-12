@@ -16,17 +16,19 @@ import { getMemberInfo, getChurchList, saveMemberInfoForUpdate } from "@/utils/c
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, View, Text } from "react-native";
+import { Keyboard, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { COMM_STYLES } from "@/constants";
 import MemEmailInput from "@/components/inputs/MemEmailInput";
 import InterestCategoryInput from "@/components/inputs/InterestCategoryInput";
+import { useLoading } from "@/contexts/LoadingContext";
 
 /**
  * 회원정보 수정
  */
 export default function MemberUpdateScreen() {
   const { logout } = useAuth();
+  const { setLoading } = useLoading();
   const [memberInfo, setMemberInfo] = useState<MemberInfo>();
   const memberUpdate = useMemberUpdate();
   const { checkDupMutation } = useFindInfo();
@@ -51,13 +53,11 @@ export default function MemberUpdateScreen() {
   // 중복 체크 함수 (아이디, 이메일, 닉네임)
   const checkDuplicateField = async (key: "login_id" | "mem_email" | "mem_nick", value?: string) => {
     const targetValue = (value ?? "").trim();
-
     const result = await checkDupMutation.mutateAsync({ [key]: targetValue });
     if (result.ret_code != 200) {
       showToast({ text1: result.ret_msg });
       return false;
     }
-
     return true;
   };
 
@@ -132,6 +132,10 @@ export default function MemberUpdateScreen() {
       },
     });
   }
+
+  useEffect(() => {
+    setLoading(memberUpdate.isPending);
+  }, [memberUpdate.isPending]);
 
   return (
     <View style={COMM_STYLES.container}>

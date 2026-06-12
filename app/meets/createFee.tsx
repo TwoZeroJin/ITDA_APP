@@ -1,6 +1,6 @@
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COMM_STYLES } from "@/constants";
 import React from "react";
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router, useLocalSearchParams } from "expo-router";

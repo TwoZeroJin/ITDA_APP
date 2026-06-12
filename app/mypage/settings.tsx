@@ -1,5 +1,5 @@
 import { COLOR, COMM_STYLES } from "@/constants";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
@@ -10,6 +10,10 @@ import IconMore from '@/assets/images/arrow_right.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebView from "react-native-webview";
 import { router } from "expo-router";
+import { useMemberUpdate } from "@/hooks/queries/useMember";
+import { showToast } from "@/utils/commToast";
+import { getMemberInfo, saveMemberInfoForUpdate } from "@/utils/commUtil";
+import { MemberInfo } from "@/types";
 
 type SettingsMenuItem = {
   label   : string;
@@ -26,6 +30,31 @@ export default function SettingsScreen() {
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
   const [termUrl, setTermUrl] = useState<string>('');
+  const memberUpdate = useMemberUpdate();
+
+  // 회원정보 조회 및 없을 경우 로그인 화면으로 이동
+  useEffect(() => {
+    const fetchData = async () => {
+      const memberInfo = await getMemberInfo();
+      if (memberInfo) {
+        setIsNotificationEnabled(memberInfo.push_send_yn === 'Y');
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
+  const onHandleNotificationToggle = (value: boolean) => {
+    setIsNotificationEnabled(value);
+    const submitValues = {
+      push_send_yn      : value ? 'Y' : 'N',
+    } as MemberInfo;
+    memberUpdate.mutate(submitValues, {
+      onSuccess: async (result) => {
+        await saveMemberInfoForUpdate(result.data);
+      },
+    });
+  }
 
   const openTermWebView = (url: string) => {
     setTermUrl(url);
@@ -85,7 +114,7 @@ export default function SettingsScreen() {
           <Text style={styles.menuText}>알림받기</Text>
           <Switch
             value={isNotificationEnabled}
-            onValueChange={setIsNotificationEnabled}
+            onValueChange={onHandleNotificationToggle}
             trackColor={{ false: COLOR.COMM_GRAY_6, true: COLOR.APP_MAIN }}
             thumbColor={COLOR.COMM_WHITE}
           />
@@ -124,14 +153,14 @@ export default function SettingsScreen() {
           style={[
             styles.webViewContainer,
             {
-              paddingTop: insets.top,
-              paddingBottom: insets.bottom + 25,
-              paddingLeft: insets.left,
-              paddingRight: insets.right,
+              paddingTop      : insets.top,
+              paddingBottom   : insets.bottom + 25,
+              paddingLeft     : insets.left,
+              paddingRight    : insets.right,
             },
           ]}
         >
-          <WebView style={styles.webView} source={{ uri: termUrl }} startInLoadingState />
+          <WebView style={styles.webViewContainer} source={{ uri: termUrl }} startInLoadingState />
           <View style={styles.webViewFooter}>
             <CustomButton
               label="닫기"
@@ -171,13 +200,10 @@ const styles = StyleSheet.create({
   },
   menuText: {
     fontSize          : 16,
-    fontWeight        : 'medium',
+    fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_DEFAULT,
   },
   webViewContainer: {
-    flex              : 1,
-  },
-  webView: {
     flex              : 1,
   },
   webViewFooter: {

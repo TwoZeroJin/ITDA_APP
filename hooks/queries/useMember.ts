@@ -43,19 +43,14 @@ function useMemberDetail() {
  * 회원 정보 수정
  */
 function useMemberUpdate() {
-  const { setLoading } = useLoading();
   return useMutation({
     mutationFn: async (body : MemberInfo) => {
-      setLoading(true);
       return memberUpdate(body);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_UPDATE],
       });
-    },
-    onSettled: () => {
-      setLoading(false);
     },
   });
 }

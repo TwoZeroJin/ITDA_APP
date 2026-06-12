@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import IconFeed from '@/assets/images/navi_community.svg';
 import IconClub from '@/assets/images/icon_club.svg';
-import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import CommBottomButton from '@/components/comm/CommBottomButton';
 import CommHeader from '@/components/comm/CommHeader';
 import { SvgProps } from 'react-native-svg';

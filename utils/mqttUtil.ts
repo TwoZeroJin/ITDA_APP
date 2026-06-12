@@ -1,5 +1,5 @@
 import { Client, Message } from 'paho-mqtt';
-import { getDeviceUid, printErrorLog, printInfoLog } from './commUtil';
+import { getDeviceUid, printErrorLog, printInfoLog } from '@/utils/commUtil';
 
 let client: Client | null = null;
 let connectPromise: Promise<boolean> | null = null;

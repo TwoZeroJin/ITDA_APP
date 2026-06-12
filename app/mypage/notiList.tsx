@@ -26,10 +26,10 @@ export default function NotiListScreen() {
 
   const getCategoryFromItem = (item: PushData): string => {
     if (item.push_type.includes('MEET')) {
-      return COMM_CONSTANTS.CHAT_TYPE_MEET;
+      return COMM_CONSTANTS.COMM_MEET;
     }
     if (item.push_type.includes('GROUP')) {
-      return COMM_CONSTANTS.CHAT_TYPE_GROUP;
+      return COMM_CONSTANTS.COMM_GROUP;
     }
 
     return '';
