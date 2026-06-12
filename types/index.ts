@@ -341,6 +341,7 @@ interface RoomData {
   mod_sdate       : string;
   last_msg?       : string;
   thumb_url?      : string;
+  unread_count    : number;
 }
 /**
  * 채팅 정보

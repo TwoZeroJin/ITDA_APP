@@ -36,4 +36,9 @@ async function chatInsert(body: ChatData): Promise<ApiResult<null>> {
   return data;
 }
 
-export { chatRoomList, chatList, chatInsert, chatMemberList };
+async function chatExit(body : ChatData): Promise<ApiResult<null>> {
+  const { data } = await axiosInstance.post(API_URL.CHAT_EXIT, body);
+  return data;
+}
+
+export { chatRoomList, chatList, chatInsert, chatMemberList, chatExit };

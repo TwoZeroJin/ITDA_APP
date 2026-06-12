@@ -194,6 +194,7 @@ const API_URL = {
   CHAT_VIEW               : "/chat/view",
   CHAT_INSERT             : "/chat/insert",
   CHAT_MEMBER_LIST        : "/chat/mem_list",
+  CHAT_EXIT               : "/chat/exit",
   MEET_LIST               : "/meet/list",
   MEET_VIEW               : "/meet/view",
   MEET_INSERT             : "/meet/insert",

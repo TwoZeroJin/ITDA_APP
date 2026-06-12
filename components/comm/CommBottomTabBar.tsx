@@ -61,7 +61,7 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
             activeOpacity={0.6}
           >
             <View style={styles.iconContainer}>
-              {getIcon(name, isFocused, "Y")}
+              {getIcon(name, isFocused, isChatYn)}
               <Text style={[styles.tabButtonText, { color: isFocused ? COLOR.APP_MAIN : COLOR.TEXT_DEFAULT }]}>
                 {options.title}
               </Text>
@@ -89,7 +89,7 @@ const getIcon = (name: string, isFocused: boolean, isChatYn: string) => {
             <View style={{
               position: 'absolute',
               top: -4,
-              right: -4,
+              right: 0,
               width: 8,
               height: 8,
               borderRadius: 4,

@@ -1,7 +1,7 @@
 import CommHeader from '@/components/comm/CommHeader';
 import CustomDialog from '@/components/modal/CustomDialog';
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
-import { useChatInsert, useChatListPaging, useChatMemberList } from '@/hooks/queries/useChat';
+import { useChatExit, useChatInsert, useChatListPaging, useChatMemberList } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -18,6 +18,7 @@ import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 export default function IndexScreen() {
   const { room_id, room_name, room_type, mem_id } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string, mem_id: string }>();
   const chatInsert = useChatInsert();
+  const chatExit = useChatExit();
   const { results: chatMemberList } = useChatMemberList({room_id : room_id});
   const { results, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatListPaging({
     page_no: 0,
@@ -28,8 +29,6 @@ export default function IndexScreen() {
   const [realtimeMessages, setRealtimeMessages] = useState<ChatData[]>([]);
   const [isConnected, setIsConnected] = useState(true);
   const [myMemId, setMyMemId] = useState<number>(0);
-  const [myMemNick, setMyMemNick] = useState<string>('');
-  const [roomTitle, setRoomTitle] = useState<string>(room_name);
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const msgInputRef = useRef<TextInput>(null);
   const topic = room_id ? room_id : `${COMM_CONSTANTS.COMM_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`;
@@ -57,22 +56,7 @@ export default function IndexScreen() {
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
       const memberInfo = await getMemberInfo();
-      const myNick = memberInfo.mem_nick || '';
-      const myName = memberInfo.mem_name || '';
       setMyMemId(memberInfo.mem_id ?? 0);
-      setMyMemNick(myNick || myName);
-
-      // 1:1 채팅방인 경우, 방 제목에서 내 이름 제거하여 상대방 이름으로 표시
-      if (room_type === COMM_CONSTANTS.COMM_MEMBER && room_name?.includes(',')) {
-        const myNames = [myNick, myName];
-        const filteredNames = room_name
-           .split(',')
-           .map((name) => name.trim())
-           .filter((name) => !!name && !myNames.includes(name));
-           
-        const cleanedTitle = filteredNames.join(', ');
-        setRoomTitle(cleanedTitle);
-      }
     };
 
     fetchMyMemberInfo();
@@ -158,6 +142,7 @@ export default function IndexScreen() {
     return () => {
       isMounted = false;
       mqttUtil.unsubscribe(topic, subscriberId);
+      chatExit.mutate({ room_id: room_id } as any);
     };
   }, [topic, myMemId, msgReceiveCallback]);
 
@@ -223,7 +208,7 @@ export default function IndexScreen() {
     const date = new Date(sourceDate);
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   };
-  const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.COMM_MEMBER ? roomTitle : item.mem_nick;
+  const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.COMM_MEMBER ? room_name : item.mem_nick;
 
   const DETAIL_MENU_ITEMS = [
     {
@@ -319,7 +304,7 @@ export default function IndexScreen() {
       <KeyboardAvoidingView
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 15 : 0}
       >
         <View style={styles.container}>
           <CommHeader 
@@ -327,7 +312,7 @@ export default function IndexScreen() {
             isNoti={false} 
             isLogo={false} 
             isDetail={chat_type !== COMM_CONSTANTS.COMM_MEMBER} 
-            title={roomTitle}
+            title={room_name}
             onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
           />
 
@@ -351,12 +336,6 @@ export default function IndexScreen() {
               </View>
             </View>
           )}
-
-          {/* {room_type === COMM_CONSTANTS.CHAT_TYPE_MEET && (
-            <View style={styles.meetInfoWrap}>
-              <Text style={styles.meetInfoText}>📅 한성교회 · 1.7(수) · 오후 8:30</Text>
-            </View>
-          )} */}
 
           <FlatList
             ref={flatListRef}

@@ -1,5 +1,5 @@
 import CommHeader from "@/components/comm/CommHeader";
-import { COLOR, COMM_STYLES } from "@/constants";
+import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
 import { useLoading } from "@/contexts/LoadingContext";
 import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
@@ -9,7 +9,7 @@ import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react
 import { useFocusEffect } from "expo-router";
 import { CategoryTab } from "@/components/CategoryTab";
 import ImageDefault from "@/assets/images/no_image.svg";
-import { formatRelativeTime } from "@/utils/commUtil";
+import { formatRelativeTime, getMemberInfo } from "@/utils/commUtil";
 
 /**
  * 채팅 리스트 화면
@@ -19,12 +19,21 @@ export default function ChatListScreen() {
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const { setLoading } = useLoading();
+  const [myMemId, setMyMemId] = useState<number>(0);
   const hasHandledInitialLoadingRef = useRef(false);
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatRoomListPaging({
     page_no   : 0,
     page_size : 20
   });
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  useEffect(() => {
+    const fetchMyMemberInfo = async () => {
+      const memberInfo = await getMemberInfo();
+      setMyMemId(memberInfo.mem_id ?? 0);
+      }
+    fetchMyMemberInfo();
+  }, []);
 
   // 화면 포커스시 재조회
   useFocusEffect(
@@ -58,13 +67,37 @@ export default function ChatListScreen() {
     }
   };
 
+  // 카테고리에 따른 필터 및 
   const filteredChatRooms = useMemo(() => {
-    if (activeCategory === "") {
-      return results;
-    }
+    const filtered =
+      activeCategory === ""
+        ? results
+        : results.filter((room) => room.room_type === activeCategory);
 
-    return results.filter((room) => room.room_type === activeCategory);
-  }, [activeCategory, results]);
+    return filtered.map((room) => {
+      if (room.room_type !== COMM_CONSTANTS.COMM_MEMBER) {
+        return room;
+      }
+
+      const roomTitle = room.room_name
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => {
+          const [memId] = item.split("$");
+          return Number(memId) !== myMemId;
+        })
+        .map((item) => {
+          const [, memNick] = item.split("$");
+          return memNick;
+        })
+        .join(",");
+
+      return {
+        ...room,
+        room_name: roomTitle,
+      };
+    });
+  }, [activeCategory, results, myMemId]);
 
   const renderChatRoom = ({ item }: { item: RoomData }) => {
     const updatedText = formatRelativeTime(item.mod_sdate || item.reg_sdate);
@@ -103,12 +136,27 @@ export default function ChatListScreen() {
 
       <View style={styles.chatTextContainer}>
         <View style={styles.titleRow}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={styles.roomTitle}>{item.room_name}</Text>
+          <Text
+            numberOfLines={1}
+            ellipsizeMode="tail"
+            style={styles.roomTitle}
+          >
+            {item.room_name}
+          </Text>
           <Text style={styles.updatedText}>{updatedText}</Text>
         </View>
-        <Text numberOfLines={1} style={styles.previewText}>
-          {messagePreview}
-        </Text>
+
+        <View style={styles.previewRow}>
+          <Text numberOfLines={1} style={styles.previewText}>{messagePreview}</Text>
+
+          {item.unread_count > 0 && (
+            <View style={styles.unreadBadge}>
+              <Text style={styles.unreadBadgeText}>
+                {item.unread_count > 99 ? '99+' : item.unread_count}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -197,10 +245,30 @@ const styles = StyleSheet.create({
     fontSize          : 14,
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_DEFAULT,
+    flex              : 1,
   },
   divider: {
     height            : 1,
     backgroundColor   : COLOR.COMM_GRAY_6,
+  },
+  previewRow: {
+    flexDirection     : 'row',
+    alignItems        : 'center',
+    marginTop         : 4,
+  },
+  unreadBadge: {
+    minWidth          : 20,
+    height            : 20,
+    borderRadius      : 10,
+    paddingHorizontal : 5,
+    marginEnd         : 8,
+    backgroundColor   : COLOR.APP_ACTIVE_1,
+    justifyContent    : 'center',
+    alignItems        : 'center',
+  },
+  unreadBadgeText: {
+    fontSize          : 12,
+    color             : COLOR.COMM_WHITE,
   },
   emptyContainer: {
     flex              : 1,

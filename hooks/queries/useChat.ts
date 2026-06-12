@@ -1,4 +1,4 @@
-import { chatInsert, chatList, chatMemberList, chatRoomList } from "@/api/chat";
+import { chatExit, chatInsert, chatList, chatMemberList, chatRoomList } from "@/api/chat";
 import { QUERY_KEYS } from "@/constants";
 import { SearchParams } from "@/types";
 import { getNextPageParamFromPaging } from "@/utils/commUtil";
@@ -36,12 +36,21 @@ function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
  * 채팅 메시지 입력
  */
 function useChatInsert() {
-    return useMutation({
-        mutationFn : chatInsert,
-        onSuccess: ()=>{}
-    });
+  return useMutation({
+    mutationFn : chatInsert,
+    onSuccess: ()=>{}
+  });
 }
 
+/**
+ * 채팅방 나가기 처리
+ */
+function useChatExit() {
+  return useMutation({
+    mutationFn : chatExit,
+    onSuccess: ()=>{}
+  });
+}
 /**
  * 채팅 멤버 조회
  */
@@ -54,4 +63,4 @@ function useChatMemberList({ room_id }: { room_id: string }) {
   return { ...query, results };
 }
 
-export { useChatInsert, useChatRoomListPaging, useChatListPaging, useChatMemberList };
+export { useChatInsert, useChatExit, useChatRoomListPaging, useChatListPaging, useChatMemberList };
