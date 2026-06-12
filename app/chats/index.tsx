@@ -142,9 +142,15 @@ export default function IndexScreen() {
     return () => {
       isMounted = false;
       mqttUtil.unsubscribe(topic, subscriberId);
-      chatExit.mutate({ room_id: room_id } as any);
     };
   }, [topic, myMemId, msgReceiveCallback]);
+
+  // 채팅방 나가기 처리
+  useEffect(() => {
+    return () => {
+      chatExit.mutate({ room_id } as any);
+    };
+  }, []);
 
   // 메시지 전송 핸들러
   const handleSubmitChat = () => {

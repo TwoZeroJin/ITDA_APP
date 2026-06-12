@@ -102,7 +102,7 @@ const connectMqtt = async (): Promise<boolean> => {
             connectPromise = null;
             resolve(false);
           },
-          useSSL: false,
+          useSSL: `${process.env.EXPO_PUBLIC_ENV}` === 'local' ? false : true,
         });
     }
     catch (e) {
