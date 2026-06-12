@@ -1,4 +1,4 @@
-import { COMM_STYLES } from "@/constants";
+import { COMM_CONSTANTS, COMM_STYLES } from "@/constants";
 import React, { useState } from "react";
 import { ScrollView, Text, View, StyleSheet, FlatList } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -92,7 +92,7 @@ export default function MeetCreatePreViewScreen() {
         <View style={COMM_STYLES.commContainer}>
           {/* 소셜링 라벨 */}
           <View style={COMM_STYLES.labelContainer}>
-            <CommLabel variant="social" />
+            <CommLabel variant={COMM_CONSTANTS.COMM_MEET as "MEET"} />
             <CommLabel variant="category" category={prevMeetInfo.meet_subj_name} />
           </View>
 

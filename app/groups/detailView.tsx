@@ -1,6 +1,6 @@
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View, Alert } from 'react-native';
+import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useGroupApply, useGroupCancelApply, useGroupDelete } from "@/hooks/queries/useGroup";
@@ -24,6 +24,7 @@ import DetailInfoRow from "@/components/comm/DetailInfoRow";
 import { formatNumberWithComma } from "@/utils/commUtil";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import HostMemberSection from "@/components/comm/HostMemberSection";
+import { showToast } from "@/utils/commToast";
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'delete' | 'error';
 
@@ -95,7 +96,7 @@ export default function GroupDetailViewScreen() {
     setActiveDialog('none');
 
     if(groupInfo?.apply_type === 'A' && (!answer || answer.trim() === '')) {
-      Alert.alert('신청 답변을 입력해주세요.');
+      showToast({ text1: '신청 답변을 입력해주세요.' });
       return;
     }
 
@@ -110,8 +111,8 @@ export default function GroupDetailViewScreen() {
         if(result.ret_code != 200){
           setErrorMessage(result.ext_msg? result.ext_msg : result.ret_msg);
           setActiveDialog('error');
-        }else{
-          Alert.alert('클럽에 신청되었습니다.');   
+        } else {
+          showToast({ text1: '클럽에 신청되었습니다.' });
           setApplyStatus('0');
           refetchMemberList();
         }
@@ -134,7 +135,7 @@ export default function GroupDetailViewScreen() {
 
     groupCancelApply.mutate(requestBody, {
       onSuccess: () => {
-        Alert.alert('클럽에 취소되었습니다.');    
+        showToast({ text1: '클럽에 취소되었습니다.' });
         setApplyStatus('-1');
         refetchMemberList();
       },

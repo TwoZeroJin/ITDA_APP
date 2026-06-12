@@ -83,9 +83,9 @@ export default function RootLayout() {
               <LoadingLayout/>
               <Toast config={{
                 customToast: ({text1, text2}) => (
-                  <View style={[styles.toastContainer, { marginTop: insets.top + 12 }]}>
-                    <Text style={{ fontSize: 18, color: 'white' }}>{text1}</Text>
-                    {text2 && <Text style={{ color: 'white' }}>{text2}</Text>}
+                  <View style={[styles.toastContainer, { marginTop: insets.top + 16 }]}>
+                    <Text style={{ fontSize: 18, fontFamily: 'Pretendard-Medium', color: COLOR.COMM_WHITE }}>{text1}</Text>
+                    {text2 && <Text style={{ fontFamily: 'Pretendard-Medium', color: COLOR.COMM_WHITE }}>{text2}</Text>}
                   </View>
                 ),
               }}/>

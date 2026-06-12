@@ -1,10 +1,10 @@
 import { COLOR, COMM_STYLES, COMM_CONSTANTS } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View, Alert } from 'react-native';
+import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply, useMeetDelete } from "@/hooks/queries/useMeet";
-import { FileInfo, MeetApply, MeetInfo, SearchParams } from "@/types";
+import { FileInfo, MeetApply, MeetInfo } from "@/types";
 import { useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -101,7 +101,7 @@ export default function DetailViewScreen() {
     setActiveDialog('none');
 
     if(meetInfo?.apply_type === 'A' && meetInfo?.meet_question?.trim() != '' && (!answer || answer.trim() === '')) {
-      Alert.alert('신청 답변을 입력해주세요.');
+      showToast({ text1: '신청 답변을 입력해주세요.' });
       return;
     }
 
@@ -116,10 +116,10 @@ export default function DetailViewScreen() {
         if(result.ret_code != 200){
           setErrorMessage(result.ext_msg? result.ext_msg : result.ret_msg);
           setActiveDialog('error');
-        }else{
-          Alert.alert('모임에 신청되었습니다.');
+        } else {
+          showToast({ text1: '모임에 신청되었습니다.' });
           setApplyStatus('0');
-          refetchMemberList(); //참여멤버 재조회
+          refetchMemberList();
         }
         
       },
@@ -140,9 +140,9 @@ export default function DetailViewScreen() {
 
     meetCancelApply.mutate(requestBody, {
       onSuccess: () => {
-        Alert.alert('모임에 취소되었습니다.');    
+        showToast({ text1: '모임에 취소되었습니다.' });
         setApplyStatus('-1');
-        refetchMemberList(); //참여멤버 재조회
+        refetchMemberList();
       },
       onError: (error) => {
         setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');

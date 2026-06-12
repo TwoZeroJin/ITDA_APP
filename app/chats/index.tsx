@@ -32,7 +32,7 @@ export default function IndexScreen() {
   const [roomTitle, setRoomTitle] = useState<string>(room_name);
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const msgInputRef = useRef<TextInput>(null);
-  const topic = room_id ? room_id : `${COMM_CONSTANTS.CHAT_TYPE_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`;
+  const topic = room_id ? room_id : `${COMM_CONSTANTS.COMM_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`;
   const mqttUtil = MqttUtil;
   const subscriberIdRef = useRef(`chat-screen:${Date.now()}:${room_id}`);
   const flatListRef = useRef<FlatList<ChatData>>(null);
@@ -63,7 +63,7 @@ export default function IndexScreen() {
       setMyMemNick(myNick || myName);
 
       // 1:1 채팅방인 경우, 방 제목에서 내 이름 제거하여 상대방 이름으로 표시
-      if (room_type === COMM_CONSTANTS.CHAT_TYPE_MEMBER && room_name?.includes(',')) {
+      if (room_type === COMM_CONSTANTS.COMM_MEMBER && room_name?.includes(',')) {
         const myNames = [myNick, myName];
         const filteredNames = room_name
            .split(',')
@@ -223,15 +223,15 @@ export default function IndexScreen() {
     const date = new Date(sourceDate);
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   };
-  const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.CHAT_TYPE_MEMBER ? roomTitle : item.mem_nick;
+  const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.COMM_MEMBER ? roomTitle : item.mem_nick;
 
   const DETAIL_MENU_ITEMS = [
     {
-      label: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? '소셜링 정보' : '클럽 정보',
+      label: chat_type === COMM_CONSTANTS.COMM_MEET ? '소셜링 정보' : '클럽 정보',
       onPress: () => {
         router.push({
-          pathname: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? `/meets/detailView` : `/groups/detailView`,
-          params: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ?
+          pathname: chat_type === COMM_CONSTANTS.COMM_MEET ? `/meets/detailView` : `/groups/detailView`,
+          params: chat_type === COMM_CONSTANTS.COMM_MEET ?
             { meetId: chat_id } : { groupId: chat_id },
         });
       },
@@ -243,7 +243,7 @@ export default function IndexScreen() {
           pathname: '/members/memberList',
           params: {
             target_id: chat_id,
-            target_type: chat_type === COMM_CONSTANTS.CHAT_TYPE_MEET ? 'M' : 'G',
+            target_type: chat_type === COMM_CONSTANTS.COMM_MEET ? 'M' : 'G',
           }
         });
       }
@@ -326,7 +326,7 @@ export default function IndexScreen() {
             isLike={false} 
             isNoti={false} 
             isLogo={false} 
-            isDetail={chat_type !== COMM_CONSTANTS.CHAT_TYPE_MEMBER} 
+            isDetail={chat_type !== COMM_CONSTANTS.COMM_MEMBER} 
             title={roomTitle}
             onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
           />

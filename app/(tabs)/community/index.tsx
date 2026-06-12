@@ -5,9 +5,13 @@ import { COLOR } from '@/constants';
 import IconPencil from '@/assets/images/icon_community.svg';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator } from 'react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useReviewList } from "@/hooks/queries/useCommunity";
+import { useReviewDelete, useReviewList } from "@/hooks/queries/useCommunity";
 import { useAuthRouter } from '@/components/comm/AuthRoute';
 import { useLoading } from '@/contexts/LoadingContext';
+import CustomDialog from '@/components/modal/CustomDialog';
+import { MeetInfo, MeetReview } from '@/types';
+import { showToast } from '@/utils/commToast';
+import { useMemberLike } from '@/hooks/queries/useMember';
 
 /**
  * 커뮤니티 탭 메인 화면 - 후기 리스트
@@ -16,6 +20,9 @@ export default function CommunityListScreen() {
   const router = useAuthRouter();
   const [activeType, setActiveType] = useState<string>('latest');
   const [refreshing, setRefreshing] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
+  const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
+  const [targetItem, setTargetItem] = useState<MeetReview | null>(null);
   const { setLoading } = useLoading();
   const hasHandledInitialLoadingRef = useRef(false);
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useReviewList({
@@ -24,6 +31,9 @@ export default function CommunityListScreen() {
     sch_condition : activeType, 
     sch_keyword   : String(3) 
   });
+  
+  const reviewMutation = useReviewDelete();
+  const memberLike = useMemberLike();
   
   // 화면 재진입시 재조회
   // useFocusEffect(
@@ -55,12 +65,45 @@ export default function CommunityListScreen() {
     }
   };
 
-  const tabs: Array<{ label: string; value: string }> = [
-    { label: '최신', value: 'latest' },
-    { label: '모임 후기', value: 'review' },
-    { label: '내가 쓴 글', value: 'mypost' },
-  ];
-  
+  const handleUpdate = (item : MeetReview) => {
+    setMenuVisible(false);
+    
+    router.navigate({
+      pathname: '/communities/writeFeedback',
+      params: { data: JSON.stringify(item.memMeetListVO),
+        updFeedData: JSON.stringify(item)
+      }
+    })
+  };
+
+  const handleDelete = (item: MeetReview) => {
+    setMenuVisible(false);
+    setTargetItem(item);
+    setIsDeleteDialogVisible(true);
+  };
+
+  // 좋아요 처리
+  const handleLikePress = (item: MeetInfo) => {
+    if (!item.meet_id) {
+      return;
+    }
+    memberLike.mutate(
+      {
+        target_id   : item.meet_id,
+        target_type : 'M',
+        flag        : item.like_yn === 'N',
+      },
+      {
+        onSuccess: () => {
+          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+        },
+        onError: () => {
+        },
+      },
+    );
+  };
+
+
   return (
     <View style={{ flex: 1 }}>
       <CommHeader />
@@ -75,7 +118,17 @@ export default function CommunityListScreen() {
       />
         <FlatList 
           data={results}
-          renderItem={({item}) => <CommunityFeed data={item} />}
+          renderItem={({ item}) => {
+            return (
+              <CommunityFeed 
+                item={item}
+                menuVisible={menuVisible}
+                handleLike={handleLikePress} 
+                handleUpdate={handleUpdate} 
+                handleDelete={handleDelete} 
+              />
+            );
+          }}
           keyExtractor={(item) => item.review_id?.toString() || ''} 
           onRefresh={onRefresh} 
           refreshing={refreshing} 
@@ -92,6 +145,25 @@ export default function CommunityListScreen() {
             ) : <View style={{ height: 50 }} />
           }    
         />
+
+      <CustomDialog
+        visible={isDeleteDialogVisible}
+        title="삭제"
+        content="정말로 이 게시글을 삭제하시겠습니까?"
+        cancelLabel="닫기"
+        confirmLabel="삭제"
+        onCancel={() => setIsDeleteDialogVisible(false)}
+        onConfirm={() => {
+          reviewMutation.mutate(targetItem as MeetReview, {
+            onSuccess: () => {
+              showToast({ text1: '삭제되었습니다.' })
+              refetch();
+            },
+            onError: () => showToast({ text1: '삭제 중 문제가 발생했습니다.' }),
+            onSettled: () => setIsDeleteDialogVisible(false)
+          });
+        }}
+      />
     </View>
   );
 }

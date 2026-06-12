@@ -1,9 +1,11 @@
 import { COLOR } from "@/constants";
 import React, { useState, useEffect, useRef } from 'react';
-import { Alert, TextInput, Text, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TextInput, Text, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchButton from '@/assets/images/search_button.svg';
 import IconClose from '@/assets/images/icon_close.svg';
+import { showToast } from "@/utils/commToast";
+import InputField from "./InputField";
 
 const STORAGE_KEY = '@recent_searches';
 
@@ -24,9 +26,7 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
         if (savedSearches !== null) {
           setRecentSearches(JSON.parse(savedSearches));
         }
-      } catch (e) {
-        // console.error('최근 검색어 로드 실패:', e);
-      }
+      } catch (e) {}
     };
     loadRecentSearches();
   }, []);
@@ -56,8 +56,8 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
     // 🔍 검색어 보안 및 유효성 검사
     const validation = validateSearchKeyword(trimmedKeyword);
     if (!validation.isValid) {
-      Alert.alert('안내', validation.message);
-      return; // ❌ 조건 통과 못 하면 차단
+      showToast({ text1: validation.message });
+      return;
     }
 
     
@@ -71,9 +71,7 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
       
       setRecentSearches(newSearches);
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newSearches));
-    } catch (e) {
-      // console.error('최근 검색어 저장 실패:', e);
-    }
+    } catch (e) {}
   };
 
   // 💡 3. [삭제] 최근 검색어 개별 삭제
@@ -89,9 +87,7 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
         setInputText('');
         searchKey?.('');
       }
-    } catch (e) {
-      // console.error('최근 검색어 삭제 실패:', e);
-    }
+    } catch (e) {}
   };
 
   // 보안 검증 로직
@@ -124,27 +120,22 @@ export default function SearchInput({ searchKey }: SearchInputProps) {
 
   return (
     <View style={[styles.container, { paddingHorizontal: 16 }]}>
-      <TouchableOpacity 
-        style={styles.searchContainer}
-        activeOpacity={0.6}
-        onPress={() => {
-          searchInputRef.current?.focus();
-        }}
-      >
-        <TextInput
-          ref={searchInputRef}
-          style={styles.searchText}
-          placeholder="검색어를 입력해 주세요."
-          placeholderTextColor={COLOR.COMM_GRAY_2}
-          value={inputText}
-          onChangeText={handleInputChange}
-          onSubmitEditing={() => handleSearch(inputText)}
-          returnKeyType="search"
-        />
-        <TouchableOpacity style={{zIndex: 1}} onPress={() => handleSearch(inputText)}>
-          <SearchButton width={20} height={20}/>
-        </TouchableOpacity>
-      </TouchableOpacity>
+      <InputField
+        ref={searchInputRef}
+        touchStyle={styles.searchContainer}
+        style={styles.searchText}
+        placeholder="검색어를 입력해 주세요."
+        placeholderTextColor={COLOR.COMM_GRAY_2}
+        value={inputText}
+        onChangeText={handleInputChange}
+        onSubmitEditing={() => handleSearch(inputText)}
+        returnKeyType="search"
+        rightChild={
+          <TouchableOpacity style={{zIndex: 1}} onPress={() => handleSearch(inputText)}>
+            <SearchButton width={20} height={20}/>
+          </TouchableOpacity>
+        }
+      />
 
       {/* 최근 검색어 리스트 */}
       {recentSearches.length > 0 && (

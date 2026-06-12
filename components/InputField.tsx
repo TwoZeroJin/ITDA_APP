@@ -8,9 +8,10 @@ interface InputFieldProps extends TextInputProps {
   error?      : string;
   rightChild? : ReactNode;
   textArea?   : boolean;
+  touchStyle? : object;
 }
 
-const InputField = ({label, variant = "filled", error, rightChild = null, textArea = false, style, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
+const InputField = ({ label, variant = "filled", error, rightChild = null, textArea = false, touchStyle = {}, style, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
   const innerRef = useRef<TextInput>(null);
   const accessoryIDRef = useRef(label ? `input-accessory-${label}` : `input-accessory-${Math.random().toString(3)}`);
   const isIOS = Platform.OS === 'ios';
@@ -29,6 +30,7 @@ const InputField = ({label, variant = "filled", error, rightChild = null, textAr
           , Boolean(error) && styles.inputError
           , isTextArea && styles.multiline
           , isTextArea && { height: multilineContainerHeight }
+          , touchStyle
         ]}
         activeOpacity={0.6}
         onPress={() => innerRef.current?.focus()} 

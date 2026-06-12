@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Linking, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { GroupInfo, MeetInfo } from '@/types';
 import { COLOR } from '@/constants';
+import { showToast } from '@/utils/commToast';
 
 /**
  * 네이버 지도 컴포넌트
@@ -30,7 +31,7 @@ export default function PlaceLocationBox({ data }: { data: MeetInfo | GroupInfo 
         await Linking.openURL(webUrl);
       }
     } catch (error) {
-      Alert.alert('오류', '네이버 지도를 열 수 없습니다.');
+      showToast({ text1: '네이버 지도를 열 수 없습니다.' });
     }
   };
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FileInfo, MeetReview, MeetInfo } from '@/types';
@@ -50,7 +50,7 @@ export default function WriteFeedback() {
         router.back();
       },
       onError: () => {
-        Alert.alert('오류', '후기 등록 중 오류가 발생했습니다. 다시 시도해 주세요.');
+        showToast({ text1: '오류', text2 : '후기 등록 중 오류가 발생했습니다. 다시 시도해 주세요.' });
       }
     });
   });
