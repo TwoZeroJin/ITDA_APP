@@ -1,6 +1,6 @@
 import CommHeader from '@/components/comm/CommHeader';
 import { CategoryTab } from '@/components/CategoryTab';
-import CommCard2, { CardData } from '@/components/comm/CommCard2';
+import CommCard2 from '@/components/comm/CommCard2';
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import { useMemberLike, useMemberLikeListPaging } from '@/hooks/queries/useMember';
 import { LikeData } from '@/types';
@@ -17,7 +17,6 @@ export default function LikeListScreen() {
   const [activeCategory, setActiveCategory] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [removedIds, setRemovedIds] = useState<Set<number>>(new Set());
-
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useMemberLikeListPaging({
     page_no   : 0,
     page_size : 10,
@@ -41,9 +40,9 @@ export default function LikeListScreen() {
     }
 
     const typeMap: Record<string, string> = {
-      [COMM_CONSTANTS.CHAT_TYPE_MEET]: 'M',
-      [COMM_CONSTANTS.CHAT_TYPE_GROUP]: 'G',
-      [COMM_CONSTANTS.CHAT_TYPE_CLASS]: 'C',
+      [COMM_CONSTANTS.COMM_MEET]: COMM_CONSTANTS.TARGET_MEET,
+      [COMM_CONSTANTS.COMM_GROUP]: COMM_CONSTANTS.TARGET_GROUP,
+      // [COMM_CONSTANTS.COMM_CLASS]: COMM_CONSTANTS.TARGET_CLASS,
     };
 
     const targetType = typeMap[activeCategory];
@@ -77,35 +76,22 @@ export default function LikeListScreen() {
     );
   };
 
-  const renderMeetCard = ({ item }: { item: LikeData }) => {
-    const cardItem: CardData = {
-      id           : item.target_id,
-      type         : item.target_type,
-      name         : item.target_name,
-      subjectName  : item.target_subj_name,
-      thumbUrl     : item.thumb_url,
-      placeAddr    : item.place_addr,
-      applyRatio   : item.apply_ratio,
-      hostNick     : item.mem_nick,
-      hostImageUrl : item.mem_image_url,
-      likeYn       : 'Y',
-    };
-
+  const renderCard = ({ item }: { item: LikeData }) => {
     return (
       <CommCard2
-        item={cardItem}
-        onPress={(pressedItem) => {
-          if (pressedItem.type === 'M') {
+        item={item}
+        onPress={() => {
+          if (item.target_type === COMM_CONSTANTS.TARGET_MEET) {
             router.push({
               pathname: '/meets/detailView',
-              params: { meetId: pressedItem.id },
+              params: { meetId: item.target_id },
             });
             return;
           }
-          if (pressedItem.type === 'G') {
+          if (item.target_type === COMM_CONSTANTS.TARGET_GROUP) {
             router.push({
               pathname: '/groups/detailView',
-              params: { groupId: pressedItem.id },
+              params: { groupId: item.target_id },
             });
           }
         }}
@@ -116,13 +102,13 @@ export default function LikeListScreen() {
 
   return (
     <View style={COMM_STYLES.container}>
-      <CommHeader title={"좋아요한 모임"} isBack={true} isLogo={false} isLike={false} isNoti={false} />
+      <CommHeader title={"좋아요 내역"} isBack={true} isLogo={false} isLike={false} isNoti={false} />
       <CategoryTab data={activeCategory} onPress={setActiveCategory} />
 
       <FlatList
         data={visibleMeets}
         keyExtractor={(item) => `${item.target_type}-${item.target_id}`}
-        renderItem={renderMeetCard}
+        renderItem={renderCard}
         contentContainerStyle={[
           styles.listContainer,
           filteredMeets.length === 0 && styles.listContainerEmpty,

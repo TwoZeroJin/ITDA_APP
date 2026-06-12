@@ -156,6 +156,7 @@ interface LikeData {
   apply_ratio?      : string;
   mem_nick?         : string;
   mem_image_url?    : string;
+  like_yn?          : "Y";
 }
 
 interface PushData {

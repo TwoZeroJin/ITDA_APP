@@ -100,48 +100,56 @@ function useMemberApplyList({target_id, target_type, use_stat}: {target_id: numb
 }
 
 // 내가 만든 소셜링 목록 조회 (무한 스크롤)
-function useMemberMyMeetListPaging(searchParams: SearchParams) {
+function useMemberMyMeetListPaging(searchParams: SearchParams, options?: { enabled?: boolean }) {
+  const { enabled = true } = options ?? {};
   const query = useInfiniteQuery({
     queryFn: ({ pageParam }) => memberMyMeetList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_MEET_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
+    enabled,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
   return { ...query, results };
 }
 
 // 내가 신청한 소셜링 목록 조회 (무한 스크롤)
-function useMemberApplyMeetListPaging(searchParams: SearchParams) {
+function useMemberApplyMeetListPaging(searchParams: SearchParams, options?: { enabled?: boolean }) {
+  const { enabled = true } = options ?? {};
   const query = useInfiniteQuery({
     queryFn: ({ pageParam }) => memberApplyMeetList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_MEET_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
+    enabled,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
   return { ...query, results };
 }
 
 // 내가 만든 클럽 목록 조회 (무한 스크롤)
-function useMemberMyGroupListPaging(searchParams: SearchParams) {
+function useMemberMyGroupListPaging(searchParams: SearchParams, options?: { enabled?: boolean }) {
+  const { enabled = true } = options ?? {};
   const query = useInfiniteQuery({
     queryFn: ({ pageParam }) => memberMyGroupList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_GROUP_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
+    enabled,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
   return { ...query, results };
 }
 
 // 내가 신청한 클럽 목록 조회 (무한 스크롤)
-function useMemberApplyGroupListPaging(searchParams: SearchParams) {
+function useMemberApplyGroupListPaging(searchParams: SearchParams, options?: { enabled?: boolean }  ) {
+  const { enabled = true } = options ?? {};
   const query = useInfiniteQuery({
     queryFn: ({ pageParam }) => memberApplyGroupList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_GROUP_LIST, searchParams],
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
+    enabled,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
   return { ...query, results };

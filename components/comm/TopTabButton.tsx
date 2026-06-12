@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_CONSTANTS } from '@/constants';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -8,16 +8,30 @@ export interface TopTabItem {
 }
 
 interface TopTabButtonProps {
-  tabs: TopTabItem[];
-  activeValue: string;
-  onTabPress: (value: string) => void;
-  rightAction?: {
+  activeValue   : string;
+  onTabPress    : (value: string) => void;
+  rightAction? : {
     element: React.ReactNode;
     onPress: () => void;
   };
+  isSocialTab? : boolean;
 }
 
-export default function TopTabButton({ tabs, activeValue, onTabPress, rightAction }: TopTabButtonProps) {
+const TABS_SOCIAL: Array<{ label: string; value: string }> = [
+  { label: '소셜링', value: COMM_CONSTANTS.COMM_MEET },
+  { label: '클럽', value: COMM_CONSTANTS.COMM_GROUP },
+  // { label: '클래스', value: 'class' },
+];
+
+const TABS_REVIEW: Array<{ label: string; value: string }> = [
+  { label: '최신', value: 'latest' },
+  { label: '모임 후기', value: 'review' },
+  { label: '내가 쓴 글', value: 'mypost' },
+];
+
+export default function TopTabButton({ activeValue, onTabPress, rightAction, isSocialTab = true }: TopTabButtonProps) {
+  const tabs = isSocialTab ? TABS_SOCIAL : TABS_REVIEW;
+
   return (
     <View style={styles.container}>
       <View style={styles.tabsWrapper}>

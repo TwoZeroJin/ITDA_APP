@@ -1,5 +1,5 @@
 import { COMM_CONSTANTS, STORE_KEY } from "@/constants";
-import { BannerData, ChatData, ChurchData, CodeInfo, FileInfo, MemberInfo, Token } from "@/types";
+import { BannerData, ChatData, ChurchData, CodeInfo, FileInfo, GroupInfo, LikeData, MeetInfo, MemberInfo, Token } from "@/types";
 import { Platform } from "react-native";
 import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
@@ -360,6 +360,14 @@ function parseImageList(imgListJson?: string): FileInfo[] {
   }
 }
 
+// MeetInfo와 GroupInfo, LikeData를 구분하는 타입 가드 함수
+function isLikeData(item: MeetInfo | GroupInfo | LikeData): item is LikeData {
+  return 'target_id' in item;
+}
+function isMeetItem(item: MeetInfo | GroupInfo | LikeData): item is MeetInfo {
+  return ('target_type' in item && item.target_type === 'M') || 'meet_id' in item;
+}
+
 // 채팅 메시지 페이로드를 Partial<ChatData> 타입으로 파싱하는 함수
 function parseChatPayload(raw: string): Partial<ChatData> {
   try {
@@ -406,4 +414,4 @@ function formatRelativeMeetDatetime(meetDatetime: string) {
   return `D-${diffDays}`;
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, isMeetItem, isLikeData };

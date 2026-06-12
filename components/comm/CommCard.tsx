@@ -4,9 +4,10 @@ import IconMarker from '@/assets/images/icon_marker.svg';
 import IconMembers from '@/assets/images/icon_members.svg';
 import ImageDefault from '@/assets/images/no_image.svg';
 import CommLabel from '@/components/comm/CommLabel';
-import { COLOR } from '@/constants';
+
+import { COLOR, COMM_CONSTANTS } from '@/constants';
 import { GroupInfo, MeetInfo } from '@/types';
-import { getAccessToken } from '@/utils/commUtil';
+import { getAccessToken, isMeetItem } from '@/utils/commUtil';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MemDefault from '@/assets/images/icon_mem_default.svg';
@@ -19,10 +20,6 @@ interface CommCardProps {
   onLikePress?      : (item: MeetInfo | GroupInfo) => void;
   backgroundColor?  : string;
   preventEvt?       : boolean;
-}
-
-function isMeetItem(item: MeetInfo | GroupInfo): item is MeetInfo {
-  return 'meet_id' in item;
 }
 
 /**
@@ -72,7 +69,7 @@ export default function CommCard({ item, onLikePress, backgroundColor, preventEv
   const isMeet = isMeetItem(item);
   const title = isMeet ? item.meet_name : item.group_name;
   const categoryName = isMeet ? item.meet_subj_name : item.group_subj_name;
-  const labelVariant = isMeet ? 'social' : 'club';
+  const labelVariant = isMeet ? COMM_CONSTANTS.COMM_MEET : COMM_CONSTANTS.COMM_GROUP;
 
   const movePage = () => {
     if (pathname === '/communities/chooseMeet' && isMeet) {
@@ -125,9 +122,10 @@ export default function CommCard({ item, onLikePress, backgroundColor, preventEv
       </View>
       <View style={styles.contentWrap}>
         <View style={styles.tagContainer}>
-          <CommLabel variant={labelVariant} />
+          <CommLabel variant={labelVariant as "MEET" | "GROUP"} />
           <CommLabel variant="category" category={categoryName} />
         </View>
+
         <View style={styles.contentContainer}>
           <Text style={styles.contentTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
           <View style={styles.contentInfoContainer}>
@@ -138,6 +136,7 @@ export default function CommCard({ item, onLikePress, backgroundColor, preventEv
             {item.apply_ratio && (<><IconMembers width={12} height={12} />
             <Text style={styles.contentText} numberOfLines={1} ellipsizeMode="tail">{item.apply_ratio}</Text></>)}
           </View>
+
           <View style={styles.contentInfoContainer}>
             {hostImageSource ? (
               <Image 
@@ -162,6 +161,8 @@ const styles = StyleSheet.create({
     paddingVertical   : 10,
     paddingHorizontal : 12,
     flexDirection     : 'row',
+    borderWidth       : 2,
+    borderColor       : COLOR.COMM_GRAY_5,
   },
   itemImage: {
     width             : 110,

@@ -9,6 +9,9 @@ import { useReviewList } from "@/hooks/queries/useCommunity";
 import { useAuthRouter } from '@/components/comm/AuthRoute';
 import { useLoading } from '@/contexts/LoadingContext';
 
+/**
+ * 커뮤니티 탭 메인 화면 - 후기 리스트
+ */
 export default function CommunityListScreen() {
   const router = useAuthRouter();
   const [activeType, setActiveType] = useState<string>('latest');
@@ -21,6 +24,7 @@ export default function CommunityListScreen() {
     sch_condition : activeType, 
     sch_keyword   : String(3) 
   });
+  
   // 화면 재진입시 재조회
   // useFocusEffect(
   //   useCallback(() => {
@@ -45,7 +49,7 @@ export default function CommunityListScreen() {
     await refetch();
     setRefreshing(false);
   }, [refetch]);
-  const loadMore = () => {
+  const handleEndReached = () => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage(); 
     }
@@ -61,13 +65,13 @@ export default function CommunityListScreen() {
     <View style={{ flex: 1 }}>
       <CommHeader />
       <TopTabButton
-        tabs={tabs}
         activeValue={activeType}
         onTabPress={setActiveType}
         rightAction={{
           element: <IconPencil width={22} height={22} />,
           onPress: () => router.navigate('/communities/chooseWriteType'),
         }}
+        isSocialTab={false}
       />
         <FlatList 
           data={results}
@@ -75,7 +79,7 @@ export default function CommunityListScreen() {
           keyExtractor={(item) => item.review_id?.toString() || ''} 
           onRefresh={onRefresh} 
           refreshing={refreshing} 
-          onEndReached={loadMore} 
+          onEndReached={handleEndReached} 
           onEndReachedThreshold={0.5} 
           ListEmptyComponent={
             <View style={styles.emptyContainer}>

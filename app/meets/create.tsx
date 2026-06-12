@@ -6,18 +6,17 @@ import CommBottomButton from "@/components/comm/CommBottomButton";
 import { router } from "expo-router";
 import IconSocial from '@/assets/images/icon_social.svg';
 import IconClub from '@/assets/images/icon_club.svg';
-import IconClass from '@/assets/images/icon_class.svg';
 
 const MEET_OPTIONS = [
   {
-    value       : COMM_CONSTANTS.MEET_SOCIAL,
+    value       : COMM_CONSTANTS.COMM_MEET,
     title       : '소셜링',
     description : '일회성 모임으로 번개처럼 가볍게 만나봐요.',
     color       : COLOR.COLOR_SOCIAL,
     Icon        : IconSocial,
   },
   {
-    value       : COMM_CONSTANTS.MEET_CLUB,
+    value       : COMM_CONSTANTS.COMM_GROUP,
     title       : '클럽',
     description : '정기적으로 만나면서 관계를 함께 만들어가요.',
     color       : COLOR.COLOR_CLUB,
@@ -25,7 +24,7 @@ const MEET_OPTIONS = [
   },
   // 클래스 주석
   // {
-  //   value       : COMM_CONSTANTS.MEET_CLASS,
+  //   value       : COMM_CONSTANTS.COMM_CLASS,
   //   title       : '클래스',
   //   description : '클래스를 열고, 함께 배우는 경험을 나눠보세요.',
   //   color       : COLOR.COLOR_CLASS,
@@ -70,7 +69,7 @@ export default function MeetCreateScreen() {
         </View>
 
         <CommBottomButton label="다음" onPress={() => meet && router.navigate(
-            meet === COMM_CONSTANTS.MEET_CLUB ? '/groups/createDetail' : '/meets/createType',
+            meet === COMM_CONSTANTS.COMM_GROUP ? '/groups/createDetail' : '/meets/createType',
           )}
           disabled={!meet}/>
     </View>
@@ -79,14 +78,15 @@ export default function MeetCreateScreen() {
 
 const styles = StyleSheet.create({
   title: {
-    fontSize          : 22,
-    fontWeight        : 'bold',
-    color             : COLOR.COMM_BLACK,
+    fontSize          : 24,
+    fontFamily        : 'Pretendard-Bold',
+    color             : COLOR.TEXT_1C1C1C,
     marginBottom      : 16,
   },
   subtitle: {
     fontSize          : 16,
-    color             : COLOR.COMM_GRAY_2,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.TEXT_DEFAULT,
   },
   meetTypeSubContainer: {
     marginStart       : 6,
@@ -103,12 +103,14 @@ const styles = StyleSheet.create({
   },
   meetTypeTitle: {
     fontSize          : 16,
-    fontWeight        : 'bold', 
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COLOR_323232,
     marginBottom      : 8,
   },
   meetTypeDesc: {
     fontSize          : 14,
-    color             : COLOR.COMM_GRAY_2,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.TEXT_DEFAULT,
   },
   meetSelected: {
     borderColor       : COLOR.APP_MAIN,

@@ -7,7 +7,7 @@ import CommCard from '@/components/comm/CommCard';
 import DividingLine from '@/components/DividingLine';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconFilter from '@/assets/images/icon_filter.svg';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_CONSTANTS } from '@/constants';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMeetListPaging } from '@/hooks/queries/useMeet';
@@ -17,26 +17,21 @@ import { GroupInfo, MeetInfo } from '@/types';
 import { useFocusEffect } from 'expo-router';
 import { useLoading } from '@/contexts/LoadingContext';
 
-type SortType = 'latest' | 'oldest';
-type MeetTabType = 'social' | 'club';
-
+/**
+ * 소셜링/클럽 전체 리스트 화면
+ */
 export default function MeetGroupListScreen() {
-  const tabs: Array<{ label: string; value: string }> = [
-    { label: '소셜링', value: 'social' },
-    { label: '클럽', value: 'club' },
-    // { label: '클래스', value: 'class' },
-  ];
-  const [activeType, setActiveType] = useState<MeetTabType>('social');
+  const [activeType, setActiveType] = useState(COMM_CONSTANTS.COMM_MEET);
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [sortType, setSortType] = useState<SortType>('latest');
+  const [sortType, setSortType] = useState('latest');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchKey, setSearchKey] = useState<string>('');
   const { setLoading } = useLoading();
   const hasHandledInitialLoadingRef = useRef(false);
   const memberLike = useMemberLike();
-  const isClub = activeType === 'club';
-    const meetQuery = useMeetListPaging({
+  const isClub = activeType === COMM_CONSTANTS.COMM_GROUP;
+  const meetQuery = useMeetListPaging({
     page_no       : 0,
     page_size     : 10,
     sch_category  : selectedCategory,
@@ -50,8 +45,8 @@ export default function MeetGroupListScreen() {
   }, { enabled: isClub });
 
   const currentQuery = isClub ? groupQuery : meetQuery;
-  const listTitle = activeType === 'club' ? '전체 클럽' : '전체 소셜링';
-  const emptyText = activeType === 'club' ? '등록된 클럽이 없습니다.' : '등록된 모임이 없습니다.';
+  const listTitle = isClub ? '전체 클럽' : '전체 소셜링';
+  const emptyText = isClub ? '등록된 클럽이 없습니다.' : '등록된 모임이 없습니다.';
 
   const sortedResults = useMemo(() => {
     const source = (isClub ? groupQuery.results : meetQuery.results) as Array<MeetInfo | GroupInfo>;
@@ -109,11 +104,10 @@ export default function MeetGroupListScreen() {
     setRefreshing(false);
   }, [currentQuery]);
   const handleTabPress = (tab: string) => {
-    const nextType = tab as MeetTabType;
-    setActiveType(nextType);
+    setActiveType(tab);
     setIsDetailMenuVisible(false);
   };
-  const loadMore = () => {
+  const handleEndReached = () => {
     if (currentQuery.hasNextPage && !currentQuery.isFetchingNextPage) {
       currentQuery.fetchNextPage();
     }
@@ -156,7 +150,6 @@ export default function MeetGroupListScreen() {
     <View style={{ flex: 1 }}>
       <CommHeader />
       <TopTabButton
-        tabs={tabs}
         activeValue={activeType}
         onTabPress={handleTabPress}
       />
@@ -170,7 +163,7 @@ export default function MeetGroupListScreen() {
         }}
         onRefresh={onRefresh}
         refreshing={refreshing}
-        onEndReached={loadMore}
+        onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}
         ListHeaderComponentStyle={{ zIndex: 10 }}
         CellRendererComponent={({ children, ...props }) => (

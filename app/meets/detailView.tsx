@@ -17,7 +17,7 @@ import IconDetailFee from '@/assets/images/icon_detail_fee.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
 import DividingLine from "@/components/DividingLine";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
-import CommReviewList from '@/components/CommReviewList';
+import CommReviewList from '@/components/comm/CommReviewList';
 import DropdownModal from '@/components/modal/DropdownModal';
 import { useReviewList } from "@/hooks/queries/useCommunity";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
@@ -296,7 +296,7 @@ export default function DetailViewScreen() {
         <View style={COMM_STYLES.commContainer}>
           {/* 소셜링 라벨 */}
           <View style={COMM_STYLES.labelContainer}>
-              <CommLabel variant="social" />
+              <CommLabel variant={COMM_CONSTANTS.COMM_MEET as "MEET"} />
               <CommLabel variant="category" category={meetInfo?.meet_subj_name} />
           </View>
 
@@ -362,9 +362,9 @@ export default function DetailViewScreen() {
           onPress={() => {router.push({
           pathname: "/chats",
           params: {
-            room_id   : `${COMM_CONSTANTS.CHAT_TYPE_MEET}_${meetInfo?.meet_id}`,
+            room_id   : `${COMM_CONSTANTS.COMM_MEET}_${meetInfo?.meet_id}`,
             room_name : meetInfo?.meet_name,
-            room_type : COMM_CONSTANTS.CHAT_TYPE_MEET,
+            room_type : COMM_CONSTANTS.COMM_MEET,
           },
         })}} />
       )}

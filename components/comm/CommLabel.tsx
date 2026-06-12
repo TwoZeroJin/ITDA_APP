@@ -1,16 +1,16 @@
-import { COLOR } from "@/constants";
+import { COLOR, COMM_CONSTANTS } from "@/constants";
 import { getCategoryList } from "@/utils/commUtil";
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text } from "react-native";
 import { CodeInfo } from "@/types";
 
 interface CommLabelProps {
-    variant?    : "social" | "club" | "category";
+    variant?    : "MEET" | "GROUP" | "category";
     category?   : string;
 }
 
 // 소셜링 라벨 텍스트
-function CommLabel({ variant = "social", category = ""} : CommLabelProps) {
+function CommLabel({ variant = "MEET", category = ""} : CommLabelProps) {
     const [categoryList, setCategoryList] = useState<CodeInfo[]>([]);
 
     useEffect(() => {
@@ -20,9 +20,9 @@ function CommLabel({ variant = "social", category = ""} : CommLabelProps) {
     }, [variant]);
 
     let text = "";
-    if (variant === "social") {
+    if (variant === COMM_CONSTANTS.COMM_MEET) {
         text = "소셜링";
-    } else if (variant === "club") {
+    } else if (variant === COMM_CONSTANTS.COMM_GROUP) {
         text = "클럽";
     } else if (variant === "category") {
         const found = categoryList.find(item => item.code_id === category);
@@ -43,12 +43,12 @@ const baseStyle = {
 };
 
 const styles = StyleSheet.create({
-  social: {
+  MEET: {
     ...baseStyle,
     color           : COLOR.COMM_WHITE,
     backgroundColor : COLOR.BG_MEET,
   },
-  club: {
+  GROUP: {
     ...baseStyle,
     color           : COLOR.COLOR_CLUB,
     backgroundColor : COLOR.BG_CLUB,

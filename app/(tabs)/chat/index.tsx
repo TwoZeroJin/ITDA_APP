@@ -149,14 +149,6 @@ export default function ChatListScreen() {
 }
 
 const styles = StyleSheet.create({
-  categoryRow: {
-    flexDirection     : "row",
-    alignItems        : "center",
-    gap               : 8,
-    paddingHorizontal : 20,
-    paddingTop        : 20,
-    paddingBottom     : 18,
-  },
   listContainer: {
     paddingHorizontal : 20,
     paddingBottom     : 24,

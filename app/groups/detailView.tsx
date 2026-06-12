@@ -293,7 +293,7 @@ export default function GroupDetailViewScreen() {
         <View style={COMM_STYLES.commContainer}>
           {/* 클럽 라벨 */}
           <View style={COMM_STYLES.labelContainer}>
-              <CommLabel variant="club" />
+              <CommLabel variant={COMM_CONSTANTS.COMM_GROUP as "GROUP"} />
               <CommLabel variant="category" category={groupInfo?.group_subj_name} />
           </View>
 
@@ -355,9 +355,9 @@ export default function GroupDetailViewScreen() {
           onPress={() => {router.push({
           pathname: "/chats",
           params: {
-            room_id   : `${COMM_CONSTANTS.CHAT_TYPE_GROUP}_${groupInfo?.group_id}`,
+            room_id   : `${COMM_CONSTANTS.COMM_GROUP}_${groupInfo?.group_id}`,
             room_name : groupInfo?.group_name,
-            room_type : COMM_CONSTANTS.CHAT_TYPE_GROUP,
+            room_type : COMM_CONSTANTS.COMM_GROUP,
           },
         })}} />
       )}

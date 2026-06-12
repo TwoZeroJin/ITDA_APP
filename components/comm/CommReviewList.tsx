@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
     paddingVertical     : 16,
     paddingHorizontal   : 8,
     backgroundColor     : COLOR.COMM_WHITE,
-//    alignItems          : 'center',//후기가 한개있을때 모양깨져서 지움
   },
   headerRow: {
     flexDirection       : 'row',

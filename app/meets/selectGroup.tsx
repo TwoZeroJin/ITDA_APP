@@ -1,5 +1,5 @@
 import CommHeader from '@/components/comm/CommHeader';
-import CommCard2, { CardData } from '@/components/comm/CommCard2';
+import CommCard2 from '@/components/comm/CommCard2';
 import { COLOR, COMM_STYLES } from '@/constants';
 import { useMemberMyGroupListPaging } from '@/hooks/queries/useMember';
 import { GroupInfo } from '@/types';
@@ -37,24 +37,12 @@ export default function SelectGroupScreen() {
     }
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const renderMeetCard = ({ item }: { item: GroupInfo }) => {
-    const cardItem: CardData = {
-      id           : item.group_id,
-      type         : 'G',
-      name         : item.group_name,
-      subjectName  : item.group_subj_name,
-      thumbUrl     : item.thumb_url,
-      placeAddr    : item.place_addr,
-      applyRatio   : item.apply_ratio,
-      hostNick     : item.mem_nick,
-      hostImageUrl : item.mem_image_url,
-    };
-
+  const renderCard = ({ item }: { item: GroupInfo }) => {
     return (
       <CommCard2
-        item={cardItem}
+        item={item}
         selected={group_id === item.group_id}
-        onPress={(pressedItem) => setGroupId(Number(pressedItem.id))}
+        onPress={() => setGroupId(Number(item.group_id))}
       />
     );
   };
@@ -66,7 +54,7 @@ export default function SelectGroupScreen() {
       <FlatList
         data={results}
         keyExtractor={(item) => `${item.group_id}`}
-        renderItem={renderMeetCard}
+        renderItem={renderCard}
         contentContainerStyle={[
           styles.listContainer,
           results.length === 0 && styles.listContainerEmpty,

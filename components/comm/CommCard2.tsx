@@ -5,43 +5,37 @@ import IconMembers from '@/assets/images/icon_members.svg';
 import ImageDefault from '@/assets/images/no_image.svg';
 import BtnLikeDefault from '@/assets/images/btn_like_default.svg';
 import BtnLikeActive from '@/assets/images/btn_like_active.svg';
-import { COLOR } from '@/constants';
-import React, { useEffect, useState } from 'react';
+import { COLOR, COMM_CONSTANTS } from '@/constants';
+import React, { useMemo, useState } from 'react';
 import { Image, ImageBackground, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { GroupInfo, LikeData, MeetInfo } from '@/types';
+import { isLikeData, isMeetItem } from '@/utils/commUtil';
 
-export interface CardData {
-  id            : number;
-  type?         : string;
-  name          : string;
-  subjectName?  : string;
-  thumbUrl?     : string;
-  placeAddr?    : string;
-  applyRatio?   : string;
-  hostNick?     : string;
-  hostImageUrl? : string;
-  likeYn?       : string;
-}
-
-interface CommCard2Props {
-  item          : CardData;
-  onPress?      : (item: CardData) => void;
-  onLikePress?  : (item: CardData) => void;
+  interface CommCard2Props {
+  item          : MeetInfo | GroupInfo | LikeData;
+  onPress?      : (item: MeetInfo | GroupInfo | LikeData) => void;
+  onLikePress?  : (item: MeetInfo | GroupInfo | LikeData) => void;
   selected?     : boolean;
   style?        : StyleProp<ViewStyle>;
 }
 
 export default function CommCard2({ item, onPress, onLikePress, selected = false, style }: CommCard2Props) {
-  const [hasImageError, setHasImageError] = useState(false);
-
-  useEffect(() => {
-    setHasImageError(false);
-  }, [item.id, item.thumbUrl]);
-
-  const imageSource = item.thumbUrl && !hasImageError
-    ? { uri: item.thumbUrl }
-    : require('@/assets/images/no_image.png');
-
-  const typeLabel = item.type === 'M' ? 'social' : item.type === 'G' ? 'club' : undefined;
+  const [thumbImageError, setThumbImageError] = useState(false);
+  const [profileImageError, setProfileImageError] = useState(false);
+  const imageSource = useMemo(
+    () => (thumbImageError || !item.thumb_url ? null : { uri: item.thumb_url }),
+    [thumbImageError, item.thumb_url],
+  );
+  const hostImageSource = useMemo(
+    () => (profileImageError || !item.mem_image_url ? null : { uri: item.mem_image_url }),
+    [profileImageError, item.mem_image_url],
+  );
+  
+  const isLike = isLikeData(item);
+  const isMeet = isMeetItem(item);
+  const title = isLike ? item.target_name : isMeet ? item.meet_name : item.group_name;
+  const categoryName = isLike ? item.apply_ratio : isMeet ? item.meet_subj_name : item.group_subj_name;
+  const labelVariant = isLike ? (item.target_type === COMM_CONSTANTS.TARGET_MEET ? COMM_CONSTANTS.COMM_MEET : COMM_CONSTANTS.COMM_GROUP) : isMeet ? COMM_CONSTANTS.COMM_MEET : COMM_CONSTANTS.COMM_GROUP;
 
   return (
     <TouchableOpacity
@@ -54,7 +48,7 @@ export default function CommCard2({ item, onPress, onLikePress, selected = false
           source={imageSource}
           style={styles.cardImage}
           imageStyle={styles.cardImageStyle}
-          onError={() => setHasImageError(true)}
+          onError={() => setThumbImageError(true)}
         >
           {onLikePress && (
             <TouchableOpacity
@@ -62,19 +56,19 @@ export default function CommCard2({ item, onPress, onLikePress, selected = false
               activeOpacity={0.6}
               onPress={() => onLikePress(item)}
             >
-              {item.likeYn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
+              {isLike || item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
             </TouchableOpacity>
           )}
         </ImageBackground>) : (
           <View style={styles.cardImage}>
-            <ImageDefault width={96} height={96} />
+            <ImageDefault width={106} height={106} />
             {onLikePress && (
               <TouchableOpacity
                 style={styles.likeBtn}
                 activeOpacity={0.6}
                 onPress={() => onLikePress(item)}
               >
-                {item.likeYn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
+                {isLike || item.like_yn === 'Y' ? <View style={{bottom : -4}}><BtnLikeActive /></View> : <BtnLikeDefault />}
               </TouchableOpacity>
             )}
           </View>
@@ -82,35 +76,36 @@ export default function CommCard2({ item, onPress, onLikePress, selected = false
 
         <View style={styles.cardContent}>
           <View style={styles.tagRow}>
-            {typeLabel && <CommLabel variant={typeLabel} />}
-            {!!item.subjectName && <CommLabel variant="category" category={item.subjectName} />}
+            <CommLabel variant={labelVariant as "MEET" | "GROUP"} />
+            <CommLabel variant="category" category={categoryName} />
           </View>
 
-          <Text style={styles.cardTitle} numberOfLines={1} ellipsizeMode="tail">{item.name}</Text>
+          <Text style={styles.cardTitle} numberOfLines={1} ellipsizeMode="tail">{title}</Text>
 
-          {!!item.placeAddr && (
+          {item.place_addr && (
             <View style={styles.infoRowItem}>
               <IconMarker width={12} height={12} />
-              <Text style={styles.infoText}>{item.placeAddr}</Text>
+              <Text style={styles.infoText} numberOfLines={1} ellipsizeMode="tail">{item.place_addr}</Text>
             </View>
           )}
-          {!!item.applyRatio && (
+          {item.apply_ratio && (
             <View style={styles.infoRowItem}>
               <IconMembers width={12} height={12} />
-              <Text style={styles.infoText}>{item.applyRatio}</Text>
+              <Text style={styles.infoText} numberOfLines={1} ellipsizeMode="tail">{item.apply_ratio}</Text>
             </View>
           )}
 
-          {!!item.hostNick && (
-            <View style={styles.hostRow}>
-              {item.hostImageUrl ? (
-                <Image source={{ uri: item.hostImageUrl }} style={styles.hostImage} />
-              ) : (
-                <MemDefault width={20} height={20} />
-              )}
-              <Text style={styles.hostText}>{item.hostNick}</Text>
-            </View>
-          )}
+          <View style={styles.hostRow}>
+            {hostImageSource ? (
+              <Image source={hostImageSource} 
+              style={styles.hostImage} 
+              onError={() => setProfileImageError(true)}
+            />
+            ) : (
+              <MemDefault width={20} height={20} />
+            )}
+            <Text style={styles.hostText} numberOfLines={1} ellipsizeMode="tail">{item.mem_nick}</Text>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -138,6 +133,7 @@ const styles = StyleSheet.create({
     width             : 106,
     height            : 106,
     borderRadius      : 10,
+    overflow          : "hidden",
   },
   cardImageStyle: {
     borderRadius      : 10,

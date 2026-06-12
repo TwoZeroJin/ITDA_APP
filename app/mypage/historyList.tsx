@@ -1,131 +1,117 @@
 import CommHeader from '@/components/comm/CommHeader';
 import { CategoryTab } from '@/components/CategoryTab';
-import CommCard2, { CardData } from '@/components/comm/CommCard2';
+import CommCard2 from '@/components/comm/CommCard2';
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
-import { useMemberLike, useMemberLikeListPaging } from '@/hooks/queries/useMember';
-import { LikeData } from '@/types';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemberApplyGroupListPaging, useMemberApplyMeetListPaging, useMemberLike, useMemberMyGroupListPaging, useMemberMyMeetListPaging } from '@/hooks/queries/useMember';
+import { GroupInfo, MeetInfo } from '@/types';
+import { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { router } from 'expo-router';
+import TopTabButton from '@/components/comm/TopTabButton';
+import { isMeetItem } from '@/utils/commUtil';
 
 /**
  * 내가 만든/참여한 소셜링/클럽 목록 화면
  */
 export default function HistoryListScreen() {
   const memberLike = useMemberLike();
-  const [activeCategory, setActiveCategory] = useState<string>("");
+  const [activeType, setActiveType] = useState(COMM_CONSTANTS.COMM_MEET);
+  const [activeCategory, setActiveCategory] = useState(COMM_CONSTANTS.TYPE_MY);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [removedIds, setRemovedIds] = useState<Set<number>>(new Set());
+  const isClub = activeType === COMM_CONSTANTS.COMM_GROUP;
+  const isMy   = activeCategory === COMM_CONSTANTS.TYPE_MY;
+  const myMeetQuery = useMemberMyMeetListPaging({
+    page_no       : 0,
+    page_size     : 10,
+  }, { enabled: !isClub && isMy });
+  const applyMeetQuery = useMemberApplyMeetListPaging({
+    page_no       : 0,  
+    page_size     : 10,
+  }, { enabled: !isClub && !isMy });
+  const myGroupQuery = useMemberMyGroupListPaging({
+    page_no       : 0,
+    page_size     : 10,
+  }, { enabled: isClub && isMy });
+  const applyGroupQuery = useMemberApplyGroupListPaging({
+    page_no       : 0,
+    page_size     : 10,
+  }, { enabled: isClub && !isMy });
 
-  const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useMemberLikeListPaging({
-    page_no   : 0,
-    page_size : 10,
-  });
+  const currentQuery = isClub ? (isMy ? myGroupQuery : applyGroupQuery) : (isMy ? myMeetQuery : applyMeetQuery);
+  const emptyText = isClub ? ( isMy ? '만든 클럽이 없습니다.' : '참여한 클럽이 없습니다.') : ( isMy ? '만든 소셜링이 없습니다.' : '참여한 소셜링이 없습니다.');
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
-    await refetch();
+    await currentQuery.refetch();
     setIsRefreshing(false);
-  }, [refetch]);
+  }, [currentQuery]);
+  const handleTabPress = (tab: string) => {
+    setActiveType(tab);
+  };
 
-  const handleEndReached = useCallback(() => {
-    if (hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
+  const handleEndReached = () => {
+    if (currentQuery.hasNextPage && !currentQuery.isFetchingNextPage) {
+      currentQuery.fetchNextPage();
     }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+  };
 
-  const filteredMeets = useMemo(() => {
-    if (activeCategory === "") {
-      return results;
-    }
-
-    const typeMap: Record<string, string> = {
-      [COMM_CONSTANTS.CHAT_TYPE_MEET]: 'M',
-      [COMM_CONSTANTS.CHAT_TYPE_GROUP]: 'G',
-      [COMM_CONSTANTS.CHAT_TYPE_CLASS]: 'C',
-    };
-
-    const targetType = typeMap[activeCategory];
-    if (!targetType) return results;
-
-    return results.filter((item) => item.target_type === targetType);
-  }, [activeCategory, results]);
-
-  const visibleMeets = useMemo(
-    () => filteredMeets.filter((item) => !removedIds.has(item.target_id)),
-    [filteredMeets, removedIds],
-  );
-
-  // 좋아요 취소 — 낙관적으로 즉시 제거, 실패 시 롤백
+  // 좋아요 처리
   const handleLikePress = (targetId: number, targetType: string) => {
     if (!targetId) return;
 
-    setRemovedIds((prev) => new Set(prev).add(targetId));
-
-    memberLike.mutate(
-      { target_id: targetId, target_type: targetType, flag: false },
-      {
-        onError: () => {
-          setRemovedIds((prev) => {
-            const next = new Set(prev);
-            next.delete(targetId);
-            return next;
-          });
-        },
+      memberLike.mutate(
+      { 
+        target_id: targetId, 
+        target_type: targetType, 
+        flag: false 
+      },
+        {
       },
     );
   };
 
-  const renderMeetCard = ({ item }: { item: LikeData }) => {
-    const cardItem: CardData = {
-      id           : item.target_id,
-      type         : item.target_type,
-      name         : item.target_name,
-      subjectName  : item.target_subj_name,
-      thumbUrl     : item.thumb_url,
-      placeAddr    : item.place_addr,
-      applyRatio   : item.apply_ratio,
-      hostNick     : item.mem_nick,
-      hostImageUrl : item.mem_image_url,
-      likeYn       : 'Y',
-    };
-
+  const renderCard = ({ item }: { item: MeetInfo | GroupInfo }) => {
+    const isMeet = isMeetItem(item);
     return (
       <CommCard2
-        item={cardItem}
+        item={item}
         onPress={(pressedItem) => {
-          if (pressedItem.type === 'M') {
+          if (isMeetItem(pressedItem)) {
             router.push({
               pathname: '/meets/detailView',
-              params: { meetId: pressedItem.id },
+              params: { meetId: pressedItem.meet_id },
             });
             return;
           }
-          if (pressedItem.type === 'G') {
+          else {
             router.push({
               pathname: '/groups/detailView',
-              params: { groupId: pressedItem.id },
+              params: { groupId: item.group_id },
             });
           }
         }}
-        onLikePress={() => handleLikePress(item.target_id, item.target_type)}
+        onLikePress={() => handleLikePress(isMeet ? item.meet_id : item.group_id, isMeet ? COMM_CONSTANTS.TARGET_MEET : COMM_CONSTANTS.TARGET_GROUP)}
       />
     );
   };
 
   return (
     <View style={COMM_STYLES.container}>
-      <CommHeader title={"좋아요한 모임"} isBack={true} isLogo={false} isLike={false} isNoti={false} />
-      <CategoryTab data={activeCategory} onPress={setActiveCategory} />
+      <CommHeader title={"나의 이력"} isBack={true} isLogo={false} isLike={false} isNoti={false} />
+      <TopTabButton
+        activeValue={activeType}
+        onTabPress={handleTabPress}
+      />
+      <CategoryTab data={activeCategory} onPress={setActiveCategory} isMyTab={true} />
 
       <FlatList
-        data={visibleMeets}
-        keyExtractor={(item) => `${item.target_type}-${item.target_id}`}
-        renderItem={renderMeetCard}
+        data={currentQuery.results}
+        keyExtractor={(item) => `${item.apply_stat}-${item.apply_ratio}`}
+        renderItem={renderCard}
         contentContainerStyle={[
           styles.listContainer,
-          filteredMeets.length === 0 && styles.listContainerEmpty,
+          currentQuery.results.length === 0 && styles.listContainerEmpty,
         ]}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}
@@ -133,11 +119,9 @@ export default function HistoryListScreen() {
         refreshing={isRefreshing}
         onRefresh={handleRefresh}
         ListEmptyComponent={
-          !isLoading ? (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>좋아요한 모임이 없습니다.</Text>
-            </View>
-          ) : null
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>{emptyText}</Text>
+          </View>
         }
       />
     </View>
@@ -147,7 +131,6 @@ export default function HistoryListScreen() {
 const styles = StyleSheet.create({
   listContainer: {
     paddingHorizontal : 16,
-    paddingVertical   : 16,
   },
   listContainerEmpty: {
     flexGrow          : 1,
