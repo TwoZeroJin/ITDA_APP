@@ -90,8 +90,8 @@ const connectMqtt = async (): Promise<boolean> => {
   connectPromise = new Promise<boolean>((resolve) => {
     try {
         bindClientEvents(mqttClient);
-
         mqttClient.connect({
+          useSSL: `${process.env.EXPO_PUBLIC_ENV}` === 'local' ? false : true,
           onSuccess: (success) => {
             printInfoLog(`MQTT Connected : ${JSON.stringify(success)}`);
             connectPromise = null;
@@ -102,7 +102,6 @@ const connectMqtt = async (): Promise<boolean> => {
             connectPromise = null;
             resolve(false);
           },
-          useSSL: `${process.env.EXPO_PUBLIC_ENV}` === 'local' ? false : true,
         });
     }
     catch (e) {
