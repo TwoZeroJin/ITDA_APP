@@ -9,36 +9,72 @@ import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react
 import { useFocusEffect } from "expo-router";
 import { CategoryTab } from "@/components/CategoryTab";
 import ImageDefault from "@/assets/images/no_image.svg";
-import { formatRelativeTime, getMemberInfo } from "@/utils/commUtil";
+import { formatRelativeTime, getMemberInfo, parseChatPayload } from "@/utils/commUtil";
+import { MqttUtil } from "@/utils/mqttUtil";
 
 /**
  * 채팅 리스트 화면
  */
 export default function ChatListScreen() {
   const router = useAuthRouter();
-  const [activeCategory, setActiveCategory] = useState<string>("");
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [ activeCategory, setActiveCategory] = useState<string>("");
+  const [ imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
   const { setLoading } = useLoading();
-  const [myMemId, setMyMemId] = useState<number>(0);
+  const [ myMemId, setMyMemId] = useState<number>(0);
   const hasHandledInitialLoadingRef = useRef(false);
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatRoomListPaging({
     page_no   : 0,
     page_size : 20
   });
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [ isRefreshing, setIsRefreshing ] = useState(false);
+  const [ chatRooms, setChatRooms ] = useState<RoomData[]>([]);
 
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
       const memberInfo = await getMemberInfo();
+      if (memberInfo) {
+          MqttUtil.subscribeTopicList(memberInfo.topic_list ?? [], 'ChatListScreen', (msg, topic) => {
+            setChatRooms(prev => {
+              const targetIndex = prev.findIndex(
+                room => room.room_id === topic
+              );
+              if (targetIndex < 0) {
+                return prev;
+              }
+              const targetRoom = prev[targetIndex];
+              const updatedRoom = {
+                ...targetRoom,
+                last_msg: parseChatPayload(msg).chat_msg,
+                unread_count: (targetRoom.unread_count ?? 0) + 1,
+                mod_sdate: new Date().toISOString(),
+              };
+              const next = [...prev];
+              next.splice(targetIndex, 1);
+              return [
+                updatedRoom,
+                ...next,
+              ];
+            });
+          });
+        }
+        else {
+          MqttUtil.unsubscribeAll('ChatListScreen');
+        }
       setMyMemId(memberInfo.mem_id ?? 0);
       }
     fetchMyMemberInfo();
+
+    return () => {
+      MqttUtil.unsubscribeAll('ChatListScreen');
+    };
   }, []);
+  
 
   // 화면 포커스시 재조회
   useFocusEffect(
     useCallback(() => {
       refetch();
+      setChatRooms(results);
     }, [refetch]),
   );
 
@@ -67,12 +103,16 @@ export default function ChatListScreen() {
     }
   };
 
+  useEffect(() => {
+    setChatRooms(results);
+  }, [results]);
+
   // 카테고리에 따른 필터 및 
   const filteredChatRooms = useMemo(() => {
     const filtered =
       activeCategory === ""
-        ? results
-        : results.filter((room) => room.room_type === activeCategory);
+        ? chatRooms
+        : chatRooms.filter((room) => room.room_type === activeCategory);
 
     return filtered.map((room) => {
       if (room.room_type !== COMM_CONSTANTS.COMM_MEMBER) {
@@ -97,7 +137,7 @@ export default function ChatListScreen() {
         room_name: roomTitle,
       };
     });
-  }, [activeCategory, results, myMemId]);
+  }, [activeCategory, chatRooms, myMemId]);
 
   const renderChatRoom = ({ item }: { item: RoomData }) => {
     const updatedText = formatRelativeTime(item.mod_sdate || item.reg_sdate);

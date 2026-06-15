@@ -9,7 +9,9 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { getAsyncStore } from '@/utils/asyncStoreUtil';
+import { saveAsyncStore } from '@/utils/asyncStoreUtil';
+import { MqttUtil } from '@/utils/mqttUtil';
+import { getMemberInfo } from '@/utils/commUtil';
 
 // 탭 이름 → 경로 매핑 (EXCLUDE_PATHS 기준으로 protected 여부 판단)
 const TAB_PATHS: Record<string, string> = {
@@ -30,10 +32,24 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
   const [ isChatYn, setIsChatYn] = useState('N');
 
   useEffect(() => {
-    getAsyncStore(STORE_KEY.CHAT_BADGE).then((val) => {
-      setIsChatYn(val ?? 'N');
-    });
+    const fetchMyMemberInfo = async () => {
+      const memberInfo = await getMemberInfo();
+      if (memberInfo) {
+        MqttUtil.subscribeTopicList(memberInfo.topic_list ?? [], 'CommBottomTabBar', () => {
+          setIsChatYn('Y');
+        });
+      }
+      else {
+        MqttUtil.unsubscribeAll('CommBottomTabBar');
+      }
+    }
+    fetchMyMemberInfo();
+
+    return () => {
+      MqttUtil.unsubscribeAll('CommBottomTabBar');
+    };
   }, []);
+
   return (
     <View style={styles.tabContainer}>
       {state.routes.map((route, index) => {
@@ -42,6 +58,11 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
         const name = route.name;
 
         const onPress = () => {
+          if (name === 'chat') {
+            saveAsyncStore(STORE_KEY.CHAT_BADGE, 'N').then(() => {
+              setIsChatYn('N');
+            });
+          }
           Haptics.selectionAsync();
           const event = navigation.emit({
             type: 'tabPress',

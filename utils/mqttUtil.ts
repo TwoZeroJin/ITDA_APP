@@ -7,11 +7,6 @@ let connectPromise: Promise<boolean> | null = null;
 type MessageCallback = (msg: string, topic: string) => void;
 type DeliveredCallback = (msg: string, topic: string) => void;
 
-const LOGIN_TOPIC_SUBSCRIBER_ID = 'global:login-topic-subscriber';
-const LOGIN_TOPIC_CALLBACK: MessageCallback = () => {
-  // 로그인 공통 구독자: 화면별 처리는 각 화면 subscriber에서 담당
-};
-
 const topicSubscribers = new Map<string, Map<string, MessageCallback>>();
 const deliveredSubscribers = new Map<string, DeliveredCallback>();
 
@@ -171,13 +166,13 @@ const unsubscribeAll = (subscriberId: string) => {
  * topic 목록 일괄 구독
  * - 기존 subscriberId 구독은 모두 해제 후 topic_list로 재구성
  */
-const subscribeTopicList = async (topics: string[]) => {
+const subscribeTopicList = async (topics: string[], subscriberId: string, messageCallback: MessageCallback) => {
   const isConnected = await connectMqtt();
   if (!isConnected) {
     return false;
   }
 
-  unsubscribeAll(LOGIN_TOPIC_SUBSCRIBER_ID);
+  unsubscribeAll(subscriberId);
 
   const topicSet = new Set((topics ?? []).filter(Boolean));
   if (topicSet.size === 0) {
@@ -185,7 +180,7 @@ const subscribeTopicList = async (topics: string[]) => {
   }
 
   const results = await Promise.all(
-    Array.from(topicSet).map((topic) => subscribe(topic, LOGIN_TOPIC_SUBSCRIBER_ID, LOGIN_TOPIC_CALLBACK))
+    Array.from(topicSet).map((topic) => subscribe(topic, subscriberId, messageCallback))
   );
 
   return results.every(Boolean);

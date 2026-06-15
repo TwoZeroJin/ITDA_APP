@@ -16,7 +16,8 @@
     "production": {
       "channel": "prod",
       "distribution": "store",
-      "env": { "APP_ENV": "prod" }
+      "env": { "APP_ENV": "prod" },
+      "autoIncrement": true
     }
   }
 }

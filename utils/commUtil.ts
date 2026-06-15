@@ -146,6 +146,7 @@ async function saveMemberInfo(data?: MemberInfo & Token) {
     await saveSecureStore(STORE_KEY.MEM_CHURCH_TM_NM,   data.mem_church_tm_nm);
     await saveSecureStore(STORE_KEY.PUSH_SEND_YN,       data.push_send_yn);
     await saveSecureStore(STORE_KEY.PUSH_TOKEN,         data.push_token);
+    await saveSecureStore(STORE_KEY.TOPIC_LIST,         data.topic_list ? JSON.stringify(data.topic_list) : '');
   }
 }
 async function saveMemberInfoForUpdate(data?: MemberInfo) {
@@ -184,6 +185,7 @@ async function getMemberInfo(): Promise<MemberInfo> {
   const mem_church_tm_nm  = await getSecureStore(STORE_KEY.MEM_CHURCH_TM_NM);
   const push_send_yn      = await getSecureStore(STORE_KEY.PUSH_SEND_YN);
   const push_token        = await getSecureStore(STORE_KEY.PUSH_TOKEN);
+  const topic_list        = await getSecureStore(STORE_KEY.TOPIC_LIST);
 
   return {
     mem_id              : Number(mem_id)    || 0,
@@ -200,7 +202,7 @@ async function getMemberInfo(): Promise<MemberInfo> {
     mem_church_tm_nm    : mem_church_tm_nm  || "",
     push_send_yn        : push_send_yn      || "",
     push_token          : push_token        || "",
-    host_yn             : "N",
+    topic_list          : topic_list        ? JSON.parse(topic_list) : [],
   };
 }
 

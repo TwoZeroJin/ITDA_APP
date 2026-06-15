@@ -3,6 +3,7 @@ import { QUERY_KEYS } from "@/constants";
 import { SearchParams } from "@/types";
 import { getNextPageParamFromPaging } from "@/utils/commUtil";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 /**
  * 채팅방 룸 조회
@@ -14,7 +15,7 @@ function useChatRoomListPaging(searchParams: SearchParams) {
     initialPageParam: searchParams.page_no,
     getNextPageParam: getNextPageParamFromPaging,
   });
-  const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
+  const results = useMemo(() => query.data?.pages.flatMap(page => page.data ?? []) ?? [], [query.data]);
   return { ...query, results };
 }
 

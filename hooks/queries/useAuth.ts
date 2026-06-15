@@ -11,7 +11,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { memberLogout } from '@/api/member';
 
 type ResponseError = AxiosError<{
   statusCode  : number;
@@ -68,7 +67,6 @@ function useLogin() {
       if (result.ret_code == 200) {
         // 회원 정보 SecureStore에 저장
         await saveMemberInfo(result.data);
-        MqttUtil.subscribeTopicList(result.data?.topic_list ?? []);
         router.replace("/");
         showToast({
           text1: "로그인하였습니다."
@@ -102,7 +100,6 @@ function useAutoLogin(options = {enabled : false}) {
       if (isSuccess) {
         if (data.ret_code == 200 && data.data) {
           await saveMemberInfo(data.data);
-          MqttUtil.subscribeTopicList(data.data.topic_list ?? []);
         }
         else {
           // 자동 로그인 실패
@@ -287,6 +284,7 @@ async function deleteSecureStoreForMember() {
     deleteSecureStore(STORE_KEY.MEM_CHURCH_TM_NM),
     deleteSecureStore(STORE_KEY.PUSH_SEND_YN),
     deleteSecureStore(STORE_KEY.PUSH_TOKEN),
+    deleteSecureStore(STORE_KEY.TOPIC_LIST),
   ]);
 }
 

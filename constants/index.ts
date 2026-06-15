@@ -139,6 +139,7 @@ const STORE_KEY = {
   PUSH_COUNT          : "push_count",
   CHAT_BADGE          : "chat_badge",
   DEVICE_UID          : "device_uid",
+  TOPIC_LIST          : "topic_list",
 }
 
 /**
