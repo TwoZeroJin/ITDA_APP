@@ -2,7 +2,7 @@ import IconArrowRightMore from '@/assets/images/icon_arrow_right_more.svg';
 import CommCard from '@/components/comm/CommCard';
 import { COLOR } from '@/constants';
 import { GroupInfo, MeetInfo } from '@/types';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import { router } from 'expo-router';
 
@@ -23,6 +23,8 @@ interface CommHorizontalListProps {
  */
 export default function CommHorizontalList({ sections, isMember = false }: CommHorizontalListProps) {
   const memberLike = useMemberLike();
+
+  const { width } = Dimensions.get('window');
 
   // 좋아요 처리
   const handleLikePress = (item: MeetInfo | GroupInfo) => {
@@ -50,18 +52,19 @@ export default function CommHorizontalList({ sections, isMember = false }: CommH
         data={sections}
         keyExtractor={(item) => item.key}
         horizontal
+        pagingEnabled
         decelerationRate="fast"
         showsHorizontalScrollIndicator={false}
         renderItem={({ item: section }) => {
           return (
-            <View style={{ minWidth: 200, marginEnd: 15 }}>
+            <View style={{ width: width - 32 }}>
               <View>
                 <Text style={styles.title} >{section.title}</Text>
                 <Text style={styles.subTitle}>{section.subTitle}</Text>
               </View>
               {section.data?.length ? (
                 section.data.map((item2, colIdx) => (
-                  <View key={colIdx} style={styles.listContainer}>
+                  <View key={colIdx} style={[styles.listContainer, { width: width - 32 } ]}>
                     <CommCard
                       item={item2}
                       onLikePress={(item) => handleLikePress(item)}
@@ -98,15 +101,17 @@ const styles = StyleSheet.create({
     fontSize          : 20,
     fontFamily        : 'Pretendard-SemiBold',
     color             : COLOR.TEXT_1C1C1C,
+    lineHeight        : 20,
   },
   subTitle: {
     fontSize          : 14,
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_2F2F2F,
+    lineHeight        : 20,
     marginTop         : 4,
   },
   listContainer: {
-    marginTop         : 12,
+    marginTop         : 8,
   },
   emptyText: {
     marginTop         : 30,

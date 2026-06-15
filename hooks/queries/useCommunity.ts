@@ -21,22 +21,8 @@ function useReviewList(searchParams: SearchParams) {
 
 // 후기 등록
 function useReviewInsert() {
-  const router = useRouter();
-
   return useMutation({
     mutationFn: reviewInsert,
-    onSuccess: (result: ApiResult<MeetReview>) => {
-      if (result.ret_code !== 200) {
-        showToast({
-          text1: result.ret_msg || '등록에 실패했습니다.'
-        });
-      } else {
-        showToast({
-          text1: '리뷰가 등록되었습니다.'
-        });
-        router.replace("/community");
-      }
-    },
     onError: (error: any) => {
       showToast({
         type: 'error',

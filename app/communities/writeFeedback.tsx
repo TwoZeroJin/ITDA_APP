@@ -46,8 +46,8 @@ export default function WriteFeedback() {
 
     mutation.mutate(reviewData as MeetReview, {
       onSuccess: () => {
-        showToast({ text1: `${meetData ? '후기' : '커뮤니티'} 글이 ${updFeedData ? '수정' : '작성'}되었습니다.` });
-        router.back();
+        showToast({ text1: `${meetData?.meet_id ? '후기' : '피드'} 글이 ${updFeedData ? '수정' : '작성'}되었습니다.` });
+        router.replace("/community");
       },
       onError: () => {
         showToast({ text1: '오류', text2 : '후기 등록 중 오류가 발생했습니다. 다시 시도해 주세요.' });
@@ -58,7 +58,7 @@ export default function WriteFeedback() {
   return (
     <View style={COMM_STYLES.container}>
         <View style={styles.header}>
-          <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`${meetData ? '후기' : '커뮤니티'} ${updFeedData ? '수정' : '작성'}`} />
+          <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`${meetData?.meet_id ? '후기' : '피드'} ${updFeedData ? '수정' : '작성'}`} />
 
           <TouchableOpacity 
             style={styles.absoluteUploadButton} 
@@ -83,7 +83,7 @@ export default function WriteFeedback() {
             <FormProvider {...formValues}>
               <ReviewContentInput />
               <CommImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
-              <PlaceInput />
+              {/* <PlaceInput /> */}
             </FormProvider>
           </View>
         </KeyboardAwareScrollView>

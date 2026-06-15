@@ -8,11 +8,13 @@ import { CategoryTab } from "@/components/CategoryTab";
 import { COMM_CONSTANTS } from "@/constants";
 import { formatRelativeTime } from "@/utils/commUtil";
 import { saveAsyncStore } from "@/utils/asyncStoreUtil";
+import { useAuthRouter } from "@/components/comm/AuthRoute";
 
 /**
  * 마이페이지 - 알림 화면
  */
 export default function NotiListScreen() {
+  const router = useAuthRouter();
   const [activeCategory, setActiveCategory] = useState<string>('');
   const { results, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, refetch, isRefetching } = usePushListPaging({
     page_no   : 0,
@@ -53,15 +55,28 @@ export default function NotiListScreen() {
           <TouchableOpacity
             style={styles.notiRow}
             activeOpacity={0.6}
+            onPress={() => {
+              console.log('푸시 데이터:', item.push_data);
+              if (item.push_data) {
+                const pathname = item.push_type.includes('APPLY') ? '/members/applyList' : '/members/applyList';
+                const target_type = item.push_type.includes('MEET') ? COMM_CONSTANTS.COMM_MEET : COMM_CONSTANTS.COMM_GROUP;
+                const target_id = JSON.parse(item.push_data)?.[`${target_type.toLowerCase()}_id`];
+                router.navigate({
+                  pathname: pathname,
+                  params: {
+                    target_id: target_id,
+                    target_type: target_type === COMM_CONSTANTS.COMM_MEET ? 'M' : 'G',
+                  }
+                });
+              }
+            }}
           >
             <View style={styles.notificationTextWrap}>
               <View style={styles.titleRow}>
                 <Text style={styles.notiTitle} numberOfLines={1}>{item.push_title}</Text>
                 <Text style={styles.timeText}>{formatRelativeTime(item.sent_date)}</Text>
               </View>
-              <Text style={styles.notificationSubText} numberOfLines={1}>
-                {item.push_message}
-              </Text>
+              <Text style={styles.notificationSubText} numberOfLines={2}>{item.push_message}</Text>
             </View>
           </TouchableOpacity>
         )}

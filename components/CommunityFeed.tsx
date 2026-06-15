@@ -72,7 +72,7 @@ export default function CommunityFeed({ item, menuVisible = false, handleLike, h
         {item.memMeetListVO && 
           <View style={[styles.commMargin, { paddingHorizontal: 16, gap: 16 }]}>
             <CommCard item={item.memMeetListVO} onLikePress={(item) => handleLike?.(item as MeetInfo)} backgroundColor="grey"/>
-            <PlaceLocationBox data={item.memMeetListVO as MeetInfo}/>
+            {/* <PlaceLocationBox data={item.memMeetListVO as MeetInfo}/> */}
           </View>
         }
 

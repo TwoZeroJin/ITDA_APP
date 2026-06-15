@@ -26,19 +26,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
  * 회원가입 기본 정보 입력 화면
  */
 export default function SignupInfoScreen() {
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const { checkDupMutation } = useFindInfo();
-
-  // 키보드가 올라오고 내려갈 때 isKeyboardVisible 상태 업데이트
-  useEffect(() => {
-      const showSub = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardVisible(true));
-      const hideSub = Keyboard.addListener('keyboardDidHide', () => setIsKeyboardVisible(false));
-
-      return () => {
-          showSub.remove();
-          hideSub.remove();
-      };
-  }, []);
 
   const signupForm = useForm<SignupInfo>({
       defaultValues: {
@@ -81,10 +69,12 @@ export default function SignupInfoScreen() {
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
       <KeyboardAwareScrollView
-        contentContainerStyle={styles.scrollContent}
+        style={{ marginBottom: 100 }}
+        contentContainerStyle={[
+          COMM_STYLES.formContainer
+        ]}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
-        extraScrollHeight={120}
       >
         <FormProvider {...signupForm}>
           <View style={COMM_STYLES.formContainer}>

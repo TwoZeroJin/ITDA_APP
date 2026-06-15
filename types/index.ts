@@ -163,6 +163,7 @@ interface PushData {
   push_title       : string;
   push_message     : string;
   push_type        : string;
+  push_data        : string;
   sent_date        : string;
   read_yn          : string;
 }
@@ -204,6 +205,7 @@ interface MeetInfo {
   apply_ratio     : string;
   host_yn         : string;
   like_yn         : string;
+  end_yn          : string;
   fee_yn          : string;
   fee_info        : string;
   fee_entry       : number;

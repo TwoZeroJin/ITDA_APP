@@ -1,8 +1,7 @@
 import { COLOR } from "@/constants";
 import React, { useRef, useState } from "react";
 import { GestureResponderEvent,
-  PanResponderGestureState, Text, View, FlatList, Dimensions, Image, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent } from "react-native";
-// ✅ 라이브러리 정상 구동을 위한 세팅
+  PanResponderGestureState, View, FlatList, Dimensions, Image, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent } from "react-native";
 import ImageZoom from 'react-native-image-pan-zoom';
 import NoImage from '@/assets/images/no_image.svg';
 
@@ -17,10 +16,9 @@ interface ImageCarouselProps  {
 export function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true, onPressImage }: ImageCarouselProps) {
   const [index, setIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [isZoomed, setIsZoomed] = useState(false); // ✅ 현재 확대 상태인지 체크할 상태 추가
+  const [isZoomed, setIsZoomed] = useState(false);
   const ref = useRef<FlatList<string> | null>(null);
   
-  // ✅ 복잡한 Responder 대신, 현재 스크롤이 머물러 있는 가로 폭을 기준으로 삼습니다.
   const currentWidth = containerWidth || Dimensions.get('window').width;
   const canSwipe = images.length > 1;
 
@@ -47,7 +45,7 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
         data={images}
         horizontal
         pagingEnabled={canSwipe}
-        scrollEnabled={canSwipe} // ✅ 스크롤은 항상 열어둡니다.
+        scrollEnabled={canSwipe}
         showsHorizontalScrollIndicator={false}
         bounces={false}
         keyExtractor={(_, i) => String(i)}

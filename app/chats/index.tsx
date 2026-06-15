@@ -190,9 +190,6 @@ export default function IndexScreen() {
     return '';
   }
   const date = new Date(sourceDate);
-  if (Number.isNaN(date.getTime())) {
-    return '';
-  }
   const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 ${dayNames[date.getDay()]}`;
   };

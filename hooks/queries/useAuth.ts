@@ -244,7 +244,7 @@ function useAuth() {
 
   // 토큰 및 회원정보 삭제
   const logout = async () => {
-    await memberLogout();
+    // await memberLogout();
     await deleteSecureStoreForMember();
     MqttUtil.disconnect();
 

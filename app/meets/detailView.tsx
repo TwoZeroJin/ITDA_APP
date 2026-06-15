@@ -4,7 +4,7 @@ import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View } from 'rea
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply, useMeetDelete } from "@/hooks/queries/useMeet";
-import { FileInfo, MeetApply, MeetInfo } from "@/types";
+import { MeetApply, MeetInfo } from "@/types";
 import { useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -27,7 +27,7 @@ import DetailInfoRow from "@/components/comm/DetailInfoRow";
 import { formatNumberWithComma } from "@/utils/commUtil";
 import HostMemberSection from "@/components/comm/HostMemberSection";
 
-type DialogType = 'none' | 'apply' | 'cancelApply' | 'delete' | 'error';
+type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'report';
 
 /**
  * 모임 상세보기 화면
@@ -67,7 +67,7 @@ export default function DetailViewScreen() {
           return;
         }
         else {
-          showToast({ text1: '모임이 삭제되었습니다.' });
+          showToast({ text1: '삭제되었습니다.' });
           expoRouter.back();
         }
       },
@@ -117,7 +117,7 @@ export default function DetailViewScreen() {
           setErrorMessage(result.ext_msg? result.ext_msg : result.ret_msg);
           setActiveDialog('error');
         } else {
-          showToast({ text1: '모임에 신청되었습니다.' });
+          showToast({ text1: '신청되었습니다.' });
           setApplyStatus('0');
           refetchMemberList();
         }
@@ -130,8 +130,8 @@ export default function DetailViewScreen() {
     });
   }
   
-  //모임 신청 취소처리
-  const handleNotApplySubmit = () => {
+  // 모임 신청 취소처리
+  const handleNotApplySubmit = (type: string) => {
     setActiveDialog('none');
 
     const requestBody = {
@@ -140,7 +140,7 @@ export default function DetailViewScreen() {
 
     meetCancelApply.mutate(requestBody, {
       onSuccess: () => {
-        showToast({ text1: '모임에 취소되었습니다.' });
+        showToast({ text1: type === 'cancelApply2' ? '소셜링에서 탈퇴했습니다.' : '취소되었습니다.' });
         setApplyStatus('-1');
         refetchMemberList();
       },
@@ -153,17 +153,17 @@ export default function DetailViewScreen() {
 
   const DETAIL_MENU_ITEMS = [
     {
-      label: '모임 수정',
+      label: '소셜링 나가기',
       onPress: () => {
-        const { img_list, ...tmpMeetInfo } = meetInfo as MeetInfo & { img_list?: FileInfo[] };
-
-        router.navigate({
-          pathname: '/meets/createDetail',
-          params: {
-            ...tmpMeetInfo,
-            img_list_json: JSON.stringify(img_list ?? []),
-          }
-        });
+        setIsDetailMenuVisible(false);
+        setActiveDialog('cancelApply2');
+      },
+    },
+    {
+      label: '소셜링 수정',
+      onPress: () => {
+        setIsDetailMenuVisible(false);
+        setActiveDialog('delete');
       },
     },
     {
@@ -191,13 +191,27 @@ export default function DetailViewScreen() {
       },
     },
     {
-      label: '모임 삭제',
+      label: '소셜링 삭제',
       onPress: () => {
         setIsDetailMenuVisible(false);
         setActiveDialog('delete');
       },
     },
+    {
+      label: '신고하기',
+      onPress: () => {
+        setIsDetailMenuVisible(false);
+        setActiveDialog('report');
+      },
+    },
   ];
+
+  if (meetInfo?.host_yn !== 'Y') {
+    DETAIL_MENU_ITEMS.splice(1);
+  }
+  else {
+    DETAIL_MENU_ITEMS.splice(0, 1);
+  }
 
   const dialogConfig = (() => {
     switch (activeDialog) {
@@ -216,11 +230,21 @@ export default function DetailViewScreen() {
         return {
           visible     : true,
           title       : '소셜링 참여 취소',
-          content     : '이 모임에 참여를 취소하시겠어요?',
+          content     : '소셜링 참여를 취소하시겠어요?',
           cancelLabel : '취소',
           confirmLabel: '확인',
           onCancel    : () => setActiveDialog('none'),
-          onConfirm   : () => handleNotApplySubmit(),
+          onConfirm   : () => handleNotApplySubmit('cancelApply'),
+        };
+      case 'cancelApply2':
+        return {
+          visible     : true,
+          title       : '소셜링 탈퇴',
+          content     : '소셜링에서 탈퇴하시겠어요?',
+          cancelLabel : '취소',
+          confirmLabel: '확인',
+          onCancel    : () => setActiveDialog('none'),
+          onConfirm   : () => handleNotApplySubmit('cancelApply2'),
         };
       case 'delete':
         return {
@@ -254,7 +278,7 @@ export default function DetailViewScreen() {
         isNoti={false}
         isSetting={false}
         isLike={false}
-        isDetail={meetInfo?.host_yn === 'Y'}
+        isDetail={applyStatus === '1'}
         onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
       />
 

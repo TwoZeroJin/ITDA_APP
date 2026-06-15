@@ -33,7 +33,6 @@ export default function MemberUpdateScreen() {
   const memberUpdate = useMemberUpdate();
   const { checkDupMutation } = useFindInfo();
   const [isAuthDialogVisible, setIsAuthDialogVisible] = useState(false);
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const updateForm = useForm<MemberInfo>({
     defaultValues: {
@@ -95,17 +94,6 @@ export default function MemberUpdateScreen() {
     fetchData();
   }, [updateForm]);
 
-  // 키보드가 올라오고 내려갈 때 isKeyboardVisible 상태 업데이트
-  useEffect(() => {
-    const showSub = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardVisible(true));
-    const hideSub = Keyboard.addListener('keyboardDidHide', () => setIsKeyboardVisible(false));
-
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
-
   const onSubmit = async (formValues: MemberInfo) => {
     // 서버를 통한 중복 체크
     if (memberInfo?.mem_name !== formValues.mem_name && !await checkDuplicateField("mem_email", formValues.mem_email)) return;
@@ -141,13 +129,12 @@ export default function MemberUpdateScreen() {
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원정보 수정"/>
       <KeyboardAwareScrollView
+        style={{ marginBottom: 100 }}
         contentContainerStyle={[
-          COMM_STYLES.formContainer,
-          { paddingBottom: isKeyboardVisible ? 0 : 120 }, // 키보드가 올라올 경우 하단 패딩 제거
+          COMM_STYLES.formContainer
         ]}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
-        extraScrollHeight={120}
       >
         <FormProvider {...updateForm}>
           <ProfileImageInput initialImageUrl={memberInfo?.mem_image_url}/>

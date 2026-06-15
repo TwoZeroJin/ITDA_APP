@@ -82,7 +82,6 @@ ITDA 사용자 앱
 # 10. iOS 16부터는 설정 > 개인정보 보호 및 보안 > 개발자 모드 > 켬 필요
 #
 #
-#
 # 빌드 방법 (위 내용 진행 후 필요[구글|애플계정 등록])
 # 1. npm install -g eas-cli
 # 2. eas login
@@ -95,3 +94,51 @@ ITDA 사용자 앱
 # 9. 위 설정 내용에서 Apple 프로필 설정 후 Device UUID 발급 받은 경우 목록에 선택할 수 있는 Device 나옴.
 # 10. Would you like to set up Push Notifications for your project? -> Yes 선택 -> 키 생성 Y
 # 11. 빌드 진행, 에러날 경우 로그 메시지 체크 후 상황에 맞는 해결 방법 진행
+#
+# SSL적용 방법 (무료방법 Lets Encrypt)
+#
+# 1. 서버에서 Certbot 설치
+# - sudo apt install certbot python3-certbot-nginx -y
+# 2. iptables로 80, 443 규칙 설정 (특정 라인에 INPUT)
+# - sudo iptables -I INPUT 7 -p tcp --dport 80 -j ACCEPT
+# - sudo iptables -I INPUT 7 -p tcp --dport 443 -j ACCEPT
+# 3. 오라클 클라우드 포트 허용 추가
+# - Networking > Virtual cloud networks > Default Security List For VCN > Security rules > Add Ingress Rules 추가
+# 4. 도메인 구매
+# - 호스팅케이알에서 구매하고 DNS 적용함
+# 5. 서버에서 nginx 설정
+#  - cd /etc/nginx/sites-available
+# - sudo vi itda-api 생성 후 작성
+#server {
+#   listen 80;
+#    server_name api.newitda.co.kr;
+#
+#    location / {
+#        proxy_pass http://127.0.0.1:6528;
+#
+#        proxy_set_header Host $host;
+#        proxy_set_header X-Real-IP $remote_addr;
+#        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#        proxy_set_header X-Forwarded-Proto $scheme;
+#    }
+# } 
+#
+# server {
+#    listen 80;
+#    server_name cms.newitda.co.kr;
+#
+#    location / {
+#       proxy_pass http://127.0.0.1:6538;
+#
+#        proxy_set_header Host $host;
+#        proxy_set_header X-Real-IP $remote_addr;
+#        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#        proxy_set_header X-Forwarded-Proto $scheme;
+#   }
+# }
+# - sudo ln -s /etc/nginx/sites-available/newitda /etc/nginx/sites-enabled/
+# - sudo nginx -t
+# - sudo systemctl restart nginx
+# - sudo certbot --nginx -d api.newitda.co.kr -d cms.newitda.co.kr
+# - certbot 진행하면서 이메일 및 'Y' 입력해 진행하면 완료됨
+#

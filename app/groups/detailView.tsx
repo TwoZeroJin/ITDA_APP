@@ -4,8 +4,8 @@ import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View } from 'rea
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useGroupApply, useGroupCancelApply, useGroupDelete } from "@/hooks/queries/useGroup";
-import {  FileInfo, GroupApply, GroupInfo } from "@/types";
-import {  useLocalSearchParams } from "expo-router";
+import { FileInfo, GroupApply, GroupInfo } from "@/types";
+import { useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
 import IconCalendar from '@/assets/images/icon_calendar.svg';
@@ -26,7 +26,7 @@ import PlaceLocationBox from "@/components/PlaceLocationBox";
 import HostMemberSection from "@/components/comm/HostMemberSection";
 import { showToast } from "@/utils/commToast";
 
-type DialogType = 'none' | 'apply' | 'cancelApply' | 'delete' | 'error';
+type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'report';
 
 /**
  * 클럽 상세보기 화면
@@ -126,7 +126,7 @@ export default function GroupDetailViewScreen() {
   }
 
   //모임 신청 취소처리
-  const handleNotApplySubmit = () => {
+  const handleNotApplySubmit = (type: string) => {
     setActiveDialog('none');
 
     const requestBody = {
@@ -135,7 +135,7 @@ export default function GroupDetailViewScreen() {
 
     groupCancelApply.mutate(requestBody, {
       onSuccess: () => {
-        showToast({ text1: '클럽에 취소되었습니다.' });
+        showToast({ text1: type === 'cancelApply2' ? '클럽에서 탈퇴되었습니다.' : '클럽에 취소되었습니다.' });
         setApplyStatus('-1');
         refetchMemberList();
       },
@@ -147,6 +147,13 @@ export default function GroupDetailViewScreen() {
   }
 
   const DETAIL_MENU_ITEMS = [
+    {
+      label: '클럽 나가기',
+      onPress: () => {
+        setIsDetailMenuVisible(false);
+        setActiveDialog('cancelApply2');
+      },
+    },
     {
       label: '클럽 수정',
       onPress: () => {
@@ -192,7 +199,21 @@ export default function GroupDetailViewScreen() {
         setActiveDialog('delete');
       },
     },
-  ];  
+    {
+      label: '신고하기',
+      onPress: () => {
+        setIsDetailMenuVisible(false);
+        setActiveDialog('report');
+      },
+    },
+  ];
+
+  if (groupInfo?.host_yn !== 'Y') {
+    DETAIL_MENU_ITEMS.splice(1);
+  }
+  else {
+    DETAIL_MENU_ITEMS.splice(0, 1);
+  }
 
   const dialogConfig = (() => {
     switch (activeDialog) {
@@ -211,11 +232,21 @@ export default function GroupDetailViewScreen() {
         return {
           visible     : true,
           title       : '클럽 참여 취소',
-          content     : '이 모임에 참여를 취소하시겠어요?',
+          content     : '클럽 참여를 취소하시겠어요?',
           cancelLabel : '취소',
           confirmLabel: '완료',
           onCancel    : () => setActiveDialog('none'),
-          onConfirm   : () => handleNotApplySubmit(),
+          onConfirm   : () => handleNotApplySubmit('cancelApply'),
+        };
+      case 'cancelApply2':
+        return {
+          visible     : true,
+          title       : '클럽 탈퇴',
+          content     : '클럽에서 탈퇴하시겠어요?',
+          cancelLabel : '취소',
+          confirmLabel: '완료',
+          onCancel    : () => setActiveDialog('none'),
+          onConfirm   : () => handleNotApplySubmit('cancelApply2'),
         };
       case 'delete':
         return {
@@ -254,7 +285,7 @@ export default function GroupDetailViewScreen() {
         isNoti={false} 
         isSetting={false} 
         isLike={false} 
-        isDetail={groupInfo?.host_yn === 'Y'} 
+        isDetail={applyStatus === '1'} 
         onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
       />      
       {isDetailMenuVisible && (

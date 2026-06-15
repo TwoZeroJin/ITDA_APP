@@ -59,9 +59,9 @@ export default function CommReviewList({ title = '피드', subTitle = '', review
                 style={styles.image}
                 onError={() => handleImageError(item.review_id)}
               />
-              <Text style={styles.cardTitle} numberOfLines={1} ellipsizeMode="tail">
+              {/* <Text style={styles.cardTitle} numberOfLines={1} ellipsizeMode="tail">
                 {item.tag || item.memMeetListVO?.meet_name || '후기'}
-              </Text>
+              </Text> */}
               <Text style={styles.cardDesc} numberOfLines={2} ellipsizeMode="tail">
                 {item.review_content}
               </Text>
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   row: {
     justifyContent      : 'space-between',
     width               : '100%',
-    height              : 250,
+    height              : 200,
   },
   card: {
     width               : '50%',
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     height              : '100%',
     aspectRatio         : 1,
     borderRadius        : 14,
-    marginBottom        : 10,
+    marginBottom        : 4,
     alignSelf           : 'center',
   },
   cardTitle: {
@@ -133,7 +133,6 @@ const styles = StyleSheet.create({
     fontSize            : 14,
     fontFamily          : 'Pretendard-Regular',
     alignSelf           : 'flex-start',
-    marginTop           : 4,
     lineHeight          : 20,
     color               : COLOR.COMM_SHADOW,
     paddingStart        : 16,

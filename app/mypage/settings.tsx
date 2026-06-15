@@ -28,6 +28,7 @@ export default function SettingsScreen() {
   const { logout } = useAuth();
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
   const [isLogoutDialogVisible, setIsLogoutDialogVisible] = useState(false);
+  const [isMemberWithdrawalDialogVisible, setIsMemberWithdrawalDialogVisible] = useState(false);
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
   const [termUrl, setTermUrl] = useState<string>('');
   const memberUpdate = useMemberUpdate();
@@ -68,6 +69,10 @@ export default function SettingsScreen() {
 
   const SETTINGS_MENU: SettingsMenuItem[] = [
     {
+      label: '회원정보 수정',
+      onPress: () => router.navigate('/mypage/memUpdate'),
+    },
+    {
       label: '공지사항',
       onPress: () => router.navigate('/mypage/notice'),
     },
@@ -79,6 +84,7 @@ export default function SettingsScreen() {
     //   label: '자주 묻는 질문',
     //   onPress: () => {},
     // },
+    
     {
       label: '개선 및 의견 남기기',
       onPress: () => router.navigate('/mypage/feedbackCreate'),
@@ -102,6 +108,10 @@ export default function SettingsScreen() {
     {
       label: '개인정보 처리방침',
       onPress: () => openTermWebView(process.env.EXPO_PUBLIC_TERMS_PRIVACY_URL ?? ''),
+    },
+    {
+      label: '회원 탈퇴',
+      onPress: () => setIsMemberWithdrawalDialogVisible(true),
     },
   ];
 
@@ -171,6 +181,19 @@ export default function SettingsScreen() {
           </View>
         </View>
       </Modal>
+
+      <CustomDialog
+        visible={isMemberWithdrawalDialogVisible}
+        content="회원 탈퇴를 진행하시겠습니까?"
+        cancelLabel="취소"
+        confirmLabel="확인"
+        onCancel={() => setIsMemberWithdrawalDialogVisible(false)}
+        onConfirm={() => {
+        setIsMemberWithdrawalDialogVisible(false);
+        logout();
+        router.replace('/user/login');
+        }}
+      />
     </View>
   );
 }
