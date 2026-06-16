@@ -109,7 +109,7 @@ ITDA 사용자 앱
 # 5. 서버에서 nginx 설정
 #  - cd /etc/nginx/sites-available
 # - sudo vi itda-api 생성 후 작성
-#server {
+# server {
 #   listen 80;
 #    server_name api.newitda.co.kr;
 #
@@ -139,6 +139,10 @@ ITDA 사용자 앱
 # - sudo ln -s /etc/nginx/sites-available/newitda /etc/nginx/sites-enabled/
 # - sudo nginx -t
 # - sudo systemctl restart nginx
-# - sudo certbot --nginx -d api.newitda.co.kr -d cms.newitda.co.kr
+# - sudo certbot --nginx -d api.newitda.co.kr -d cms.newitda.co.kr -d mqtt.newitda.co.kr
 # - certbot 진행하면서 이메일 및 'Y' 입력해 진행하면 완료됨
+# MQTT도 작업 필요 (진행됨)
 #
+# 구글 플레이 제출하기 (구글 개발자 계정 세팅, 구글 FCM 설정 필요)
+# 1. npm run build:android 실행 (prod로 build)
+# 2. 앱 제출 이후 eas submit --platform android로 배포 가능
