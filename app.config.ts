@@ -52,8 +52,6 @@ function loadEnvFile(appEnv: string) {
 
 const appEnv = process.env.APP_ENV ?? 'local';
 
-console.log('>>>>>>>>>>>> APP_ENV =', appEnv);
-
 loadEnvFile(appEnv);
 
 const { expo } = require('./app.json') as { expo: ExpoConfig };
