@@ -77,20 +77,18 @@ export default function SignupInfoScreen() {
         enableOnAndroid={true}
       >
         <FormProvider {...signupForm}>
-          <View style={COMM_STYLES.formContainer}>
-            <ProfileImageInput/>
-            <ChurchSelectBox/>
-            <ChurchTmNmInput/>
-            <NameInput focusField="mem_email"/>
-            {/* <MemTelnoInput/> */}
-            <MemEmailInput focusField="login_id"/>
-            <GenderInput/>
-            <BirthInput/>
-            <IdInput focusField="mem_nick"/>
-            <NickNameInput/>
-            <PasswordInput returnKeyType="next"/>
-            <PasswordConfirmInput/>
-          </View>
+          <ProfileImageInput/>
+          <ChurchSelectBox/>
+          <ChurchTmNmInput/>
+          <NameInput focusField="mem_email"/>
+          {/* <MemTelnoInput/> */}
+          <MemEmailInput focusField="login_id"/>
+          <GenderInput/>
+          <BirthInput/>
+          <IdInput focusField="mem_nick"/>
+          <NickNameInput/>
+          <PasswordInput returnKeyType="next"/>
+          <PasswordConfirmInput/>
         </FormProvider>
       </KeyboardAwareScrollView>
       <CommBottomButton label="다음" onPress={signupForm.handleSubmit(onSubmit)}/>

@@ -16,7 +16,7 @@ import { getMemberInfo, getChurchList, saveMemberInfoForUpdate } from "@/utils/c
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, View } from "react-native";
+import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { COMM_STYLES } from "@/constants";
 import MemEmailInput from "@/components/inputs/MemEmailInput";
