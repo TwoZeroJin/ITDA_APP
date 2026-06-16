@@ -11,12 +11,18 @@
     "preview": {
       "channel": "develop",
       "distribution": "internal",
-      "env": { "APP_ENV": "dev" }
+      "env": { 
+        "APP_ENV": "dev",
+        "EXPO_NO_DOTENV": "1"
+       }
     },
     "production": {
       "channel": "prod",
       "distribution": "store",
-      "env": { "APP_ENV": "prod" },
+      "env": { 
+        "APP_ENV": "prod",
+        "EXPO_NO_DOTENV": "1"
+       },
       "autoIncrement": true
     }
   }

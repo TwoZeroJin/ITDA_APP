@@ -29,7 +29,7 @@
     "async-storage": "^0.1.0",
     "axios": "^1.11.0",
     "dayjs": "^1.11.13",
-    "expo": "~54.0.35",
+    "expo": "~54.0.34",
     "expo-blur": "~15.0.8",
     "expo-constants": "~18.0.8",
     "expo-dev-client": "~6.0.21",
