@@ -19,7 +19,7 @@ export default function MyPageLayout() {
       <Stack.Screen
         name="memberList"
         options={{
-          title: "멤버 관리",
+          title: "멤버 목록",
           headerShown: false,
         }}
       />

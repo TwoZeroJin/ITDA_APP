@@ -58,6 +58,13 @@ export default function UserLayout() {
           headerShown: false,
         }}
       />
+      <Stack.Screen 
+        name="reportCreate"
+        options={{
+          title: "신고하기",
+          headerShown: false,
+        }}
+      />
     </Stack>
   )
 }

@@ -25,21 +25,23 @@ import { formatNumberWithComma } from "@/utils/commUtil";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import HostMemberSection from "@/components/comm/HostMemberSection";
 import { showToast } from "@/utils/commToast";
+import { useReportBlock } from "@/hooks/queries/useReport";
 
-type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'report';
+type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'report' | 'block';
 
 /**
  * 클럽 상세보기 화면
  */
 export default function GroupDetailViewScreen() {
-  const { groupId } = useLocalSearchParams();
-  const { results : groupInfo } = useGroupDetailView(Number(groupId));  
   const groupApply = useGroupApply();
   const groupCancelApply = useGroupCancelApply();
   const groupDelete = useGroupDelete();
-  const [activeDialog, setActiveDialog] = useState<DialogType>('none');
+  const reportBlock = useReportBlock();
   const router = useAuthRouter();
+  const { groupId } = useLocalSearchParams();
+  const { results : groupInfo } = useGroupDetailView(Number(groupId));  
   const { results : memberList, refetch: refetchMemberList, isLoading : isMemberLoading, isError : isMemberError } = useGroupMemberList(Number(groupId));  
+  const [activeDialog, setActiveDialog] = useState<DialogType>('none');
   const [errorMessage, setErrorMessage] = useState('');
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [applyStatus, setApplyStatus] = useState<string | undefined>(undefined);
@@ -73,6 +75,32 @@ export default function GroupDetailViewScreen() {
       },
     });
   };
+
+  // 차단하기
+    const handleBlockSubmit = () => {
+      setActiveDialog('none');
+  
+      reportBlock.mutate({
+        target_id: Number(groupInfo?.group_id),
+        target_type: 'G',
+      }, {
+        onSuccess: (result) => {
+          if (result.ret_code !== 200) {
+            setErrorMessage(result.ret_msg);
+            setActiveDialog('error');
+            return;
+          }
+          else {
+            showToast({ text1: '차단되었습니다.' });
+            expoRouter.back();
+          }
+        },
+        onError: (error) => {
+          setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+          setActiveDialog('error');
+        },
+      });
+    };
 
   if (isMemberLoading) {
     return (
@@ -135,7 +163,7 @@ export default function GroupDetailViewScreen() {
 
     groupCancelApply.mutate(requestBody, {
       onSuccess: () => {
-        showToast({ text1: type === 'cancelApply2' ? '클럽에서 탈퇴되었습니다.' : '클럽에 취소되었습니다.' });
+        showToast({ text1: type === 'cancelApply2' ? '클럽에서 나갔습니다.' : '클럽에 취소되었습니다.' });
         setApplyStatus('-1');
         refetchMemberList();
       },
@@ -148,10 +176,36 @@ export default function GroupDetailViewScreen() {
 
   const DETAIL_MENU_ITEMS = [
     {
+      label: '멤버 목록',
+      onPress: () => {
+        router.navigate({
+          pathname: '/members/memberList',
+          params: {
+            target_id: groupInfo?.group_id,
+            target_type: 'G',
+          }
+        });
+      },
+    },
+    {
       label: '클럽 나가기',
       onPress: () => {
         setIsDetailMenuVisible(false);
         setActiveDialog('cancelApply2');
+      },
+    },
+    {
+      label: '신고하기',
+      onPress: () => {
+        setIsDetailMenuVisible(false);
+        setActiveDialog('report');
+      },
+    },
+    {
+      label: '차단하기',
+      onPress: () => {
+        setIsDetailMenuVisible(false);
+        router.checkAndNavigate(() => setActiveDialog('block'), '/groups/detailView')
       },
     },
     {
@@ -181,38 +235,28 @@ export default function GroupDetailViewScreen() {
       }
     },
     {
-      label: '멤버 관리',
-      onPress: () => {
-        router.navigate({
-          pathname: '/members/memberList',
-          params: {
-            target_id: groupInfo?.group_id,
-            target_type: 'G',
-          }
-        });
-      },
-    },
-    {
       label: '클럽 삭제',
       onPress: () => {
         setIsDetailMenuVisible(false);
         setActiveDialog('delete');
       },
     },
-    {
-      label: '신고하기',
-      onPress: () => {
-        setIsDetailMenuVisible(false);
-        setActiveDialog('report');
-      },
-    },
   ];
 
+// 상태에 따른 메뉴 제거
   if (groupInfo?.host_yn !== 'Y') {
-    DETAIL_MENU_ITEMS.splice(1);
+    if (applyStatus === '-1') {
+      // 신고하기/차단하기
+      DETAIL_MENU_ITEMS.splice(0, 2);
+      DETAIL_MENU_ITEMS.splice(2);
+    }
+    else {
+      // 목록, 나가기, 신고하기
+      DETAIL_MENU_ITEMS.splice(3);
+    }
   }
   else {
-    DETAIL_MENU_ITEMS.splice(0, 1);
+    DETAIL_MENU_ITEMS.splice(1, 3);
   }
 
   const dialogConfig = (() => {
@@ -241,8 +285,8 @@ export default function GroupDetailViewScreen() {
       case 'cancelApply2':
         return {
           visible     : true,
-          title       : '클럽 탈퇴',
-          content     : '클럽에서 탈퇴하시겠어요?',
+          title       : '클럽 나가기',
+          content     : '클럽에서 나가시겠어요?',
           cancelLabel : '취소',
           confirmLabel: '완료',
           onCancel    : () => setActiveDialog('none'),
@@ -264,11 +308,37 @@ export default function GroupDetailViewScreen() {
           title       : '처리 실패',
           content     : `정상 처리되지 않았습니다. \n${errorMessage}`,
           cancelLabel : '닫기',
-          onCancel    : () => {
-            setActiveDialog('none');
-            refetchMemberList();
-          },
+          onCancel    : () => setActiveDialog('none'),
           onConfirm   : () => setActiveDialog('none'),
+        };
+      case 'report':
+        return {
+          visible     : true,
+          title       : '신고하기',
+          content     : `신고하시겠어요? \n신고 시, 운영자 검토 후 조치가 진행됩니다.`,
+          cancelLabel : '닫기',
+          confirmLabel: '신고',
+          onCancel    : () => setActiveDialog('none'),
+          onConfirm   : () => {
+            setActiveDialog('none')
+            router.navigate({
+              pathname: '/user/reportCreate',
+              params: {
+                target_id   : groupInfo?.group_id,
+                target_type : 'G',
+              }
+            })
+          }
+        };
+      case 'block':
+        return {
+          visible     : true,
+          title       : '차단하기',
+          content     : `차단하시겠어요? \n차단 시, 조회되지 않습니다.`,
+          cancelLabel : '닫기',
+          confirmLabel: '차단',
+          onCancel    : () => setActiveDialog('none'),
+          onConfirm   : () => handleBlockSubmit(),
         };
       default:
         return {
@@ -372,7 +442,7 @@ export default function GroupDetailViewScreen() {
       {applyStatus === '-1' && (
         <CommBottomButton 
           label="신청하기" 
-          onPress={() => router.checkAndNavigate(() => setActiveDialog('apply'), '/groups/groupDetailPage')}
+          onPress={() => router.checkAndNavigate(() => setActiveDialog('apply'), '/groups/detailView')}
         />
       )}
       {applyStatus === '0' && (

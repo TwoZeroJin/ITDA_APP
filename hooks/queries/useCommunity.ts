@@ -1,11 +1,11 @@
 import { myMeetListNoReview, reviewInsert, reviewList,reviewDelete,reviewUpdate } from "@/api/community"; // API 함수 임포트 경로 확인 필요
 import { QUERY_KEYS } from "@/constants";
-import { ApiResult, MeetReview, SearchParams } from "@/types";
+import { MeetReview, SearchParams } from "@/types";
 import { useInfiniteQuery, useMutation, useQuery } from "@tanstack/react-query"
 import { showToast } from "@/utils/commToast";
-import { useRouter } from "expo-router";
 import { useLoading } from "@/contexts/LoadingContext";
 import { getNextPageParamFromPaging } from "@/utils/commUtil";
+import queryClient from "@/api/queryClient";
 
 // 후기 목록 조회 (무한 스크롤)
 function useReviewList(searchParams: SearchParams) {
@@ -23,6 +23,11 @@ function useReviewList(searchParams: SearchParams) {
 function useReviewInsert() {
   return useMutation({
     mutationFn: reviewInsert,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.COMMUNITY, QUERY_KEYS.COMMUNITY_REVIEW_LIST],
+      });
+    },
     onError: (error: any) => {
       showToast({
         type: 'error',
@@ -46,16 +51,10 @@ function useMyMeetListNoReview(searchParams: SearchParams) {
 function useReviewDelete() {
   return useMutation({
     mutationFn: reviewDelete,
-    onSuccess: (result: ApiResult<MeetReview>) => {
-      if (result.ret_code !== 200) {
-        showToast({
-          text1: result.ret_msg || '삭제에 실패했습니다.'
-        });
-      } else {
-        showToast({
-          text1: '리뷰가 삭제되었습니다.'
-        });
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.COMMUNITY, QUERY_KEYS.COMMUNITY_REVIEW_LIST],
+      });
     },
     onError: (error: any) => {
       showToast({
@@ -68,24 +67,16 @@ function useReviewDelete() {
 
 // 후기 수정
 function useReviewUpdate() {
-  const router = useRouter();
   const { setLoading } = useLoading();
   return useMutation({
     mutationFn: async (body : MeetReview) => {
       setLoading(true);
       return reviewUpdate(body);
     },
-    onSuccess: (result: ApiResult<MeetReview>) => {
-      if (result.ret_code !== 200) {
-        showToast({
-          text1: result.ret_msg || '수정에 실패했습니다.'
-        });
-      } else {
-        showToast({
-          text1: '리뷰가 수정되었습니다.'
-        });
-        router.replace("/community");
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.COMMUNITY, QUERY_KEYS.COMMUNITY_REVIEW_LIST],
+      });
     },
     onError: (error: any) => {
       showToast({

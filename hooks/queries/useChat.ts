@@ -1,4 +1,5 @@
-import { chatExit, chatInsert, chatList, chatMemberList, chatRoomList } from "@/api/chat";
+import { chatDelete, chatExit, chatInsert, chatList, chatMemberList, chatRoomList } from "@/api/chat";
+import queryClient from "@/api/queryClient";
 import { QUERY_KEYS } from "@/constants";
 import { SearchParams } from "@/types";
 import { getNextPageParamFromPaging } from "@/utils/commUtil";
@@ -39,7 +40,11 @@ function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
 function useChatInsert() {
   return useMutation({
     mutationFn : chatInsert,
-    onSuccess: ()=>{}
+    onSuccess: ()=>{
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_PAGING],
+      });
+    }
   });
 }
 
@@ -49,9 +54,28 @@ function useChatInsert() {
 function useChatExit() {
   return useMutation({
     mutationFn : chatExit,
-    onSuccess: ()=>{}
+    onSuccess: ()=>{
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_PAGING],
+      });
+    }
   });
 }
+
+/**
+ * 채팅방 삭제 처리
+ */
+function useChatDelete() {
+  return useMutation({
+    mutationFn : chatDelete,
+    onSuccess: ()=>{
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_PAGING],
+      });
+    }
+  });
+}
+
 /**
  * 채팅 멤버 조회
  */
@@ -64,4 +88,4 @@ function useChatMemberList({ room_id }: { room_id: string }) {
   return { ...query, results };
 }
 
-export { useChatInsert, useChatExit, useChatRoomListPaging, useChatListPaging, useChatMemberList };
+export { useChatInsert, useChatExit, useChatDelete, useChatRoomListPaging, useChatListPaging, useChatMemberList };

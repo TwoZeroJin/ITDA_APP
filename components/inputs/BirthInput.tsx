@@ -1,6 +1,6 @@
 import IconCalendar from '@/assets/images/icon_calendar.svg';
 import DatePickerModal from '@/components/modal/DatePickerModal';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { formatDisplayBirthDate, getDefaultBirthDate } from '@/utils/commUtil';
 import React, { useMemo, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -16,19 +16,19 @@ function BirthInput() {
     <Controller
       name="mem_birth"
       control={control}
-      rules={{
-        validate: (value: string) => {
-          if (!value) {
-            return '생년월일을 선택해주세요.';
-          }
-        },
-      }}
+      // rules={{
+      //   validate: (value: string) => {
+      //     if (!value) {
+      //       return '생년월일을 선택해주세요.';
+      //     }
+      //   },
+      // }}
       render={({ field: { onChange, value }, fieldState: { error } }) => {
         const displayValue = formatDisplayBirthDate(value);
 
         return (
           <View>
-            <Text style={styles.label}>생년월일</Text>
+            <Text style={COMM_STYLES.label}>생년월일</Text>
             <TouchableOpacity
               style={[styles.inputContainer, Boolean(error?.message) && styles.inputError]}
               activeOpacity={0.6}
@@ -49,7 +49,10 @@ function BirthInput() {
               visible={modalVisible}
               selectedValue={draftValue}
               onChangeValue={setDraftValue}
-              onClose={() => setModalVisible(false)}
+              onClose={() => {
+                onChange(null);
+                setModalVisible(false);
+              }}
               onConfirm={(nextValue) => {
                 onChange(nextValue);
                 setModalVisible(false);
@@ -63,14 +66,6 @@ function BirthInput() {
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize            : 14,
-    fontWeight          : 400,
-    lineHeight          : 22,
-    color               : COLOR.TEXT_DEFAULT,
-    marginStart         : 5,
-    marginBottom        : 7,
-  },
   inputContainer: {
     height              : 49,
     borderRadius        : 12,

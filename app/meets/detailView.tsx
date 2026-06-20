@@ -4,7 +4,7 @@ import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View } from 'rea
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply, useMeetDelete } from "@/hooks/queries/useMeet";
-import { MeetApply, MeetInfo } from "@/types";
+import { FileInfo, MeetApply, MeetInfo } from "@/types";
 import { useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -26,8 +26,9 @@ import { showToast } from "@/utils/commToast";
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
 import { formatNumberWithComma } from "@/utils/commUtil";
 import HostMemberSection from "@/components/comm/HostMemberSection";
+import { useReportBlock } from "@/hooks/queries/useReport";
 
-type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'report';
+type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'memUpdate' | 'report' | 'block';
 
 /**
  * 모임 상세보기 화면
@@ -36,8 +37,7 @@ export default function DetailViewScreen() {
   const meetApply = useMeetApply();
   const meetCancelApply = useMeetCancelApply();
   const meetDelete = useMeetDelete();
-  const [activeDialog, setActiveDialog] = useState<DialogType>('none');
-  const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
+  const reportBlock = useReportBlock();
   const router = useAuthRouter();
   const { meetId } = useLocalSearchParams();
   const { results : meetInfo } = useMeetDetailView(Number(meetId));  
@@ -48,6 +48,8 @@ export default function DetailViewScreen() {
     sch_condition: 'meet',
     sch_keyword: String(meetId),
   }); 
+  const [activeDialog, setActiveDialog] = useState<DialogType>('none');
+  const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [applyStatus, setApplyStatus] = useState<string | undefined>(undefined);
   
@@ -68,6 +70,32 @@ export default function DetailViewScreen() {
         }
         else {
           showToast({ text1: '삭제되었습니다.' });
+          expoRouter.back();
+        }
+      },
+      onError: (error) => {
+        setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+        setActiveDialog('error');
+      },
+    });
+  };
+
+  // 차단하기
+  const handleBlockSubmit = () => {
+    setActiveDialog('none');
+
+    reportBlock.mutate({
+      target_id: Number(meetInfo?.meet_id),
+      target_type: 'M',
+    }, {
+      onSuccess: (result) => {
+        if (result.ret_code !== 200) {
+          setErrorMessage(result.ret_msg);
+          setActiveDialog('error');
+          return;
+        }
+        else {
+          showToast({ text1: '차단되었습니다.' });
           expoRouter.back();
         }
       },
@@ -113,9 +141,9 @@ export default function DetailViewScreen() {
 
     meetApply.mutate(requestBody, {
       onSuccess: (result) => {
-        if(result.ret_code != 200){
+        if (result.ret_code != 200){
           setErrorMessage(result.ext_msg? result.ext_msg : result.ret_msg);
-          setActiveDialog('error');
+          setActiveDialog(result.ret_code === 665 ? 'memUpdate' : 'error');
         } else {
           showToast({ text1: '신청되었습니다.' });
           setApplyStatus('0');
@@ -140,7 +168,7 @@ export default function DetailViewScreen() {
 
     meetCancelApply.mutate(requestBody, {
       onSuccess: () => {
-        showToast({ text1: type === 'cancelApply2' ? '소셜링에서 탈퇴했습니다.' : '취소되었습니다.' });
+        showToast({ text1: type === 'cancelApply2' ? '소셜링에서 나갔습니다.' : '취소되었습니다.' });
         setApplyStatus('-1');
         refetchMemberList();
       },
@@ -153,6 +181,18 @@ export default function DetailViewScreen() {
 
   const DETAIL_MENU_ITEMS = [
     {
+      label: '멤버 목록',
+      onPress: () => {
+        router.navigate({
+          pathname: '/members/memberList',
+          params: {
+            target_id: meetInfo?.meet_id,
+            target_type: 'M',
+          }
+        });
+      },
+    },
+    {
       label: '소셜링 나가기',
       onPress: () => {
         setIsDetailMenuVisible(false);
@@ -160,10 +200,30 @@ export default function DetailViewScreen() {
       },
     },
     {
-      label: '소셜링 수정',
+      label: '신고하기',
       onPress: () => {
         setIsDetailMenuVisible(false);
-        setActiveDialog('delete');
+        setActiveDialog('report');
+      },
+    },
+    {
+      label: '차단하기',
+      onPress: () => {
+        setIsDetailMenuVisible(false);
+        router.checkAndNavigate(() => setActiveDialog('block'), '/meets/detailView')
+      },
+    },
+    {
+      label: '소셜링 수정',
+      onPress: () => {
+        const { img_list, ...tmpMeetInfo } = meetInfo as MeetInfo & { img_list?: FileInfo[] };
+        router.navigate({
+          pathname: '/meets/createDetail',
+          params: {
+            ...tmpMeetInfo,
+            img_list_json: JSON.stringify(img_list ?? []),
+          }
+        });
       },
     },
     {
@@ -179,38 +239,28 @@ export default function DetailViewScreen() {
       }
     },
     {
-      label: '멤버 관리',
-      onPress: () => {
-        router.navigate({
-          pathname: '/members/memberList',
-          params: {
-            target_id: meetInfo?.meet_id,
-            target_type: 'M',
-          }
-        });
-      },
-    },
-    {
       label: '소셜링 삭제',
       onPress: () => {
         setIsDetailMenuVisible(false);
         setActiveDialog('delete');
       },
     },
-    {
-      label: '신고하기',
-      onPress: () => {
-        setIsDetailMenuVisible(false);
-        setActiveDialog('report');
-      },
-    },
   ];
 
+  // 상태에 따른 메뉴 제거
   if (meetInfo?.host_yn !== 'Y') {
-    DETAIL_MENU_ITEMS.splice(1);
+    if (applyStatus === '-1') {
+      // 신고하기/차단하기
+      DETAIL_MENU_ITEMS.splice(0, 2);
+      DETAIL_MENU_ITEMS.splice(2);
+    }
+    else {
+      // 목록, 나가기, 신고하기
+      DETAIL_MENU_ITEMS.splice(3);
+    }
   }
   else {
-    DETAIL_MENU_ITEMS.splice(0, 1);
+    DETAIL_MENU_ITEMS.splice(1, 3);
   }
 
   const dialogConfig = (() => {
@@ -239,8 +289,8 @@ export default function DetailViewScreen() {
       case 'cancelApply2':
         return {
           visible     : true,
-          title       : '소셜링 탈퇴',
-          content     : '소셜링에서 탈퇴하시겠어요?',
+          title       : '소셜링 나가기',
+          content     : '소셜링에서 나가시겠어요?',
           cancelLabel : '취소',
           confirmLabel: '확인',
           onCancel    : () => setActiveDialog('none'),
@@ -263,6 +313,35 @@ export default function DetailViewScreen() {
           cancelLabel : '닫기',
           onCancel    : () => setActiveDialog('none'),
         };
+      case 'report':
+        return {
+          visible     : true,
+          title       : '신고하기',
+          content     : `신고하시겠어요? \n신고 시, 운영자 검토 후 조치가 진행됩니다.`,
+          cancelLabel : '닫기',
+          confirmLabel: '신고',
+          onCancel    : () => setActiveDialog('none'),
+          onConfirm   : () => {
+            setActiveDialog('none')
+            router.navigate({
+              pathname: '/user/reportCreate',
+              params: {
+                target_id   : meetInfo?.meet_id,
+                target_type : 'M',
+              }
+            })
+          }
+        };
+      case 'block':
+        return {
+          visible     : true,
+          title       : '차단하기',
+          content     : `차단하시겠어요? \n차단 시, 조회되지 않습니다.`,
+          cancelLabel : '닫기',
+          confirmLabel: '차단',
+          onCancel    : () => setActiveDialog('none'),
+          onConfirm   : () => handleBlockSubmit(),
+        };
       default:
         return {
           visible: false,
@@ -278,7 +357,7 @@ export default function DetailViewScreen() {
         isNoti={false}
         isSetting={false}
         isLike={false}
-        isDetail={applyStatus === '1'}
+        isDetail={true}
         onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
       />
 

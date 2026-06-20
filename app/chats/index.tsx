@@ -11,12 +11,13 @@ import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
 import ChatSend from '@/assets/images/icon_chat_send.svg';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
+import CommBottomButton from '@/components/comm/CommBottomButton';
 
 /**
  * 채팅 화면
  */
 export default function IndexScreen() {
-  const { room_id, room_name, room_type, mem_id } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string, mem_id: string }>();
+  const { room_id, room_name, room_type, expiry_date, mem_id } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string, expiry_date: string, mem_id: string }>();
   const chatInsert = useChatInsert();
   const chatExit = useChatExit();
   const { results: chatMemberList } = useChatMemberList({room_id : room_id});
@@ -30,6 +31,7 @@ export default function IndexScreen() {
   const [isConnected, setIsConnected] = useState(true);
   const [myMemId, setMyMemId] = useState<number>(0);
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
+  const [expiryYn, setExpiryYn] = useState('N');
   const msgInputRef = useRef<TextInput>(null);
   const topic = room_id ? room_id : `${COMM_CONSTANTS.COMM_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`;
   const mqttUtil = MqttUtil;
@@ -52,11 +54,18 @@ export default function IndexScreen() {
     }, [refetch]),
   );
 
-  // 내 mem_id 정보 조회
+  // 내 mem_id 정보 조회 및 만료 여부
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
       const memberInfo = await getMemberInfo();
       setMyMemId(memberInfo.mem_id ?? 0);
+
+      if (expiry_date) {
+        const now = new Date().toDateString().slice(0, 10);
+        if (expiry_date < now) {
+          setExpiryYn('Y');
+        }
+      }
     };
 
     fetchMyMemberInfo();
@@ -363,38 +372,46 @@ export default function IndexScreen() {
             }
           />
 
-          <View style={styles.inputBarWrap}>
-            {/* <TouchableOpacity 
-              activeOpacity={0.6}
-            >
-              <ChatAdd width={30} height={30} />
-            </TouchableOpacity> */}
+          {expiryYn === 'N' ? (
+            <View style={styles.inputBarWrap}>
+              {/* 
+                <TouchableOpacity 
+                  activeOpacity={0.6}
+                >
+                  <ChatAdd width={30} height={30} />
+                </TouchableOpacity> 
+              */}
+              <TouchableOpacity 
+                style={styles.inputBoxWrap}
+                activeOpacity={0.6}
+                onPress={() => { msgInputRef.current?.focus();}}
+              >
+                <TextInput
+                  ref={msgInputRef}
+                  value={chatMsg}
+                  onChangeText={setChatMsg}
+                  placeholder="메시지 입력"
+                  placeholderTextColor={COLOR.COMM_GRAY_7}
+                  style={styles.inputBox}
+                  returnKeyType="send"
+                  onSubmitEditing={handleSubmitChat}
+                  maxLength={500}
+                />
+              </TouchableOpacity>
 
-            <TouchableOpacity 
-              style={styles.inputBoxWrap}
-              activeOpacity={0.6}
-              onPress={() => { msgInputRef.current?.focus();}}
-            >
-              <TextInput
-                ref={msgInputRef}
-                value={chatMsg}
-                onChangeText={setChatMsg}
-                placeholder="메시지 입력"
-                placeholderTextColor={COLOR.COMM_GRAY_7}
-                style={styles.inputBox}
-                returnKeyType="send"
-                onSubmitEditing={handleSubmitChat}
-                maxLength={500}
-              />
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-              activeOpacity={0.6}
-              onPress={handleSubmitChat}
-            >
-              <ChatSend width={30} height={30} />
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity 
+                activeOpacity={0.6}
+                onPress={handleSubmitChat}
+              >
+                <ChatSend width={30} height={30} />
+              </TouchableOpacity>
+            </View>
+          ) : 
+          <CommBottomButton 
+            label="채팅방 나가기" 
+            onPress={() => {}}
+          />
+          }
         </View>
       </KeyboardAvoidingView>
       

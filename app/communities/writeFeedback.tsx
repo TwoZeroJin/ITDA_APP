@@ -47,7 +47,7 @@ export default function WriteFeedback() {
     mutation.mutate(reviewData as MeetReview, {
       onSuccess: () => {
         showToast({ text1: `${meetData?.meet_id ? '후기' : '피드'} 글이 ${updFeedData ? '수정' : '작성'}되었습니다.` });
-        router.replace("/community");
+        router.navigate("/community");
       },
       onError: () => {
         showToast({ text1: '오류', text2 : '후기 등록 중 오류가 발생했습니다. 다시 시도해 주세요.' });

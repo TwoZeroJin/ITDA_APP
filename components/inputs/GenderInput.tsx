@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -15,16 +15,16 @@ function GenderInput() {
     <Controller
       name="mem_gender"
       control={control}
-      rules={{
-        validate: (value: string) => {
-          if (!value) {
-            return '성별을 선택해주세요.';
-          }
-        },
-      }}
+      // rules={{
+      //   validate: (value: string) => {
+      //     if (!value) {
+      //       return '성별을 선택해주세요.';
+      //     }
+      //   },
+      // }}
       render={({ field: {onChange, value}, fieldState: { error } }) => (
         <View>
-          <Text style={styles.label}>성별</Text>
+          <Text style={COMM_STYLES.label}>성별</Text>
           <View style={styles.container}>
             {GENDER_OPTIONS.map((option) => {
               const selected = value === option.value;
@@ -34,7 +34,12 @@ function GenderInput() {
                   key={option.value}
                   style={[styles.optionButton, selected && styles.optionButtonActive]}
                   activeOpacity={0.6}
-                  onPress={() => onChange(option.value)}
+                  onPress={() => {
+                    if (value == option.value) {
+                      onChange(null);
+                    } else {
+                      onChange(option.value)
+                    }}}
                   accessibilityRole="radio"
                   accessibilityState={{ selected }}
                 >
@@ -53,14 +58,6 @@ function GenderInput() {
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize        : 14,
-    fontWeight      : 400,
-    lineHeight      : 22,
-    color           : COLOR.TEXT_DEFAULT,
-    marginStart     : 5,
-    marginBottom    : 7,
-  },
   container: {
     flexDirection   : 'row',
     gap             : 8,

@@ -81,9 +81,9 @@ export default function ApplyListScreen() {
     if (!pendingAction) {
       return;
     }
-    handleConfirmPress(pendingAction.item, pendingAction.use_stat);
     setIsConfirmDialogVisible(false);
     setPendingAction(null);
+    handleConfirmPress(pendingAction.item, pendingAction.use_stat);
   };
 
   return (

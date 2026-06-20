@@ -69,7 +69,7 @@ function CommImagePicker({ onChangeImages, maxCount = 10, imgList = [] }: CommIm
   const handlePickFromLibrary = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('권한 필요', '사진 접근 권한이 필요합니다.');
+      Alert.alert('사진 접근 권한 필요', '사진을 선택하기 위해 접근 권한이 필요합니다.');
       return;
     }
 
@@ -91,7 +91,7 @@ function CommImagePicker({ onChangeImages, maxCount = 10, imgList = [] }: CommIm
   const handleTakePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert('권한 필요', '카메라 접근 권한이 필요합니다.');
+      Alert.alert('카메라 접근 권한 필요', '사진을 찍기 위해 카메라 접근 권한이 필요합니다.');
       return;
     }
 

@@ -8,13 +8,13 @@ function ChurchTmNmInput() {
     <Controller
       name='mem_church_tm_nm'
       control={control}
-      rules={{
-        validate: (data: string) => {
-          if (!data || data.length === 0) {
-            return '팀을 입력해주세요.';
-          }
-        }
-      }}
+      // rules={{
+      //   validate: (data: string) => {
+      //     if (!data || data.length === 0) {
+      //       return '팀을 입력해주세요.';
+      //     }
+      //   }
+      // }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <InputField
           label="팀" 

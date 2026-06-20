@@ -109,6 +109,9 @@ const QUERY_KEYS = {
   NOTICE                  : "notice",
   NOTICE_PAGING           : "notice_paging",
   NOTICE_VIEW             : "notice_view",
+  REPORT                  : "report",
+  REPORT_INSERT           : "report_insert",
+  REPORT_BLOCK            : "report_block",
 };
 
 /**
@@ -119,6 +122,7 @@ const STORE_KEY = {
   X_REFRESH_TOKEN     : "x-refresh-token",
   CATEGORY_LIST       : "category_list",
   FEE_LIST            : "fee_list",
+  REPORT_LIST         : "report_list",
   MAIN_BANNER_LIST    : "main_banner_list",
   CHURCH_LIST         : "church_list",
   MEM_ID              : "mem_id",
@@ -196,6 +200,7 @@ const API_URL = {
   CHAT_INSERT             : "/chat/insert",
   CHAT_MEMBER_LIST        : "/chat/mem_list",
   CHAT_EXIT               : "/chat/exit",
+  CHAT_ROOM_DELETE        : "/chat/delete_chat_room_member",
   MEET_LIST               : "/meet/list",
   MEET_VIEW               : "/meet/view",
   MEET_INSERT             : "/meet/insert",
@@ -227,6 +232,8 @@ const API_URL = {
   FEEDBACK_LIST           : "/feedback/list",
   FEEDBACK_VIEW           : "/feedback/view",
   FEEDBACK_INSERT         : "/feedback/insert",
+  REPORT_INSERT           : "/report/insert",
+  REPORT_BLOCK            : "/report/block",
 }
 
 /**
@@ -453,6 +460,15 @@ const COMM_STYLES = StyleSheet.create({
     top                 : 44,
     right               : 8,
   },
+  //
+  label: {
+    fontSize            : 14,
+    fontFamily          : 'Pretendard-Light',
+    lineHeight          : 22,
+    color               : COLOR.TEXT_DEFAULT,
+    marginStart         : 5,
+    marginBottom        : 7,
+  }
 });
 
 export { COLOR, QUERY_KEYS, STORE_KEY, COMM_CONSTANTS, API_URL, COMM_STYLES };

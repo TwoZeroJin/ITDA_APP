@@ -101,13 +101,13 @@ const styles = StyleSheet.create({
     fontSize          : 20,
     fontFamily        : 'Pretendard-SemiBold',
     color             : COLOR.TEXT_1C1C1C,
-    lineHeight        : 20,
+    lineHeight        : 21,
   },
   subTitle: {
     fontSize          : 14,
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_2F2F2F,
-    lineHeight        : 20,
+    lineHeight        : 21,
     marginTop         : 4,
   },
   listContainer: {

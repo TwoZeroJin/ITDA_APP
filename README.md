@@ -145,4 +145,14 @@ ITDA 사용자 앱
 #
 # 구글 플레이 제출하기 (구글 개발자 계정 세팅, 구글 FCM 설정 필요)
 # 1. npm run build:android 실행 (prod로 build)
-# 2. 앱 제출 이후 eas submit --platform android로 배포 가능
+# 2. Play Console 로그인 후 앱 만들기 진행
+# 3. 앱 등록하여 대시보드 이동후 앱 설정 완료 진행
+# 4. 신규 개발자 계정일 경우 비공개 테스트 (12명 이상 테스터가 14일 이상 테스트 진행 필요)
+# . 앱 제출 이후 eas submit --platform android로 배포 가능
+#
+#
+# 앱스토어 제출하기 (에플 디벨로퍼 멤버십 가입)
+# 1. npm run build:ios 실행 (prod로 build)
+# 2. 애플 로그인 및 Y 진행 후 빌드 진행
+# 3. 빌드 완료후 eas submit --platform ios 진행
+

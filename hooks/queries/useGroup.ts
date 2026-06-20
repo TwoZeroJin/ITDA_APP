@@ -46,7 +46,7 @@ function useGroupInsert() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_INSERT],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -65,7 +65,7 @@ function useGroupUpdate() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_UPDATE],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -84,7 +84,7 @@ function useGroupDelete() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_DELETE],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -93,7 +93,7 @@ function useGroupDelete() {
   });
 }
 
-// 소셜링에 참여하는 멤버 조회
+// 클럽에 참여하는 멤버 조회
 function useGroupMemberList(groupId: number) {
   const query = useQuery({
     queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_MEMBER_LIST, groupId],
@@ -113,7 +113,7 @@ function useGroupApply() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_APPLY],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_APPLY, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -132,7 +132,7 @@ function useGroupCancelApply() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CANCEL_APPLY],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CANCEL_APPLY, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {

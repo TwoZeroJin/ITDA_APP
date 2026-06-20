@@ -3,7 +3,7 @@ import { userRefreshToken } from '@/api/user';
 import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { ApiResult, MainData } from '@/types';
 import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
-import { printDebugLog, setCategoryList, setChurchList, setFeeList, setMainBannerList } from '@/utils/commUtil';
+import { printDebugLog, setCategoryList, setChurchList, setFeeList, setMainBannerList, setReportList } from '@/utils/commUtil';
 import { saveAsyncStore } from '@/utils/asyncStoreUtil';
 import { useQuery } from '@tanstack/react-query';
 import * as Updates from 'expo-updates';
@@ -32,6 +32,7 @@ function useMainEntry() {
       // App에 필요한 정보 SecureStore(중요정보) 및 AsyncStore(비중요정보)에 세팅
       setCategoryList(data?.data?.category_list);
       setFeeList(data?.data?.fee_list);
+      setReportList(data?.data?.report_list);
       setMainBannerList(normalizedBannerList);
       setChurchList(data?.data?.church_list);
     }

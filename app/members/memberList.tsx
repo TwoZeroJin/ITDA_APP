@@ -97,14 +97,14 @@ export default function MemberListScreen() {
     if (!pendingAction) {
       return;
     }
-    handleConfirmPress(pendingAction.item);
     setIsConfirmDialogVisible(false);
     setPendingAction(null);
+    handleConfirmPress(pendingAction.item);
   };
 
   return (
     <View style={COMM_STYLES.container}>
-      <CommHeader title={'멤버 관리'} isBack={true} isLogo={false} isLike={false} isNoti={false} />
+      <CommHeader title={'멤버 목록'} isBack={true} isLogo={false} isLike={false} isNoti={false} />
 
       <Text style={COMM_STYLES.sectionTitle}>참여 멤버</Text>
 

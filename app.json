@@ -17,7 +17,10 @@
       "supportsTablet": true,
       "bundleIdentifier": "church.hacts.itda",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "프로필 사진 및 모임, 게시글 이미지를 촬영하여 업로드하기 위해 카메라 접근 권한이 필요합니다.",
+        "NSPhotoLibraryUsageDescription": "프로필 사진 및 모임, 게시글 이미지를 선택하여 업로드하기 위해 사진 접근 권한이 필요합니다.",
+        "NSUserNotificationsUsageDescription": "채팅 메시지, 모임 신청 결과 및 중요한 서비스 알림을 받기 위해 알림 권한이 필요합니다."
       }
     },
     "android": {

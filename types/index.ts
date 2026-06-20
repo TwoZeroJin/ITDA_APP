@@ -39,6 +39,7 @@ interface AppData {
   app_ver_name  : string;
   category_list : CodeInfo[];
   fee_list      : CodeInfo[];
+  report_list   : CodeInfo[];
   banner_list?  : BannerData[];
   church_list   : ChurchData[];
 }
@@ -344,6 +345,7 @@ interface RoomData {
   last_msg?       : string;
   thumb_url?      : string;
   unread_count    : number;
+  expiry_date?    : string;
 }
 /**
  * 채팅 정보
@@ -369,9 +371,22 @@ interface CodeInfo {
   sub_list?       : CodeInfo[];
 }
 
+/**
+ * 배너 정보
+ */
 interface BannerData {
   banner_image_url : string;
   banner_link_url? : string;
 }
 
-export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply, PushData };
+/**
+ * 신고/차단 정보
+ */
+interface Report {
+	target_id       : number;
+	target_type     : string;
+	report_type?    : string;
+	report_content? : string;
+}
+
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply, PushData, Report };

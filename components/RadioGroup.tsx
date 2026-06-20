@@ -69,33 +69,33 @@ const RadioGroup = ({ items, value, onChange, direction = "column", spacing = 12
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "flex-start",
+    alignItems        : "flex-start",
   },
   item: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection     : "row",
+    alignItems        : "center",
   },
   circle: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    borderWidth: 2,
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 8,
+    width             : 22,
+    height            : 22,
+    borderRadius      : 11,
+    borderWidth       : 2,
+    justifyContent    : "center",
+    alignItems        : "center",
+    marginEnd         : 8,
   },
   circleSelected: {
-    borderColor: "#2563eb",
+    borderColor       : "#2563eb",
   },
   innerDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: "#2563eb",
+    width             : 10,
+    height            : 10,
+    borderRadius      : 5,
+    backgroundColor   : "#2563eb",
   },
   label: {
-    fontSize: 16,
-    fontWeight: Platform.OS === "ios" ? "500" : "400",
+    fontSize          : 16,
+    fontFamily        : "Pretendard-Regular",
   },
 });
 

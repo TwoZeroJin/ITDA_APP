@@ -1,6 +1,6 @@
 import { COMM_STYLES } from "@/constants";
-import React, { useEffect, useState } from "react";
-import { Keyboard, StyleSheet, View } from 'react-native';
+import React, { useState } from "react";
+import { View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import FeedContentInput from "@/components/inputs/FeedContentInput";
@@ -17,7 +17,6 @@ import CommImagePicker from "@/components/comm/CommImagePicker";
  * 마이페이지 - 개선사항 등록 화면
  */
 export default function FeedbackCreateScreen() {
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const feedbackInsert = useFeedbackInsert();
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>([]);
 
@@ -27,16 +26,6 @@ export default function FeedbackCreateScreen() {
       feed_content: '',
     },
   });
-
-  useEffect(() => {
-    const showSub = Keyboard.addListener('keyboardDidShow', () => setIsKeyboardVisible(true));
-    const hideSub = Keyboard.addListener('keyboardDidHide', () => setIsKeyboardVisible(false));
-
-    return () => {
-      showSub.remove();
-      hideSub.remove();
-    };
-  }, []);
 
   const onSubmit = (formValues: FeedbackData) => {
     feedbackInsert.mutate({ ...formValues, img_list: uploadedImageList }, {
@@ -55,10 +44,8 @@ export default function FeedbackCreateScreen() {
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="피드백 작성"/>
       <KeyboardAwareScrollView
-        contentContainerStyle={[
-        styles.formContainer,
-          { paddingBottom: isKeyboardVisible ? 0 : 120 }, // 키보드가 올라올 경우 하단 패딩 제거
-        ]}
+        style={{ marginBottom: 100 }}
+        contentContainerStyle={COMM_STYLES.formContainer}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid
         extraScrollHeight={24}
@@ -77,10 +64,3 @@ export default function FeedbackCreateScreen() {
 
   );
 }
-
-const styles = StyleSheet.create({
-  formContainer: {
-    marginHorizontal  : 20,
-    gap               : 16,
-  },
-});

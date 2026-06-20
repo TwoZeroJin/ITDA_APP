@@ -35,13 +35,6 @@ export default function CommunityListScreen() {
   const reviewMutation = useReviewDelete();
   const memberLike = useMemberLike();
   
-  // 화면 재진입시 재조회
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     refetch();
-  //   }, [refetch])
-  // );
-
   // 초기 진입시 로딩 관리
   useEffect(() => {
     if (hasHandledInitialLoadingRef.current) {
@@ -157,7 +150,6 @@ export default function CommunityListScreen() {
           reviewMutation.mutate(targetItem as MeetReview, {
             onSuccess: () => {
               showToast({ text1: '삭제되었습니다.' })
-              refetch();
             },
             onError: () => showToast({ text1: '삭제 중 문제가 발생했습니다.' }),
             onSettled: () => setIsDeleteDialogVisible(false)

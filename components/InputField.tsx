@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import React, { ForwardedRef, forwardRef, ReactNode, RefObject, useRef } from 'react';
 import { InputAccessoryView, Keyboard, Platform, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 
@@ -22,7 +22,7 @@ const InputField = ({ label, variant = "filled", error, rightChild = null, textA
 
   return (
     <View>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={COMM_STYLES.label}>{label}</Text>}
       <TouchableOpacity 
         style={[
           styles.container
@@ -75,14 +75,6 @@ const InputField = ({ label, variant = "filled", error, rightChild = null, textA
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize            : 14,
-    fontFamily          : 'Pretendard-Light',
-    lineHeight          : 22,
-    color               : COLOR.TEXT_DEFAULT,
-    marginStart         : 5,
-    marginBottom        : 7,
-  },
   container: {
     justifyContent      : "center",
     alignItems          : "center",

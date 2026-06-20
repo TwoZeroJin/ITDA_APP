@@ -36,9 +36,20 @@ async function chatInsert(body: ChatData): Promise<ApiResult<null>> {
   return data;
 }
 
+/**
+ * 채팅방 나감처리
+ */
 async function chatExit(body : ChatData): Promise<ApiResult<null>> {
   const { data } = await axiosInstance.post(API_URL.CHAT_EXIT, body);
   return data;
 }
 
-export { chatRoomList, chatList, chatInsert, chatMemberList, chatExit };
+/**
+ * 채팅방 삭제처리
+ */
+async function chatDelete({ room_id }: { room_id: string }): Promise<ApiResult<null>> {
+  const { data } = await axiosInstance.post(API_URL.CHAT_ROOM_DELETE, { room_id });
+  return data;
+}
+
+export { chatRoomList, chatList, chatInsert, chatMemberList, chatExit, chatDelete };

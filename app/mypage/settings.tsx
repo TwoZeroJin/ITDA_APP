@@ -11,7 +11,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebView from "react-native-webview";
 import { router } from "expo-router";
 import { useMemberUpdate } from "@/hooks/queries/useMember";
-import { showToast } from "@/utils/commToast";
 import { getMemberInfo, saveMemberInfoForUpdate } from "@/utils/commUtil";
 import { MemberInfo } from "@/types";
 
@@ -94,7 +93,7 @@ export default function SettingsScreen() {
     //   onPress: () => {},
     // },
     // {
-    //   label: '멤버 관리',
+    //   label: '멤버 목록',
     //   onPress: () => {},
     // },
     // {

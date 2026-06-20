@@ -68,15 +68,6 @@ export default function ChatListScreen() {
       MqttUtil.unsubscribeAll('ChatListScreen');
     };
   }, []);
-  
-
-  // 화면 포커스시 재조회
-  useFocusEffect(
-    useCallback(() => {
-      refetch();
-      setChatRooms(results);
-    }, [refetch]),
-  );
 
   // 초기 진입시 로딩 관리
   useEffect(() => {
@@ -153,9 +144,10 @@ export default function ChatListScreen() {
         router.push({
           pathname: "/chats",
           params: {
-            room_id   : item.room_id,
-            room_name : item.room_name,
-            room_type : item.room_type,
+            room_id       : item.room_id,
+            room_name     : item.room_name,
+            room_type     : item.room_type,
+            expiry_date   : item.expiry_date
           },
         })
       }

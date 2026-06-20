@@ -1,5 +1,5 @@
 import SelectboxModal from "@/components/modal/SelectboxModal";
-import { COLOR } from "@/constants";
+import { COLOR, COMM_STYLES } from "@/constants";
 import { ChurchData } from "@/types";
 import { getChurchList } from "@/utils/commUtil";
 import React, { useEffect, useMemo, useState } from 'react';
@@ -7,7 +7,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, View } from 'react-native';
 
 function ChurchSelectBox() {
-  const {control} = useFormContext();
+  const { control } = useFormContext();
   const [churchList, setChurchList] = useState<ChurchData[]>([]);
 
   useEffect(() => {
@@ -37,37 +37,29 @@ function ChurchSelectBox() {
           }
         }}
         render={({field: {onChange, value}, fieldState: {error}}) => (
-      <View>
-        <Text style={styles.label}>교회</Text>
-        <SelectboxModal
-          options={churchOptions}
-          value={value ?? null}
-          onChange={(selectedValue) => {
-            const selectedChurch = churchList.find((church) => (
-              String(church.church_id) === String(selectedValue)
-              || church.church_name === String(selectedValue)
-            ));
+          <View>
+            <Text style={COMM_STYLES.label}>교회</Text>
+            <SelectboxModal
+              options={churchOptions}
+              value={value ?? null}
+              onChange={(selectedValue) => {
+                const selectedChurch = churchList.find((church) => (
+                  String(church.church_id) === String(selectedValue)
+                  || church.church_name === String(selectedValue)
+                ));
 
-            onChange(selectedChurch?.church_id ?? Number(selectedValue));
-          }}
-          placeholder="교회를 선택하세요."
-        />
-        {Boolean(error?.message) && <Text style={styles.error}>{error?.message}</Text>}
-      </View>
+                onChange(selectedChurch?.church_id ?? Number(selectedValue));
+              }}
+              placeholder="교회를 선택하세요."
+            />
+            {Boolean(error?.message) && <Text style={styles.error}>{error?.message}</Text>}
+          </View>
         )}
     />
   )
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize        : 14,
-    fontWeight      : 400,
-    lineHeight      : 22,
-    color           : COLOR.TEXT_DEFAULT,
-    marginStart     : 5,
-    marginBottom    : 7,
-  },
   error: {
     marginTop   : 5,
     marginStart : 5,

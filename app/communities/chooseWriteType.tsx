@@ -41,32 +41,32 @@ export default function chooseWriteType() {
   return (
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="커뮤니티 작성"/>
-        <View style={[COMM_STYLES.typeContainer, { marginTop: 26 }]}>
-           {OPTIONS.map(opt => {
-             const active = selected === opt.key;
-             return (
-              <TouchableOpacity 
-                style={[styles.meetContainer, active && styles.meetSelected]}
-                key={opt.key}
-                onPress={() => setSelected(opt.key)}
-                activeOpacity={0.6}
-              >
-                <View style={[styles.iconBox]}>
-                  <opt.icon width={20} color={active ? COLOR.COMM_WHITE : COLOR.COMM_GRAY_7}/>
-                </View>
-                <View style={styles.meetTypeSubContainer}>
-                  <Text style={[styles.meetTypeTitle, active && styles.meetSelectedText]}>{opt.title}</Text>
-                  <Text style={[styles.meetTypeDesc, active && styles.meetSelectedText]}>{opt.desc}</Text>
-                </View>
-              </TouchableOpacity >
-             );
-           })}
-        </View>
+      <View style={[COMM_STYLES.typeContainer, { marginTop: 26 }]}>
+          {OPTIONS.map(opt => {
+            const active = selected === opt.key;
+            return (
+            <TouchableOpacity 
+              style={[styles.meetContainer, active && styles.meetSelected]}
+              key={opt.key}
+              onPress={() => setSelected(opt.key)}
+              activeOpacity={0.6}
+            >
+              <View style={[styles.iconBox]}>
+                <opt.icon width={20} color={active ? COLOR.COMM_WHITE : COLOR.COMM_GRAY_7}/>
+              </View>
+              <View style={styles.meetTypeSubContainer}>
+                <Text style={[styles.meetTypeTitle, active && styles.meetSelectedText]}>{opt.title}</Text>
+                <Text style={[styles.meetTypeDesc, active && styles.meetSelectedText]}>{opt.desc}</Text>
+              </View>
+            </TouchableOpacity >
+            );
+          })}
+      </View>
       <CommBottomButton 
         label="다음" 
         onPress={onNext}
         disabled={!selected}
-      />        
+      />
     </View>
 
   );

@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { CodeInfo, SignupInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
 import React, { useEffect, useState } from 'react';
@@ -45,7 +45,7 @@ export default function InterestCategoryInput() {
 
         return (
           <>
-            <Text style={styles.label}>관심분야</Text>
+            <Text style={COMM_STYLES.label}>관심분야</Text>
             {categoryList.map((category, idx) => (
               <View key={idx} style={styles.categoryBox}>
                 <Text style={styles.categoryTitle}>{category.code_value}</Text>
@@ -78,13 +78,6 @@ export default function InterestCategoryInput() {
 }
 
 const styles = StyleSheet.create({
-  label: {
-    fontSize            : 14,
-    fontFamily          : 'Pretendard-Light',
-    lineHeight          : 22,
-    color               : COLOR.TEXT_DEFAULT,
-    marginStart         : 5,
-  },
   categoryBox: {
     backgroundColor     : COLOR.COMM_GRAY_5,
     borderRadius        : 12,
