@@ -55,14 +55,14 @@ export default function CommunityFeed({ item, handleLike, handleUpdate, handleDe
                   setMenuVisible(false);
                   handleUpdate?.(item);
                 }}>
-                  <Text style={styles.menuText}>수정</Text>
+                  <Text style={styles.menuText}>수정하기</Text>
                 </TouchableOpacity>
                 <View style={styles.menuDivider} />
                 <TouchableOpacity style={styles.menuItem} onPress={() => {
                   setMenuVisible(false);
                   handleDelete?.(item);
                 }}>
-                  <Text style={[styles.menuText, { color: 'red' }]}>삭제</Text>
+                  <Text style={[styles.menuText, { color: 'red' }]}>삭제하기</Text>
                 </TouchableOpacity>
               </View>
             ) : (
@@ -211,18 +211,19 @@ const styles = StyleSheet.create({
     zIndex              : 100,
   },
   menuItem: {
-    paddingVertical     : 10,
-    alignItems          : 'center',
-    justifyContent      : 'center',
+    paddingVertical     : 12,
+    paddingHorizontal   : 18,
   },
   menuText: {
     fontSize            : 14,
-    fontWeight          : '500',
-    color               : COLOR.COMM_BLACK,
+    fontFamily          : 'Pretendard-Regular',
+    color               : COLOR.COLOR_1A1A1A,
+    textAlign           : 'center',
   },
   menuDivider: {
     height              : 1,
-    backgroundColor     : COLOR.COMM_GRAY_4,
-    marginHorizontal    : 8,
+    width               : '85%',
+    backgroundColor     : COLOR.COLOR_E6E6E6,
+    alignSelf           : 'center',
   },  
 }); 

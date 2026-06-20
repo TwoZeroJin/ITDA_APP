@@ -44,7 +44,6 @@ return (
                 style={styles.menuItem}
                 onPress={() => handleItemPress(item.onPress)}
               >
-                {/* ✅ numberOfLines={1}로 글자가 절대 아래로 줄바꿈되지 않게 방어 */}
                 <Text 
                   numberOfLines={1} 
                   style={[styles.menuText, { color: item.color || COLOR.TEXT_DEFAULT }]}
@@ -71,12 +70,8 @@ const styles = StyleSheet.create({
   menuPopup: {
     backgroundColor     : COLOR.COMM_TRANSPARENT,
     borderRadius        : 16,
-    // width: 200,       <-- ❌ 기존 고정 너비 삭제
-    
-    // ✅ 텍스트 길이에 맞게 자동으로 크기가 조절되도록 하는 핵심 속성들
-    alignSelf           : 'flex-end', // 내용물 크기만큼 너비가 쪼그라들게 만듦
-    minWidth            : 100,        // 글자가 너무 짧을 때 모달이 너무 얇아지지 않게 최소 너비 보장
-    
+    alignSelf           : 'flex-end',
+    minWidth            : 100,
     shadowColor         : COLOR.COMM_BLACK,
     shadowOpacity       : 0.2,
     shadowOffset        : { width: 0, height: 4 },
@@ -87,17 +82,17 @@ const styles = StyleSheet.create({
   menuPopupLeft: {
     right               : 'auto',
     left                : 0,
-    alignSelf           : 'flex-start', // 왼쪽 정렬일 때는 쪼그라드는 방향을 왼쪽 기준으로
+    alignSelf           : 'flex-start',
   },
   menuItem: {
     paddingVertical     : 12,
-    paddingHorizontal   : 18, // ✅ 글자 양옆 여백을 살짝 늘려주면 텍스트 맞춤형일 때 더 예쁩니다.
+    paddingHorizontal   : 18,
   },
   menuText: {
     fontSize            : 14,
     fontFamily          : 'Pretendard-Regular',
     color               : COLOR.COLOR_1A1A1A,
-    textAlign           : 'center', // ✅ 모달 내부에서 텍스트가 가운데 정렬되도록 처리
+    textAlign           : 'center',
   },
   menuDivider: {
     height              : 1,
