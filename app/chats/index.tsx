@@ -1,7 +1,7 @@
 import CommHeader from '@/components/comm/CommHeader';
 import CustomDialog from '@/components/modal/CustomDialog';
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
-import { useChatExit, useChatInsert, useChatListPaging, useChatMemberList } from '@/hooks/queries/useChat';
+import { useChatDelete, useChatExit, useChatInsert, useChatListPaging, useChatMemberList } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
@@ -12,6 +12,7 @@ import ChatSend from '@/assets/images/icon_chat_send.svg';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 import CommBottomButton from '@/components/comm/CommBottomButton';
+import { showToast } from '@/utils/commToast';
 
 /**
  * 채팅 화면
@@ -20,6 +21,7 @@ export default function IndexScreen() {
   const { room_id, room_name, room_type, expiry_date, mem_id } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string, expiry_date: string, mem_id: string }>();
   const chatInsert = useChatInsert();
   const chatExit = useChatExit();
+  const chatDelete = useChatDelete();
   const { results: chatMemberList } = useChatMemberList({room_id : room_id});
   const { results, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatListPaging({
     page_no: 0,
@@ -32,6 +34,7 @@ export default function IndexScreen() {
   const [myMemId, setMyMemId] = useState<number>(0);
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [expiryYn, setExpiryYn] = useState('N');
+  const [isExit, setIsExit] = useState(false);
   const msgInputRef = useRef<TextInput>(null);
   const topic = room_id ? room_id : `${COMM_CONSTANTS.COMM_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`;
   const mqttUtil = MqttUtil;
@@ -160,6 +163,19 @@ export default function IndexScreen() {
       chatExit.mutate({ room_id } as any);
     };
   }, []);
+
+  // 채팅방 삭제 처리
+  const handleDeleteChatRoom = () => {
+    chatDelete.mutate({ room_id } as any, {
+      onSuccess: () => {
+        showToast({ text1: '채팅방에서 나갔습니다.' });
+        router.back();
+      },
+      onError: () => {
+        showToast({ text1: '채팅방에서 나가기가 실패하였습니다.' });
+      }
+    });
+  };
 
   // 메시지 전송 핸들러
   const handleSubmitChat = () => {
@@ -407,10 +423,10 @@ export default function IndexScreen() {
               </TouchableOpacity>
             </View>
           ) : 
-          <CommBottomButton 
-            label="채팅방 나가기" 
-            onPress={() => {}}
-          />
+            <CommBottomButton 
+              label="채팅방 나가기" 
+              onPress={() => setIsExit(true)}
+            />
           }
         </View>
       </KeyboardAvoidingView>
@@ -431,6 +447,16 @@ export default function IndexScreen() {
           });
           setIsConnected(isSubscribed);
         }}
+      />
+
+      <CustomDialog
+        visible={isExit}
+        title="채팅방 나가기"
+        content={`모임이 끝난 채팅방입니다. 채팅방을 나가시겠습니까?`}
+        cancelLabel="닫기"
+        confirmLabel="나가기"
+        onCancel={() => setIsExit(false)}
+        onConfirm={handleDeleteChatRoom}
       />
     </>
   );

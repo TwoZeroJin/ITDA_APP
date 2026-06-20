@@ -52,11 +52,11 @@ export default function ReportCreateScreen() {
         bounces={false}
         alwaysBounceVertical={false}
         overScrollMode="never"
-        >
-          <FormProvider {...formValues}>
-            <ReportTypeSelectBox />
-            <ReportContentInput />
-          </FormProvider>
+      >
+        <FormProvider {...formValues}>
+          <ReportTypeSelectBox />
+          <ReportContentInput />
+        </FormProvider>
       </KeyboardAwareScrollView>
       <CommBottomButton label="등록" onPress={formValues.handleSubmit(onSubmit)} />
     </View>

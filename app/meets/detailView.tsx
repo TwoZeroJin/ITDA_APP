@@ -1,6 +1,6 @@
 import { COLOR, COMM_STYLES, COMM_CONSTANTS } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply, useMeetDelete } from "@/hooks/queries/useMeet";
@@ -322,14 +322,14 @@ export default function DetailViewScreen() {
           confirmLabel: '신고',
           onCancel    : () => setActiveDialog('none'),
           onConfirm   : () => {
-            setActiveDialog('none')
+            setActiveDialog('none');
             router.navigate({
               pathname: '/user/reportCreate',
               params: {
                 target_id   : meetInfo?.meet_id,
                 target_type : 'M',
               }
-            })
+            });
           }
         };
       case 'block':
@@ -362,14 +362,6 @@ export default function DetailViewScreen() {
       />
 
       {/* 메뉴 팝업 */}
-      {isDetailMenuVisible && (
-        <TouchableOpacity
-          style={COMM_STYLES.detailMenuBackdrop}
-          activeOpacity={1}
-          onPress={() => setIsDetailMenuVisible(false)}
-        />
-      )}
-
       {isDetailMenuVisible && (
         <View style={COMM_STYLES.detailMenuLayer} pointerEvents="box-none">
           <View style={COMM_STYLES.detailMenuAnchor}>

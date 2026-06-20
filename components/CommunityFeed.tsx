@@ -1,4 +1,4 @@
-import { COLOR } from '@/constants';
+import { COLOR, COMM_STYLES } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
@@ -10,19 +10,27 @@ import ProfileIcon from "@/components/ProfileIcon";
 
 interface communityFeedProps {
   item          : MeetReview;
-  menuVisible?  : boolean;
   handleLike?   : (item: MeetInfo) => void;
   handleUpdate? : (item: MeetReview) => void;
   handleDelete? : (item: MeetReview) => void;
+  handleReport? : (item: MeetReview) => void;
+  handleBlock?  : (item: MeetReview) => void;
 }
 
-export default function CommunityFeed({ item, menuVisible = false, handleLike, handleUpdate, handleDelete }: communityFeedProps) {
+export default function CommunityFeed({ item, handleLike, handleUpdate, handleDelete, handleReport, handleBlock }: communityFeedProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [localMenuVisible, setLocalMenuVisible] = useState(menuVisible);
+  const [menuVisible, setMenuVisible] = useState(false);
   const imageList = item.img_list || [];
 
   return (
     <View style={styles.feedContainer}>
+      {menuVisible && (
+        <TouchableOpacity
+        style={COMM_STYLES.detailMenuBackdrop}
+        activeOpacity={1}
+        onPress={() => setMenuVisible(false)}
+        />
+      )}
       <View style={styles.feedCard}>
         {/* 상단 프로필 영역 */}
         <View style={styles.feedHeader}>
@@ -32,29 +40,48 @@ export default function CommunityFeed({ item, menuVisible = false, handleLike, h
             <Text style={styles.feedTimeText}>{item.reg_sdate}</Text>
           </View>
 
-          {/* 더보기 버튼 추가 */}
-          {item.my_yn === 'Y' && (
-            <>
-              <TouchableOpacity 
-                style={styles.menuTrigger} 
-                onPress={() => setLocalMenuVisible(!localMenuVisible)}
-              >
-                <Ionicons name="ellipsis-vertical" size={24} color={COLOR.COMM_BLACK} />
-              </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.menuTrigger} 
+            onPress={() => setMenuVisible(!menuVisible)}
+          >
+            <Ionicons name="ellipsis-vertical" size={24} color={COLOR.COMM_BLACK} />
+          </TouchableOpacity>
           
-              {/* 수정/삭제 메뉴 팝업 (버튼 클릭 시 노출) */}
-              {localMenuVisible && (
-                <View style={styles.menuPopup}>
-                  <TouchableOpacity style={styles.menuItem} onPress={() => handleUpdate?.(item)}>
-                    <Text style={styles.menuText}>수정</Text>
-                  </TouchableOpacity>
-                  <View style={styles.menuDivider} />
-                  <TouchableOpacity style={styles.menuItem} onPress={() => handleDelete?.(item)}>
-                    <Text style={[styles.menuText, { color: 'red' }]}>삭제</Text>
-                  </TouchableOpacity>
-                </View>
-              )}   
-            </>
+          {/* 수정/삭제 메뉴 팝업 (버튼 클릭 시 노출) */}
+          {menuVisible && (
+            item.my_yn === 'Y' ? (
+              <View style={styles.menuPopup}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => {
+                  setMenuVisible(false);
+                  handleUpdate?.(item);
+                }}>
+                  <Text style={styles.menuText}>수정</Text>
+                </TouchableOpacity>
+                <View style={styles.menuDivider} />
+                <TouchableOpacity style={styles.menuItem} onPress={() => {
+                  setMenuVisible(false);
+                  handleDelete?.(item);
+                }}>
+                  <Text style={[styles.menuText, { color: 'red' }]}>삭제</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.menuPopup}>
+                <TouchableOpacity style={styles.menuItem} onPress={() => {
+                  setMenuVisible(false);
+                  handleReport?.(item);
+                }}>
+                  <Text style={styles.menuText}>신고</Text>
+                </TouchableOpacity>
+                <View style={styles.menuDivider} />
+                <TouchableOpacity style={styles.menuItem} onPress={() => {
+                  setMenuVisible(false);
+                  handleBlock?.(item);
+                }}>
+                  <Text style={styles.menuText}>차단</Text>
+                </TouchableOpacity>
+              </View>
+            )
           )}
         </View>
 

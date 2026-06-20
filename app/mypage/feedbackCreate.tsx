@@ -52,12 +52,12 @@ export default function FeedbackCreateScreen() {
         bounces={false}
         alwaysBounceVertical={false}
         overScrollMode="never"
-        >
-          <FormProvider {...formValues}>
-            <FeedSubjectInput />
-            <FeedContentInput />
-            <CommImagePicker onChangeImages={setUploadedImageList} />
-          </FormProvider>
+      >
+        <FormProvider {...formValues}>
+          <FeedSubjectInput />
+          <FeedContentInput />
+          <CommImagePicker onChangeImages={setUploadedImageList} />
+        </FormProvider>
       </KeyboardAwareScrollView>
       <CommBottomButton label="등록" onPress={formValues.handleSubmit(onSubmit)} />
     </View>

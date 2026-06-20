@@ -68,11 +68,6 @@ function useChatExit() {
 function useChatDelete() {
   return useMutation({
     mutationFn : chatDelete,
-    onSuccess: ()=>{
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_PAGING],
-      });
-    }
   });
 }
 

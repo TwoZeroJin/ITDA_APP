@@ -4,9 +4,8 @@ import { useLoading } from "@/contexts/LoadingContext";
 import { useChatRoomListPaging } from "@/hooks/queries/useChat";
 import { RoomData } from "@/types";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useFocusEffect } from "expo-router";
 import { CategoryTab } from "@/components/CategoryTab";
 import ImageDefault from "@/assets/images/no_image.svg";
 import { formatRelativeTime, getMemberInfo, parseChatPayload } from "@/utils/commUtil";
@@ -17,49 +16,49 @@ import { MqttUtil } from "@/utils/mqttUtil";
  */
 export default function ChatListScreen() {
   const router = useAuthRouter();
-  const [ activeCategory, setActiveCategory] = useState<string>("");
-  const [ imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
-  const { setLoading } = useLoading();
-  const [ myMemId, setMyMemId] = useState<number>(0);
   const hasHandledInitialLoadingRef = useRef(false);
+  const [activeCategory, setActiveCategory] = useState<string>("");
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const [myMemId, setMyMemId] = useState<number>(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [chatRooms, setChatRooms] = useState<RoomData[]>([]);
+  const { setLoading } = useLoading();
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useChatRoomListPaging({
     page_no   : 0,
     page_size : 20
   });
-  const [ isRefreshing, setIsRefreshing ] = useState(false);
-  const [ chatRooms, setChatRooms ] = useState<RoomData[]>([]);
 
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
       const memberInfo = await getMemberInfo();
       if (memberInfo) {
-          MqttUtil.subscribeTopicList(memberInfo.topic_list ?? [], 'ChatListScreen', (msg, topic) => {
-            setChatRooms(prev => {
-              const targetIndex = prev.findIndex(
-                room => room.room_id === topic
-              );
-              if (targetIndex < 0) {
-                return prev;
-              }
-              const targetRoom = prev[targetIndex];
-              const updatedRoom = {
-                ...targetRoom,
-                last_msg: parseChatPayload(msg).chat_msg,
-                unread_count: (targetRoom.unread_count ?? 0) + 1,
-                mod_sdate: new Date().toISOString(),
-              };
-              const next = [...prev];
-              next.splice(targetIndex, 1);
-              return [
-                updatedRoom,
-                ...next,
-              ];
-            });
+        MqttUtil.subscribeTopicList(memberInfo.topic_list ?? [], 'ChatListScreen', (msg, topic) => {
+          setChatRooms(prev => {
+            const targetIndex = prev.findIndex(
+              room => room.room_id === topic
+            );
+            if (targetIndex < 0) {
+              return prev;
+            }
+            const targetRoom = prev[targetIndex];
+            const updatedRoom = {
+              ...targetRoom,
+              last_msg: parseChatPayload(msg).chat_msg,
+              unread_count: (targetRoom.unread_count ?? 0) + 1,
+              mod_sdate: new Date().toISOString(),
+            };
+            const next = [...prev];
+            next.splice(targetIndex, 1);
+            return [
+              updatedRoom,
+              ...next,
+            ];
           });
-        }
-        else {
-          MqttUtil.unsubscribeAll('ChatListScreen');
-        }
+        });
+      }
+      else {
+        MqttUtil.unsubscribeAll('ChatListScreen');
+      }
       setMyMemId(memberInfo.mem_id ?? 0);
       }
     fetchMyMemberInfo();
