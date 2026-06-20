@@ -29,13 +29,13 @@ function ChurchSelectBox() {
     <Controller
         name='mem_church_id'
         control={control}
-        rules={{
-          validate: (data: number | string) => {
-            if (!data) {
-              return '교회를 선택해주세요.';
-            }
-          }
-        }}
+        // rules={{
+        //   validate: (data: number | string) => {
+        //     if (!data) {
+        //       return '교회를 선택해주세요.';
+        //     }
+        //   }
+        // }}
         render={({field: {onChange, value}, fieldState: {error}}) => (
           <View>
             <Text style={COMM_STYLES.label}>교회</Text>
