@@ -49,7 +49,10 @@ function useMeetInsert() {
     onSuccess: () => {
       // INVALID 시 해당 쿼리키 캐시 삭제 후 재조회
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -68,7 +71,10 @@ function useMeetUpdate() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -87,7 +93,10 @@ function useMeetDelete() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -117,7 +126,10 @@ function useMeetApply() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_APPLY, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_APPLY],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -137,7 +149,10 @@ function useMeetCancelApply() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CANCEL_APPLY, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CANCEL_APPLY],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {

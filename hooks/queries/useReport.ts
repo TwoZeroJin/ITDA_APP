@@ -38,7 +38,13 @@ function useReportBlock() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING, QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, QUERY_KEYS.COMMUNITY, QUERY_KEYS.COMMUNITY_REVIEW_LIST],
+        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.COMMUNITY, QUERY_KEYS.COMMUNITY_REVIEW_LIST],
       });
     },
     onSettled: () => {

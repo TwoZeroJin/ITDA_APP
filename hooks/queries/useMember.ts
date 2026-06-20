@@ -15,7 +15,7 @@ function useMemberDetail() {
     const { setLoading } = useLoading();
     const query = useQuery({
         queryFn: memberDetail,
-        queryKey: [QUERY_KEYS.MEMBER , QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
     });
 
     useEffect(() => {

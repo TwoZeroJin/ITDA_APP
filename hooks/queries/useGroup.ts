@@ -46,7 +46,10 @@ function useGroupInsert() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -65,7 +68,10 @@ function useGroupUpdate() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -84,7 +90,10 @@ function useGroupDelete() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -113,7 +122,10 @@ function useGroupApply() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_APPLY, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_APPLY],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
@@ -132,7 +144,10 @@ function useGroupCancelApply() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CANCEL_APPLY, QUERY_KEYS.MEMBER_DETAIL],
+        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CANCEL_APPLY],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
       });
     },
     onSettled: () => {
