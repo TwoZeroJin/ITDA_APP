@@ -81,8 +81,6 @@ const QUERY_KEYS = {
   MEET_PAGING             : "meet_paging",
   MEET_VIEW               : "meet_view",
   MEET_MEMBER_LIST        : "meet_member_list",
-  MEET_COMMENT_LIST       : "meet_comment_list",
-  MEET_REVIEW_LIST        : "meet_review_list",
   MEET_APPLY              : "meet_apply",
   MEET_CANCEL_APPLY       : "meet_cancel_apply",
   MEET_INSERT             : "meet_insert",

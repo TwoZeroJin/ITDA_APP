@@ -155,4 +155,7 @@ ITDA 사용자 앱
 # 1. npm run build:ios 실행 (prod로 build)
 # 2. 애플 로그인 및 Y 진행 후 빌드 진행
 # 3. 빌드 완료후 eas submit --platform ios 진행
+# *** 2026-06-20 빌드 에러 발생 ***
+# 1. 애플에서 SMS 인증을 권장하지 않게 함 https://github.com/expo/fyi/blob/main/apple-2fa-sms-issues-workaround.md
+# 2. iOS 기기에 hannewacts@gmail.com 애플 아이디로 로그인 후 빌드 진행 필요
 

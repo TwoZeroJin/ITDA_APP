@@ -71,14 +71,14 @@ export default function CommunityFeed({ item, handleLike, handleUpdate, handleDe
                   setMenuVisible(false);
                   handleReport?.(item);
                 }}>
-                  <Text style={styles.menuText}>신고</Text>
+                  <Text style={styles.menuText}>신고하기</Text>
                 </TouchableOpacity>
                 <View style={styles.menuDivider} />
                 <TouchableOpacity style={styles.menuItem} onPress={() => {
                   setMenuVisible(false);
                   handleBlock?.(item);
                 }}>
-                  <Text style={styles.menuText}>차단</Text>
+                  <Text style={styles.menuText}>차단하기</Text>
                 </TouchableOpacity>
               </View>
             )
