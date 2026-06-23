@@ -56,7 +56,6 @@ export default function NotiListScreen() {
             style={styles.notiRow}
             activeOpacity={0.6}
             onPress={() => {
-              console.log('푸시 데이터:', item.push_data);
               if (item.push_data) {
                 const pathname = item.push_type.includes('APPLY') ? '/members/applyList' : '/members/applyList';
                 const target_type = item.push_type.includes('MEET') ? COMM_CONSTANTS.COMM_MEET : COMM_CONSTANTS.COMM_GROUP;
