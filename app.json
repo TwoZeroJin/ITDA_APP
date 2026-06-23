@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "ITDA_APP",
-    "slug": "ITDA_APP",
+    "name": "잇다",
+    "slug": "잇다",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -42,9 +42,8 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
+          "image": "./assets/images/splash_screen2.png",
+          "resizeMode": "cover",
           "backgroundColor": "#ffffff"
         }
       ],
