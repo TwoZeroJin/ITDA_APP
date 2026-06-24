@@ -78,28 +78,28 @@ export default function MyPageScreen() {
 
   const recommendSections = [
     {
-      key       : 'myMeet',
-      title     : '내가 만든 소셜링',
-      subTitle  : '내가 만든 소셜링이에요.',
-      data      : myMeetList,
-    },
-    {
       key       : 'applyMeet',
       title     : '내가 참여한 소셜링',
       subTitle  : '내가 참여한 소셜링이에요.',
       data      : applyMeetList,
     },
     {
-      key       : 'myGroup',
-      title     : '내가 만든 클럽',
-      subTitle  : '내가 만든 클럽이에요.',
-      data      : myGroupList,
-    },
-    {
       key       : 'applyGroup',
       title     : '내가 참여한 클럽',
       subTitle  : '내가 참여한 클럽이에요.',
       data      : applyGroupList,
+    },
+    {
+      key       : 'myMeet',
+      title     : '내가 만든 소셜링',
+      subTitle  : '내가 만든 소셜링이에요.',
+      data      : myMeetList,
+    },
+    {
+      key       : 'myGroup',
+      title     : '내가 만든 클럽',
+      subTitle  : '내가 만든 클럽이에요.',
+      data      : myGroupList,
     },
   ];
 

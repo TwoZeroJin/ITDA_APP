@@ -17,8 +17,8 @@ const TABS_SOCIAL: { key: string; label: string }[] = [
 ];
 
 const TABS_MY: { key: string; label: string }[] = [
-  { key: COMM_CONSTANTS.TYPE_MY, label: '내가 만든' },
   { key: COMM_CONSTANTS.TYPE_APPLY, label: '내가 참여한' },
+  { key: COMM_CONSTANTS.TYPE_MY, label: '내가 만든' },
 ];
 
 /**

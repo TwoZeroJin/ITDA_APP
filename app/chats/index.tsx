@@ -35,8 +35,9 @@ export default function IndexScreen() {
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [expiryYn, setExpiryYn] = useState('N');
   const [isExit, setIsExit] = useState(false);
+  const [os] = useState(Platform.OS);
+  const [topic] = useState<string>(room_id ? room_id : `${COMM_CONSTANTS.COMM_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`);
   const msgInputRef = useRef<TextInput>(null);
-  const topic = room_id ? room_id : `${COMM_CONSTANTS.COMM_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`;
   const mqttUtil = MqttUtil;
   const subscriberIdRef = useRef(`chat-screen:${Date.now()}:${room_id}`);
   const flatListRef = useRef<FlatList<ChatData>>(null);
@@ -64,7 +65,7 @@ export default function IndexScreen() {
       setMyMemId(memberInfo.mem_id ?? 0);
 
       if (expiry_date) {
-        const now = new Date().toDateString().slice(0, 10);
+        const now = new Date().toISOString().slice(0, 10);
         if (expiry_date < now) {
           setExpiryYn('Y');
         }
@@ -331,8 +332,8 @@ export default function IndexScreen() {
     <>
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 15 : 0}
+        behavior={os === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={os === 'ios' ? 45 : 0}
       >
         <View style={styles.container}>
           <CommHeader 

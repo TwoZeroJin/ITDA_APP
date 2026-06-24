@@ -42,8 +42,8 @@ export default function ApplyTypeInput({ questionFieldName = 'meet_question' }) 
                 onPress={() => onChange(optValue)}>
                 <Icon width={20} color={value !== optValue ? COLOR.COLOR_373737 : COLOR.APP_ACTIVE_5} />
                 <View style={styles.subContainer}>
-                  <Text style={[styles.applyTypeTitle, value === optValue && styles.applySelectedText]}>{title}</Text>
-                  <Text style={[styles.applyTypeDesc, value === optValue && styles.applySelectedText]}>{description}</Text>
+                  <Text style={[COMM_STYLES.commTypeTitle, value === optValue && styles.applySelectedText]}>{title}</Text>
+                  <Text style={[COMM_STYLES.commTypeDesc, value === optValue && styles.applySelectedText]}>{description}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -81,16 +81,6 @@ const styles = StyleSheet.create({
     paddingStart        : 28,
     paddingVertical     : 16,
     gap                 : 12,
-  },
-  applyTypeTitle: {
-    fontSize            : 16,
-    fontFamily          : 'Pretendard-Medium',
-    marginBottom        : 8,
-  },
-  applyTypeDesc: {
-    fontSize            : 14,
-    fontFamily          : 'Pretendard-Regular',
-    color               : COLOR.COMM_GRAY_2,
   },
   applySelected: {
     borderColor         : COLOR.APP_ACTIVE_5,

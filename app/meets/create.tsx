@@ -43,8 +43,8 @@ export default function MeetCreateScreen() {
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
         {/* 소셜링 생성 타이틀 */}
         <View style={COMM_STYLES.titleContainer}>
-          <Text style={styles.title}>{'잇다에서 함께 이어갈 모임을\n만들어주세요.'}</Text>
-          <Text style={styles.subtitle}>어떤 유형의 모임인지 선택해주세요.</Text>
+          <Text style={COMM_STYLES.commCreateTitle}>{'잇다에서 함께 이어갈 모임을\n만들어주세요.'}</Text>
+          <Text style={COMM_STYLES.commCreateSubTitle}>어떤 유형의 모임인지 선택해주세요.</Text>
         </View>
 
         <View style={COMM_STYLES.typeContainer}>
@@ -60,8 +60,8 @@ export default function MeetCreateScreen() {
               >
                 <Icon width={20} color={isSelected ? COLOR.COMM_WHITE : color} />
                 <View style={styles.meetTypeSubContainer}>
-                  <Text style={[styles.meetTypeTitle, isSelected && styles.meetSelectedText]}>{title}</Text>
-                  <Text style={[styles.meetTypeDesc, isSelected && styles.meetSelectedText]}>{description}</Text>
+                  <Text style={[COMM_STYLES.commTypeTitle, isSelected && styles.meetSelectedText]}>{title}</Text>
+                  <Text style={[COMM_STYLES.commTypeDesc, isSelected && styles.meetSelectedText]}>{description}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -77,17 +77,6 @@ export default function MeetCreateScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize          : 24,
-    fontFamily        : 'Pretendard-Bold',
-    color             : COLOR.TEXT_1C1C1C,
-    marginBottom      : 16,
-  },
-  subtitle: {
-    fontSize          : 16,
-    fontFamily        : 'Pretendard-Regular',
-    color             : COLOR.TEXT_DEFAULT,
-  },
   meetTypeSubContainer: {
     marginStart       : 6,
   },
@@ -100,17 +89,6 @@ const styles = StyleSheet.create({
     paddingStart      : 28,
     paddingVertical   : 16,
     gap               : 12,
-  },
-  meetTypeTitle: {
-    fontSize          : 16,
-    fontFamily        : 'Pretendard-Medium',
-    color             : COLOR.COLOR_323232,
-    marginBottom      : 8,
-  },
-  meetTypeDesc: {
-    fontSize          : 14,
-    fontFamily        : 'Pretendard-Regular',
-    color             : COLOR.TEXT_DEFAULT,
   },
   meetSelected: {
     borderColor       : COLOR.APP_MAIN,

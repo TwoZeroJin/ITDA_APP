@@ -62,8 +62,8 @@ export default function MeetCreateDetailScreen() {
         >
           {/* 소셜링 생성 타이틀 */}
           <View style={COMM_STYLES.detailTitleContainer}>
-            <Text style={COMM_STYLES.commTitle}>{'어떻게 모임원을 모을까요?'}</Text>
-            <Text style={COMM_STYLES.commSubtitle}>{`${prevMeetInfo.meet_type === COMM_CONSTANTS.MEET_TYPE_NORMAL ? '일반 소셜링' : '클럽 소셜링'}을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
+            <Text style={COMM_STYLES.commCreateTitle}>{'어떻게 모임원을 모을까요?'}</Text>
+            <Text style={COMM_STYLES.commCreateSubTitle}>{`${prevMeetInfo.meet_type === COMM_CONSTANTS.MEET_TYPE_NORMAL ? '일반 소셜링' : '클럽 소셜링'}을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
           </View>
 
           <DividingLine />

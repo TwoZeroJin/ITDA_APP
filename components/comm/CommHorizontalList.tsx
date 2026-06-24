@@ -54,7 +54,7 @@ export default function CommHorizontalList({ sections, isMember = false }: CommH
         horizontal
         pagingEnabled
         decelerationRate="fast"
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator={true}
         renderItem={({ item: section }) => {
           return (
             <View style={{ width: width - 32 }}>

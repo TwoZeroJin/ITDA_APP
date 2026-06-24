@@ -22,7 +22,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="meet"
         options={{
-            title: '소셜링',
+            title: '모임',
         }}
       />
       <Tabs.Screen

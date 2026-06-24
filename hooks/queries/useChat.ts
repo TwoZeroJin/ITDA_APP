@@ -40,11 +40,6 @@ function useChatListPaging(searchParams: SearchParams & { room_id: string }) {
 function useChatInsert() {
   return useMutation({
     mutationFn : chatInsert,
-    onSuccess: ()=>{
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.CHAT, QUERY_KEYS.CHAT_PAGING],
-      });
-    }
   });
 }
 

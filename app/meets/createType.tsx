@@ -35,8 +35,8 @@ export default function MeetCreateTypeScreen() {
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="모임 생성"/>
         {/* 소셜링 생성 타이틀 */}
         <View style={COMM_STYLES.titleContainer}>
-          <Text style={styles.title}>{'어떤 소셜링을 열어볼까요?'}</Text>
-          <Text style={styles.subtitle}>{'소셜링은 번개처럼 원데이로 만나는 자유로운 활동입니다.\n장기간 함께하는 활동은 \'클럽\'으로 개설해 주세요.'}</Text>
+          <Text style={COMM_STYLES.commCreateTitle}>{'어떤 소셜링을 열어볼까요?'}</Text>
+          <Text style={COMM_STYLES.commCreateSubTitle}>{'소셜링은 번개처럼 원데이로 만나는 자유로운 활동입니다.\n장기간 함께하는 활동은 \'클럽\'으로 개설해 주세요.'}</Text>
         </View>
 
         <View style={COMM_STYLES.typeContainer}>
@@ -48,8 +48,8 @@ export default function MeetCreateTypeScreen() {
               onPress={() => setMeet_type(value)}>
               <Icon width={20} color={meet_type !== value ? color : COLOR.COMM_WHITE} />
               <View style={styles.meetTypeSubContainer}>
-                <Text style={[styles.meetTypeTitle, meet_type === value && styles.meetSelectedText]}>{title}</Text>
-                <Text style={[styles.meetTypeDesc, meet_type === value && styles.meetSelectedText]}>{description}</Text>
+                <Text style={[COMM_STYLES.commTypeTitle, meet_type === value && styles.meetSelectedText]}>{title}</Text>
+                <Text style={[COMM_STYLES.commTypeDesc, meet_type === value && styles.meetSelectedText]}>{description}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -67,16 +67,6 @@ export default function MeetCreateTypeScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize          : 22,
-    fontWeight        : 'bold',
-    color             : COLOR.COMM_BLACK,
-    marginBottom      : 16,
-  },
-  subtitle: {
-    fontSize          : 16,
-    color             : COLOR.COMM_GRAY_2,
-  },
   meetTypeSubContainer: {
     marginStart       : 6,
   },
@@ -89,15 +79,6 @@ const styles = StyleSheet.create({
     paddingStart      : 28,
     paddingVertical   : 16,
     gap               : 12,
-  },
-  meetTypeTitle: {
-    fontSize          : 16,
-    fontWeight        : 'bold', 
-    marginBottom      : 8,
-  },
-  meetTypeDesc: {
-    fontSize          : 14,
-    color             : COLOR.COMM_GRAY_2,
   },
   meetSelected: {
     borderColor       : COLOR.APP_MAIN,

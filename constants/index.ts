@@ -340,6 +340,28 @@ const COMM_STYLES = StyleSheet.create({
     marginBottom        : 30,
     gap                 : 16,
   },
+  commCreateTitle: {
+    fontSize          : 24,
+    fontFamily        : 'Pretendard-Bold',
+    color             : COLOR.TEXT_1C1C1C,
+    marginBottom      : 16,
+  },
+  commCreateSubTitle : {
+    fontSize          : 16,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.TEXT_DEFAULT,
+  },
+  commTypeTitle: {
+    fontSize          : 16,
+    fontFamily        : 'Pretendard-Medium',
+    color             : COLOR.COLOR_323232,
+    marginBottom      : 8,
+  },
+  commTypeDesc: {
+    fontSize          : 14,
+    fontFamily        : 'Pretendard-Regular',
+    color             : COLOR.TEXT_DEFAULT,
+  },
   commContainer2: {
     marginTop           : 30,
     marginHorizontal    : 16,
