@@ -1,10 +1,12 @@
 import IconArrowRightMore from '@/assets/images/icon_arrow_right_more.svg';
+import IconArrowLeftMore from '@/assets/images/icon_arrow_left_more.svg';
 import CommCard from '@/components/comm/CommCard';
 import { COLOR } from '@/constants';
 import { GroupInfo, MeetInfo } from '@/types';
 import { Dimensions, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import { router } from 'expo-router';
+import { useRef, useState } from 'react';
 
 interface SectionItem {
   key       : string;
@@ -23,8 +25,9 @@ interface CommHorizontalListProps {
  */
 export default function CommHorizontalList({ sections, isMember = false }: CommHorizontalListProps) {
   const memberLike = useMemberLike();
-
   const { width } = Dimensions.get('window');
+  const flatListRef = useRef<FlatList<SectionItem>>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // 좋아요 처리
   const handleLikePress = (item: MeetInfo | GroupInfo) => {
@@ -48,13 +51,33 @@ export default function CommHorizontalList({ sections, isMember = false }: CommH
 
   return (
     <View style={styles.container}>
+      {currentIndex > 0 && (
+        <TouchableOpacity
+          style={styles.leftArrow}
+          onPress={() => {
+            flatListRef.current?.scrollToIndex({
+              index: currentIndex - 1,
+              animated: true,
+            });
+          }}
+        >
+          <IconArrowLeftMore width={7} height={10} />
+        </TouchableOpacity>
+      )}
       <FlatList<SectionItem>
+        ref={flatListRef}
         data={sections}
         keyExtractor={(item) => item.key}
         horizontal
         pagingEnabled
         decelerationRate="fast"
         showsHorizontalScrollIndicator={true}
+        onMomentumScrollEnd={(e) => {
+          const index = Math.round(
+            e.nativeEvent.contentOffset.x / (width - 32)
+          );
+          setCurrentIndex(index);
+        }}
         renderItem={({ item: section }) => {
           return (
             <View style={{ width: width - 32 }}>
@@ -79,6 +102,20 @@ export default function CommHorizontalList({ sections, isMember = false }: CommH
         }}
       />
 
+      {currentIndex < sections.length - 1 && (
+        <TouchableOpacity
+          style={styles.rightArrow}
+          onPress={() => {
+            flatListRef.current?.scrollToIndex({
+              index: currentIndex + 1,
+              animated: true,
+            });
+          }}
+        >
+          <IconArrowRightMore width={7} height={10} />
+        </TouchableOpacity>
+      )}
+
       <View style={{ alignItems: 'center' }}>
         <TouchableOpacity 
           style={styles.moreButton} 
@@ -96,6 +133,7 @@ export default function CommHorizontalList({ sections, isMember = false }: CommH
 const styles = StyleSheet.create({
   container: {
     padding           : 16,
+    position          : 'relative',
   },
   title: {
     fontSize          : 20,
@@ -137,5 +175,17 @@ const styles = StyleSheet.create({
     fontFamily        : 'Pretendard-Regular',
     marginEnd         : 5,
     color             : COLOR.COLOR_323232,
+  },
+  leftArrow: {
+    position            : 'absolute',
+    left                : 16,
+    top                 : '45%',
+    zIndex              : 999,
+  },
+  rightArrow: {
+    position            : 'absolute',
+    right               : 16,
+    top                 : '45%',
+    zIndex              : 999,
   },
 });
