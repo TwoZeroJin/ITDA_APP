@@ -135,6 +135,8 @@ const STORE_KEY = {
   MEM_INTEREST        : "mem_interest",
   MEM_IMAGE_URL       : "mem_image_url",
   MEM_CHURCH_NM       : "mem_church_nm",
+  MEM_CHURCH_MNM      : "mem_church_mnm",
+  MEM_CHURCH_ADDR     : "mem_church_addr",
   MEM_CHURCH_TM_NM    : "mem_church_tm_nm",
   PUSH_SEND_YN        : "push_send_yn",
   PUSH_TOKEN          : "push_token",
@@ -284,14 +286,14 @@ const COMM_STYLES = StyleSheet.create({
     color               : COLOR.TEXT_DEFAULT,
   },
   dataText: {
-    fontSize          : 16,
-    fontFamily        : 'Pretendard-Medium',
-    color             : COLOR.COLOR_323232,
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Medium',
+    color               : COLOR.COLOR_323232,
   },
   placeholderText: {
-    fontSize          : 14,
-    fontFamily        : 'Pretendard-Regular',
-    color             : COLOR.COMM_GRAY_7,
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-Regular',
+    color               : COLOR.TEXT_GRAY,
   },
   // 소셜링/클럽 공통 스타일
   commTitleContainer: {

@@ -143,7 +143,7 @@ export default function MyPageScreen() {
         {/* 교회 및 팀 정보 */}
         <View style={styles.churchTeamRow}>
           <View style={styles.churchTeamChip}>
-            <Text style={styles.churchTeamChipText}>{memberInfo?.mem_church_nm || '한성교회'}</Text>
+            <Text style={styles.churchTeamChipText}>{memberInfo?.mem_church_nm || ''}</Text>
           </View>
           {memberInfo?.mem_church_tm_nm && (
             <View style={styles.churchTeamChip}>

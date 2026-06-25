@@ -143,6 +143,8 @@ async function saveMemberInfo(data?: MemberInfo & Token) {
     await saveSecureStore(STORE_KEY.MEM_INTEREST,       data.mem_interest);
     await saveSecureStore(STORE_KEY.MEM_IMAGE_URL,      data.mem_image_url);
     await saveSecureStore(STORE_KEY.MEM_CHURCH_NM,      data.mem_church_nm);
+    await saveSecureStore(STORE_KEY.MEM_CHURCH_MNM,     data.mem_church_mnm);
+    await saveSecureStore(STORE_KEY.MEM_CHURCH_ADDR,    data.mem_church_addr);
     await saveSecureStore(STORE_KEY.MEM_CHURCH_TM_NM,   data.mem_church_tm_nm);
     await saveSecureStore(STORE_KEY.PUSH_SEND_YN,       data.push_send_yn);
     await saveSecureStore(STORE_KEY.PUSH_TOKEN,         data.push_token);
@@ -162,6 +164,8 @@ async function saveMemberInfoForUpdate(data?: MemberInfo) {
     await saveSecureStore(STORE_KEY.MEM_INTEREST,       data.mem_interest);
     await saveSecureStore(STORE_KEY.MEM_IMAGE_URL,      data.mem_image_url);
     await saveSecureStore(STORE_KEY.MEM_CHURCH_NM,      data.mem_church_nm);
+    await saveSecureStore(STORE_KEY.MEM_CHURCH_MNM,     data.mem_church_mnm);
+    await saveSecureStore(STORE_KEY.MEM_CHURCH_ADDR,    data.mem_church_addr);
     await saveSecureStore(STORE_KEY.MEM_CHURCH_TM_NM,   data.mem_church_tm_nm);
     await saveSecureStore(STORE_KEY.PUSH_SEND_YN,       data.push_send_yn);
     await saveSecureStore(STORE_KEY.PUSH_TOKEN,         data.push_token);
@@ -182,6 +186,8 @@ async function getMemberInfo(): Promise<MemberInfo> {
   const mem_interest      = await getSecureStore(STORE_KEY.MEM_INTEREST);
   const mem_image_url     = await getSecureStore(STORE_KEY.MEM_IMAGE_URL);
   const mem_church_nm     = await getSecureStore(STORE_KEY.MEM_CHURCH_NM);
+  const mem_church_mnm    = await getSecureStore(STORE_KEY.MEM_CHURCH_MNM);
+  const mem_church_addr   = await getSecureStore(STORE_KEY.MEM_CHURCH_ADDR);
   const mem_church_tm_nm  = await getSecureStore(STORE_KEY.MEM_CHURCH_TM_NM);
   const push_send_yn      = await getSecureStore(STORE_KEY.PUSH_SEND_YN);
   const push_token        = await getSecureStore(STORE_KEY.PUSH_TOKEN);
@@ -199,6 +205,8 @@ async function getMemberInfo(): Promise<MemberInfo> {
     mem_interest        : mem_interest      || "",
     mem_image_url       : mem_image_url     || "",
     mem_church_nm       : mem_church_nm     || "",
+    mem_church_mnm      : mem_church_mnm    || "",
+    mem_church_addr     : mem_church_addr   || "",
     mem_church_tm_nm    : mem_church_tm_nm  || "",
     push_send_yn        : push_send_yn      || "",
     push_token          : push_token        || "",

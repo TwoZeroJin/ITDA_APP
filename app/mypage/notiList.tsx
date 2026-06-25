@@ -57,16 +57,24 @@ export default function NotiListScreen() {
             activeOpacity={0.6}
             onPress={() => {
               if (item.push_data) {
-                const pathname = item.push_type.includes('APPLY') ? '/members/applyList' : '/members/applyList';
                 const target_type = item.push_type.includes('MEET') ? COMM_CONSTANTS.COMM_MEET : COMM_CONSTANTS.COMM_GROUP;
                 const target_id = JSON.parse(item.push_data)?.[`${target_type.toLowerCase()}_id`];
-                router.navigate({
-                  pathname: pathname,
-                  params: {
-                    target_id: target_id,
-                    target_type: target_type === COMM_CONSTANTS.COMM_MEET ? 'M' : 'G',
-                  }
-                });
+                const apply_type = item.push_type.includes('APPLY') ? JSON.parse(item.push_data)?.[`apply_type`] : '';
+                const pathname = item.push_type.includes('APPLY') ? (apply_type === 'A' ? '/members/applyList': '/members/memberList') : item.push_type.includes('CONFIRM') ? '/members/memberList' : '/chats';
+                if (pathname.includes('/members')) {
+                  router.navigate({
+                    pathname: pathname,
+                    params: {
+                      target_id: target_id,
+                      target_type: target_type === COMM_CONSTANTS.COMM_MEET ? 'M' : 'G',
+                    }
+                  });
+                }
+                else if (pathname.includes('/chat')) {
+                  router.navigate({
+                    pathname: pathname,
+                  });
+                }
               }
             }}
           >

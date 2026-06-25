@@ -22,6 +22,9 @@ import { COMM_STYLES } from "@/constants";
 import MemEmailInput from "@/components/inputs/MemEmailInput";
 import InterestCategoryInput from "@/components/inputs/InterestCategoryInput";
 import { useLoading } from "@/contexts/LoadingContext";
+import ChurchNmInput from "@/components/inputs/ChurchNmInput";
+import ChurchMnmInput from "@/components/inputs/ChurchMnmInput";
+import ChurchAddrInput from "@/components/inputs/ChurchAddrInput";
 
 /**
  * 회원정보 수정
@@ -42,6 +45,9 @@ export default function MemberUpdateScreen() {
       mem_nick          : '',
       mem_gender        : '',
       mem_birth         : '',
+      mem_church_nm     : '',
+      mem_church_mnm    : '',
+      mem_church_addr   : '',
       mem_church_tm_nm  : '',
       mem_church_id     : 0,
       mem_image_id      : '',
@@ -84,6 +90,9 @@ export default function MemberUpdateScreen() {
         mem_email         : memberInfo.mem_email ?? '',
         mem_addr          : memberInfo.mem_addr ?? '',
         mem_interest      : memberInfo.mem_interest ?? '',
+        mem_church_nm     : memberInfo.mem_church_nm ?? '',
+        mem_church_mnm    : memberInfo.mem_church_mnm ?? '',
+        mem_church_addr   : memberInfo.mem_church_addr ?? '',
         mem_church_tm_nm  : memberInfo.mem_church_tm_nm ?? '',
         mem_church_id     : selectedChurch?.church_id ?? 0,
         mem_image_id      : memberInfo.mem_image_id ?? '',
@@ -129,23 +138,29 @@ export default function MemberUpdateScreen() {
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원정보 수정"/>
       <KeyboardAwareScrollView
-        style={{ marginBottom: 100 }}
+        style={{ marginBottom: 120 }}
         contentContainerStyle={[
           COMM_STYLES.formContainer
+          , {gap: 0}
         ]}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
       >
         <FormProvider {...updateForm}>
-          <ProfileImageInput initialImageUrl={memberInfo?.mem_image_url}/>
-          <ChurchSelectBox/>
-          <ChurchTmNmInput/>
-          <NameInput focusField="mem_email"/>
-          {/* <MemTelnoInput/> */}
-          <MemEmailInput focusField="mem_nick"/>
-          <GenderInput/>
-          <BirthInput/>
-          <NickNameInput/>
+          <View style={{gap: 16, marginBottom: 16}}>
+            <ProfileImageInput initialImageUrl={memberInfo?.mem_image_url}/>
+            {/* <ChurchSelectBox/> */}
+            <NameInput focusField="mem_email"/>
+            {/* <MemTelnoInput/> */}
+            <MemEmailInput focusField="mem_nick"/>
+            <GenderInput/>
+            <BirthInput/>
+            <NickNameInput/>
+            <ChurchNmInput/>
+            <ChurchMnmInput/>
+            <ChurchAddrInput/>
+            {/* <ChurchTmNmInput/> */}
+          </View>
           <InterestCategoryInput />
         </FormProvider>
       </KeyboardAwareScrollView>

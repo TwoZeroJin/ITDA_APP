@@ -91,6 +91,9 @@ interface SignupInfo extends User {
   mem_addr?         : string;
   mem_interest?     : string;
   mem_church_id?    : number;
+  mem_church_nm?    : string;
+  mem_church_mnm?   : string;
+  mem_church_addr?  : string;
   mem_church_tm_nm? : string;
   mem_image_id?     : string;
   new_image_name?   : string;
@@ -111,6 +114,8 @@ interface MemberInfo {
   mem_interest?     : string;
   mem_church_id?    : number;
   mem_church_nm?    : string;
+  mem_church_mnm?   : string;
+  mem_church_addr?  : string;
   mem_church_tm_nm? : string;
   push_send_yn?     : string;
   push_token?       : string;

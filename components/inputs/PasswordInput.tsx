@@ -18,7 +18,7 @@ function PasswordInput({submitBehavior = 'blurAndSubmit', returnKeyType = 'defau
       control={control}
       rules={{
         validate: (data: string) => {
-          if (data !== "1111" && (!data || data.length < 8)) {
+          if (!data || data.length < 8) {
             return '비밀번호는 8자 이상 입력해주세요.';
           }
         }

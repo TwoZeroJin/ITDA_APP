@@ -1,6 +1,9 @@
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import CommHeader from "@/components/comm/CommHeader";
 import BirthInput from "@/components/inputs/BirthInput";
+import ChurchAddrInput from "@/components/inputs/ChurchAddrInput";
+import ChurchMnmInput from "@/components/inputs/ChurchMnmInput";
+import ChurchNmInput from "@/components/inputs/ChurchNmInput";
 import ChurchSelectBox from "@/components/inputs/ChurchSelectBox";
 import ChurchTmNmInput from "@/components/inputs/ChurchTmNmInput";
 import GenderInput from "@/components/inputs/GenderInput";
@@ -17,9 +20,8 @@ import { useFindInfo } from "@/hooks/queries/useAuth";
 import { SignupInfo } from "@/types";
 import { showToast } from "@/utils/commToast";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 /**
@@ -69,7 +71,7 @@ export default function SignupInfoScreen() {
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="회원 가입"/>
       <KeyboardAwareScrollView
-        style={{ marginBottom: 100 }}
+        style={{ marginBottom: 120 }}
         contentContainerStyle={[
           COMM_STYLES.formContainer
         ]}
@@ -78,15 +80,18 @@ export default function SignupInfoScreen() {
       >
         <FormProvider {...signupForm}>
           <ProfileImageInput/>
-          <ChurchSelectBox/>
-          <ChurchTmNmInput/>
+          {/* <ChurchSelectBox/> */}
           <NameInput focusField="mem_email"/>
           {/* <MemTelnoInput/> */}
           <MemEmailInput focusField="login_id"/>
           <GenderInput/>
           <BirthInput/>
-          <IdInput focusField="mem_nick"/>
           <NickNameInput/>
+          <ChurchNmInput/>
+          <ChurchMnmInput/>
+          <ChurchAddrInput/>
+          {/* <ChurchTmNmInput/> */}
+          <IdInput focusField="login_pwd"/>
           <PasswordInput returnKeyType="next"/>
           <PasswordConfirmInput/>
         </FormProvider>

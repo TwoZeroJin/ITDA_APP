@@ -19,7 +19,7 @@ export default function CommUpcomingMeetList({ upcomingMeetList }: CommUpcomingM
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>다가오는 모임 리스트</Text>
+        <Text style={styles.title}>다가오는 소셜링</Text>
         <TouchableOpacity
           style={{ height: '100%', justifyContent: 'center', paddingStart: 25 }}
           activeOpacity={0.6}

@@ -48,7 +48,7 @@ export default function SignupInterestScreen() {
 const styles = StyleSheet.create({
   title: {
     fontSize            : 23,
-    fontWeight          : 'bold',
+    fontFamily          : 'Pretendard-Bold',
     color               : COLOR.TEXT_DEFAULT,
     textAlign           : 'left',
     marginTop           : 20,

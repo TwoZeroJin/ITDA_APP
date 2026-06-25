@@ -16,8 +16,8 @@ function IdInput({ focusField = "" }: IdInputProps) {
       control={control}
       rules={{
         validate: (data: string) => {
-          if (!data || data.length === 0) {
-            return 'ID를 입력해주세요.';
+          if (!data || data.length < 3) {
+            return 'ID는 3자 이상 입력해주세요.';
           }
 
           if (!/^[a-zA-Z0-9]+$/.test(data)) {
