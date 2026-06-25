@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useController, useFormContext } from 'react-hook-form';
+import { ImageManipulator } from 'expo-image-manipulator';
 
 type ProfileImageInputProps = {
   fieldName?        : string;
@@ -31,8 +32,15 @@ export default function ProfileImageInput({ fieldName = 'upfile', initialImageUr
   };
 
   // 이미지 업로드 후 URI와 폼 값 업데이트
-  const uploadAsset = (asset: ImagePicker.ImagePickerAsset) => {
-    const formData = getFormDataImages(fieldName, [asset]);
+  const uploadAsset = async (asset: ImagePicker.ImagePickerAsset) => {
+
+    const compressedAsset = await ImageManipulator.manipulateAsync(
+      asset.uri,
+      [{ resize: { width: 1024 } }],
+      { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+    );
+
+    const formData = getFormDataImages(fieldName, [compressedAsset]);
     uploadImage.mutate(formData, {
       onSuccess: (data: ApiResult<FileInfo>) => {
         const uploaded = data?.data;
