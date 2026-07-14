@@ -17,7 +17,7 @@ import { isMeetItem } from '@/utils/commUtil';
 export default function HistoryListScreen() {
   const memberLike = useMemberLike();
   const [activeType, setActiveType] = useState(COMM_CONSTANTS.COMM_MEET);
-  const [activeCategory, setActiveCategory] = useState(COMM_CONSTANTS.TYPE_MY);
+  const [activeCategory, setActiveCategory] = useState(COMM_CONSTANTS.TYPE_APPLY);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const isClub = activeType === COMM_CONSTANTS.COMM_GROUP;
   const isMy   = activeCategory === COMM_CONSTANTS.TYPE_MY;
@@ -57,16 +57,18 @@ export default function HistoryListScreen() {
   };
 
   // 좋아요 처리
-  const handleLikePress = (targetId: number, targetType: string) => {
-    if (!targetId) return;
-
-      memberLike.mutate(
-      { 
-        target_id: targetId, 
-        target_type: targetType, 
-        flag: false 
+  const handleLikePress = (item: MeetInfo | GroupInfo) => {
+    const targetId = isClub ? (item as GroupInfo).group_id : (item as MeetInfo).meet_id;
+    memberLike.mutate(
+      {
+        target_id: targetId,
+        target_type: isClub ? 'G' : 'M',
+        flag: item.like_yn === 'N',
       },
-        {
+      {
+        onSuccess: () => {
+          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+        },
       },
     );
   };
@@ -91,7 +93,7 @@ export default function HistoryListScreen() {
             });
           }
         }}
-        onLikePress={() => handleLikePress(isMeet ? item.meet_id : item.group_id, isMeet ? COMM_CONSTANTS.TARGET_MEET : COMM_CONSTANTS.TARGET_GROUP)}
+        onLikePress={() => handleLikePress(item)}
       />
     );
   };

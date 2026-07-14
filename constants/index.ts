@@ -49,6 +49,7 @@ const COLOR = {
   COLOR_BABABA        : '#BABABA',
   COLOR_838383        : '#838383',
   COLOR_D9D9D9        : '#D9D9D9',
+  COLOR_LINK          : '#007AFF',
 };
 
 /**

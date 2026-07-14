@@ -177,15 +177,15 @@ const styles = StyleSheet.create({
     color             : COLOR.COLOR_323232,
   },
   leftArrow: {
-    position            : 'absolute',
-    left                : 16,
-    top                 : '50%',
-    zIndex              : 999,
+    position          : 'absolute',
+    left              : 16,
+    top               : '50%',
+    zIndex            : 999,
   },
   rightArrow: {
-    position            : 'absolute',
-    right               : 16,
-    top                 : '50%',
-    zIndex              : 999,
+    position          : 'absolute',
+    right             : 16,
+    top               : '50%',
+    zIndex            : 999,
   },
 });

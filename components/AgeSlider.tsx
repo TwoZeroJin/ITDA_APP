@@ -16,22 +16,33 @@ const AGE_VALUES = [10, 15, 20, 25, 30, 35, 40, 45, 50];
  */
 function AgeSlider({ value, onChange, disabled = false }: AgeSliderProps) {
   const normalizedValue = useMemo(() => {
-    const rounded = Math.round(value / 5) * 5;
+    const rounded = Math.round(value);
     return Math.max(10, Math.min(rounded, 50));
   }, [value]);
 
-  const THUMB_LEFT_PERCENT_OFFSET = 3;
+  const THUMB_LEFT_PERCENT_OFFSET = 5;
 
   const thumbLeftPercent = useMemo(() => {
     const linearPercent = ((normalizedValue - 10) / 40) * 100;
     return Math.max(
       0,
       Math.min(
-        linearPercent + (linearPercent > 50 ? -THUMB_LEFT_PERCENT_OFFSET : linearPercent === 50 ? 0 : THUMB_LEFT_PERCENT_OFFSET),
+        linearPercent == 0 ? THUMB_LEFT_PERCENT_OFFSET : 
+        linearPercent == 100 ? linearPercent - THUMB_LEFT_PERCENT_OFFSET : 
+        linearPercent >= 90 ? linearPercent - (THUMB_LEFT_PERCENT_OFFSET - 1) : 
+        linearPercent >= 80 ? linearPercent - (THUMB_LEFT_PERCENT_OFFSET - 2) : 
+        linearPercent >= 70 ? linearPercent - (THUMB_LEFT_PERCENT_OFFSET - 3) : 
+        linearPercent >= 60 ? linearPercent - (THUMB_LEFT_PERCENT_OFFSET - 4) : 
+        linearPercent <= 10 ? linearPercent + (THUMB_LEFT_PERCENT_OFFSET - 1) :
+        linearPercent <= 20 ? linearPercent + (THUMB_LEFT_PERCENT_OFFSET - 2) :
+        linearPercent <= 30 ? linearPercent + (THUMB_LEFT_PERCENT_OFFSET - 3) :
+        linearPercent <= 40 ? linearPercent + (THUMB_LEFT_PERCENT_OFFSET - 4) :
+        linearPercent < 50 ? linearPercent + (THUMB_LEFT_PERCENT_OFFSET - 5) :
+        linearPercent,
         100,
       ),
     );
-  }, [THUMB_LEFT_PERCENT_OFFSET, normalizedValue]);
+  }, [normalizedValue]);
 
   return (
     <View style={[styles.sliderContainer, disabled && styles.sliderDisabled]}>
@@ -42,10 +53,10 @@ function AgeSlider({ value, onChange, disabled = false }: AgeSliderProps) {
       <View style={styles.sliderRow}>
         <Slider
           value={normalizedValue}
-          onValueChange={(nextValue) => onChange(Math.round(nextValue / 5) * 5)}
+          onValueChange={(nextValue) => onChange(Math.round(nextValue))}
           minimumValue={10}
           maximumValue={50}
-          step={5}
+          step={1}
           disabled={disabled}
           minimumTrackTintColor={COLOR.APP_ACTIVE_5}
           maximumTrackTintColor={COLOR.COMM_GRAY_4}

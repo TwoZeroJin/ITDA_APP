@@ -1,4 +1,4 @@
-import { COLOR, COMM_STYLES, COMM_CONSTANTS } from "@/constants";
+import { COLOR, COMM_STYLES, COMM_CONSTANTS, QUERY_KEYS } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -24,9 +24,11 @@ import { useAuthRouter } from "@/components/comm/AuthRoute";
 import { router as expoRouter } from 'expo-router';
 import { showToast } from "@/utils/commToast";
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
-import { formatNumberWithComma } from "@/utils/commUtil";
+import { formatNumberWithComma, renderTextWithHttpLinks } from "@/utils/commUtil";
 import HostMemberSection from "@/components/comm/HostMemberSection";
 import { useReportBlock } from "@/hooks/queries/useReport";
+import { useMemberLike } from "@/hooks/queries/useMember";
+import queryClient from "@/api/queryClient";
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'memUpdate' | 'report' | 'block';
 
@@ -38,6 +40,7 @@ export default function DetailViewScreen() {
   const meetCancelApply = useMeetCancelApply();
   const meetDelete = useMeetDelete();
   const reportBlock = useReportBlock();
+  const memberLike = useMemberLike();
   const router = useAuthRouter();
   const { meetId } = useLocalSearchParams();
   const { results : meetInfo } = useMeetDetailView(Number(meetId));  
@@ -78,6 +81,36 @@ export default function DetailViewScreen() {
         setActiveDialog('error');
       },
     });
+  };
+
+  // 좋아요 처리
+  const handleLikePress = (targetId: number) => {
+    if (!targetId) return;
+
+      memberLike.mutate(
+      { 
+        target_id: targetId, 
+        target_type: 'M', 
+        flag: meetInfo?.like_yn == 'N'
+      },
+      {
+        onSuccess: () => {
+          meetInfo!.like_yn = meetInfo!.like_yn === 'Y' ? 'N' : 'Y';
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_MEET_LIST],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_MEET_LIST],
+          });
+        },
+      },
+    );
   };
 
   // 차단하기
@@ -399,7 +432,7 @@ export default function DetailViewScreen() {
           <Text style={COMM_STYLES.commContainerTitle}>{meetInfo?.meet_name}</Text>
 
           {/* 설명 */}
-          <Text style={COMM_STYLES.contentDesc}>{meetInfo?.meet_desc}</Text>
+          <Text style={COMM_STYLES.contentDesc}>{renderTextWithHttpLinks(meetInfo?.meet_desc)}</Text>
         </View>
         
         <DividingLine />
@@ -443,25 +476,32 @@ export default function DetailViewScreen() {
         <CommBottomButton
           label="신청하기"
           onPress={() => router.checkAndNavigate(() => setActiveDialog('apply'), '/meets/detailView')}
+          onLike={() => handleLikePress(meetInfo?.meet_id as number)}
+          isLike={meetInfo?.like_yn === 'Y'}
         />
       )}
       {applyStatus === '0' && (
         <CommBottomButton 
           label="신청 취소하기" 
-          onPress={() => setActiveDialog('cancelApply')} 
+          onPress={() => setActiveDialog('cancelApply')}
+          onLike={() => handleLikePress(meetInfo?.meet_id as number)}
+          isLike={meetInfo?.like_yn === 'Y'}
         />
       )}
       {applyStatus === '1' && (
         <CommBottomButton 
           label="채팅하기" 
           onPress={() => {router.push({
-          pathname: "/chats",
-          params: {
-            room_id   : `${COMM_CONSTANTS.COMM_MEET}_${meetInfo?.meet_id}`,
-            room_name : meetInfo?.meet_name,
-            room_type : COMM_CONSTANTS.COMM_MEET,
-          },
-        })}} />
+            pathname: "/chats",
+            params: {
+              room_id   : `${COMM_CONSTANTS.COMM_MEET}_${meetInfo?.meet_id}`,
+              room_name : meetInfo?.meet_name,
+              room_type : COMM_CONSTANTS.COMM_MEET,
+            },
+          })}}
+          onLike={() => handleLikePress(meetInfo?.meet_id as number)}
+          isLike={meetInfo?.like_yn === 'Y'}
+        />
       )}
 
       <CustomDialog {...dialogConfig} />

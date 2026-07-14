@@ -8,14 +8,13 @@ import * as ImagePicker from 'expo-image-picker';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useController, useFormContext } from 'react-hook-form';
-import { ImageManipulator } from 'expo-image-manipulator';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 type ProfileImageInputProps = {
-  fieldName?        : string;
   initialImageUrl?  : string;
 };
 
-export default function ProfileImageInput({ fieldName = 'upfile', initialImageUrl }: ProfileImageInputProps) {
+export default function ProfileImageInput({ initialImageUrl }: ProfileImageInputProps) {
   const uploadImage = useImageUpload();
   const { showActionSheetWithOptions } = useActionSheet();
   const [imageUri, setImageUri] = useState<string | null>(initialImageUrl ?? null);
@@ -40,7 +39,7 @@ export default function ProfileImageInput({ fieldName = 'upfile', initialImageUr
       { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
     );
 
-    const formData = getFormDataImages(fieldName, [compressedAsset]);
+    const formData = getFormDataImages('upfile', [compressedAsset]);
     uploadImage.mutate(formData, {
       onSuccess: (data: ApiResult<FileInfo>) => {
         const uploaded = data?.data;

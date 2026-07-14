@@ -2,7 +2,7 @@ import InputField from "@/components/InputField";
 import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-const sanitizeEmail = (data: string) => data.replace(/\s/g, '');
+const sanitizeEmail = (data: string) => data.replace(/[^A-Za-z0-9._%+-@]|[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
 const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
 
 interface MemEmailInputProps {

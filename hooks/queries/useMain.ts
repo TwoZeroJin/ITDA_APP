@@ -5,6 +5,7 @@ import { ApiResult, MainData } from '@/types';
 import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
 import { printDebugLog, setCategoryList, setChurchList, setFeeList, setMainBannerList, setReportList } from '@/utils/commUtil';
 import { saveAsyncStore } from '@/utils/asyncStoreUtil';
+import { emitPushCountChanged } from '@/utils/pushCountEvent';
 import { useQuery } from '@tanstack/react-query';
 import * as Updates from 'expo-updates';
 import { useEffect, useState } from 'react';
@@ -133,6 +134,7 @@ function useMainData(sch_category?: string, sch_text?: string) {
 
   useEffect(() => {
     saveAsyncStore(STORE_KEY.PUSH_COUNT, String(pushCount));
+    emitPushCountChanged(pushCount);
   }, [pushCount]);
 
   return {

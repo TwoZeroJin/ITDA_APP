@@ -134,7 +134,9 @@ export default function MyPageScreen() {
               <TouchableOpacity 
                 style={styles.editBtnGroup} 
                 activeOpacity={0.6}
-                onPress={() => router.navigate('/mypage/memUpdate')}>
+                onPress={() => router.navigate('/mypage/memUpdate')}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
                 <IconPencil width={20} height={20}/>
               </TouchableOpacity>
             </View>

@@ -7,7 +7,7 @@ import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native';
-import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
+import { getMemberInfo, parseChatPayload, renderTextWithHttpLinks } from '@/utils/commUtil';
 import ChatSend from '@/assets/images/icon_chat_send.svg';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
@@ -18,6 +18,7 @@ import { showToast } from '@/utils/commToast';
  * 채팅 화면
  */
 export default function IndexScreen() {
+  const NEAR_LATEST_OFFSET = 40;
   const { room_id, room_name, room_type, expiry_date, mem_id } = useLocalSearchParams<{ room_id: string; room_name: string; room_type: string, expiry_date: string, mem_id: string }>();
   const chatInsert = useChatInsert();
   const chatExit = useChatExit();
@@ -35,12 +36,14 @@ export default function IndexScreen() {
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [expiryYn, setExpiryYn] = useState('N');
   const [isExit, setIsExit] = useState(false);
-  const [os] = useState(Platform.OS);
+  const [showNewMessageNotice, setShowNewMessageNotice] = useState(false);
+  const [newMessageCount, setNewMessageCount] = useState(0);
   const [topic] = useState<string>(room_id ? room_id : `${COMM_CONSTANTS.COMM_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`);
   const msgInputRef = useRef<TextInput>(null);
   const mqttUtil = MqttUtil;
   const subscriberIdRef = useRef(`chat-screen:${Date.now()}:${room_id}`);
   const flatListRef = useRef<FlatList<ChatData>>(null);
+  const isNearLatestRef = useRef(true);
   const hasUserDraggedRef = useRef(false);
   const onEndReachedCalledDuringMomentum = useRef(true);
   const hasFocusedOnceRef = useRef(false);
@@ -131,7 +134,18 @@ export default function IndexScreen() {
       },
       ...prev,
     ]);
+
+    if (!isNearLatestRef.current) {
+      setShowNewMessageNotice(true);
+      setNewMessageCount((prev) => prev + 1);
+    }
   }, [chatMemberList, myMemId, room_id]);
+
+  const moveToLatestMessage = useCallback(() => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+    setShowNewMessageNotice(false);
+    setNewMessageCount(0);
+  }, []);
 
   // MQTT 연결 및 메시지 수신 설정
   useEffect(() => {
@@ -209,6 +223,8 @@ export default function IndexScreen() {
     chatInsert.mutate({...chatData});
     // MQTT SendMessage
     mqttUtil.sendMessage(topic, {...chatData});
+
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
   }
 
   const formatDateBadgeText = (sourceDate?: string) => {
@@ -281,7 +297,7 @@ export default function IndexScreen() {
       <View style={styles.myMessageWrap}>
         {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
         <View style={[styles.bubble, styles.myBubble]}>
-          <Text style={[styles.otherBubbleText, styles.myBubbleText]}>{item.chat_msg}</Text>
+          <Text style={[styles.otherBubbleText, styles.myBubbleText]}>{renderTextWithHttpLinks(item.chat_msg)}</Text>
         </View>
       </View>
     ) : (
@@ -308,7 +324,7 @@ export default function IndexScreen() {
       ) : (
         <View style={styles.otherMessageOnlyWrap}>
           <View style={[styles.bubble, styles.otherBubble]}>
-            <Text style={styles.otherBubbleText}>{item.chat_msg}</Text>
+            <Text style={styles.otherBubbleText}>{renderTextWithHttpLinks(item.chat_msg)}</Text>
           </View>
           {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
         </View>
@@ -332,8 +348,10 @@ export default function IndexScreen() {
     <>
       <KeyboardAvoidingView
         style={styles.container}
-        behavior={os === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={os === 'ios' ? 45 : 0}
+        // behavior={os === 'ios' ? 'padding' : 'height'}
+        behavior='padding'
+        // keyboardVerticalOffset={os === 'ios' ? 45 : 0}
+        keyboardVerticalOffset={15}
       >
         <View style={styles.container}>
           <CommHeader 
@@ -380,6 +398,16 @@ export default function IndexScreen() {
             onMomentumScrollBegin={() => {
               onEndReachedCalledDuringMomentum.current = false;
             }}
+            onScroll={({ nativeEvent }) => {
+              const isNearLatest = nativeEvent.contentOffset.y <= NEAR_LATEST_OFFSET;
+              isNearLatestRef.current = isNearLatest;
+
+              if (isNearLatest && showNewMessageNotice) {
+                setShowNewMessageNotice(false);
+                setNewMessageCount(0);
+              }
+            }}
+            scrollEventThrottle={16}
             onEndReached={handleEndReached}
             onEndReachedThreshold={0.2}
             ListHeaderComponent={
@@ -388,6 +416,18 @@ export default function IndexScreen() {
               ) : null
             }
           />
+
+          {showNewMessageNotice && (
+            <TouchableOpacity
+              activeOpacity={0.9}
+              style={styles.newMessageNoticeButton}
+              onPress={moveToLatestMessage}
+            >
+              <Text style={styles.newMessageNoticeText}>
+                {`새 메시지 ${newMessageCount}개`}
+              </Text>
+            </TouchableOpacity>
+          )}
 
           {expiryYn === 'N' ? (
             <View style={styles.inputBarWrap}>
@@ -410,8 +450,9 @@ export default function IndexScreen() {
                   placeholder="메시지 입력"
                   placeholderTextColor={COLOR.COMM_GRAY_7}
                   style={styles.inputBox}
-                  returnKeyType="send"
+                  returnKeyType="default"
                   onSubmitEditing={handleSubmitChat}
+                  multiline={true}
                   maxLength={500}
                 />
               </TouchableOpacity>
@@ -419,6 +460,8 @@ export default function IndexScreen() {
               <TouchableOpacity 
                 activeOpacity={0.6}
                 onPress={handleSubmitChat}
+                style={{ marginStart: -5, marginEnd: -10, paddingEnd : 10, paddingVertical: 20, zIndex: 10 }}
+                hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               >
                 <ChatSend width={30} height={30} />
               </TouchableOpacity>
@@ -467,19 +510,6 @@ const styles = StyleSheet.create({
   container : {
     flex              : 1,
     backgroundColor   : COLOR.COMM_WHITE,
-  },
-  meetInfoWrap: {
-    alignItems        : 'center',
-    marginTop         : 8,
-    marginHorizontal  : 20,
-    backgroundColor   : COLOR.COMM_GRAY_5,
-    borderRadius      : 10,
-    paddingVertical   : 10,
-  },
-  meetInfoText: {
-    fontWeight        : 'bold',
-    color             : COLOR.TEXT_2F2F2F,
-    fontSize          : 18,
   },
   dateBadgeWrap: {
     alignItems        : 'center',
@@ -566,6 +596,8 @@ const styles = StyleSheet.create({
   inputBarWrap: {
     flexDirection     : 'row',
     alignItems        : 'center',
+    width             : '100%',
+    height            : 80,
     paddingHorizontal : 16,
     paddingTop        : 16,
     paddingBottom     : 18,
@@ -579,6 +611,7 @@ const styles = StyleSheet.create({
     borderRadius      : 16,
     backgroundColor   : COLOR.COMM_GRAY_5,
     paddingHorizontal : 14,
+    paddingVertical   : 5,
     justifyContent    : 'center',
     height            : 50,
   },
@@ -586,8 +619,24 @@ const styles = StyleSheet.create({
     fontSize          : 14,
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_2F2F2F,
+    paddingVertical   : 0,
   },
   topLoading: {
     marginVertical    : 10,
-  }
+  },
+  newMessageNoticeButton: {
+    position          : 'absolute',
+    bottom            : 92,
+    alignSelf         : 'center',
+    backgroundColor   : COLOR.APP_ACTIVE_1,
+    borderRadius      : 18,
+    paddingHorizontal : 14,
+    paddingVertical   : 8,
+    zIndex            : 20,
+  },
+  newMessageNoticeText: {
+    color             : COLOR.COMM_WHITE,
+    fontSize          : 13,
+    fontFamily        : 'Pretendard-Medium',
+  },
 });

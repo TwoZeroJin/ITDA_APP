@@ -1,7 +1,7 @@
 import { COLOR } from "@/constants";
 import * as Haptics from 'expo-haptics';
 import React, { useEffect, useRef } from "react";
-import { FlatList, InteractionManager, Modal, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, InteractionManager, Modal, NativeScrollEvent, NativeSyntheticEvent, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export type WheelOption = {
   label     : string;
@@ -31,12 +31,21 @@ const WHEEL_ITEM_HEIGHT = 35;
 const WHEEL_VISIBLE_ROWS = 5;
 const WHEEL_CONTAINER_HEIGHT = WHEEL_ITEM_HEIGHT * WHEEL_VISIBLE_ROWS;
 
+function getSelectedIndexFromOffset(offsetY: number, optionCount: number) {
+  const maxOffset = Math.max((optionCount - 1) * WHEEL_ITEM_HEIGHT, 0);
+  const clampedOffset = Math.min(Math.max(offsetY, 0), maxOffset);
+  const rawIndex = Math.round(clampedOffset / WHEEL_ITEM_HEIGHT);
+
+  return Math.min(Math.max(rawIndex, 0), optionCount - 1);
+}
+
 /**
  * 휠 형태의 선택 UI를 모달로 띄워주는 컴포넌트
  */
 function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelColumnItemProps) {
   const listRef = useRef<FlatList<WheelOption>>(null);
   const lastHapticValueRef = useRef<string | null>(null);
+  const scrollOffsetYRef = useRef(0);
 
   useEffect(() => {
     lastHapticValueRef.current = selectedValue;
@@ -53,9 +62,10 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
     }
 
     const interactionTask = InteractionManager.runAfterInteractions(() => {
+      scrollOffsetYRef.current = selectedIndex * WHEEL_ITEM_HEIGHT;
       listRef.current?.scrollToOffset({
         offset: selectedIndex * WHEEL_ITEM_HEIGHT,
-        animated: true,
+        animated: false,
       });
     });
 
@@ -65,9 +75,8 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
 
   }, [options, selectedValue, visible]);
 
-  const handleScrollFinish = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const rawIndex = Math.round(event.nativeEvent.contentOffset.y / WHEEL_ITEM_HEIGHT);
-    const normalizedIndex = Math.min(Math.max(rawIndex, 0), options.length - 1);
+  const handleScrollFinish = () => {
+    const normalizedIndex = getSelectedIndexFromOffset(scrollOffsetYRef.current, options.length);
     const nextOption = options[normalizedIndex];
 
     if (!nextOption || nextOption.value === selectedValue) {
@@ -85,8 +94,7 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
 
   // 휠이 도는 중에도 선택 칸이 바뀌면 햅틱 발생
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const rawIndex = Math.round(event.nativeEvent.contentOffset.y / WHEEL_ITEM_HEIGHT);
-    const normalizedIndex = Math.min(Math.max(rawIndex, 0), options.length - 1);
+    const normalizedIndex = getSelectedIndexFromOffset(event.nativeEvent.contentOffset.y, options.length);
     const nextOption = options[normalizedIndex];
 
     if (!nextOption || lastHapticValueRef.current === nextOption.value) {
@@ -99,15 +107,22 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
 
   // 스크롤이 완전히 멈췄을 때 선택된 아이템을 확정
   const handleMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    handleScrollFinish(event);
+    scrollOffsetYRef.current = event.nativeEvent.contentOffset.y;
+    handleScrollFinish();
   };
 
   const handleScrollEndDrag = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const velocityY = event.nativeEvent.velocity?.y ?? 0;
+    scrollOffsetYRef.current = event.nativeEvent.contentOffset.y;
 
     // 손을 놓은 뒤 관성 스크롤이 거의 없을 때만 즉시 확정
-    if (Math.abs(velocityY) < 0.05) {
-      handleScrollFinish(event);
+    if (Platform.OS === 'ios') {
+      if (Math.abs(velocityY) < 0.05) {
+        handleScrollFinish();
+      }
+    }
+    else {
+      handleScrollFinish();
     }
   };
 
@@ -119,9 +134,8 @@ function WheelColumnItem({ options, selectedValue, onChange, visible }: WheelCol
           data={options}
           keyExtractor={(item) => item.value}
           showsVerticalScrollIndicator={false}
-          decelerationRate={0.995}
-          snapToInterval={WHEEL_ITEM_HEIGHT}
-          snapToAlignment="center"
+          decelerationRate={Platform.OS === 'ios' ? 'normal' : 0.995}
+          {...(Platform.OS === 'ios' ? { snapToInterval : WHEEL_ITEM_HEIGHT } : {})}
           bounces={true}
           onScroll={handleScroll}
           onMomentumScrollEnd={handleMomentumScrollEnd}
@@ -194,7 +208,7 @@ const styles = StyleSheet.create({
     overflow            : "hidden",
   },
   column: {
-    width               : "15%",
+    width               : "20%",
   },
   wheelContainer: {
     height              : WHEEL_CONTAINER_HEIGHT,

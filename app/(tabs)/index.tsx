@@ -26,12 +26,6 @@ export default function HomeScreen() {
   const { setLoading } = useLoading();
   const hasHandledInitialLoadingRef = useRef(false);
   const { upcomingMeetList, hotMeetList, recommendMeetList, newClassList, reviewList, hotGroupList, recommendGroupList, isLoading, refetch } = useMainData(schCategory, schText);
-  // 화면 재진입시 재조회
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     refetch();
-  //   }, [refetch])
-  // );
 
   // 초기 진입시 로딩 관리
   useEffect(() => {

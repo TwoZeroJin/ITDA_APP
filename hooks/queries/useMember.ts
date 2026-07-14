@@ -7,6 +7,7 @@ import { getNextPageParamFromPaging, printDebugLog } from '@/utils/commUtil';
 import { MemberInfo, MemberLike, SearchParams } from '@/types';
 import queryClient from '@/api/queryClient';
 import { useAuth } from './useAuth';
+import { showToast } from '@/utils/commToast';
 
 /**
  * 회원 상세 정보 조회 (다가올 모임, 모임 내역, 후기 목록)
@@ -164,6 +165,7 @@ function useMemberWithdrawl() {
     },
     onSuccess: async () => {
       await logout();
+      showToast({ text1: '정상적으로 회원탈퇴 되었습니다.' });
     },
     onSettled: () => {
       setLoading(false);

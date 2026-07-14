@@ -8,6 +8,7 @@ import { CategoryTab } from "@/components/CategoryTab";
 import { COMM_CONSTANTS } from "@/constants";
 import { formatRelativeTime } from "@/utils/commUtil";
 import { saveAsyncStore } from "@/utils/asyncStoreUtil";
+import { emitPushCountChanged } from "@/utils/pushCountEvent";
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 
 /**
@@ -23,8 +24,13 @@ export default function NotiListScreen() {
 
   // 푸시화면으로 올 시 push count 초기화
   useEffect(() => {
-      saveAsyncStore(STORE_KEY.PUSH_COUNT, '0');
-    }, []);
+    const resetPushCount = async () => {
+      await saveAsyncStore(STORE_KEY.PUSH_COUNT, '0');
+      emitPushCountChanged(0);
+    };
+
+    resetPushCount();
+  }, []);
 
   const getCategoryFromItem = (item: PushData): string => {
     if (item.push_type.includes('MEET')) {
@@ -32,6 +38,10 @@ export default function NotiListScreen() {
     }
     if (item.push_type.includes('GROUP')) {
       return COMM_CONSTANTS.COMM_GROUP;
+    }
+
+    if (item.push_type.includes('CHAT')) {
+      return COMM_CONSTANTS.COMM_MEMBER;
     }
 
     return '';
@@ -46,7 +56,7 @@ export default function NotiListScreen() {
   return (
     <View style={COMM_STYLES.container}>
       <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title="알림"/>
-      <CategoryTab data={activeCategory} onPress={setActiveCategory} />
+      <CategoryTab data={activeCategory} onPress={setActiveCategory} isMember={true} />
 
       <FlatList
         data={filteredResults}
@@ -71,8 +81,15 @@ export default function NotiListScreen() {
                   });
                 }
                 else if (pathname.includes('/chat')) {
+                  const chat_data = JSON.parse(item.push_data);
                   router.navigate({
                     pathname: pathname,
+                    params: {
+                      room_id       : chat_data?.room_id,
+                      room_name     : chat_data?.room_name,
+                      room_type     : chat_data?.room_type,
+                      expiry_date   : chat_data?.expiry_date
+                    }
                   });
                 }
               }
@@ -128,6 +145,7 @@ const styles = StyleSheet.create({
   },
   notificationTextWrap: {
     flex              : 1,
+    width            : '85%',
   },
   titleRow: {
     flexDirection     : 'row',

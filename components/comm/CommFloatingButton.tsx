@@ -1,5 +1,5 @@
 import { COLOR } from '@/constants';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import IconCreate from '@/assets/images/icon_create.svg';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
@@ -23,6 +23,12 @@ export default function CommFloatingButton() {
 const styles = StyleSheet.create({
   floatingButton: {
     position        : 'absolute',
+    width           : 40,
+    height          : 40,
+    borderRadius    : 55,
+    backgroundColor : COLOR.APP_ACTIVE_2,
+    justifyContent  : 'center',
+    alignItems      : 'center',
     elevation       : 6,
     shadowColor     : COLOR.COMM_BLACK,
     shadowOpacity   : 0.2,

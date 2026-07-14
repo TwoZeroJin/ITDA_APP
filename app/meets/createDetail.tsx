@@ -76,9 +76,9 @@ export default function MeetCreateDetailScreen() {
 
           <DividingLine />
 
-          <GenderRatioInput />
+          {/* <GenderRatioInput />
 
-          <DividingLine />
+          <DividingLine /> */}
 
           <AgeRangeInput />
 

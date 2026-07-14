@@ -1,4 +1,4 @@
-import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
+import { COLOR, COMM_CONSTANTS, COMM_STYLES, QUERY_KEYS } from "@/constants";
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -21,11 +21,13 @@ import { useAuthRouter } from "@/components/comm/AuthRoute";
 import DropdownModal from '@/components/modal/DropdownModal';
 import { router as expoRouter } from 'expo-router';
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
-import { formatNumberWithComma } from "@/utils/commUtil";
+import { formatNumberWithComma, isMeetItem, renderTextWithHttpLinks } from "@/utils/commUtil";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import HostMemberSection from "@/components/comm/HostMemberSection";
 import { showToast } from "@/utils/commToast";
 import { useReportBlock } from "@/hooks/queries/useReport";
+import { useMemberLike } from "@/hooks/queries/useMember";
+import queryClient from "@/api/queryClient";
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'report' | 'block';
 
@@ -37,6 +39,7 @@ export default function GroupDetailViewScreen() {
   const groupCancelApply = useGroupCancelApply();
   const groupDelete = useGroupDelete();
   const reportBlock = useReportBlock();
+  const memberLike = useMemberLike();
   const router = useAuthRouter();
   const { groupId } = useLocalSearchParams();
   const { results : groupInfo } = useGroupDetailView(Number(groupId));  
@@ -76,31 +79,61 @@ export default function GroupDetailViewScreen() {
     });
   };
 
+  // 좋아요 처리
+  const handleLikePress = (targetId: number) => {
+    if (!targetId) return;
+
+      memberLike.mutate(
+      { 
+        target_id: targetId, 
+        target_type: 'G', 
+        flag: groupInfo?.like_yn == 'N'
+      },
+      {
+        onSuccess: () => {
+          groupInfo!.like_yn = groupInfo!.like_yn === 'Y' ? 'N' : 'Y';
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_GROUP_LIST],
+          });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_GROUP_LIST],
+          });
+        },
+      },
+    );
+  };
+
   // 차단하기
-    const handleBlockSubmit = () => {
-      setActiveDialog('none');
-  
-      reportBlock.mutate({
-        target_id: Number(groupInfo?.group_id),
-        target_type: 'G',
-      }, {
-        onSuccess: (result) => {
-          if (result.ret_code !== 200) {
-            setErrorMessage(result.ret_msg);
-            setActiveDialog('error');
-            return;
-          }
-          else {
-            showToast({ text1: '차단되었습니다.' });
-            expoRouter.back();
-          }
-        },
-        onError: (error) => {
-          setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+  const handleBlockSubmit = () => {
+    setActiveDialog('none');
+
+    reportBlock.mutate({
+      target_id: Number(groupInfo?.group_id),
+      target_type: 'G',
+    }, {
+      onSuccess: (result) => {
+        if (result.ret_code !== 200) {
+          setErrorMessage(result.ret_msg);
           setActiveDialog('error');
-        },
-      });
-    };
+          return;
+        }
+        else {
+          showToast({ text1: '차단되었습니다.' });
+          expoRouter.back();
+        }
+      },
+      onError: (error) => {
+        setErrorMessage(error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.');
+        setActiveDialog('error');
+      },
+    });
+  };
 
   if (isMemberLoading) {
     return (
@@ -403,7 +436,7 @@ export default function GroupDetailViewScreen() {
           <Text style={COMM_STYLES.commContainerTitle}>{groupInfo?.group_name}</Text>
 
           {/* 설명 */}
-          <Text style={COMM_STYLES.contentDesc}>{groupInfo?.group_desc}</Text>
+          <Text style={COMM_STYLES.contentDesc}>{renderTextWithHttpLinks(groupInfo?.group_desc)}</Text>
         </View>
         
         <DividingLine />
@@ -443,12 +476,16 @@ export default function GroupDetailViewScreen() {
         <CommBottomButton 
           label="신청하기" 
           onPress={() => router.checkAndNavigate(() => setActiveDialog('apply'), '/groups/detailView')}
+          onLike={() => handleLikePress(groupInfo?.group_id as number)}
+          isLike={groupInfo?.like_yn === 'Y'}
         />
       )}
       {applyStatus === '0' && (
         <CommBottomButton 
           label="신청 취소하기" 
-          onPress={() => setActiveDialog('cancelApply')} 
+          onPress={() => setActiveDialog('cancelApply')}
+          onLike={() => handleLikePress(groupInfo?.group_id as number)}
+          isLike={groupInfo?.like_yn === 'Y'}
         />
       )}
       {applyStatus === '1' && (
@@ -461,7 +498,10 @@ export default function GroupDetailViewScreen() {
             room_name : groupInfo?.group_name,
             room_type : COMM_CONSTANTS.COMM_GROUP,
           },
-        })}} />
+          })}}
+          onLike={() => handleLikePress(groupInfo?.group_id as number)}
+          isLike={groupInfo?.like_yn === 'Y'}
+        />
       )}
       <CustomDialog {...dialogConfig} />
     </View>

@@ -60,7 +60,7 @@ export default function ChatListScreen() {
         MqttUtil.unsubscribeAll('ChatListScreen');
       }
       setMyMemId(memberInfo.mem_id ?? 0);
-      }
+    }
     fetchMyMemberInfo();
 
     return () => {

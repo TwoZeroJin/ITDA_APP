@@ -1,14 +1,68 @@
 import { Client, Message } from 'paho-mqtt';
+import { AppState, AppStateStatus } from 'react-native';
 import { getDeviceUid, printErrorLog, printInfoLog } from '@/utils/commUtil';
 
 let client: Client | null = null;
 let connectPromise: Promise<boolean> | null = null;
+let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+let appStateInitialized = false;
 
 type MessageCallback = (msg: string, topic: string) => void;
 type DeliveredCallback = (msg: string, topic: string) => void;
 
 const topicSubscribers = new Map<string, Map<string, MessageCallback>>();
 const deliveredSubscribers = new Map<string, DeliveredCallback>();
+
+const clearReconnectTimer = () => {
+  if (reconnectTimer) {
+    clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+  }
+};
+
+const subscribeAllTrackedTopics = () => {
+  if (!client || !client.isConnected()) {
+    return;
+  }
+
+  topicSubscribers.forEach((_subscribers, topic) => {
+    try {
+      client!.subscribe(topic);
+    } catch (e) {
+      printErrorLog(`MQTT Resubscribe Exception : ${JSON.stringify(e)}`);
+    }
+  });
+};
+
+const reconnectAndRestoreSubscriptions = async () => {
+  const isConnected = await connectMqtt();
+  if (!isConnected) {
+    return false;
+  }
+
+  subscribeAllTrackedTopics();
+  return true;
+};
+
+const scheduleReconnect = () => {
+  clearReconnectTimer();
+  reconnectTimer = setTimeout(() => {
+    reconnectAndRestoreSubscriptions();
+  }, 1000);
+};
+
+const setupAppStateListener = () => {
+  if (appStateInitialized) {
+    return;
+  }
+
+  appStateInitialized = true;
+  AppState.addEventListener('change', (nextState: AppStateStatus) => {
+    if (nextState === 'active' && topicSubscribers.size > 0) {
+      reconnectAndRestoreSubscriptions();
+    }
+  });
+};
 
 /**
  * MQTT INIT
@@ -18,6 +72,8 @@ const deliveredSubscribers = new Map<string, DeliveredCallback>();
  * @param msgSendCallback 
  */
 const ensureClient = async (): Promise<Client> => {
+  setupAppStateListener();
+
   if (client == null) {
     client = new Client(
       `${process.env.EXPO_PUBLIC_MQTT_URL}`,        // host
@@ -32,8 +88,10 @@ const ensureClient = async (): Promise<Client> => {
 
 const bindClientEvents = (mqttClient: Client) => {
   mqttClient.onConnectionLost = (response) => {
+    connectPromise = null;
       if (response.errorCode !== 0) {
           printInfoLog('connection Lost : ', response.errorMessage);
+      scheduleReconnect();
       }
   }
 
@@ -89,6 +147,7 @@ const connectMqtt = async (): Promise<boolean> => {
           useSSL: `${process.env.EXPO_PUBLIC_ENV}` === 'local' ? false : true,
           onSuccess: (success) => {
             printInfoLog(`MQTT Connected : ${JSON.stringify(success)}`);
+            clearReconnectTimer();
             connectPromise = null;
             resolve(true);
           },
@@ -237,6 +296,8 @@ const sendMessage = (topic : string, payload: string | object) => {
  * 연결 해제
  */
 const disconnect = () => {
+  clearReconnectTimer();
+
   if (client != null) {
     client.disconnect();
     client = null;

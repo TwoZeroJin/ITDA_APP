@@ -1,9 +1,11 @@
-import { COMM_CONSTANTS, STORE_KEY } from "@/constants";
+import { COLOR, COMM_CONSTANTS, STORE_KEY } from "@/constants";
 import { BannerData, ChatData, ChurchData, CodeInfo, FileInfo, GroupInfo, LikeData, MeetInfo, MemberInfo, Token } from "@/types";
-import { Platform } from "react-native";
+import React from "react";
+import { Linking, Platform, Text, TextStyle } from "react-native";
 import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
 import { getAsyncStore, saveAsyncStore } from "./asyncStoreUtil";
+import { showToast } from "./commToast";
 
 /**
  * OS 값 return
@@ -365,6 +367,50 @@ function formatNumberWithComma(value?: number) {
   return value.toLocaleString('ko-KR');
 }
 
+const URL_REGEX = /(https?:\/\/[^\s]+)/g;
+const URL_PART_REGEX = /^https?:\/\/\S+$/;
+
+type RenderTextWithHttpLinksOptions = {
+  linkStyle?: TextStyle;
+};
+
+const openExternalLink = async (url: string) => {
+  try {
+    await Linking.openURL(url);
+  }
+  catch {
+    showToast({ text1: '링크를 열 수 없습니다.' });
+  }
+};
+
+function renderTextWithHttpLinks(text?: string, options?: RenderTextWithHttpLinksOptions) {
+  if (!text) {
+    return null;
+  }
+
+  const linkStyle: TextStyle = {
+    color: COLOR.COLOR_LINK,
+    textDecorationLine: 'underline',
+    ...(options?.linkStyle ?? {}),
+  };
+
+  return text.split(URL_REGEX).map((part, index) => {
+    if (URL_PART_REGEX.test(part)) {
+      return React.createElement(
+        Text,
+        {
+          key: `${part}-${index}`,
+          style: linkStyle,
+          onPress: () => openExternalLink(part),
+        },
+        part,
+      );
+    }
+
+    return React.createElement(React.Fragment, { key: `${part}-${index}` }, part);
+  });
+}
+
 // 이미지 리스트 JSON 문자열을 FileInfo[] 타입으로 파싱하는 함수
 function parseImageList(imgListJson?: string): FileInfo[] {
   if (!imgListJson) {
@@ -433,4 +479,4 @@ function formatRelativeMeetDatetime(meetDatetime: string) {
   return `D-${diffDays}`;
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, isMeetItem, isLikeData, setReportList, getReportList };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, renderTextWithHttpLinks, isMeetItem, isLikeData, setReportList, getReportList };

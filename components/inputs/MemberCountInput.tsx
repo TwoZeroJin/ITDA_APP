@@ -27,6 +27,10 @@ export default function MemberCountInput() {
               const minValue = Number(value ?? 0);
               const maxValue = Number(getValues('meet_max') ?? 0);
 
+              if (minValue < 0) {
+                return '최소인원은 1명 이상이어야 해요.';
+              }
+
               if (maxValue && minValue > maxValue) {
                 return '최소인원은 최대인원보다 작거나 같아야 해요.';
               }

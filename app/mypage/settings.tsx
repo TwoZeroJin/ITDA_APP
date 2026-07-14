@@ -10,7 +10,7 @@ import IconMore from '@/assets/images/arrow_right.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import WebView from "react-native-webview";
 import { router } from "expo-router";
-import { useMemberUpdate } from "@/hooks/queries/useMember";
+import { useMemberUpdate, useMemberWithdrawl } from "@/hooks/queries/useMember";
 import { getMemberInfo, saveMemberInfoForUpdate } from "@/utils/commUtil";
 import { MemberInfo } from "@/types";
 
@@ -31,6 +31,7 @@ export default function SettingsScreen() {
   const [isWebViewVisible, setIsWebViewVisible] = useState(false);
   const [termUrl, setTermUrl] = useState<string>('');
   const memberUpdate = useMemberUpdate();
+  const memberWithdrawl = useMemberWithdrawl();
 
   // 회원정보 조회 및 없을 경우 로그인 화면으로 이동
   useEffect(() => {
@@ -64,6 +65,11 @@ export default function SettingsScreen() {
   const handleConfirmLogout = () => {
     setIsLogoutDialogVisible(false);
     logout();
+  };
+
+  const handleConfirmMemberWithdrawal = () => {
+    setIsMemberWithdrawalDialogVisible(false);
+    memberWithdrawl.mutate();
   };
 
   const SETTINGS_MENU: SettingsMenuItem[] = [
@@ -187,11 +193,7 @@ export default function SettingsScreen() {
         cancelLabel="취소"
         confirmLabel="확인"
         onCancel={() => setIsMemberWithdrawalDialogVisible(false)}
-        onConfirm={() => {
-        setIsMemberWithdrawalDialogVisible(false);
-        logout();
-        router.replace('/user/login');
-        }}
+        onConfirm={handleConfirmMemberWithdrawal}
       />
     </View>
   );

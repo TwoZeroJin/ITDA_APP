@@ -6,10 +6,12 @@ import Detail from '@/assets/images/header_detail.svg';
 import Logo from '@/assets/images/top_logo.svg';
 import { COLOR, STORE_KEY } from '@/constants';
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import { getAsyncStore } from '@/utils/asyncStoreUtil';
+import { subscribePushCountChanged } from '@/utils/pushCountEvent';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface CommHeaderProps {
   isLogo?         : boolean;
@@ -27,11 +29,29 @@ function CommHeader({ isLogo = true, isLike = true, isNoti = true, isSetting = f
   const authRouter = useAuthRouter();
   const [notiCount, setNotiCount] = useState(0);
 
-  useEffect(() => {
-    getAsyncStore(STORE_KEY.PUSH_COUNT).then((val) => {
-      setNotiCount(val ? parseInt(val, 10) : 0);
-    });
-  }, []);
+  const loadNotiCount = useCallback(async () => {
+    if (!isNoti) {
+      return;
+    }
+
+    const val = await getAsyncStore(STORE_KEY.PUSH_COUNT);
+    setNotiCount(val ? parseInt(val, 10) : 0);
+  }, [isNoti]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadNotiCount();
+
+      if (!isNoti) {
+        return;
+      }
+
+      return subscribePushCountChanged((nextCount) => {
+        setNotiCount(nextCount);
+      });
+    }, [loadNotiCount]),
+  );
+
   return (
     <View style={styles.container}>
         <View style={styles.container}>
