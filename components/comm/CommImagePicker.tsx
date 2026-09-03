@@ -38,13 +38,19 @@ function CommImagePicker({ onChangeImages, maxCount = 10, imgList = [] }: CommIm
 
   // 서버에 이미지 업로드
   const uploadSelectedAssets = async (assets: ImagePicker.ImagePickerAsset[]) => {
-    if (!assets.length) {
+    const imageAssets = assets.filter((asset) => asset.type === 'image');
+
+    if (imageAssets.length !== assets.length) {
+      Alert.alert('이미지 파일만 선택 가능', '동영상은 선택할 수 없습니다.');
+    }
+
+    if (!imageAssets.length) {
       return;
     }
 
     // 이미지 압축 및 JPEG 변환
     const compressedAssets = await Promise.all(
-      assets.map(async (asset) => {
+      imageAssets.map(async (asset) => {
         const manipResult = await ImageManipulator.manipulateAsync(
           asset.uri,
           [{ resize: { width: 1024 } }],

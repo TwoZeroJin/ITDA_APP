@@ -123,6 +123,7 @@ export default function HomeScreen() {
             images={bannerList.map((banner) => banner.banner_image_url)}
             height={250}
             imageRadius={12}
+            resizeMode="cover"
           />
         </View>
 

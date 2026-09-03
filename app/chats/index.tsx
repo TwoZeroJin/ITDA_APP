@@ -7,6 +7,8 @@ import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native';
+import { Alert } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { getMemberInfo, parseChatPayload, renderTextWithHttpLinks } from '@/utils/commUtil';
 import ChatSend from '@/assets/images/icon_chat_send.svg';
 import DropdownModal from '@/components/modal/DropdownModal';
@@ -255,6 +257,19 @@ export default function IndexScreen() {
   };
   const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.COMM_MEMBER ? room_name : item.mem_nick;
 
+  const handleMessageLongPress = (message: string) => {
+    Alert.alert('메시지', undefined, [
+      {
+        text: '복사하기',
+        onPress: () => {
+          void Clipboard.setStringAsync(message);
+          showToast({ text1: '메시지를 복사했습니다.' });
+        },
+      },
+      { text: '취소', style: 'cancel' },
+    ]);
+  };
+
   const DETAIL_MENU_ITEMS = [
     {
       label: chat_type === COMM_CONSTANTS.COMM_MEET ? '소셜링 정보' : '클럽 정보',
@@ -296,9 +311,14 @@ export default function IndexScreen() {
     const messageContent = isMine ? (
       <View style={styles.myMessageWrap}>
         {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
-        <View style={[styles.bubble, styles.myBubble]}>
+        <TouchableOpacity
+          activeOpacity={1}
+          onLongPress={() => handleMessageLongPress(item.chat_msg)}
+          delayLongPress={350}
+          style={[styles.bubble, styles.myBubble]}
+        >
           <Text style={[styles.otherBubbleText, styles.myBubbleText]}>{renderTextWithHttpLinks(item.chat_msg)}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     ) : (
       !isSameSender ? (
@@ -314,18 +334,28 @@ export default function IndexScreen() {
           <View>
             <Text style={styles.senderText}>{getSenderText(item)}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-              <View style={[styles.bubble, styles.otherBubble]}>
-                <Text style={styles.otherBubbleText}>{item.chat_msg}</Text>
-              </View>
+              <TouchableOpacity
+                activeOpacity={1}
+                onLongPress={() => handleMessageLongPress(item.chat_msg)}
+                delayLongPress={350}
+                style={[styles.bubble, styles.otherBubble]}
+              >
+                <Text style={styles.otherBubbleText}>{renderTextWithHttpLinks(item.chat_msg)}</Text>
+              </TouchableOpacity>
               {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
             </View>
           </View>
         </View>
       ) : (
         <View style={styles.otherMessageOnlyWrap}>
-          <View style={[styles.bubble, styles.otherBubble]}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onLongPress={() => handleMessageLongPress(item.chat_msg)}
+            delayLongPress={350}
+            style={[styles.bubble, styles.otherBubble]}
+          >
             <Text style={styles.otherBubbleText}>{renderTextWithHttpLinks(item.chat_msg)}</Text>
-          </View>
+          </TouchableOpacity>
           {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
         </View>
       )

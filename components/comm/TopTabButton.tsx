@@ -34,14 +34,14 @@ export default function TopTabButton({ activeValue, onTabPress, rightAction, isS
 
   return (
     <View style={styles.container}>
-      <View style={styles.tabsWrapper}>
+      <View style={[styles.tabsWrapper, isSocialTab && styles.socialTabsWrapper]}>
         {tabs.map((tab) => {
           const isActive = activeValue === tab.value;
 
           return (
             <TouchableOpacity
               key={tab.value}
-              style={styles.tabButton}
+              style={[styles.tabButton, isSocialTab && styles.socialTabButton]}
               activeOpacity={0.6}
               onPress={() => onTabPress(tab.value)}
             >
@@ -81,10 +81,17 @@ const styles = StyleSheet.create({
     alignItems            : 'center',
     justifyContent        : 'flex-start', 
   },
+  socialTabsWrapper: {
+    flex: 1,
+  },
   tabButton: {
     width                 : 100,
     alignItems            : 'center',
     paddingVertical       : 12,
+  },
+  socialTabButton: {
+    flex: 1,
+    width: undefined,
   },
   tabText: {
     fontSize              : 20,

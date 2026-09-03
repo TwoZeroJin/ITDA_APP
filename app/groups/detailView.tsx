@@ -21,7 +21,8 @@ import { useAuthRouter } from "@/components/comm/AuthRoute";
 import DropdownModal from '@/components/modal/DropdownModal';
 import { router as expoRouter } from 'expo-router';
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
-import { formatNumberWithComma, isMeetItem, renderTextWithHttpLinks } from "@/utils/commUtil";
+import { formatNumberWithComma, renderTextWithHttpLinks } from "@/utils/commUtil";
+import SelectableWebText from '../../components/comm/SelectableWebText';
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import HostMemberSection from "@/components/comm/HostMemberSection";
 import { showToast } from "@/utils/commToast";
@@ -131,15 +132,6 @@ export default function GroupDetailViewScreen() {
           groupInfo!.like_yn = groupInfo!.like_yn === 'Y' ? 'N' : 'Y';
           queryClient.invalidateQueries({
             queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
-          });
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-          });
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_GROUP_LIST],
-          });
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_GROUP_LIST],
           });
         },
       },
@@ -475,7 +467,10 @@ export default function GroupDetailViewScreen() {
           <Text style={COMM_STYLES.commContainerTitle}>{groupInfo?.group_name}</Text>
 
           {/* 설명 */}
-          <Text style={COMM_STYLES.contentDesc}>{renderTextWithHttpLinks(groupInfo?.group_desc)}</Text>
+          <SelectableWebText
+            text={groupInfo?.group_desc}
+            style={COMM_STYLES.contentDesc}
+          />
         </View>
         
         <DividingLine />

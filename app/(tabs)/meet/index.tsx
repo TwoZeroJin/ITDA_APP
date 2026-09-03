@@ -14,7 +14,6 @@ import { useMeetListPaging } from '@/hooks/queries/useMeet';
 import { useGroupListPaging } from '@/hooks/queries/useGroup';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import { GroupInfo, MeetInfo } from '@/types';
-import { useFocusEffect } from 'expo-router';
 import { useLoading } from '@/contexts/LoadingContext';
 
 /**
@@ -74,16 +73,6 @@ export default function MeetGroupListScreen() {
       },
     },
   ];
-  // 화면 재진입시 재조회
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (isClub) {
-  //       groupQuery.refetch();
-  //       return;
-  //     }
-  //     meetQuery.refetch();
-  //   }, [isClub, selectedCategory, searchKey, groupQuery.refetch, meetQuery.refetch])
-  // );
 
   // 초기 진입시 로딩 관리
   useEffect(() => {

@@ -1,6 +1,6 @@
 {
   "expo": {
-   "name": "잇다",
+    "name": "잇다",
     "slug": "ITDA_APP",
     "version": "1.0.2",
     "orientation": "portrait",
@@ -13,7 +13,7 @@
       "android",
       "web"
     ],
-   "ios": {
+    "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "church.hacts.itda",
       "infoPlist": {

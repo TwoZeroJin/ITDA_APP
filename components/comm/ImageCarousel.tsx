@@ -1,22 +1,25 @@
 import { COLOR } from "@/constants";
 import React, { useRef, useState } from "react";
-import { GestureResponderEvent,
-  PanResponderGestureState, View, FlatList, Dimensions, Image, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent } from "react-native";
+import { View, FlatList, Dimensions, Image, StyleSheet, NativeSyntheticEvent, NativeScrollEvent, LayoutChangeEvent, Pressable } from "react-native";
 import ImageZoom from 'react-native-image-pan-zoom';
 import NoImage from '@/assets/images/no_image.svg';
+import ImagePreviewModal from '@/components/modal/ImagePreviewModal';
 
 interface ImageCarouselProps  {
   images            : string[];           // 이미지 URL
   height?           : number;             // 기본 높이
   imageRadius?      : number;             // 이미지 모서리 둥글기 (옵션)
   showIndicator?    : boolean;            // 인디케이터 표시 여부
+  resizeMode?       : "contain" | "cover" | "stretch" | "repeat" | "center"; // 이미지 리사이즈 모드 (옵션)
+  isZoomEnabled?    : boolean;            // 이미지 줌 가능 여부 (옵션)
   onPressImage?     : (idx: number) => void;
 };
 
-export function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true, onPressImage }: ImageCarouselProps) {
+export function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true, resizeMode = "contain", isZoomEnabled = false }: ImageCarouselProps) {
   const [index, setIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [isZoomed, setIsZoomed] = useState(false);
+  const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
   const ref = useRef<FlatList<string> | null>(null);
   
   const currentWidth = containerWidth || Dimensions.get('window').width;
@@ -37,6 +40,11 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
     setIndex(newIndex);
   };
 
+  const handleImagePress = (imageIndex: number) => {
+    setPreviewIndex(imageIndex);
+    setIsPreviewVisible(true);
+  };
+
   return (
     <View style={[styles.container, { height }]} onLayout={handleLayout}>
       {images.length > 0 && (
@@ -51,35 +59,35 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
         keyExtractor={(_, i) => String(i)}
         onMomentumScrollEnd={onMomentumScrollEnd}
         renderItem={({ item, index: idx }) => (
-          <View style={{ width: currentWidth, height, overflow: 'hidden' }}>
+          <Pressable
+            style={[styles.imagePage, { width: currentWidth, height }]}
+            onPress={() => handleImagePress(idx)}
+          >
             {/* @ts-ignore */}
-            <ImageZoom 
-              cropWidth={currentWidth}
-              cropHeight={height}
-              imageWidth={currentWidth}
-              imageHeight={height}
-              panToMove={true}
-              pinchToZoom={true}
-              enableDoubleClickZoom={true}
-              // 💡 매개변수 뒤에 각각 : GestureResponderEvent 와 : PanResponderGestureState 를 붙여줍니다.
-              onStartShouldSetPanResponder={(e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-                return false; 
-              }}
-              onMoveShouldSetPanResponder={(e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-                return isZoomed || gestureState.numberActiveTouches >= 2;
-              }}
-              onMoveShouldSetPanResponderCapture={(e: GestureResponderEvent, gestureState: PanResponderGestureState) => {
-                if (!isZoomed && gestureState.numberActiveTouches === 1) {
-                  return false;
-                }
-                return true;
-              }}              
-              // 💡 라이브러리 자체 버그 방지: 줌 동작을 무겁게 잡지 않도록 임계값 최소화
-              minScale={1}
-              maxScale={4}
-              // 💡 확대 도중 삐져나가는 현상을 방지하고, 손을 떼면 원래 크기로 자석처럼 돌아오게 유도
-              responderRelease={() => {}}
-            >
+            {isZoomEnabled ? (
+              // @ts-ignore
+              <ImageZoom 
+                cropWidth={currentWidth}
+                cropHeight={height}
+                imageWidth={currentWidth}
+                imageHeight={height}
+                panToMove={true}
+                pinchToZoom={true}
+                enableDoubleClickZoom={true}
+                minScale={1}
+                maxScale={4}
+              >
+                <Image
+                  source={{ uri: item }}
+                  style={[
+                    styles.image,
+                    { width: currentWidth, height },
+                    imageRadius !== undefined && { borderRadius: imageRadius },
+                  ]}
+                  resizeMode={resizeMode}
+                />
+              </ImageZoom>
+            ) : (
               <Image
                 source={{ uri: item }}
                 style={[
@@ -87,10 +95,10 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
                   { width: currentWidth, height },
                   imageRadius !== undefined && { borderRadius: imageRadius },
                 ]}
-                resizeMode="cover"
+                resizeMode={resizeMode}
               />
-            </ImageZoom>          
-          </View>
+            )}
+          </Pressable>
         )}
       />)}
       {!images.length && (
@@ -109,6 +117,13 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
           ))}
         </View>
       )}
+
+      <ImagePreviewModal
+        visible={isPreviewVisible}
+        images={images}
+        initialIndex={previewIndex}
+        onClose={() => setIsPreviewVisible(false)}
+      />
     </View>
   );
 }
@@ -121,6 +136,10 @@ const styles = StyleSheet.create({
   image: {
     width           : "100%",
     height          : "100%",
+  },
+  imagePage: {
+    overflow        : 'hidden',
+    backgroundColor : 'rgba(0, 0, 0, 0.07)',
   },
   noImageContainer: {
     flex            : 1,

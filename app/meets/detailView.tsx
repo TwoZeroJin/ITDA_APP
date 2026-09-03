@@ -30,6 +30,7 @@ import { useReportBlock } from "@/hooks/queries/useReport";
 import { useMemberLike } from "@/hooks/queries/useMember";
 import queryClient from "@/api/queryClient";
 import { shareFeedTemplate } from '@react-native-kakao/share';
+import SelectableWebText from "@/components/comm/SelectableWebText";
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'memUpdate' | 'report' | 'block';
 
@@ -134,15 +135,6 @@ export default function DetailViewScreen() {
           meetInfo!.like_yn = meetInfo!.like_yn === 'Y' ? 'N' : 'Y';
           queryClient.invalidateQueries({
             queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
-          });
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-          });
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_MY_MEET_LIST],
-          });
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_APPLY_MEET_LIST],
           });
         },
       },
@@ -470,7 +462,10 @@ export default function DetailViewScreen() {
           <Text style={COMM_STYLES.commContainerTitle}>{meetInfo?.meet_name}</Text>
 
           {/* 설명 */}
-          <Text style={COMM_STYLES.contentDesc}>{renderTextWithHttpLinks(meetInfo?.meet_desc)}</Text>
+          <SelectableWebText
+            text={meetInfo?.meet_desc}
+            style={COMM_STYLES.contentDesc}
+          />
         </View>
         
         <DividingLine />

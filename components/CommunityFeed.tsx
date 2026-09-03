@@ -90,7 +90,7 @@ export default function CommunityFeed({ item, handleLike, handleUpdate, handleDe
           <View style={styles.commMargin}>
             <ImageCarousel
               images={imageList?.length ? imageList.map((file) => file.file_path) : []}
-              height={390}
+              height={330}
             />
           </View>
         )}
@@ -141,7 +141,7 @@ export default function CommunityFeed({ item, handleLike, handleUpdate, handleDe
 
 const styles = StyleSheet.create({
   commMargin: {
-    marginBottom        : 16
+    marginBottom        : 16,
   },
   feedContainer: {
     backgroundColor     : COLOR.COMM_WHITE,

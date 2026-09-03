@@ -259,6 +259,22 @@ interface MeetReview {
 }
 
 /**
+ * 후기 댓글
+ */
+interface ReviewComment {
+  comment_id?     : number;
+  review_id       : number;
+  review_comment  : string;
+  mem_id          : number;
+  mem_nick?       : string;
+  mem_image_url?  : string;
+  my_yn           : string;
+  like_yn         : string;
+  like_cnt        : number;
+  reg_sdate       : string;
+}
+
+/**
  * 공동체 정보
  */
 interface GroupInfo {
@@ -394,4 +410,4 @@ interface Report {
 	report_content? : string;
 }
 
-export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply, PushData, Report };
+export type { ApiResult, SearchParams, BoardNotice, ChatData, RoomData, CodeInfo, FeedbackData, FileInfo, GroupInfo, GroupApply, AppData, MeetApply, MeetInfo, MeetReview, MemberInfo, MemberDetail, SignupInfo, Token, User, BannerData, ChurchData, MainData, MemberLike, LikeData, MemberApply, PushData, Report, ReviewComment };

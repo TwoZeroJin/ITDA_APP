@@ -85,6 +85,13 @@ export default function LoginScreen() {
           >
             <Text style={styles.findIdText}>계정 정보를 잊으셨나요?</Text>
           </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.findUserContainer}
+            activeOpacity={0.6}
+            onPress={() => router.replace('/')}
+          >
+            <Text style={styles.findIdText}>메인으로 이동</Text>
+          </TouchableOpacity>
           {/* SNS 로그인 추후 작업 */}
           {/* <View style={styles.snsLoginTextContainer}>
             <View style={styles.line}/>
@@ -122,8 +129,7 @@ const styles = StyleSheet.create({
   },
   findUserContainer: {
     alignItems          : "center",
-    marginBottom        : 40,
-    height              : 40,
+    height              : 30,
   },
   findIdText: {
     fontSize            : 14,
