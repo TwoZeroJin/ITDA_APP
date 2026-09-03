@@ -1,6 +1,6 @@
 import { COLOR, COMM_CONSTANTS, COMM_STYLES, QUERY_KEYS } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View, Image } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useGroupApply, useGroupCancelApply, useGroupDelete } from "@/hooks/queries/useGroup";
@@ -28,6 +28,7 @@ import { showToast } from "@/utils/commToast";
 import { useReportBlock } from "@/hooks/queries/useReport";
 import { useMemberLike } from "@/hooks/queries/useMember";
 import queryClient from "@/api/queryClient";
+import { shareFeedTemplate } from '@react-native-kakao/share';
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'report' | 'block';
 
@@ -48,6 +49,42 @@ export default function GroupDetailViewScreen() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [applyStatus, setApplyStatus] = useState<string | undefined>(undefined);
+
+  const handleSharePress = async () => {
+    if (!groupInfo) return;
+
+    const imageUrl =
+      groupInfo.thumb_url ||
+      groupInfo.img_list?.[0]?.file_path ||
+      Image.resolveAssetSource(require('@/assets/images/no_image.svg')).uri;
+
+      try {
+      await shareFeedTemplate({
+        template: {
+          content: {
+            title: groupInfo.group_name,
+            description: groupInfo.group_desc,
+            imageUrl,
+            link: {
+              androidExecutionParams: { groupId: String(groupInfo.group_id) },
+              iosExecutionParams: { groupId: String(groupInfo.group_id) },
+            },
+          },
+          buttons: [
+            {
+              title: '클럽 보기',
+              link: {
+                androidExecutionParams: { groupId: String(groupInfo.group_id) },
+                iosExecutionParams: { groupId: String(groupInfo.group_id) },
+              },
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      showToast({ text1: error instanceof Error ? error.message : '카카오톡 공유를 열지 못했습니다.' });
+    }
+  };
 
   useEffect(() => {
     setApplyStatus(groupInfo?.apply_stat);
@@ -388,7 +425,9 @@ export default function GroupDetailViewScreen() {
         isNoti={false} 
         isSetting={false} 
         isLike={false} 
+        isShare={true}
         isDetail={applyStatus === '1'} 
+        onPressShare={handleSharePress}
         onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
       />      
       {isDetailMenuVisible && (
@@ -507,4 +546,3 @@ export default function GroupDetailViewScreen() {
     </View>
   );
 }
-

@@ -11,11 +11,19 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import * as Notifications from 'expo-notifications';
+import { initializeKakaoSDK } from '@react-native-kakao/core';
+
+const kakaoNativeAppKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY;
+
+// 모든 화면보다 먼저 한 번 초기화합니다. 웹은 별도의 JavaScript/REST 키 설정이 필요하므로 제외합니다.
+if (Platform.OS !== 'web' && kakaoNativeAppKey) {
+  void initializeKakaoSDK(kakaoNativeAppKey);
+}
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -115,6 +123,7 @@ function RootNavigator() {
         <Stack.Screen name="communities"  options={{ headerShown: false }} /> 
         <Stack.Screen name="mypage"       options={{ headerShown: false }} /> 
         <Stack.Screen name="members"      options={{ headerShown: false }} />
+        <Stack.Screen name="kakaolink"    options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
       </Stack>
       <CustomDialog

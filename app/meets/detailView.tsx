@@ -1,6 +1,6 @@
 import { COLOR, COMM_STYLES, COMM_CONSTANTS, QUERY_KEYS } from "@/constants";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, ScrollView, Text, View, Image } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply, useMeetDelete } from "@/hooks/queries/useMeet";
@@ -29,6 +29,7 @@ import HostMemberSection from "@/components/comm/HostMemberSection";
 import { useReportBlock } from "@/hooks/queries/useReport";
 import { useMemberLike } from "@/hooks/queries/useMember";
 import queryClient from "@/api/queryClient";
+import { shareFeedTemplate } from '@react-native-kakao/share';
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'memUpdate' | 'report' | 'block';
 
@@ -55,7 +56,42 @@ export default function DetailViewScreen() {
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [applyStatus, setApplyStatus] = useState<string | undefined>(undefined);
-  
+  const handleSharePress = async () => {
+    if (!meetInfo) return;
+
+    const imageUrl =
+      meetInfo.thumb_url ||
+      meetInfo.img_list?.[0]?.file_path ||
+      Image.resolveAssetSource(require('@/assets/images/no_image.svg')).uri;
+
+      try {
+      await shareFeedTemplate({
+        template: {
+          content: {
+            title: meetInfo.meet_name,
+            description: meetInfo.meet_desc,
+            imageUrl,
+            link: {
+              androidExecutionParams: { meetId: String(meetInfo.meet_id) },
+              iosExecutionParams: { meetId: String(meetInfo.meet_id) },
+            },
+          },
+          buttons: [
+            {
+              title: '소셜링 보기',
+              link: {
+                androidExecutionParams: { meetId: String(meetInfo.meet_id) },
+                iosExecutionParams: { meetId: String(meetInfo.meet_id) },
+              },
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      showToast({ text1: error instanceof Error ? error.message : '카카오톡 공유를 열지 못했습니다.' });
+    }
+  };
+
   useEffect(() => {
     setApplyStatus(meetInfo?.apply_stat);
   }, [meetInfo?.apply_stat]);
@@ -390,7 +426,9 @@ export default function DetailViewScreen() {
         isNoti={false}
         isSetting={false}
         isLike={false}
+        isShare={true}
         isDetail={true}
+        onPressShare={handleSharePress}
         onPressDetail={() => setIsDetailMenuVisible((prev) => !prev)}
       />
 

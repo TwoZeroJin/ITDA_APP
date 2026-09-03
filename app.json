@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "잇다",
+   "name": "잇다",
     "slug": "ITDA_APP",
     "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "itdaapp",
+    "scheme": "kakao8afd31fe78bdf0bab17c4d674214c5be",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "platforms": [
@@ -13,7 +13,7 @@
       "android",
       "web"
     ],
-    "ios": {
+   "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "church.hacts.itda",
       "infoPlist": {
@@ -46,7 +46,13 @@
         }
       ],
       "expo-secure-store",
-      "expo-web-browser"
+      "expo-web-browser",
+      [
+        "@react-native-kakao/core",
+        {
+          "nativeAppKey": "8afd31fe78bdf0bab17c4d674214c5be"
+        }
+      ]      
     ],
     "experiments": {
       "typedRoutes": true

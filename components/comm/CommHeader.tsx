@@ -8,6 +8,7 @@ import { COLOR, STORE_KEY } from '@/constants';
 import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import { getAsyncStore } from '@/utils/asyncStoreUtil';
 import { subscribePushCountChanged } from '@/utils/pushCountEvent';
@@ -21,11 +22,13 @@ interface CommHeaderProps {
   isSetting?      : boolean;
   isBack?         : boolean;
   isDetail?       : boolean;
+  isShare?        : boolean;
   title?          : string;
   onPressDetail?  : () => void;
+  onPressShare?   : () => void;
 }
 
-function CommHeader({ isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, isDetail = false, title, onPressDetail }: CommHeaderProps) {
+function CommHeader({ isLogo = true, isLike = true, isNoti = true, isSetting = false, isBack = true, isDetail = false, isShare = false, title, onPressDetail, onPressShare }: CommHeaderProps) {
   const authRouter = useAuthRouter();
   const [notiCount, setNotiCount] = useState(0);
 
@@ -52,12 +55,20 @@ function CommHeader({ isLogo = true, isLike = true, isNoti = true, isSetting = f
     }, [loadNotiCount]),
   );
 
+  const handleBackPress = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/');
+    }
+  };
+
   return (
     <View style={styles.container}>
         <View style={styles.container}>
           {isLogo && <Logo width={101} height={50} style={{marginStart: 7}}/>}
           {!isLogo && isBack &&
-            <TouchableOpacity onPress={() => {router.back()}} activeOpacity={0.6}>
+            <TouchableOpacity onPress={handleBackPress} activeOpacity={0.6}>
               <Back width={54} height={44}/>
             </TouchableOpacity>
           }
@@ -86,6 +97,17 @@ function CommHeader({ isLogo = true, isLike = true, isNoti = true, isSetting = f
           {isSetting && 
             <TouchableOpacity style={styles.iconContainer} onPress={() => {authRouter.navigate("/mypage/settings");}} activeOpacity={0.6}>
               <Setting width={26} height={26}/>
+            </TouchableOpacity>
+          }
+          {isShare &&
+            <TouchableOpacity
+              style={styles.iconContainer}
+              onPress={onPressShare}
+              accessibilityRole="button"
+              accessibilityLabel="공유하기"
+              activeOpacity={0.6}
+            >
+              <Ionicons name="share-outline" size={25} color={COLOR.COMM_BLACK} />
             </TouchableOpacity>
           }
           {isDetail && 
