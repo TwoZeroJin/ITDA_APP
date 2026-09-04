@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import type { ExpoConfig } from 'expo/config';
+import { withProjectBuildGradle, ConfigPlugin } from '@expo/config-plugins';
 
 const ENV_FILE_BY_APP_ENV: Record<string, string> = {
   local: '.env.local',
@@ -56,12 +57,33 @@ loadEnvFile(appEnv);
 
 const { expo } = require('./app.json') as { expo: ExpoConfig };
 
-const config: ExpoConfig = {
+/**
+ * android/build.gradle의 allprojects.repositories에 카카오 메이븐 레포지토리를 자동으로 추가하는 Expo Config Plugin
+ */
+const withKakaoMavenRepository: ConfigPlugin = (config) => {
+  return withProjectBuildGradle(config, (modConfig) => {
+    if (modConfig.modResults.language === 'groovy') {
+      const kakaoMavenRepo = "maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }";
+
+      if (!modConfig.modResults.contents.includes(kakaoMavenRepo)) {
+        modConfig.modResults.contents = modConfig.modResults.contents.replace(
+          /allprojects\s*\{\s*repositories\s*\{/,
+          `allprojects {\n  repositories {\n    ${kakaoMavenRepo}`
+        );
+      }
+    }
+    return modConfig;
+  });
+};
+
+let config: ExpoConfig = {
   ...expo,
   extra: {
     ...expo.extra,
     appEnv,
   },
 };
+
+config = withKakaoMavenRepository(config);
 
 export default config;
