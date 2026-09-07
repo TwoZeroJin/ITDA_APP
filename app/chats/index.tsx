@@ -15,6 +15,7 @@ import DropdownModal from '@/components/modal/DropdownModal';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 import CommBottomButton from '@/components/comm/CommBottomButton';
 import { showToast } from '@/utils/commToast';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 /**
  * 채팅 화면
@@ -51,6 +52,7 @@ export default function IndexScreen() {
   const hasFocusedOnceRef = useRef(false);
   const chat_id = Number(room_id ? room_id.split("_")[1] : Number(mem_id));
   const chat_type = room_type;
+  const insets = useSafeAreaInsets();
 
   // 화면 포커스시 재조회
   useFocusEffect(
@@ -381,7 +383,7 @@ export default function IndexScreen() {
         // behavior={os === 'ios' ? 'padding' : 'height'}
         behavior='padding'
         // keyboardVerticalOffset={os === 'ios' ? 45 : 0}
-        keyboardVerticalOffset={15}
+        keyboardVerticalOffset={insets.top}
       >
         <View style={styles.container}>
           <CommHeader 

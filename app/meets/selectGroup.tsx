@@ -5,7 +5,7 @@ import { useMemberMyGroupListPaging } from '@/hooks/queries/useMember';
 import { GroupInfo } from '@/types';
 import { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router/react-navigation';
 import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import CommBottomButton from '@/components/comm/CommBottomButton';

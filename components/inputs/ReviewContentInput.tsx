@@ -1,8 +1,11 @@
 import InputField from "@/components/InputField";
-import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-function ReviewContentInput() {
+interface ReviewContentInputProps {
+  titleText?: string;
+}
+
+function ReviewContentInput({ titleText = "후기" }: ReviewContentInputProps) {
   const {control} = useFormContext();
   return (
     <Controller
@@ -11,18 +14,18 @@ function ReviewContentInput() {
       rules={{
         validate: (data: string) => {
           if (!data || data.trim().length < 10) {
-            return '후기 내용을 입력해주세요.(10글자 이상)';
+            return titleText + ' 내용을 입력해주세요.(10글자 이상)';
           }
           if (data.length > 1000) {
-            return '후기 내용은 1000자 이하로 입력해주세요.';
+            return titleText + ' 내용은 1000자 이하로 입력해주세요.';
           }
         }
       }}
       render={({field: {ref, onChange, value}, fieldState: {error}}) => (
         <InputField
           ref={ref}
-          label="후기 내용" 
-          placeholder="후기 내용을 입력해 주세요.(10글자 이상)"
+          label={titleText + " 내용"} 
+          placeholder={titleText + " 내용을 입력해 주세요.(10글자 이상)"}
           inputMode='text'
           autoCapitalize='none'
           returnKeyType='next'

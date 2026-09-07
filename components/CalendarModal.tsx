@@ -127,13 +127,8 @@ function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfi
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.modalOverlay}>
-        <TouchableOpacity 
-          style={styles.modalBackdrop} 
-          activeOpacity={0.6} 
-          onPress={onClose} 
-        />
-        <View style={styles.modalContainer}>
+      <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose}>
+        <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPress={(e) => e.stopPropagation()}>
           <View style={{ paddingHorizontal : 16}}>
             <View style={styles.calendarHeader}>
               <Text style={styles.monthTitle}>{`${displayMonth.getFullYear()}년 ${displayMonth.getMonth() + 1}월`}</Text>
@@ -204,8 +199,8 @@ function CalendarModal({ visible, selectedValue, onChangeValue, onClose, onConfi
               <Text style={styles.confirmButtonText}>확인</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 }
@@ -215,9 +210,6 @@ const styles = StyleSheet.create({
     flex                : 1,
     justifyContent      : 'center',
     paddingHorizontal   : 16,
-  },
-  modalBackdrop: {
-    ...StyleSheet.absoluteFillObject,
     backgroundColor     : COLOR.COMM_MODAL_BG,
   },
   modalContainer: {

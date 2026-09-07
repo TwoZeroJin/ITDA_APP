@@ -7,7 +7,6 @@
     "icon": "./assets/images/icon.png",
     "scheme": "kakao8afd31fe78bdf0bab17c4d674214c5be",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "platforms": [
       "ios",
       "android",
@@ -34,7 +33,6 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
       "package": "church.hacts.itda",
       "googleServicesFile": "./google-services.json"
     },

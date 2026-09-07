@@ -5,7 +5,7 @@ import Meet from '@/assets/images/navi_meet.svg';
 import My from '@/assets/images/navi_my.svg';
 import { COLOR, STORE_KEY } from '@/constants';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
-import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
+import { BottomTabBarProps } from 'expo-router/js-tabs';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';

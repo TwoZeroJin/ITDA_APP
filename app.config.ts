@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import type { ExpoConfig } from 'expo/config';
+import type { ConfigContext, ExpoConfig } from 'expo/config';
 import { withProjectBuildGradle, ConfigPlugin } from '@expo/config-plugins';
 
 const ENV_FILE_BY_APP_ENV: Record<string, string> = {
@@ -55,8 +55,6 @@ const appEnv = process.env.APP_ENV ?? 'local';
 
 loadEnvFile(appEnv);
 
-const { expo } = require('./app.json') as { expo: ExpoConfig };
-
 /**
  * android/build.gradle의 allprojects.repositories에 카카오 메이븐 레포지토리를 자동으로 추가하는 Expo Config Plugin
  */
@@ -76,14 +74,16 @@ const withKakaoMavenRepository: ConfigPlugin = (config) => {
   });
 };
 
-let config: ExpoConfig = {
-  ...expo,
-  extra: {
-    ...expo.extra,
-    appEnv,
-  },
+export default ({ config }: ConfigContext): ExpoConfig => {
+  let conf: ExpoConfig = {
+    ...config,
+    extra: {
+      ...config.extra,
+      appEnv,
+    },
+  };
+
+  conf = withKakaoMavenRepository(conf);
+
+  return conf;
 };
-
-config = withKakaoMavenRepository(config);
-
-export default config;

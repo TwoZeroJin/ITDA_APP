@@ -1,26 +1,44 @@
 import { COLOR, COMM_STYLES } from '@/constants';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { MeetInfo, MeetReview} from '@/types';
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import PlaceLocationBox from '@/components/PlaceLocationBox';
 import CommCard from '@/components/comm/CommCard';
 import ProfileIcon from "@/components/ProfileIcon";
+import CommentBottomModal from '@/components/modal/CommentBottomModal';
+import IconComment from '@/assets/images/icon_comment.svg';
+import IconLikeOff from '@/assets/images/icon_review_like_off.svg';
+import IconLikeOn from '@/assets/images/icon_review_like_on.svg';
+import { useAuthRouter } from '@/components/comm/AuthRoute';
 
 interface communityFeedProps {
-  item          : MeetReview;
-  handleLike?   : (item: MeetInfo) => void;
-  handleUpdate? : (item: MeetReview) => void;
-  handleDelete? : (item: MeetReview) => void;
-  handleReport? : (item: MeetReview) => void;
-  handleBlock?  : (item: MeetReview) => void;
+  item              : MeetReview;
+  handleLike?       : (item: MeetInfo) => void;
+  handleReviewLike? : (item: MeetReview) => void;
+  handleUpdate?     : (item: MeetReview) => void;
+  handleDelete?     : (item: MeetReview) => void;
+  handleReport?     : (item: MeetReview) => void;
+  handleBlock?      : (item: MeetReview) => void;
 }
 
-export default function CommunityFeed({ item, handleLike, handleUpdate, handleDelete, handleReport, handleBlock }: communityFeedProps) {
+export default function CommunityFeed({ item, handleLike, handleReviewLike, handleUpdate, handleDelete, handleReport, handleBlock }: communityFeedProps) {
+  const { requireAuth } = useAuthRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
+  const [isLiked, setIsLiked] = useState(item.like_review_yn === 'Y');
+  const [likeCnt, setLikeCnt] = useState(item.like_cnt ?? 0);
+  const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
   const imageList = item.img_list || [];
+
+  const onPressLike = () => {
+    requireAuth(() => {
+      setIsLiked((prev) => !prev);
+      setLikeCnt((prev) => (isLiked ? Math.max(0, prev - 1) : prev + 1));
+      handleReviewLike?.(item);
+    });
+  };
 
   return (
     <View style={styles.feedContainer}>
@@ -135,6 +153,29 @@ export default function CommunityFeed({ item, handleLike, handleUpdate, handleDe
         </View>
       </View>
 
+      {/* 좋아요 / 댓글 영역 */}
+      <View style={styles.engagementRow}>
+        <TouchableOpacity style={styles.engagementItem} activeOpacity={0.6} onPress={onPressLike}>
+          {isLiked ? (
+            <View style={{ marginEnd: 1.5 }}>
+              <IconLikeOn width={23} height={22} />
+            </View>
+          ) : (
+            <IconLikeOff width={22} height={22} />
+          )}
+          <Text style={styles.engagementText}>{likeCnt}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.engagementItem} activeOpacity={0.6} onPress={() => setIsCommentModalVisible(true)}>
+          <IconComment width={22} height={22} />
+          <Text style={styles.engagementText}>{item.comment_cnt ?? 0}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <CommentBottomModal
+        visible={isCommentModalVisible}
+        reviewId={item.review_id ?? 0}
+        onClose={() => setIsCommentModalVisible(false)}
+      />
     </View>
   )
 }
@@ -176,6 +217,23 @@ const styles = StyleSheet.create({
   feedContent: {
     width               : '90%',
     paddingHorizontal   : 16,
+  },
+  engagementRow: {
+    flexDirection       : 'row',
+    alignItems          : 'center',
+    paddingHorizontal   : 16,
+    paddingBottom       : 12,
+    gap                 : 16,
+  },
+  engagementItem: {
+    flexDirection       : 'row',
+    alignItems          : 'center',
+    gap                 : 4,
+  },
+  engagementText: {
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-SemiBold',
+    color               : COLOR.TEXT_DEFAULT,
   },
   feedText: {
     fontSize            : 16,

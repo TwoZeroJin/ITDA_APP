@@ -22,6 +22,7 @@ interface SearchParams {
   sch_text?       : string;
   sch_keyword?    : string;
   mem_id?         : number;
+  review_id?      : number;
 }
 
 /**
@@ -256,6 +257,10 @@ interface MeetReview {
   thumb_url?      : string;
   memMeetListVO?  : MeetInfo;
   img_list?       : FileInfo[];
+  like_yn?        : string;
+  like_cnt?       : number;
+  like_review_yn? : string;
+  comment_cnt?    : number;
 }
 
 /**

@@ -169,7 +169,7 @@ function WheelPickerModal({ visible, columns, onClose, onConfirm, cancelLabel = 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
-        <TouchableOpacity style={styles.backdrop} activeOpacity={0.6} onPress={onClose} />
+        <TouchableOpacity style={styles.backdrop} activeOpacity={1} onPress={onClose} />
         <View style={styles.container}>
           <View style={styles.pickerWrapper}>
             <View pointerEvents="none" style={styles.highlight} />
@@ -199,7 +199,12 @@ const styles = StyleSheet.create({
     paddingHorizontal   : 16,
   },
   backdrop: {
-    ...StyleSheet.absoluteFillObject,
+    flex                : 1,
+    position            : "absolute",
+    top                 : 0,
+    left                : 0,
+    right               : 0,
+    bottom              : 0,
     backgroundColor     : COLOR.COMM_MODAL_BG,
   },
   container: {

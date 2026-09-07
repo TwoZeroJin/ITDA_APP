@@ -6,13 +6,13 @@ import Detail from '@/assets/images/header_detail.svg';
 import Logo from '@/assets/images/top_logo.svg';
 import { COLOR, STORE_KEY } from '@/constants';
 import { router } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthRouter } from "@/components/comm/AuthRoute";
 import { getAsyncStore } from '@/utils/asyncStoreUtil';
 import { subscribePushCountChanged } from '@/utils/pushCountEvent';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router/react-navigation';
 
 interface CommHeaderProps {
   isLogo?         : boolean;

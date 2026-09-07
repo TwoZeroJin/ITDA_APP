@@ -1,13 +1,13 @@
 import TimePickerModal from '@/components/modal/TimePickerModal';
 import { COLOR, COMM_STYLES } from '@/constants';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconTime from '@/assets/images/icon_time.svg';
 
 interface TimeInputProps {
-  isError?: boolean;
-  onTimeChange?: (timeLabel: string) => void;
-  initialTimeLabel?: string;
+  isError?          : boolean;
+  onTimeChange?     : (timeLabel: string) => void;
+  initialTimeLabel? : string;
 }
 
 /**

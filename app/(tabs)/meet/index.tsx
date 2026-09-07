@@ -253,7 +253,6 @@ const styles = StyleSheet.create({
     zIndex              : 100,
   },
   detailMenuBackdrop: {
-    ...StyleSheet.absoluteFillObject,
     backgroundColor     : 'transparent',
     zIndex              : 1,
   },

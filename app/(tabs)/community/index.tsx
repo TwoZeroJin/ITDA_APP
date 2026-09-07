@@ -103,19 +103,27 @@ export default function CommunityListScreen() {
   };
 
   // 좋아요 처리
-  const handleLikePress = (item: MeetInfo) => {
-    if (!item.meet_id) {
+  const handleLikePress = (item: MeetInfo | MeetReview) => {
+    const isReview = 'review_id' in item;
+    const targetId = isReview ? item.review_id : item.meet_id;
+
+    if (!targetId) {
       return;
     }
+
     memberLike.mutate(
       {
-        target_id   : item.meet_id,
-        target_type : 'M',
-        flag        : item.like_yn === 'N',
+        target_id   : targetId,
+        target_type : isReview ? 'R' : 'M',
+        flag        : isReview ? item.like_review_yn === 'N' : item.like_yn === 'N',
       },
       {
         onSuccess: () => {
-          item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+          if (isReview) {
+            item.like_review_yn = item.like_review_yn === 'Y' ? 'N' : 'Y';
+          } else {
+            item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
+          }
         },
         onError: () => {
         },
@@ -144,6 +152,7 @@ export default function CommunityListScreen() {
             <CommunityFeed 
               item={item}
               handleLike={handleLikePress} 
+              handleReviewLike={handleLikePress}
               handleUpdate={handleUpdate} 
               handleDelete={handleDelete}
               handleReport={handleReport}

@@ -22,7 +22,8 @@ export default function WriteFeedback() {
   const reviewMutation = useReviewInsert();
   const reviewUpdate = useReviewUpdate();
   const [uploadedImageList, setUploadedImageList] = useState<FileInfo[]>(updFeedData?.img_list || []);
-
+  const titleText = `${meetData?.meet_id ? '후기' : '피드'}`;
+  
   const formValues = useForm<MeetReview>({
     defaultValues: {
       review_content  : updFeedData?.review_content || '',
@@ -46,7 +47,7 @@ export default function WriteFeedback() {
 
     mutation.mutate(reviewData as MeetReview, {
       onSuccess: () => {
-        showToast({ text1: `${meetData?.meet_id ? '후기' : '피드'} 글이 ${updFeedData ? '수정' : '작성'}되었습니다.` });
+        showToast({ text1: `${titleText} 글이 ${updFeedData ? '수정' : '작성'}되었습니다.` });
         router.navigate("/community");
       },
       onError: () => {
@@ -58,14 +59,14 @@ export default function WriteFeedback() {
   return (
     <View style={COMM_STYLES.container}>
         <View style={styles.header}>
-          <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`${meetData?.meet_id ? '후기' : '피드'} ${updFeedData ? '수정' : '작성'}`} />
+          <CommHeader isLogo={false} isNoti={false} isSetting={false} isLike={false} title={`${titleText} ${updFeedData ? '수정' : '작성'}`} />
 
           <TouchableOpacity 
             style={styles.absoluteUploadButton} 
             onPress={onHandleSubmit}
             activeOpacity={0.6}
           >
-            <Text style={styles.uploadButton}>올리기</Text>
+            <Text style={styles.uploadButton}>{updFeedData ? '수정하기' : '올리기'}</Text>
           </TouchableOpacity>
         </View>
 
@@ -81,7 +82,7 @@ export default function WriteFeedback() {
 
           <View style={[COMM_STYLES.commContainer, {marginVertical : 8}]}>
             <FormProvider {...formValues}>
-              <ReviewContentInput />
+              <ReviewContentInput titleText={titleText} />
               <CommImagePicker imgList={uploadedImageList} onChangeImages={setUploadedImageList} />
               {/* <PlaceInput /> */}
             </FormProvider>

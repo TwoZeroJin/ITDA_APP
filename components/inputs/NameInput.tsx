@@ -1,5 +1,4 @@
 import InputField from "@/components/InputField";
-import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 interface NameInputProps {

@@ -24,7 +24,7 @@ const TABS_SOCIAL: Array<{ label: string; value: string }> = [
 ];
 
 const TABS_REVIEW: Array<{ label: string; value: string }> = [
-  { label: '최신', value: 'latest' },
+  { label: '피드', value: 'latest' },
   { label: '모임 후기', value: 'review' },
   { label: '내가 쓴 글', value: 'mypost' },
 ];

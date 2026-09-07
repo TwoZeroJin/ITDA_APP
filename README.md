@@ -52,6 +52,12 @@ ITDA 사용자 앱
 # 1. eas update만 문제였으나 npm install -g eas-cli 재 실행 후 재시도, 현재 확인 완료
 # 2. Expo Go 앱이 현재 SDK 54버전만 지원하여(App Store) 55로 업그레이드는 추후 고민 필요
 #
+# 2026.09.07 Expo SDK 54.0.0 => 57.0.0 버전업 대응
+# 1. iOS Device로 실행시 57버전으로 업데이트 해야 실행 가능하도록 바뀜
+# 2. npm install expo@^57.0.0
+# 3. npx expo install --fix 실행후 에러날 경우 npx expo-doctor 실행후 에러 수정
+# 4. package.json에서 라이브러리 버전 수정, app.json, app.config.ts 수정
+#
 # EXPO 공용 계정 정보 : Notion 문서 참고
 #
 # npm start(서버 실행) 없이 Expo Go APP에서 실행하는 법 - Expo Publish (클라우드에 upload)
