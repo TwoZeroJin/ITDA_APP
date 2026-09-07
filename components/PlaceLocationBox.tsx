@@ -8,30 +8,34 @@ import { showToast } from '@/utils/commToast';
  * 네이버 지도 컴포넌트
  */
 export default function PlaceLocationBox({ data }: { data: MeetInfo | GroupInfo }) {
-  // 클릭 시 네이버 지도로 이동시키는 함수
   const openNaverMap = async () => {
     if (!data.place_name || !data.place_addr) return;
     
     // 네이버 지도 앱 전용 URL 스키마 (주소 검색 방식)
-    // 인코딩을 해주어야 공백이나 한글이 주소창에 깨지지 않고 잘 들어갑니다.
     const encodedAddress = encodeURIComponent(data.place_addr);
     
     const appUrl = `nmap://search?query=${encodedAddress}&appname=church.hacts.itda`;
     const webUrl = `https://map.naver.com/v5/search/${encodedAddress}`;
 
     try {
-      // 유저의 핸드폰에 네이버 지도 앱이 설치되어 있는지 확인
-      const isSupported = await Linking.canOpenURL(appUrl);
+      let isSupported = false;
+      try {
+        isSupported = await Linking.canOpenURL(appUrl);
+      } catch {
+        isSupported = false;
+      }
 
       if (isSupported) {
-        // 앱이 있으면 네이버 지도 앱으로 바로 실행
         await Linking.openURL(appUrl);
       } else {
-        // 앱이 없으면 기본 브라우저(사파리/크롬)로 네이버 지도 웹사이트 열기
         await Linking.openURL(webUrl);
       }
-    } catch (error) {
-      showToast({ text1: '네이버 지도를 열 수 없습니다.' });
+    } catch {
+      try {
+        await Linking.openURL(webUrl);
+      } catch {
+        showToast({ text1: '네이버 지도를 열 수 없습니다.' });
+      }
     }
   };
 
