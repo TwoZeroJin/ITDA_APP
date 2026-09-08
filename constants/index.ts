@@ -147,6 +147,7 @@ const STORE_KEY = {
   CHAT_BADGE          : "chat_badge",
   DEVICE_UID          : "device_uid",
   TOPIC_LIST          : "topic_list",
+  PUSH_STATUS         : "push_status",
 }
 
 /**

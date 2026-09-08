@@ -10,7 +10,7 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, Platform, StyleSheet, Text, View } from 'react-native';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -25,6 +25,7 @@ if (Platform.OS !== 'web' && kakaoNativeAppKey) {
   void initializeKakaoSDK(kakaoNativeAppKey);
 }
 
+// 푸시 설정
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldPlaySound: true,

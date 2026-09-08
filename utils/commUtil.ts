@@ -301,6 +301,15 @@ async function setReportList(data: any) {
     await saveAsyncStore(STORE_KEY.REPORT_LIST, JSON.stringify(data));
   }
 }
+async function getPushStatus(): Promise<string> {
+  return await getAsyncData<string>(STORE_KEY.PUSH_STATUS, JSON.parse) ?? 'A';
+}
+// 신고/차단 리스트
+async function setPushStatus(data: any) {
+  if (data) {
+    await saveAsyncStore(STORE_KEY.PUSH_STATUS, JSON.stringify(data));
+  }
+}
 async function getReportList(): Promise<CodeInfo[]> {
   return await getAsyncData<CodeInfo[]>(STORE_KEY.REPORT_LIST, JSON.parse) ?? [];
 }
@@ -479,4 +488,4 @@ function formatRelativeMeetDatetime(meetDatetime: string) {
   return `D-${diffDays}`;
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, renderTextWithHttpLinks, isMeetItem, isLikeData, setReportList, getReportList };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, renderTextWithHttpLinks, isMeetItem, isLikeData, setReportList, getReportList, setPushStatus, getPushStatus };
