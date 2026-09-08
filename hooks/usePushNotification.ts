@@ -68,6 +68,7 @@ function usePushNotification() {
       if (finalStatus !== "granted") {
         if (forceAsk || pushStatus !== 'N') {
           handleRegistrationError("푸시 권한을 허용해주세요.", true, forceAsk);
+          setPushStatus("A");
           return;
         }
       }
@@ -76,6 +77,7 @@ function usePushNotification() {
         Constants?.easConfig?.projectId;
       if (!projectId) {
         handleRegistrationError("Project ID를 찾을 수 없습니다.");
+        setPushStatus("A");
         return;
       }
       try {
@@ -87,10 +89,12 @@ function usePushNotification() {
         return pushTokenString;
       } catch (e: unknown) {
         handleRegistrationError(`${e}`);
+        setPushStatus("A");
         return;
       }
     } else {
       handleRegistrationError("실제 기기를 이용해주세요.");
+      setPushStatus("A");
       return;
     }
   };
@@ -117,7 +121,6 @@ function usePushNotification() {
 
     responseListener.current =
       Notifications.addNotificationResponseReceivedListener((response) => {
-        console.log("response : ", response);
       });
 
     return () => {

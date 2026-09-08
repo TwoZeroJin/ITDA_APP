@@ -57,7 +57,6 @@ export default function SettingsScreen() {
       pushToken = await requestPushPermission(true);
       if (!pushToken) {
         // 여전히 권한이 없으면 스위치를 켜지 않고 종료
-        setLocalPushStatus(await getPushStatus());
         return;
       }
     }

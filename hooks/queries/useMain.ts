@@ -39,43 +39,6 @@ function useMainEntry() {
     }
   }, [isSuccess, data])
 
-  useEffect(() => {
-      if (!isError) {
-        return;
-      }
-
-      const status = (error as AxiosError | null)?.response?.status;
-
-      // Main 호출시 401 에러 발생 -> 토큰 갱신 시도 -> 갱신 성공 시 Main 재호출
-      if (status === 401) {
-        (async () => {
-            try {
-              const refreshResult = await userRefreshToken();
-
-              if (refreshResult.ret_code === 200 && refreshResult.data) {
-                await saveSecureStore(STORE_KEY.X_ACCESS_TOKEN,     refreshResult.data.access_token);
-                await saveSecureStore(STORE_KEY.X_REFRESH_TOKEN,    refreshResult.data.refresh_token);
-                await refetch();
-                return;
-              }
-              else {
-                // 토큰 발급 실패시 토큰 제거
-                await deleteSecureStore(STORE_KEY.X_ACCESS_TOKEN);
-                await deleteSecureStore(STORE_KEY.X_REFRESH_TOKEN);
-              }
-
-              setIsErrorDialogVisible(true);
-            } catch {
-              setIsErrorDialogVisible(true);
-            }
-        })();
-
-        return;
-      }
-
-      setIsErrorDialogVisible(true);
-  }, [isError, error, refetch]);
-
   const handleRetryMainEntry = () => {
     setIsErrorDialogVisible(false);
     refetch();

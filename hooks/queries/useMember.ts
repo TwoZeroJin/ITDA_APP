@@ -23,12 +23,6 @@ function useMemberDetail() {
         setLoading(query.isFetching);
     }, [query.isFetching, setLoading]);
 
-    useEffect(() => {
-        if (query.isError) {
-            printDebugLog('회원 상세 정보 조회 실패', JSON.stringify(query.error));
-        }
-    }, [query.isError, query.error]);
-
     return {
         ...query,
         upcomingMeetList    : query.data?.data?.upcoming_meet_list ?? [],

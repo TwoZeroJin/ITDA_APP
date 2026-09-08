@@ -63,7 +63,14 @@ export default function HomeScreen() {
     fetchData();
   }, []);
 
+  const isInitialSearchRef = useRef(true);
+
   useEffect(() => {
+    // 최초 마운트 시에는 useMainData가 이미 자동으로 조회하므로 중복 호출을 막음
+    if (isInitialSearchRef.current) {
+      isInitialSearchRef.current = false;
+      return;
+    }
     refetch();
   }, [schCategory, schText, refetch]);
   

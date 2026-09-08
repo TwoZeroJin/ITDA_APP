@@ -1,6 +1,5 @@
 import CommBottomTabBar from '@/components/comm/CommBottomTabBar';
 import { Tabs } from 'expo-router';
-import React from 'react';
 import { Platform } from 'react-native';
 
 export default function TabLayout() {

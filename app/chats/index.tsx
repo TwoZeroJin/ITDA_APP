@@ -224,9 +224,15 @@ export default function IndexScreen() {
     setChatMsg('');
 
     // Mongo DB Insert
-    chatInsert.mutate({...chatData});
-    // MQTT SendMessage
-    mqttUtil.sendMessage(topic, {...chatData});
+    chatInsert.mutate(
+      {...chatData},
+      {
+        onSuccess: () => {
+          // API 통신 후 mqtt 메시지 전송
+          mqttUtil.sendMessage(topic, {...chatData});
+        },
+      }
+    );
 
     flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
   }
