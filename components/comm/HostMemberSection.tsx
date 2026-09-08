@@ -57,7 +57,6 @@ export default function HostMemberSection({ hostMemId, hostImageUrl, hostName, h
               mem_id={item?.mem_id}
               mem_image_url={item?.mem_image_url || ''}
               type={item.host_yn === 'Y' ? 'HOST' : 'MEMBER'}
-              profileInfo={item}
             />
           )}
         />

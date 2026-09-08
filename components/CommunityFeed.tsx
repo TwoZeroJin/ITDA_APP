@@ -52,7 +52,7 @@ export default function CommunityFeed({ item, handleLike, handleReviewLike, hand
       <View style={styles.feedCard}>
         {/* 상단 프로필 영역 */}
         <View style={styles.feedHeader}>
-          <ProfileIcon mem_image_url={item.mem_image_url || ''} type="MEMBER" />
+          <ProfileIcon mem_id={item?.mem_id} mem_image_url={item.mem_image_url || ''} type="MEMBER" />
           <View style={styles.memberInfoContainer}>
             <Text style={styles.memberInfoNameText}>{item.mem_nick}</Text>
             <Text style={styles.feedTimeText}>{item.reg_sdate}</Text>
