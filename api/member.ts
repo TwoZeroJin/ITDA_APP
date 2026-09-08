@@ -9,6 +9,13 @@ async function memberDetail(): Promise<ApiResult<MemberDetail>> {
   const { data } = await axiosInstance.post(API_URL.MEMBER_DETAIL);
   return data;
 }
+/**
+ * 회원 프로필 상세 정보 조회
+ */
+async function memberProfileDetail(searchParams: SearchParams): Promise<ApiResult<MemberInfo>> {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_PROFILE_DETAIL, searchParams);
+  return data;
+}
 
 /**
  * 회원정보 수정
@@ -93,4 +100,4 @@ async function memberWithdrawal() {
   return data;
 }
 
-export { memberDetail, memberUpdate, memberLike, memberLikeList, memberApplyList, memberMyMeetList, memberApplyMeetList, memberMyGroupList, memberApplyGroupList, memberLogout, memberWithdrawal };
+export { memberDetail, memberProfileDetail, memberUpdate, memberLike, memberLikeList, memberApplyList, memberMyMeetList, memberApplyMeetList, memberMyGroupList, memberApplyGroupList, memberLogout, memberWithdrawal };

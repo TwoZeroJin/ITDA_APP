@@ -477,6 +477,7 @@ export default function GroupDetailViewScreen() {
         
         {/* 모임장 및 참여 멤버 */}
         <HostMemberSection
+          hostMemId={groupInfo?.mem_id}
           hostImageUrl={groupInfo?.mem_image_url}
           hostName={groupInfo?.mem_nick}
           hostInfo={groupInfo?.mem_info}

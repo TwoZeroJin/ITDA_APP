@@ -1,7 +1,8 @@
 import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { COLOR } from '@/constants';
 import ProfileIcon from '@/components/ProfileIcon';
+import { router } from "expo-router";
 
 interface MemberItem {
   mem_id?           : number | string;
@@ -10,6 +11,7 @@ interface MemberItem {
 }
 
 interface HostMemberSectionProps {
+  hostMemId?    : number | string;
   hostImageUrl? : string;
   hostName?     : string;
   hostInfo?     : string | null;
@@ -19,13 +21,22 @@ interface HostMemberSectionProps {
 /**
  * 참여한 회원 목록 공통 컴포넌트
  */
-export default function HostMemberSection({ hostImageUrl, hostName, hostInfo, members = [] }: HostMemberSectionProps) {
+export default function HostMemberSection({ hostMemId, hostImageUrl, hostName, hostInfo, members = [] }: HostMemberSectionProps) {
   return (
     <View style={styles.membersContainer}>
       <View style={styles.membersSection}>
         <Text style={styles.membersSectionTitle}>모임장 소개</Text>
         <View style={styles.hostContainer}>
-          <ProfileIcon mem_image_url={hostImageUrl || ''} type="HOST" />
+          <ProfileIcon
+            mem_id={hostMemId}
+            mem_image_url={hostImageUrl || ''}
+            type="HOST"
+            profileInfo={{
+              mem_id: Number(hostMemId ?? 0),
+              mem_nick: hostName,
+              mem_image_url: hostImageUrl,
+            }}
+          />
           <View>
             <Text style={styles.hostName}>{hostName}</Text>
             {Boolean(hostInfo) && <Text style={styles.hostInfo}>{hostInfo}</Text>}
@@ -43,8 +54,10 @@ export default function HostMemberSection({ hostImageUrl, hostName, hostInfo, me
           contentContainerStyle={styles.memberListContent}
           renderItem={({ item }) => (
             <ProfileIcon
+              mem_id={item?.mem_id}
               mem_image_url={item?.mem_image_url || ''}
               type={item.host_yn === 'Y' ? 'HOST' : 'MEMBER'}
+              profileInfo={item}
             />
           )}
         />

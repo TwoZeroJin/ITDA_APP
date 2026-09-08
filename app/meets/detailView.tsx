@@ -472,6 +472,7 @@ export default function DetailViewScreen() {
 
         {/* 모임장 및 참여 멤버 */}
         <HostMemberSection
+          hostMemId={meetInfo?.mem_id}
           hostImageUrl={meetInfo?.mem_image_url}
           hostName={meetInfo?.mem_nick}
           hostInfo={meetInfo?.mem_info}

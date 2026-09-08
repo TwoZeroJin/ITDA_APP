@@ -9,6 +9,7 @@ import ProfileViewModal from '@/components/modal/ProfileViewModal';
 interface ProfileIconProps {
   mem_image_url?: string;
   type?: 'HOST' | 'MEMBER';
+  mem_id?: number | string;
   profileInfo?: MemberInfo;
   onChatPress?: (profileInfo: MemberInfo) => void;
 }
@@ -16,8 +17,15 @@ interface ProfileIconProps {
 /**
  * 사용자 프로필 아이콘
  */
-const ProfileIcon = ({ mem_image_url, type, profileInfo, onChatPress }: ProfileIconProps) => {
+const ProfileIcon = ({ mem_image_url, type, mem_id, profileInfo, onChatPress }: ProfileIconProps) => {
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
+
+  const targetMemId = Number(mem_id ?? profileInfo?.mem_id ?? 0);
+  const effectiveProfileInfo: MemberInfo = profileInfo ?? {
+    mem_id: targetMemId,
+    mem_image_url,
+  };
+
   const image = (
     // 모임장이 아닌 경우
     type === 'MEMBER' ? (
@@ -48,21 +56,20 @@ const ProfileIcon = ({ mem_image_url, type, profileInfo, onChatPress }: ProfileI
     )
   );
 
-  if (!profileInfo) {
-    return image;
-  }
-
   return (
     <>
       <TouchableOpacity activeOpacity={0.6} onPress={() => setIsProfileModalVisible(true)}>
         {image}
       </TouchableOpacity>
-      <ProfileViewModal
-        visible={isProfileModalVisible}
-        profileInfo={profileInfo}
-        onClose={() => setIsProfileModalVisible(false)}
-        onChatPress={onChatPress}
-      />
+      {isProfileModalVisible && (
+        <ProfileViewModal
+          visible={isProfileModalVisible}
+          memId={targetMemId}
+          profileInfo={effectiveProfileInfo}
+          onClose={() => setIsProfileModalVisible(false)}
+          onChatPress={onChatPress}
+        />
+      )}
     </>
   );
 };

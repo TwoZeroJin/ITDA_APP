@@ -5,12 +5,15 @@ import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 import { COLOR } from '@/constants';
 import { MemberInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
+import { useProfileDetailView } from '@/hooks/queries/useMember';
+import { router } from 'expo-router';
 
 const MAX_VISIBLE_INTERESTS = 7;
 const GENDER_LABEL: Record<string, string> = { M: '남', F: '여' };
 
 interface ProfileViewModalProps {
   visible       : boolean;
+  memId?        : number;
   profileInfo?  : MemberInfo;
   onClose       : () => void;
   onChatPress?  : (profileInfo: MemberInfo) => void;
@@ -19,16 +22,31 @@ interface ProfileViewModalProps {
 /**
  * 회원 프로필 확인 모달
  */
-export default function ProfileViewModal({ visible, profileInfo, onClose, onChatPress }: ProfileViewModalProps) {
+export default function ProfileViewModal({ visible, memId, profileInfo, onClose, onChatPress }: ProfileViewModalProps) {
+  const targetMemId = memId ?? Number(profileInfo?.mem_id ?? 0);
+
+  const { results: apiProfile } = useProfileDetailView(
+    { page_no: 1, page_size: 1, mem_id: targetMemId }
+  );
+
+  const displayInfo: MemberInfo | undefined = apiProfile ?? profileInfo;
+
   const [interestLabels, setInterestLabels] = useState<string[]>([]);
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!visible || !profileInfo?.mem_interest) {
+    if (!visible) {
+      setIsExpanded(false);
       setInterestLabels([]);
       return;
     }
 
-    const interestIds = profileInfo.mem_interest.split('|').filter(Boolean);
+    if (!displayInfo?.mem_interest) {
+      setInterestLabels([]);
+      return;
+    }
+
+    const interestIds = displayInfo.mem_interest.split('|').filter(Boolean);
     getCategoryList().then((categoryList) => {
       const subCategoryList = categoryList.flatMap((cat) => cat.sub_list ?? []);
       const matched = interestIds
@@ -36,63 +54,90 @@ export default function ProfileViewModal({ visible, profileInfo, onClose, onChat
         .filter((label): label is string => !!label);
       setInterestLabels(matched);
     });
-  }, [visible, profileInfo?.mem_interest]);
+  }, [visible, displayInfo?.mem_interest]);
 
-  if (!profileInfo) {
+  if (!displayInfo) {
     return null;
   }
 
-  const birthYear = profileInfo.mem_birth?.match(/^(\d{4})/)?.[1];
+  const birthYear = displayInfo.mem_birth?.match(/^(\d{4})/)?.[1];
   const ageLabel = birthYear ? birthYear.slice(2) : '';
-  const genderLabel = profileInfo.mem_gender ? GENDER_LABEL[profileInfo.mem_gender] ?? '' : '';
-  const visibleInterests = interestLabels.slice(0, MAX_VISIBLE_INTERESTS);
-  const remainingInterestCount = interestLabels.length - visibleInterests.length;
+  const genderLabel = displayInfo.mem_gender ? GENDER_LABEL[displayInfo.mem_gender] ?? '' : '';
+  const ageGenderStr = [ageLabel, genderLabel].filter(Boolean).join('·');
+
+  const visibleInterests = isExpanded ? interestLabels : interestLabels.slice(0, MAX_VISIBLE_INTERESTS);
+  const remainingInterestCount = interestLabels.length - MAX_VISIBLE_INTERESTS;
+  const showMoreButton = !isExpanded && remainingInterestCount > 0;
+
+  const handleChatPress = () => {
+    if (!displayInfo) return;
+    if (onChatPress) {
+      onChatPress(displayInfo);
+    } else if (displayInfo.mem_id) {
+      onClose();
+      router.push({
+        pathname: '/chats',
+        params: {
+          room_id: `M_${displayInfo.mem_id}`,
+          room_name: displayInfo.mem_nick ?? displayInfo.mem_name,
+          room_type: 'M',
+        },
+      });
+    }
+  };
 
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
       <View style={styles.background}>
         <View style={styles.container}>
+          {/* 상단 헤더 */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>프로필 확인</Text>
             <TouchableOpacity style={styles.closeButton} activeOpacity={0.6} onPress={onClose} hitSlop={10}>
-              <Ionicons name="close" size={22} color={COLOR.COMM_BLACK} />
+              <Ionicons name="close" size={24} color={COLOR.COLOR_838383} />
             </TouchableOpacity>
           </View>
 
+          {/* 프로필 메인 정보 (사진 / 이름·나이성별·교회팀 / 채팅 버튼) */}
           <View style={styles.profileRow}>
             <View style={styles.profileImageWrap}>
-              {profileInfo.mem_image_url ? (
-                <Image source={{ uri: profileInfo.mem_image_url }} style={styles.profileImage} />
+              {displayInfo.mem_image_url ? (
+                <Image source={{ uri: displayInfo.mem_image_url }} style={styles.profileImage} />
               ) : (
                 <IconProfileDefault width={60} height={60} />
               )}
             </View>
-            <View style={styles.nameWrap}>
-              <Text style={styles.nameText}>{profileInfo.mem_nick}</Text>
-              <Text style={styles.ageGenderText}>{[ageLabel, genderLabel].filter(Boolean).join('·')}</Text>
+
+            <View style={styles.infoCol}>
+              <View style={styles.nameRow}>
+                <Text style={styles.nameText}>{displayInfo.mem_nick ?? displayInfo.mem_name}</Text>
+                {Boolean(ageGenderStr) && (
+                  <Text style={styles.ageGenderText}>{ageGenderStr}</Text>
+                )}
+              </View>
+
+              {(displayInfo.mem_church_nm || displayInfo.mem_church_tm_nm) && (
+                <View style={styles.churchTagRow}>
+                  {Boolean(displayInfo.mem_church_nm) && (
+                    <View style={styles.churchChip}>
+                      <Text style={styles.churchChipText}>{displayInfo.mem_church_nm}</Text>
+                    </View>
+                  )}
+                  {Boolean(displayInfo.mem_church_tm_nm) && (
+                    <View style={styles.churchChip}>
+                      <Text style={styles.churchChipText}>{displayInfo.mem_church_tm_nm}</Text>
+                    </View>
+                  )}
+                </View>
+              )}
             </View>
-            {onChatPress && (
-              <TouchableOpacity style={styles.chatButton} activeOpacity={0.6} onPress={() => onChatPress(profileInfo)}>
-                <Text style={styles.chatButtonText}>채팅</Text>
-              </TouchableOpacity>
-            )}
+
+            <TouchableOpacity style={styles.chatButton} activeOpacity={0.6} onPress={handleChatPress}>
+              <Text style={styles.chatButtonText}>채팅</Text>
+            </TouchableOpacity>
           </View>
 
-          {(profileInfo.mem_church_nm || profileInfo.mem_church_tm_nm) && (
-            <View style={styles.chipRow}>
-              {profileInfo.mem_church_nm && (
-                <View style={styles.churchChip}>
-                  <Text style={styles.churchChipText}>{profileInfo.mem_church_nm}</Text>
-                </View>
-              )}
-              {profileInfo.mem_church_tm_nm && (
-                <View style={styles.churchChip}>
-                  <Text style={styles.churchChipText}>{profileInfo.mem_church_tm_nm}</Text>
-                </View>
-              )}
-            </View>
-          )}
-
+          {/* 관심 취미 영역 */}
           <View style={styles.interestSection}>
             <Text style={styles.interestTitle}>관심 취미</Text>
             {visibleInterests.length > 0 ? (
@@ -102,10 +147,14 @@ export default function ProfileViewModal({ visible, profileInfo, onClose, onChat
                     <Text style={styles.interestChipText}>{label}</Text>
                   </View>
                 ))}
-                {remainingInterestCount > 0 && (
-                  <View style={styles.interestChip}>
-                    <Text style={styles.interestChipText}>{`+${remainingInterestCount}`}</Text>
-                  </View>
+                {showMoreButton && (
+                  <TouchableOpacity
+                    activeOpacity={0.6}
+                    onPress={() => setIsExpanded(true)}
+                    style={styles.churchChip}
+                  >
+                    <Text style={styles.churchChipText}>{`+${remainingInterestCount}`}</Text>
+                  </TouchableOpacity>
                 )}
               </View>
             ) : (
@@ -124,24 +173,24 @@ const styles = StyleSheet.create({
     backgroundColor     : COLOR.COMM_MODAL_BG,
     justifyContent      : 'center',
     alignItems          : 'center',
-    paddingHorizontal    : 20,
+    paddingHorizontal   : 20,
   },
   container: {
     width               : '100%',
     backgroundColor     : COLOR.COMM_WHITE,
-    borderRadius        : 16,
-    padding             : 24,
+    borderRadius        : 20,
+    padding             : 20,
   },
   header: {
     flexDirection       : 'row',
     alignItems          : 'center',
     justifyContent      : 'center',
-    marginBottom        : 20,
+    marginBottom        : 18,
   },
   headerTitle: {
-    fontSize            : 16,
-    fontFamily          : 'Pretendard-Bold',
-    color               : COLOR.COMM_BLACK,
+    fontSize            : 15,
+    fontFamily          : 'Pretendard-Medium',
+    color               : COLOR.COLOR_838383,
   },
   closeButton: {
     position            : 'absolute',
@@ -165,64 +214,75 @@ const styles = StyleSheet.create({
     height              : 60,
     borderRadius        : 30,
   },
-  nameWrap: {
+  infoCol: {
     flex                : 1,
+    marginStart         : 12,
+    justifyContent      : 'center',
+  },
+  nameRow: {
     flexDirection       : 'row',
     alignItems          : 'baseline',
-    gap                 : 8,
-    marginStart         : 14,
+    gap                 : 6,
   },
   nameText: {
-    fontSize            : 18,
+    fontSize            : 20,
     fontFamily          : 'Pretendard-Bold',
     color               : COLOR.COMM_BLACK,
   },
   ageGenderText: {
-    fontSize            : 14,
+    fontSize            : 15,
     fontFamily          : 'Pretendard-Regular',
     color               : COLOR.COLOR_838383,
   },
+  churchTagRow: {
+    flexDirection       : 'row',
+    flexWrap            : 'wrap',
+    gap                 : 6,
+    marginTop           : 6,
+  },
+  churchChip: {
+    borderWidth         : 1,
+    borderColor         : COLOR.COLOR_E6E6E6,
+    borderRadius        : 14,
+    paddingHorizontal   : 10,
+    paddingVertical     : 3,
+  },
+  churchChipText: {
+    fontSize            : 12,
+    fontFamily          : 'Pretendard-Regular',
+    color               : COLOR.TEXT_DEFAULT,
+  },
   chatButton: {
-    backgroundColor     : COLOR.APP_ACTIVE_5,
-    paddingHorizontal   : 18,
+    backgroundColor     : COLOR.APP_MAIN,
+    paddingHorizontal   : 16,
     paddingVertical     : 8,
     borderRadius        : 20,
+    alignSelf           : 'center',
+    marginStart         : 8,
   },
   chatButtonText: {
     fontSize            : 14,
     fontFamily          : 'Pretendard-Bold',
     color               : COLOR.COMM_WHITE,
   },
-  chipRow: {
-    flexDirection       : 'row',
-    flexWrap            : 'wrap',
-    gap                 : 8,
-    marginTop           : 16,
-  },
-  churchChip: {
-    borderWidth         : 1,
-    borderColor         : COLOR.COLOR_E6E6E6,
-    borderRadius        : 16,
-    paddingHorizontal   : 14,
-    paddingVertical     : 6,
-  },
-  churchChipText: {
-    fontSize            : 13,
-    fontFamily          : 'Pretendard-Regular',
-    color               : COLOR.TEXT_DEFAULT,
-  },
   interestSection: {
-    marginTop           : 24,
+    marginTop           : 22,
   },
   interestTitle: {
     fontSize            : 15,
     fontFamily          : 'Pretendard-Bold',
     color               : COLOR.COMM_BLACK,
+    marginBottom        : 10,
+  },
+  chipRow: {
+    flexDirection       : 'row',
+    flexWrap            : 'wrap',
+    gap                 : 8,
   },
   interestChip: {
     backgroundColor     : COLOR.COMM_GRAY_5,
     borderRadius        : 16,
-    paddingHorizontal   : 14,
+    paddingHorizontal   : 13,
     paddingVertical     : 6,
   },
   interestChipText: {
@@ -234,6 +294,5 @@ const styles = StyleSheet.create({
     fontSize            : 13,
     fontFamily          : 'Pretendard-Regular',
     color               : COLOR.COLOR_838383,
-    marginTop           : 10,
   },
 });
