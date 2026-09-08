@@ -38,6 +38,8 @@ interface Token {
  */
 interface AppData {
   app_ver_name  : string;
+  update_stat?  : number;
+  market_url?   : string;
   category_list : CodeInfo[];
   fee_list      : CodeInfo[];
   report_list   : CodeInfo[];

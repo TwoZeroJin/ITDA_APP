@@ -5,6 +5,7 @@ import { logoutUser } from "@/utils/authUtil";
 import { saveSecureStore } from "@/utils/secureStoreUtil";
 import axios from "axios";
 import { showToast } from "@/utils/commToast";
+import { version as appVersion } from "@/package.json";
 
 /**
  * Axios instance 설정
@@ -13,7 +14,7 @@ const axiosInstance = axios.create({
   baseURL: `${process.env.EXPO_PUBLIC_API_KEY}`,
   timeout: 30000, // 타임아웃 30초
   headers: {
-    'x-client-id' : getClientId(),
+    'x-client-id' : getClientId(appVersion),
   }
 });
 

@@ -1,23 +1,21 @@
 import { mainData, mainEntry } from '@/api/main';
-import { userRefreshToken } from '@/api/user';
 import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { ApiResult, MainData } from '@/types';
-import { deleteSecureStore, saveSecureStore } from '@/utils/secureStoreUtil';
 import { printDebugLog, setCategoryList, setChurchList, setFeeList, setMainBannerList, setReportList } from '@/utils/commUtil';
 import { saveAsyncStore } from '@/utils/asyncStoreUtil';
 import { emitPushCountChanged } from '@/utils/pushCountEvent';
 import { useQuery } from '@tanstack/react-query';
 import * as Updates from 'expo-updates';
 import { useEffect, useState } from 'react';
-import { DevSettings, Image } from 'react-native';
-import { AxiosError } from 'axios';
+import { DevSettings, Image, Linking } from 'react-native';
 
 /**
  * 초기 정보 조회
  */
 function useMainEntry() {
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
-  const { data, isError, isSuccess, error, refetch } = useQuery({
+  const [isUpdateDialogVisible, setIsUpdateDialogVisible] = useState(false);
+  const { data, isSuccess, refetch } = useQuery({
     queryFn: mainEntry,
     queryKey: [QUERY_KEYS.MAIN , QUERY_KEYS.MAIN_ENTRY],
     retry: 1,
@@ -25,6 +23,10 @@ function useMainEntry() {
   //
   useEffect(() => {
     if (isSuccess) {
+
+      if (data?.data?.update_stat === 1) {
+        setIsUpdateDialogVisible(true);
+      }
       const bannerList = data?.data?.banner_list ;
       const normalizedBannerList = bannerList && bannerList.length > 0
           ? bannerList
@@ -42,6 +44,14 @@ function useMainEntry() {
   const handleRetryMainEntry = () => {
     setIsErrorDialogVisible(false);
     refetch();
+  };
+
+  const handleGoToUpdate = () => {
+    const marketUrl = data?.data?.market_url;
+    if (marketUrl) {
+      Linking.openURL(marketUrl);
+    }
+    setIsUpdateDialogVisible(false);
   };
 
   const handleRestartApp = async () => {
@@ -69,12 +79,19 @@ function useMainEntry() {
     setIsErrorDialogVisible(false);
   };
 
+  const handleCloseUpdateDialog = () => {
+    setIsUpdateDialogVisible(false);
+  };
+
   return {
     data,
     isErrorDialogVisible,
+    isUpdateDialogVisible,
     handleRetryMainEntry,
     handleRestartApp,
     handleCloseErrorDialog,
+    handleGoToUpdate,
+    handleCloseUpdateDialog,
   };
 }
 

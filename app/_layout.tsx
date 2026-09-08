@@ -136,6 +136,15 @@ function RootNavigator() {
         onCancel={mainData.handleRetryMainEntry}
         onConfirm={mainData.handleRestartApp}
       />
+      <CustomDialog
+        visible={mainData.isUpdateDialogVisible}
+        title="업데이트 안내"
+        content="새로운 버전이 출시되었어요. 스토어에서 업데이트해주세요."
+        confirmLabel="업데이트"
+        onConfirm={mainData.handleGoToUpdate}
+        cancelLabel="닫기"
+        onCancel={mainData.handleCloseUpdateDialog}
+      />
     </>
   );
 }
