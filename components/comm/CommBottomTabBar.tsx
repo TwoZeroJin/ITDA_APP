@@ -11,7 +11,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { saveAsyncStore } from '@/utils/asyncStoreUtil';
 import { MqttUtil } from '@/utils/mqttUtil';
-import { getMemberInfo } from '@/utils/commUtil';
+import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
 
 // 탭 이름 → 경로 매핑 (EXCLUDE_PATHS 기준으로 protected 여부 판단)
 const TAB_PATHS: Record<string, string> = {
@@ -35,8 +35,12 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
     const fetchMyMemberInfo = async () => {
       const memberInfo = await getMemberInfo();
       if (memberInfo) {
-        MqttUtil.subscribeTopicList(memberInfo.topic_list ?? [], 'CommBottomTabBar', () => {
-          setIsChatYn('Y');
+        // sender_id가 본인이 아닐 경우에만 뱃지 ON
+        MqttUtil.subscribeTopicList(memberInfo.topic_list ?? [], 'CommBottomTabBar', (msg) => {
+          const payload = parseChatPayload(msg);
+          if (memberInfo.mem_id !== Number(payload.sender_id)) {
+            setIsChatYn('Y');
+          }
         });
       }
       else {

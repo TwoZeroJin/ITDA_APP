@@ -158,8 +158,8 @@ export default function MemberUpdateScreen() {
             <NickNameInput/>
             <ChurchNmInput/>
             <ChurchMnmInput/>
-            <ChurchAddrInput/>
             {/* <ChurchTmNmInput/> */}
+            <ChurchAddrInput/>
           </View>
           <InterestCategoryInput />
         </FormProvider>

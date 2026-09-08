@@ -89,8 +89,8 @@ export default function SignupInfoScreen() {
           <NickNameInput/>
           <ChurchNmInput/>
           <ChurchMnmInput/>
-          <ChurchAddrInput/>
           {/* <ChurchTmNmInput/> */}
+          <ChurchAddrInput/>
           <IdInput focusField="login_pwd"/>
           <PasswordInput returnKeyType="next"/>
           <PasswordConfirmInput/>
@@ -103,7 +103,6 @@ export default function SignupInfoScreen() {
 
 const styles = StyleSheet.create({
   scrollContent: {
-    // 🌟 하단에 떠 있는 버튼 영역(약 70~80px) + 안드로이드 키보드 안전 마진을 고정 패딩으로 확보합니다.
     paddingBottom       : 200, 
   },
 })

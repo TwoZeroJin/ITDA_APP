@@ -11,6 +11,9 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { showToast } from '@/utils/commToast';
 
+/**
+ * 로그인 화면
+ */
 export default function LoginScreen() {
   const { loginMutation } = useAuth();
   const { expoPushToken } = usePushNotification();

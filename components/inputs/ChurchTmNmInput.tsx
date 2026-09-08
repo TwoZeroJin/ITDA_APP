@@ -1,5 +1,4 @@
 import InputField from "@/components/InputField";
-import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 function ChurchTmNmInput() {
@@ -17,7 +16,7 @@ function ChurchTmNmInput() {
       // }}
       render={({field: {onChange, value}, fieldState: {error}}) => (
         <InputField
-          label="팀" 
+          label="팀 이름" 
           placeholder="팀 이름을 입력하세요."
           inputMode='text'
           autoCapitalize='none'
