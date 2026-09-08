@@ -1,6 +1,6 @@
 import { COMM_CONSTANTS, COMM_STYLES } from "@/constants";
 import React, { useState } from "react";
-import { ScrollView, Text, View, StyleSheet, FlatList } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, FlatList, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetInsert, useMeetUpdate } from "@/hooks/queries/useMeet";
@@ -60,6 +60,12 @@ export default function MeetCreatePreViewScreen() {
 
     if (prevMeetInfo.meet_id) {
       // meet_id가 존재하면 업데이트, 없으면 새로 생성
+      const meetDatetime = new Date(formValues.meet_datetime);
+      if ((meetDatetime.getTime() - Date.now()) < 60 * 60 * 1000) {
+        Alert.alert('수정 불가', '모임 시작 1시간 전에는 수정할 수 없습니다.');
+        return;
+      }
+
       meetUpdate.mutate(formValues, {
         onSuccess: handleMutationSuccess,
         onError: handleMutationError,

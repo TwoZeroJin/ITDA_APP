@@ -1,13 +1,13 @@
 import CalendarModal from '@/components/CalendarModal';
 import { COLOR, COMM_STYLES } from '@/constants';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconCalendar from '@/assets/images/icon_calendar.svg';
 
 interface DateInputProps {
   type? : string;
   isError?: boolean;
-  onDateChange?: (dateValue: string, dateLabel: string) => void;
+  onDateChange?: (dateValue: string, dateLabel: string) => boolean | void;
   initialDateValue?: string;
   initialDateLabel?: string;
 }
@@ -17,18 +17,24 @@ interface DateInputProps {
  */
 export default function DateInput({ type = 'M', isError = false, onDateChange, initialDateValue = '', initialDateLabel = '' }: DateInputProps) {
   const [dateModalVisible, setDateModalVisible] = useState(false);
-  const [selectedDateValue, setSelectedDateValue] = useState('');
-  const [selectedDateLabel, setSelectedDateLabel] = useState('');
-
-  useEffect(() => {
-    setSelectedDateValue(initialDateValue);
-    setSelectedDateLabel(initialDateLabel);
-  }, [initialDateValue, initialDateLabel]);
+  const [selectedDateValue, setSelectedDateValue] = useState(initialDateValue);
+  const [selectedDateLabel, setSelectedDateLabel] = useState(initialDateLabel);
 
   const handleConfirmDate = (item: { value: string; label: string }) => {
+    if (onDateChange?.(item.value, item.label) === false) {
+      setDateModalVisible(false);
+      return;
+    }
+
     setSelectedDateValue(item.value);
     setSelectedDateLabel(item.label);
-    onDateChange?.(item.value, item.label);
+    setDateModalVisible(false);
+  };
+
+  const handleCloseDateModal = () => {
+    setSelectedDateValue('');
+    setSelectedDateLabel('');
+    onDateChange?.('', '');
     setDateModalVisible(false);
   };
 
@@ -52,7 +58,7 @@ export default function DateInput({ type = 'M', isError = false, onDateChange, i
         visible={dateModalVisible}
         selectedValue={selectedDateValue}
         onChangeValue={setSelectedDateValue}
-        onClose={() => setDateModalVisible(false)}
+        onClose={handleCloseDateModal}
         onConfirm={handleConfirmDate}
       />
     </>

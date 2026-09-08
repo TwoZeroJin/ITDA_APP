@@ -1,5 +1,4 @@
 import WheelPickerModal from "@/components/modal/WheelPickerModal";
-import React from "react";
 
 type TimePickerModalProps = {
   visible: boolean;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { showToast } from '@/utils/commToast';
 
 type UseCombinedDateTimeParams = {
   onChangeCombined: (value: string) => void;
@@ -66,27 +67,41 @@ export default function useCombinedDateTime({ onChangeCombined, initialCombinedV
   const updateCombinedDateTime = (dateValue: string, timeLabel: string) => {
     if (!dateValue || !timeLabel) {
       onChangeCombined('');
-      return;
+      return true;
     }
 
     const parsedTime24 = parseTimeLabelTo24Hour(timeLabel);
 
     if (!parsedTime24) {
       onChangeCombined('');
-      return;
+      return true;
     }
 
-    onChangeCombined(`${dateValue} ${parsedTime24}`);
+    const combinedDateTime = `${dateValue} ${parsedTime24}`;
+
+    if (new Date(combinedDateTime).getTime() - Date.now() < 60 * 60 * 1000) {
+      showToast({ text1: '현재 시간으로부터 1시간 이후로 선택해주세요.' });
+      return false;
+    }
+
+    onChangeCombined(combinedDateTime);
+    return true;
   };
 
   const handleDateChange = (dateValue: string, _dateLabel: string) => {
+    if (!updateCombinedDateTime(dateValue, selectedTimeLabel)) {
+      return false;
+    }
     setSelectedDateValue(dateValue);
-    updateCombinedDateTime(dateValue, selectedTimeLabel);
+    return true;
   };
 
   const handleTimeChange = (timeLabel: string) => {
+    if (!updateCombinedDateTime(selectedDateValue, timeLabel)) {
+      return false;
+    }
     setSelectedTimeLabel(timeLabel);
-    updateCombinedDateTime(selectedDateValue, timeLabel);
+    return true;
   };
 
   return {

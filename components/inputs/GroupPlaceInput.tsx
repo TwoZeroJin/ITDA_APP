@@ -1,7 +1,7 @@
 import CommRadioGroup from '@/components/comm/CommRadioGroup';
 import { COLOR, COMM_STYLES } from '@/constants';
 import { GroupInfo } from '@/types';
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';

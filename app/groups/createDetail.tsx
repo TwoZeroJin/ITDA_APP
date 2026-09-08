@@ -1,4 +1,4 @@
-import { COMM_CONSTANTS, COMM_STYLES } from "@/constants";
+import { COLOR, COMM_CONSTANTS, COMM_STYLES } from "@/constants";
 import React from "react";
 import { Platform, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
@@ -49,8 +49,10 @@ export default function GroupCreateDetailScreen() {
           enableOnAndroid={true}
         >
           <View style={COMM_STYLES.detailTitleContainer}>
-            <Text style={COMM_STYLES.commTitle}>{'어떻게 모임원을 모을까요?'}</Text>
-            <Text style={COMM_STYLES.commSubtitle}>{`클럽을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
+            <Text style={COMM_STYLES.commCreateTitle}>{'어떻게 모임원을 모을까요?'}</Text>
+            <Text style={COMM_STYLES.commCreateSubTitle}>{`클럽을 선택했어요.\n모임에 맞는 모임원 구성을 정해주세요.`}</Text>
+
+            {prevGroupInfo.group_id ? <Text style={[COMM_STYLES.commCreateSubTitle, { marginTop: 8, marginBottom: -16, fontSize: 14, fontWeight: 'bold', color : COLOR.COMM_GRAY_7 }]}>{'모임 시작 1시간 전에는 수정할 수 없습니다.'}</Text> : null}
           </View>
 
           <DividingLine />

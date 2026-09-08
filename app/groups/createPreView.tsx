@@ -1,6 +1,6 @@
 import { COMM_CONSTANTS, COMM_STYLES } from "@/constants";
-import React, { useState } from "react";
-import { ScrollView, Text, View } from 'react-native';
+import { useState } from "react";
+import { Alert, ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { GroupInfo, ApiResult } from "@/types";
@@ -57,6 +57,11 @@ export default function GroupCreatePreViewScreen() {
     };
     
     if (prevGroupInfo.group_id) {
+      const groupDatetime = new Date(formValues.group_datetime);
+      if ((groupDatetime.getTime() - Date.now()) < 60 * 60 * 1000) {
+        Alert.alert('수정 불가', '모임 시작 1시간 전에는 수정할 수 없습니다.');
+        return;
+      }
       // group_id가 존재하면 업데이트, 없으면 새로 생성
       groupUpdate.mutate(formValues, {
         onSuccess: handleMutationSuccess,

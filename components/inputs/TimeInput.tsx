@@ -1,12 +1,12 @@
 import TimePickerModal from '@/components/modal/TimePickerModal';
 import { COLOR, COMM_STYLES } from '@/constants';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconTime from '@/assets/images/icon_time.svg';
 
 interface TimeInputProps {
   isError?          : boolean;
-  onTimeChange?     : (timeLabel: string) => void;
+  onTimeChange?     : (timeLabel: string) => boolean | void;
   initialTimeLabel? : string;
 }
 
@@ -15,27 +15,26 @@ interface TimeInputProps {
  */
 export default function TimeInput({ isError = false, onTimeChange, initialTimeLabel = '' }: TimeInputProps) {
   const [timeModalVisible, setTimeModalVisible] = useState(false);
-  const [selectedTimeLabel, setSelectedTimeLabel] = useState('');
+  const [selectedTimeLabel, setSelectedTimeLabel] = useState(initialTimeLabel);
 
-  const [timeMeridiem, setTimeMeridiem] = useState('오전');
-  const [timeHour, setTimeHour] = useState('01');
-  const [timeMinute, setTimeMinute] = useState('00');
-
-  useEffect(() => {
-    setSelectedTimeLabel(initialTimeLabel);
-
-    const parsedTime = initialTimeLabel.match(/^(오전|오후)\s(\d{1,2}):(\d{2})$/);
-    if (parsedTime) {
-      setTimeMeridiem(parsedTime[1]);
-      setTimeHour(parsedTime[2].padStart(2, '0'));
-      setTimeMinute(parsedTime[3].padStart(2, '0'));
-    }
-  }, [initialTimeLabel]);
+  const [timeMeridiem, setTimeMeridiem] = useState(() => initialTimeLabel.match(/^(오전|오후)/)?.[1] ?? '오전');
+  const [timeHour, setTimeHour] = useState(() => initialTimeLabel.match(/(\d{1,2}):/)?.[1].padStart(2, '0') ?? '01');
+  const [timeMinute, setTimeMinute] = useState(() => initialTimeLabel.match(/:(\d{2})/)?.[1] ?? '00');
 
   const handleConfirmTime = () => {
     const nextLabel = `${timeMeridiem} ${timeHour}:${timeMinute}`;
+    if (onTimeChange?.(nextLabel) === false) {
+      setTimeModalVisible(false);
+      return;
+    }
+
     setSelectedTimeLabel(nextLabel);
-    onTimeChange?.(nextLabel);
+    setTimeModalVisible(false);
+  };
+
+  const handleCloseTimeModal = () => {
+    setSelectedTimeLabel('');
+    onTimeChange?.('');
     setTimeModalVisible(false);
   };
 
@@ -74,7 +73,7 @@ export default function TimeInput({ isError = false, onTimeChange, initialTimeLa
         onChangeMeridiem={setTimeMeridiem}
         onChangeHour={setTimeHour}
         onChangeMinute={setTimeMinute}
-        onClose={() => setTimeModalVisible(false)}
+        onClose={handleCloseTimeModal}
         onConfirm={handleConfirmTime}
       />
     </>
