@@ -154,7 +154,7 @@ export default function MeetCreatePreViewScreen() {
             <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${prevMeetInfo?.meet_subj_name}`} />
             <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`1회성 ${prevMeetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${prevMeetInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} />
             <DetailInfoRow icon={<IconDetailMembers width={18} height={18} />} text={`최소 ${prevMeetInfo?.meet_min}명 ~ 최대 ${prevMeetInfo?.meet_max}명`} />
-            <DetailInfoRow icon={<MaterialIcons name="child-care" size={21} color="black" />} text={`나이 ${prevMeetInfo?.age_min} ~ ${prevMeetInfo?.age_max}`} />
+            <DetailInfoRow icon={<MaterialIcons name="child-care" size={21} color="black" />} text={`나이 ${prevMeetInfo?.age_min}세 ~ ${prevMeetInfo?.age_max}세`} />
             {prevMeetInfo?.fee_entry && <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(prevMeetInfo?.fee_entry)}원`} />}
             <DetailInfoRow icon={<IconCalendar width={18} height={18} />} text={`${prevMeetInfo?.meet_datetime}`} />
             {prevMeetInfo?.place_name && <DetailInfoRow icon={<IconDetailMarker width={18} height={18} />} text={`${prevMeetInfo?.place_name}`} />}
