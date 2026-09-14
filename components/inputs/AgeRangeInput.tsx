@@ -10,49 +10,71 @@ import { MeetInfo } from '@/types';
 const AGE_MIN = 10;
 
 export default function AgeRangeInput() {
-  const { control } = useFormContext<MeetInfo>();
+  const { control, watch, setValue } = useFormContext<MeetInfo>();
+
+  const ageMinVal = watch('age_min');
+  const ageMaxVal = watch('age_max');
+
+  const isAgeSet = ageMaxVal !== null && ageMaxVal !== undefined;
+  const ageType: 'none' | 'set' = isAgeSet ? 'set' : 'none';
 
   return (
     <View style={COMM_STYLES.commInputContainer}>
       <Text style={COMM_STYLES.commInputContainerTitle}>나이</Text>
+      <CommRadioGroup
+        items={[
+          { label: '나이 무관', value: 'none' },
+          { label: '나이 지정', value: 'set' },
+        ]}
+        value={ageType}
+        onChange={(type) => {
+          if (type === 'none') {
+            setValue('age_min', 10);
+            setValue('age_max', null as any);
+          } else {
+            const currentMin = typeof ageMinVal === 'number' ? ageMinVal : 20;
+            const currentMax = typeof ageMaxVal === 'number' ? ageMaxVal : 30;
+            setValue('age_min', currentMin);
+            setValue('age_max', currentMax);
+          }
+        }}
+      />
+      <Controller
+        name="age_min"
+        control={control}
+        render={({ field: { onChange: onMinChange, value: minVal } }) => {
+          const minAge = typeof minVal === 'number' ? minVal : 10;
+          const maxAge = typeof ageMaxVal === 'number' ? ageMaxVal : 30;        
+          return (
+            <AgeSlider
+              minAge={minAge}
+              maxAge={maxAge}
+              onMinAgeChange={(newMin) => {
+                onMinChange(newMin);
+                if (newMin > maxAge) {
+                  setValue('age_max', newMin);
+                }
+              }}
+              onMaxAgeChange={(newMax) => {
+                setValue('age_max', newMax);
+                if (newMax < minAge) {
+                  onMinChange(newMax);
+                }
+              }}
+              disabled={ageType === 'none'}
+            />
+          );
+        }}
+      />
       <Controller
         name="age_max"
         control={control}
-        render={({ field: { onChange, value } }) => (
-          <>
-            {(() => {
-              const ageType: 'none' | 'set' = value !== null && value !== undefined ? 'set' : 'none';
-              return (
-                <>
-                  <CommRadioGroup
-                    items={[
-                      { label: '나이 무관', value: 'none' },
-                      { label: '나이 지정', value: 'set' },
-                    ]}
-                    value={ageType}
-                    onChange={(type) => {
-                      if (type === 'none') {
-                        onChange(null);
-                      } else if (value === null || value === undefined) {
-                        onChange(30);
-                      }
-                    }}
-                  />
-                  <AgeSlider
-                    value={value ?? 30}
-                    onChange={onChange}
-                    disabled={ageType === 'none'}
-                  />
-                </>
-              );
-            })()}
-          </>
-        )}
+        render={() => <></>}
       />
       <View style={COMM_STYLES.infoContainer}>
         <View style={COMM_STYLES.infoTitleRow}>
           <IconInfoMark />
-          <Text style={COMM_STYLES.infoTitle}>동그라미 바를 움직여 나이를 지정할 수 있어요.</Text>
+          <Text style={COMM_STYLES.infoTitle}>최소/최대 나이 슬라이더를 움직여 범위를 지정할 수 있어요.</Text>
         </View>
       </View>
     </View>

@@ -31,6 +31,7 @@ import { useMemberLike } from "@/hooks/queries/useMember";
 import queryClient from "@/api/queryClient";
 import { shareFeedTemplate } from '@react-native-kakao/share';
 import SelectableWebText from "@/components/comm/SelectableWebText";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'memUpdate' | 'report' | 'block';
 
@@ -491,6 +492,7 @@ export default function DetailViewScreen() {
             <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${meetInfo?.meet_subj_name}`} />
             <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`1회성 ${meetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${meetInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} />
             <DetailInfoRow icon={<IconDetailMembers width={18} height={18} />} text={`최소 ${meetInfo?.meet_min}명 ~ 최대 ${meetInfo?.meet_max}명`} />
+            <DetailInfoRow icon={<MaterialIcons name="child-care" size={21} color="black" />} text={`나이 ${meetInfo?.age_min}세 ~ ${meetInfo?.age_max}세`} />
             {meetInfo?.fee_entry && <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(meetInfo?.fee_entry)}원`} />}
             <DetailInfoRow icon={<IconCalendar width={18} height={18} />} text={`${meetInfo?.meet_datetime}`} />
             {meetInfo?.place_name && <DetailInfoRow icon={<IconDetailMarker width={18} height={18} />} text={`${meetInfo?.place_name}`} />}
