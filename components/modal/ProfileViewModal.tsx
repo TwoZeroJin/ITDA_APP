@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
-import { COLOR } from '@/constants';
+import { COLOR, COMM_CONSTANTS } from '@/constants';
 import { MemberInfo } from '@/types';
-import { getCategoryList } from '@/utils/commUtil';
+import { getCategoryList, getMemberInfo } from '@/utils/commUtil';
 import { useProfileDetailView } from '@/hooks/queries/useMember';
 import { router } from 'expo-router';
+import IconClose from '@/assets/images/icon_close.svg';
 
 const MAX_VISIBLE_INTERESTS = 7;
 const GENDER_LABEL: Record<string, string> = { M: '남', F: '여' };
@@ -26,13 +27,22 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
   const targetMemId = memId ?? Number(profileInfo?.mem_id ?? 0);
 
   const { results: apiProfile } = useProfileDetailView(
-    { page_no: 1, page_size: 1, mem_id: targetMemId }
+    { mem_id: targetMemId }
   );
 
   const displayInfo: MemberInfo | undefined = apiProfile ?? profileInfo;
 
   const [interestLabels, setInterestLabels] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [myMemId, setMyMemId] = useState<number>(0);
+
+    useEffect(() => {
+    const fetchMyMemberInfo = async () => {
+      const memberInfo = await getMemberInfo();
+      setMyMemId(memberInfo.mem_id ?? 0);
+      }
+    fetchMyMemberInfo();
+  }, []);
 
   useEffect(() => {
     if (!visible) {
@@ -78,9 +88,9 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
       router.push({
         pathname: '/chats',
         params: {
-          room_id: `M_${displayInfo.mem_id}`,
+          // 해당 화면에서 room_id는 /chats에서 관리
           room_name: displayInfo.mem_nick ?? displayInfo.mem_name,
-          room_type: 'M',
+          room_type: COMM_CONSTANTS.COMM_MEMBER,
         },
       });
     }
@@ -94,7 +104,7 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
           <View style={styles.header}>
             <Text style={styles.headerTitle}>프로필 확인</Text>
             <TouchableOpacity style={styles.closeButton} activeOpacity={0.6} onPress={onClose} hitSlop={10}>
-              <Ionicons name="close" size={24} color={COLOR.COLOR_838383} />
+              <IconClose width={20} height={20} />
             </TouchableOpacity>
           </View>
 
@@ -132,9 +142,11 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
               )}
             </View>
 
-            <TouchableOpacity style={styles.chatButton} activeOpacity={0.6} onPress={handleChatPress}>
-              <Text style={styles.chatButtonText}>채팅</Text>
-            </TouchableOpacity>
+            {myMemId !== displayInfo.mem_id && (
+              <TouchableOpacity style={styles.chatButton} activeOpacity={0.6} onPress={handleChatPress}>
+                <Text style={styles.chatButtonText}>채팅</Text>
+              </TouchableOpacity>
+            )}
           </View>
 
           {/* 관심 취미 영역 */}
@@ -185,12 +197,12 @@ const styles = StyleSheet.create({
     flexDirection       : 'row',
     alignItems          : 'center',
     justifyContent      : 'center',
-    marginBottom        : 18,
+    marginBottom        : 12,
   },
   headerTitle: {
-    fontSize            : 15,
-    fontFamily          : 'Pretendard-Medium',
-    color               : COLOR.COLOR_838383,
+    fontSize            : 14,
+    fontFamily          : 'Pretendard-Light',
+    color               : COLOR.TEXT_DEFAULT,
   },
   closeButton: {
     position            : 'absolute',
@@ -198,7 +210,6 @@ const styles = StyleSheet.create({
   },
   profileRow: {
     flexDirection       : 'row',
-    alignItems          : 'center',
   },
   profileImageWrap: {
     width               : 60,
@@ -242,35 +253,36 @@ const styles = StyleSheet.create({
   },
   churchChip: {
     borderWidth         : 1,
-    borderColor         : COLOR.COLOR_E6E6E6,
+    borderColor         : COLOR.COLOR_D9D9D9,
     borderRadius        : 14,
     paddingHorizontal   : 10,
     paddingVertical     : 3,
   },
   churchChipText: {
     fontSize            : 12,
-    fontFamily          : 'Pretendard-Regular',
-    color               : COLOR.TEXT_DEFAULT,
+    fontFamily          : 'Pretendard-Medium',
+    color               : COLOR.COLOR_6B6B6B,
   },
   chatButton: {
-    backgroundColor     : COLOR.APP_MAIN,
+    backgroundColor     : COLOR.APP_ACTIVE_4,
     paddingHorizontal   : 16,
     paddingVertical     : 8,
     borderRadius        : 20,
     alignSelf           : 'center',
-    marginStart         : 8,
+    marginTop           : -20,
   },
   chatButtonText: {
     fontSize            : 14,
-    fontFamily          : 'Pretendard-Bold',
+    fontFamily          : 'Pretendard-Medium',
     color               : COLOR.COMM_WHITE,
   },
   interestSection: {
-    marginTop           : 22,
+    marginTop           : 16,
+    marginStart         : 4,
   },
   interestTitle: {
-    fontSize            : 15,
-    fontFamily          : 'Pretendard-Bold',
+    fontSize            : 16,
+    fontFamily          : 'Pretendard-SemiBold',
     color               : COLOR.COMM_BLACK,
     marginBottom        : 10,
   },
@@ -286,13 +298,13 @@ const styles = StyleSheet.create({
     paddingVertical     : 6,
   },
   interestChipText: {
-    fontSize            : 13,
-    fontFamily          : 'Pretendard-Regular',
-    color               : COLOR.TEXT_DEFAULT,
+    fontSize            : 12,
+    fontFamily          : 'Pretendard-Medium',
+    color               : COLOR.COLOR_6B6B6B,
   },
   interestEmptyText: {
     fontSize            : 13,
     fontFamily          : 'Pretendard-Regular',
-    color               : COLOR.COLOR_838383,
+    color               : COLOR.COLOR_6B6B6B,
   },
 });

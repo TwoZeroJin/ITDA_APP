@@ -1,7 +1,7 @@
 import { COLOR } from '@/constants';
 import { CodeInfo } from '@/types';
 import { getCategoryList } from '@/utils/commUtil';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, FieldValues, Path, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

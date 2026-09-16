@@ -47,8 +47,11 @@ export default function FeedbackCreateScreen() {
         style={{ marginBottom: 100 }}
         contentContainerStyle={COMM_STYLES.formContainer}
         keyboardShouldPersistTaps="handled"
-        enableOnAndroid
-        extraScrollHeight={24}
+        enableOnAndroid={true}
+        enableAutomaticScroll={true}
+        keyboardOpeningTime={0}
+        extraScrollHeight={-100}
+        enableResetScrollToCoords={false}
         bounces={false}
         alwaysBounceVertical={false}
         overScrollMode="never"

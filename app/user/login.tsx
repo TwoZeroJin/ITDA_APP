@@ -119,12 +119,12 @@ const styles = StyleSheet.create({
   imageContainer: {
     justifyContent      : "center",
     alignItems          : "center",
-    marginTop           : 50,
+    marginTop           : 30,
     marginBottom        : 30
   },
   inputContainer: {
     gap                 : 16,
-    marginBottom        : 36
+    marginBottom        : 26
   },
   buttonContainer: {
     gap                 : 16,

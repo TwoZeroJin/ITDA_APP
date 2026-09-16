@@ -25,9 +25,10 @@ export default function GroupCreateFeeScreen() {
   });
 
   const feeInfo = formValues.watch('fee_info');
+  const isEtcSelected = (feeInfo ?? '').split('|').includes('FEE_INFO_99');
   const canMoveNext =
     !!prevGroupInfo.apply_type
-    && (formValues.watch('fee_yn') === 'N' || (!!formValues.watch('fee_entry') && (feeInfo === 'FEE_INFO_99' ? !!formValues.watch('fee_desc') : !!feeInfo)));
+    && (formValues.watch('fee_yn') === 'N' || (!!formValues.watch('fee_entry') && (isEtcSelected ? !!formValues.watch('fee_desc') : !!feeInfo)));
 
   const onNext = formValues.handleSubmit((data) => {
     router.navigate({
@@ -50,6 +51,10 @@ export default function GroupCreateFeeScreen() {
           style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
           enableOnAndroid={true}
+          enableAutomaticScroll={true}
+          keyboardOpeningTime={0}
+          extraScrollHeight={-80}
+          enableResetScrollToCoords={false}
         >
           <View style={COMM_STYLES.detailTitleContainer}>
             <Text style={COMM_STYLES.commTitle}>{'참가비가 있다면 설정해주세요.'}</Text>

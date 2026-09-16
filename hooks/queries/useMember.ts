@@ -3,7 +3,7 @@ import { useLoading } from '@/contexts/LoadingContext';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { memberApplyGroupList, memberProfileDetail, memberApplyList, memberApplyMeetList, memberDetail, memberLike, memberLikeList, memberMyGroupList, memberMyMeetList, memberUpdate, memberWithdrawal } from '@/api/member';
-import { getNextPageParamFromPaging, printDebugLog } from '@/utils/commUtil';
+import { getNextPageParamFromPaging } from '@/utils/commUtil';
 import { MemberInfo, MemberLike, SearchParams } from '@/types';
 import queryClient from '@/api/queryClient';
 import { useAuth } from './useAuth';
@@ -39,11 +39,11 @@ function useMemberDetail() {
  * 회원 프로필 팝업 상세 조회
  * profile/detail
  */
-function useProfileDetailView(searchParams: SearchParams) {
+function useProfileDetailView(body: MemberInfo) {
   const { setLoading } = useLoading();
   const query = useQuery({
-    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_PROFILE_DETAIL, searchParams],
-    queryFn: () => memberProfileDetail(searchParams)
+    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_PROFILE_DETAIL, body],
+    queryFn: () => memberProfileDetail(body)
   });  
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 import IconHost from '@/assets/images/icon_host.svg';
@@ -58,7 +58,7 @@ const ProfileIcon = ({ mem_image_url, type, mem_id, profileInfo, onChatPress }: 
 
   return (
     <>
-      <TouchableOpacity activeOpacity={0.6} onPress={() => setIsProfileModalVisible(true)}>
+      <TouchableOpacity activeOpacity={0.6} onPress={() => targetMemId > 0 && setIsProfileModalVisible(true)}>
         {image}
       </TouchableOpacity>
       {isProfileModalVisible && (

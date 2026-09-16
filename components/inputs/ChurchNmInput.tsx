@@ -15,8 +15,9 @@ function ChurchNmInput() {
       //     }
       //   }
       // }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({field: { ref, onChange, value}, fieldState: {error}}) => (
         <InputField
+          ref={ref}
           label="교회 이름" 
           placeholder="교회 이름을 입력하세요."
           inputMode='text'

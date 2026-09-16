@@ -1,7 +1,7 @@
 {
   "name": "itda_app",
   "main": "expo-router/entry",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "scripts": {
     "start:local": "set EXPO_NO_DOTENV=1&& set APP_ENV=local&& expo start --tunnel --clear",
     "start:dev": "set EXPO_NO_DOTENV=1&& set APP_ENV=dev&& expo start --tunnel --clear",
@@ -20,6 +20,7 @@
   "dependencies": {
     "@expo/react-native-action-sheet": "^4.1.1",
     "@expo/vector-icons": "^15.0.2",
+    "@gorhom/bottom-sheet": "^5.2.14",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/slider": "5.2.0",
     "@react-native-kakao/core": "^2.4.6",

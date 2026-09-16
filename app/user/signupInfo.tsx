@@ -77,6 +77,10 @@ export default function SignupInfoScreen() {
         ]}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
+        enableAutomaticScroll={true}
+        keyboardOpeningTime={0}
+        extraScrollHeight={-120}
+        enableResetScrollToCoords={false}
       >
         <FormProvider {...signupForm}>
           <ProfileImageInput/>

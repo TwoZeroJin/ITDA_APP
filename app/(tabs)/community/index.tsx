@@ -1,7 +1,8 @@
 import CommHeader from '@/components/comm/CommHeader';
 import TopTabButton from '@/components/comm/TopTabButton';
 import CommunityFeed from '@/components/CommunityFeed';
-import { COLOR } from '@/constants';
+import CommentBottomModal from '@/components/modal/CommentBottomModal';
+import { COLOR, QUERY_KEYS } from '@/constants';
 import IconPencil from '@/assets/images/icon_community.svg';
 import { StyleSheet, Text, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -14,6 +15,7 @@ import { showToast } from '@/utils/commToast';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import { getMemberInfo } from '@/utils/commUtil';
 import { useReportBlock } from '@/hooks/queries/useReport';
+import queryClient from '@/api/queryClient';
 
 /**
  * 커뮤니티 탭 메인 화면 - 후기 리스트
@@ -29,6 +31,7 @@ export default function CommunityListScreen() {
   const [isDeleteDialogVisible, setIsDeleteDialogVisible] = useState(false);
   const [isBlockDialogVisible, setIsBlockDialogVisible] = useState(false);
   const [targetItem, setTargetItem] = useState<MeetReview | null>(null);
+  const [commentItem, setCommentItem] = useState<MeetReview | null>(null);
   const { setLoading } = useLoading();
   const hasHandledInitialLoadingRef = useRef(false);
   const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useReviewList({
@@ -102,6 +105,10 @@ export default function CommunityListScreen() {
     setIsBlockDialogVisible(true);
   };
 
+  const handleCommentPress = (item: MeetReview) => {
+    setCommentItem(item);
+  };
+
   // 좋아요 처리
   const handleLikePress = (item: MeetInfo | MeetReview) => {
     const isReview = 'review_id' in item;
@@ -120,12 +127,14 @@ export default function CommunityListScreen() {
       {
         onSuccess: () => {
           if (isReview) {
-            item.like_review_yn = item.like_review_yn === 'Y' ? 'N' : 'Y';
+            const wasLiked = item.like_review_yn === 'Y';
+            item.like_review_yn = wasLiked ? 'N' : 'Y';
+            item.like_cnt = wasLiked
+              ? Math.max(0, (item.like_cnt ?? 0) - 1)
+              : (item.like_cnt ?? 0) + 1;
           } else {
             item.like_yn = item.like_yn === 'Y' ? 'N' : 'Y';
           }
-        },
-        onError: () => {
         },
       },
     );
@@ -157,6 +166,7 @@ export default function CommunityListScreen() {
               handleDelete={handleDelete}
               handleReport={handleReport}
               handleBlock={handleBlock}
+              onCommentPress={handleCommentPress}
             />
           );
         }}
@@ -175,6 +185,12 @@ export default function CommunityListScreen() {
             <ActivityIndicator size="small" color={COLOR.APP_ACTIVE_3} style={{ marginVertical: 20 }} />
           ) : <View style={{ height: 50 }} />
         }    
+      />
+
+      <CommentBottomModal
+        visible={Boolean(commentItem)}
+        reviewId={commentItem?.review_id ?? 0}
+        onClose={() => setCommentItem(null)}
       />
 
       <CustomDialog
@@ -208,7 +224,10 @@ export default function CommunityListScreen() {
             target_type : 'R',
           }, {
             onSuccess: () => {
-              showToast({ text1: '차단되었습니다.' })
+              showToast({ text1: '차단되었습니다.' });
+              queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.COMMUNITY, QUERY_KEYS.COMMUNITY_REVIEW_LIST],
+              });
             },
             onError: () => showToast({ text1: '차단 중 문제가 발생했습니다.' }),
             onSettled: () => setIsBlockDialogVisible(false)

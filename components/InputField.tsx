@@ -1,5 +1,5 @@
 import { COLOR, COMM_STYLES } from '@/constants';
-import React, { ForwardedRef, forwardRef, ReactNode, RefObject, useRef } from 'react';
+import React, { ForwardedRef, forwardRef, ReactNode, RefObject, useEffect, useRef } from 'react';
 import { InputAccessoryView, Keyboard, Platform, StyleSheet, Text, TextInput, TextInputProps, TouchableOpacity, View } from 'react-native';
 
 interface InputFieldProps extends TextInputProps {
@@ -13,12 +13,20 @@ interface InputFieldProps extends TextInputProps {
 
 const InputField = ({ label, variant = "filled", error, rightChild = null, textArea = false, touchStyle = {}, style, ...props }: InputFieldProps, ref?: ForwardedRef<TextInput>) => {
   const innerRef = useRef<TextInput>(null);
-  const accessoryIDRef = useRef(label ? `input-accessory-${label}` : `input-accessory-${Math.random().toString(3)}`);
+  const randomID = Math.random().toString(2);
+  const accessoryIDRef = useRef(label ? `input-accessory-${label}-${randomID}` : `input-accessory-${randomID}`);
   const isIOS = Platform.OS === 'ios';
   const isTextArea = textArea || Boolean(props.multiline);
   const multilineLines = isTextArea ? (props.numberOfLines ?? 5) : 1;
   const multilineInputHeight = multilineLines * 24;
   const multilineContainerHeight = multilineInputHeight + 20;
+
+  useEffect(() => {
+    return () => {
+      innerRef.current?.blur();
+      Keyboard.dismiss();
+    };
+  }, []);
 
   return (
     <View>

@@ -5,7 +5,7 @@ import { useChatDelete, useChatExit, useChatInsert, useChatListPaging, useChatMe
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
-import React, { useMemo, useEffect, useRef, useState, useCallback } from 'react';
+import { useMemo, useEffect, useRef, useState, useCallback } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native';
 import { Alert } from 'react-native';
 import * as Clipboard from 'expo-clipboard';

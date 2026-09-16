@@ -4,7 +4,7 @@ import InputField from '@/components/InputField';
 import { COLOR, COMM_STYLES } from '@/constants';
 import { CodeInfo, MeetInfo } from '@/types';
 import { formatNumberWithComma, getFeeList } from '@/utils/commUtil';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -21,10 +21,14 @@ export default function FeeInput() {
 
   const feeYn = watch('fee_yn') as 'N' | 'Y' | undefined;
   const feeType = watch('fee_info');
+  const selectedFeeTypes = useMemo(
+    () => (feeType ?? '').split('|').filter(Boolean),
+    [feeType],
+  );
 
   const isEtcSelected = useMemo(
-    () => feeList?.find((item) => item.code_id === feeType)?.code_id === 'FEE_INFO_99',
-    [feeList, feeType],
+    () => selectedFeeTypes.includes('FEE_INFO_99'),
+    [selectedFeeTypes],
   );
 
   return (
@@ -101,7 +105,7 @@ export default function FeeInput() {
               <>
                 <View style={styles.feeInfoTypeContainer}>
                   {feeList.map((item) => {
-                    const selected = feeType === item.code_id;
+                    const selected = selectedFeeTypes.includes(item.code_id);
 
                     return (
                       <TouchableOpacity
@@ -109,8 +113,15 @@ export default function FeeInput() {
                         style={[styles.feeInfoTypeBox, selected && styles.feeInfoTypeBoxSelected]}
                         activeOpacity={0.6}
                         onPress={() => {
-                          onChange(item.code_id);
-                          if (item.code_id !== 'FEE_INFO_99') setValue('fee_desc', '');
+                          const isEtc = item.code_id === 'FEE_INFO_99';
+                          const nextSelectedFeeTypes = isEtc
+                            ? selected ? [] : [item.code_id]
+                            : selected
+                              ? selectedFeeTypes.filter((codeId) => codeId !== item.code_id)
+                              : [...selectedFeeTypes.filter((codeId) => codeId !== 'FEE_INFO_99'), item.code_id];
+
+                          onChange(nextSelectedFeeTypes.join('|'));
+                          if (!nextSelectedFeeTypes.includes('FEE_INFO_99')) setValue('fee_desc', '');
                         }}>
                         <Text style={[styles.feeInfoTypeText, selected && styles.feeInfoTypeTextSelected]}>{item.code_value}</Text>
                       </TouchableOpacity>
@@ -128,7 +139,7 @@ export default function FeeInput() {
               control={control}
               rules={{
                 validate: (value) => {
-                  if (feeType !== 'FEE_INFO_99') {
+                  if (!isEtcSelected) {
                     return true;
                   }
                   if (!value?.trim()) {

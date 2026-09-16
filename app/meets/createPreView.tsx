@@ -1,10 +1,10 @@
 import { COMM_CONSTANTS, COMM_STYLES } from "@/constants";
-import React, { useState } from "react";
-import { ScrollView, Text, View, StyleSheet, FlatList, Alert } from 'react-native';
+import { useEffect, useState } from "react";
+import { ScrollView, Text, View, Alert } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetInsert, useMeetUpdate } from "@/hooks/queries/useMeet";
-import { ApiResult, MeetInfo } from "@/types";
+import { ApiResult, CodeInfo, MeetInfo } from "@/types";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -15,12 +15,12 @@ import IconDetailCategory from '@/assets/images/icon_detail_category.svg';
 import IconDetailMembers from '@/assets/images/icon_detail_members.svg';
 import IconDetailFee from '@/assets/images/icon_detail_fee.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
-import { formatNumberWithComma, parseImageList } from "@/utils/commUtil";
+import { formatFeeInfo, formatNumberWithComma, getFeeList, parseImageList } from "@/utils/commUtil";
 import DividingLine from "@/components/DividingLine";
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
-import ProfileIcon from "@/components/ProfileIcon";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import IconDetailAge from '@/assets/images/icon_detail_age.svg';
+import HostMemberSection from "@/components/comm/HostMemberSection";
 
 /**
  * 모임 생성 - 최종 미리보기 및 생성 화면
@@ -32,6 +32,15 @@ export default function MeetCreatePreViewScreen() {
   const meetUpdate = useMeetUpdate();
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [feeList, setFeeList] = useState<CodeInfo[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      setFeeList(await getFeeList());
+    })();
+  }, []);
+
+  const feeInfoText = formatFeeInfo(prevMeetInfo.fee_info, prevMeetInfo.fee_desc, feeList);
 
   const handleMutationSuccess = (result: ApiResult<null>) => {
     if (result.ret_code !== 200) {
@@ -113,34 +122,13 @@ export default function MeetCreatePreViewScreen() {
         <DividingLine />
 
         {/* 모임장 및 참여 멤버 */}
-
-        <View style={styles.membersContainer}>
-          {/* 모임장 소개 섹션 */}
-          <View style={styles.membersSection}>
-            <Text style={styles.membersSectionTitle}>모임장 소개</Text>
-            <View style={styles.hostContainer}>
-                <ProfileIcon mem_image_url={prevMeetInfo?.mem_image_url || ''} type="HOST" />
-              <View style={styles.hostInfo}>
-                <Text style={styles.hostName}>{prevMeetInfo?.mem_nick}</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* 참여 멤버 섹션 */}
-          <View style={[styles.membersSection, { marginBottom: 0 }]}> 
-            <Text style={styles.membersSectionTitle}>참여 멤버</Text>
-            <FlatList
-              data={[]}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item, index) => prevMeetInfo?.mem_id?.toString() ?? String(index)}
-              contentContainerStyle={styles.memberListContent}
-              renderItem={({ item }) => (
-                <ProfileIcon mem_image_url={prevMeetInfo?.mem_image_url || ''} type="HOST" />
-              )}
-            />
-          </View>
-        </View>
+        <HostMemberSection
+          hostMemId={prevMeetInfo?.mem_id}
+          hostImageUrl={prevMeetInfo?.mem_image_url}
+          hostName={prevMeetInfo?.mem_nick}
+          hostInfo={prevMeetInfo?.mem_info}
+          members={[]}
+        />
 
         <DividingLine />
 
@@ -151,11 +139,16 @@ export default function MeetCreatePreViewScreen() {
           <Text style={COMM_STYLES.detailMainTitle}>모임에 대해 자세히 알려드려요.</Text>
           {/* 정보 박스 */}
           <View style={COMM_STYLES.detailInfoBox}>
-            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${prevMeetInfo?.meet_subj_name}`} />
-            <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`1회성 ${prevMeetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${prevMeetInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} />
+            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${prevMeetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${prevMeetInfo?.apply_type === 'F' ? '선착순' : '승인제'} · ${prevMeetInfo?.meet_subj_name}`} />
+            {/* <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`1회성 ${prevMeetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${prevMeetInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} /> */}
             <DetailInfoRow icon={<IconDetailMembers width={18} height={18} />} text={`최소 ${prevMeetInfo?.meet_min}명 ~ 최대 ${prevMeetInfo?.meet_max}명`} />
-            <DetailInfoRow icon={<MaterialIcons name="child-care" size={21} color="black" />} text={`나이 ${prevMeetInfo?.age_min}세 ~ ${prevMeetInfo?.age_max}세`} />
-            {prevMeetInfo?.fee_entry && <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(prevMeetInfo?.fee_entry)}원`} />}
+            {prevMeetInfo?.age_min && prevMeetInfo?.age_max && <DetailInfoRow icon={<IconDetailAge width={18} height={18} />} text={`${prevMeetInfo?.age_min === prevMeetInfo?.age_max ? `${prevMeetInfo?.age_min}세` : `${prevMeetInfo?.age_min}세 ~ ${prevMeetInfo?.age_max}세`}`} />}
+            {prevMeetInfo?.fee_yn === 'Y' && (
+              <>
+                <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(prevMeetInfo?.fee_entry)}원`} />
+                <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={feeInfoText} />
+              </>
+            )}
             <DetailInfoRow icon={<IconCalendar width={18} height={18} />} text={`${prevMeetInfo?.meet_datetime}`} />
             {prevMeetInfo?.place_name && <DetailInfoRow icon={<IconDetailMarker width={18} height={18} />} text={`${prevMeetInfo?.place_name}`} />}
           </View>
@@ -183,40 +176,3 @@ export default function MeetCreatePreViewScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  membersContainer: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 25,
-  },
-  membersSection: {
-    marginBottom: 30,
-  },
-  membersSectionTitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 15,
-    fontWeight: '700',
-  },
-  memberListContent: {
-    alignItems: 'center',
-  },
-  hostContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  hostInfo: {
-    marginLeft: 15,
-  },
-  hostName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
-  },
-  hostGreeting: {
-    fontSize: 14,
-    color: '#888',
-  },
-});

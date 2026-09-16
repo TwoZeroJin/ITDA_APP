@@ -1,8 +1,7 @@
 import InputField from "@/components/InputField";
-import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-function ChurchTmNmInput() {
+function ChurchMnmInput() {
     const { control } = useFormContext();
   return (
     <Controller
@@ -15,8 +14,9 @@ function ChurchTmNmInput() {
       //     }
       //   }
       // }}
-      render={({field: {onChange, value}, fieldState: {error}}) => (
+      render={({field: { ref,onChange, value}, fieldState: {error}}) => (
         <InputField
+          ref={ref}
           label="담임목사 이름" 
           placeholder="담임목사 이름을 입력하세요."
           inputMode='text'
@@ -33,4 +33,4 @@ function ChurchTmNmInput() {
   )
 }
 
-export default ChurchTmNmInput;
+export default ChurchMnmInput;

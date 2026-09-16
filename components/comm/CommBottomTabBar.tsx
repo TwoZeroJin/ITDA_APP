@@ -9,7 +9,7 @@ import { BottomTabBarProps } from 'expo-router/js-tabs';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { saveAsyncStore } from '@/utils/asyncStoreUtil';
+import { getAsyncStore, saveAsyncStore } from '@/utils/asyncStoreUtil';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { getMemberInfo, parseChatPayload } from '@/utils/commUtil';
 
@@ -29,23 +29,30 @@ const TAB_PATHS: Record<string, string> = {
  */
 function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  {
   const { checkAndNavigate } = useAuthRouter();
-  const [ isChatYn, setIsChatYn] = useState('N');
+  const [isChatYn, setIsChatYn] = useState('N');
 
   useEffect(() => {
     const fetchMyMemberInfo = async () => {
       const memberInfo = await getMemberInfo();
       if (memberInfo) {
-        // sender_id가 본인이 아닐 경우에만 뱃지 ON
+        // 로그인한 경우 Topic 구독
         MqttUtil.subscribeTopicList(memberInfo.topic_list ?? [], 'CommBottomTabBar', (msg) => {
           const payload = parseChatPayload(msg);
+          // sender_id가 본인이 아닐 경우에만 뱃지 ON
           if (memberInfo.mem_id !== Number(payload.sender_id)) {
             setIsChatYn('Y');
           }
         });
+        // 푸시 카운트 있을 경우 뱃지 ON
+        const val = await getAsyncStore(STORE_KEY.PUSH_COUNT);
+        if (val && Number(val) > 0) {
+          setIsChatYn('Y');
+        }
       }
       else {
         MqttUtil.unsubscribeAll('CommBottomTabBar');
       }
+
     }
     fetchMyMemberInfo();
 
@@ -84,6 +91,7 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
             onPress={onPress}
             style={styles.tabButton}
             activeOpacity={0.6}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <View style={styles.iconContainer}>
               {getIcon(name, isFocused, isChatYn)}

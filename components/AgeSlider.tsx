@@ -1,6 +1,6 @@
 import { COLOR } from "@/constants";
 import Slider from "@react-native-community/slider";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 type AgeSliderProps = {
@@ -95,6 +95,7 @@ function AgeSlider({ minAge, maxAge, onMinAgeChange, onMaxAgeChange, disabled = 
             onSlidingStart={() => setActiveThumb('min')}
             minimumValue={10}
             maximumValue={50}
+            upperLimit={normalizedMax}
             step={1}
             disabled={disabled}
             minimumTrackTintColor="transparent"
@@ -112,6 +113,7 @@ function AgeSlider({ minAge, maxAge, onMinAgeChange, onMaxAgeChange, disabled = 
             onSlidingStart={() => setActiveThumb('max')}
             minimumValue={10}
             maximumValue={50}
+            lowerLimit={normalizedMin}
             step={1}
             disabled={disabled}
             minimumTrackTintColor="transparent"
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
     color             : COLOR.COMM_WHITE,
   },
   trackWrapper: {
-    height            : 40,
+    height            : 56,
     justifyContent    : 'center',
     position          : 'relative',
   },
@@ -184,7 +186,7 @@ const styles = StyleSheet.create({
   },
   slider: {
     width             : '100%',
-    height            : 40,
+    height            : 56,
   },
   valueRow: {
     marginTop         : 4,

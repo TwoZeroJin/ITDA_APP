@@ -4,7 +4,7 @@ import { TouchableOpacity, ActivityIndicator, ScrollView, Text, View, Image } fr
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useGroupApply, useGroupCancelApply, useGroupDelete } from "@/hooks/queries/useGroup";
-import { FileInfo, GroupApply, GroupInfo } from "@/types";
+import { CodeInfo, FileInfo, GroupApply, GroupInfo } from "@/types";
 import { useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -21,7 +21,7 @@ import { useAuthRouter } from "@/components/comm/AuthRoute";
 import DropdownModal from '@/components/modal/DropdownModal';
 import { router as expoRouter } from 'expo-router';
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
-import { formatNumberWithComma, renderTextWithHttpLinks } from "@/utils/commUtil";
+import { formatFeeInfo, formatNumberWithComma, getFeeList, renderTextWithHttpLinks } from "@/utils/commUtil";
 import SelectableWebText from '../../components/comm/SelectableWebText';
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import HostMemberSection from "@/components/comm/HostMemberSection";
@@ -50,6 +50,13 @@ export default function GroupDetailViewScreen() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [applyStatus, setApplyStatus] = useState<string | undefined>(undefined);
+  const [feeList, setFeeList] = useState<CodeInfo[]>([]);
+
+  useEffect(() => {
+    getFeeList().then(setFeeList);
+  }, []);
+
+  const feeInfoText = formatFeeInfo(groupInfo?.fee_info, groupInfo?.fee_desc, feeList);
 
   const handleSharePress = async () => {
     if (!groupInfo) return;
@@ -154,6 +161,9 @@ export default function GroupDetailViewScreen() {
         }
         else {
           showToast({ text1: '차단되었습니다.' });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+          });
           expoRouter.back();
         }
       },
@@ -494,10 +504,15 @@ export default function GroupDetailViewScreen() {
 
           {/* 정보 박스 */}
           <View style={COMM_STYLES.detailInfoBox}>
-            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${groupInfo?.group_subj_name}`} />
-            <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`클럽 · ${groupInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} />
+            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${groupInfo?.apply_type === 'F' ? '선착순' : '승인제'} · ${groupInfo?.group_subj_name}`} />
+            {/* <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`클럽 · ${groupInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} /> */}
             <DetailInfoRow icon={<IconDetailMembers width={18} height={18} />} text={`최대 ${groupInfo?.group_max}명`} />
-            {groupInfo?.fee_entry && <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(groupInfo?.fee_entry)}원`} />}
+            {groupInfo?.fee_yn === 'Y' && (
+              <>
+                <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(groupInfo?.fee_entry)}원`} />
+                <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={feeInfoText} />
+              </>
+            )}
             <DetailInfoRow icon={<IconCalendar width={18} height={18} />} text={`${groupInfo?.group_datetime}`} />
             {groupInfo?.place_name && <DetailInfoRow icon={<IconDetailMarker width={18} height={18} />} text={`${groupInfo?.place_name}`} />}
           </View>

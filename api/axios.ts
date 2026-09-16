@@ -88,8 +88,9 @@ axiosInstance.interceptors.response.use(
       // 토큰 갱신 요청 자체가 401인 경우 또는 이미 재시도한 요청인 경우 바로 로그아웃 처리
       if (originalRequest?.url === API_URL.USER_REFRESH_TOKEN || originalRequest?._retry) {
         showToast({ text1: '로그인 상태가 만료되었습니다.\n 다시 로그인해주세요.' });
+        isRefreshing = false;
         logoutUser();
-        return Promise.reject(error);
+        return Promise.resolve(error);
       }
 
       // 이미 다른 요청이 토큰 갱신 중이면, 갱신 완료 후 재요청하도록 대기

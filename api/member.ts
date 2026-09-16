@@ -9,11 +9,12 @@ async function memberDetail(): Promise<ApiResult<MemberDetail>> {
   const { data } = await axiosInstance.post(API_URL.MEMBER_DETAIL);
   return data;
 }
+
 /**
  * 회원 프로필 상세 정보 조회
  */
-async function memberProfileDetail(searchParams: SearchParams): Promise<ApiResult<MemberInfo>> {
-  const { data } = await axiosInstance.post(API_URL.MEMBER_PROFILE_DETAIL, searchParams);
+async function memberProfileDetail(body: MemberInfo): Promise<ApiResult<MemberInfo>> {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_PROFILE_DETAIL, body);
   return data;
 }
 

@@ -1,9 +1,9 @@
 import { COMM_CONSTANTS, COMM_STYLES } from "@/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, ScrollView, Text, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
-import { GroupInfo, ApiResult } from "@/types";
+import { CodeInfo, GroupInfo, ApiResult } from "@/types";
 import { router, useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -14,11 +14,12 @@ import IconDetailCategory from '@/assets/images/icon_detail_category.svg';
 import IconDetailMembers from '@/assets/images/icon_detail_members.svg';
 import IconDetailFee from '@/assets/images/icon_detail_fee.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
-import { parseImageList, formatNumberWithComma } from "@/utils/commUtil";
+import { formatFeeInfo, getFeeList, parseImageList, formatNumberWithComma } from "@/utils/commUtil";
 import { useGroupInsert, useGroupUpdate } from "@/hooks/queries/useGroup";
 import DividingLine from "@/components/DividingLine";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
+import HostMemberSection from "@/components/comm/HostMemberSection";
 
 /**
  * 클럽 생성 - 최종 미리보기 및 생성 화면
@@ -30,6 +31,15 @@ export default function GroupCreatePreViewScreen() {
   const groupUpdate = useGroupUpdate();
   const [isErrorDialogVisible, setIsErrorDialogVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [feeList, setFeeList] = useState<CodeInfo[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      setFeeList(await getFeeList());
+    })();
+  }, []);
+
+  const feeInfoText = formatFeeInfo(prevGroupInfo.fee_info, prevGroupInfo.fee_desc, feeList);
 
   const handleMutationSuccess = (result: ApiResult<null>) => {
     if (result.ret_code !== 200) {
@@ -108,6 +118,14 @@ export default function GroupCreatePreViewScreen() {
         <DividingLine />
         
         {/* 모임장 및 참여 멤버 */}
+        <HostMemberSection
+          hostMemId={prevGroupInfo?.mem_id}
+          hostImageUrl={prevGroupInfo?.mem_image_url}
+          hostName={prevGroupInfo?.mem_nick}
+          hostInfo={prevGroupInfo?.mem_info}
+          members={[]}
+        />
+
         {/* 클럽 상세 소개 */}
         <View style={COMM_STYLES.detailContainer}>
           {/* 상단 타이틀 */}
@@ -115,10 +133,15 @@ export default function GroupCreatePreViewScreen() {
           <Text style={COMM_STYLES.detailMainTitle}>클럽에 대해 자세히 알려드려요.</Text>
           {/* 정보 박스 */}
           <View style={COMM_STYLES.detailInfoBox}>
-            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${prevGroupInfo?.group_subj_name}`} />
-            <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`클럽 · ${prevGroupInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} />
+            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${prevGroupInfo?.apply_type === 'F' ? '선착순' : '승인제'} · ${prevGroupInfo?.group_subj_name}`} />
+            {/* <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`클럽 · ${prevGroupInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} /> */}
             <DetailInfoRow icon={<IconDetailMembers width={18} height={18} />} text={`최대 ${prevGroupInfo?.group_max}명`} />
-            {prevGroupInfo?.fee_entry && <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(prevGroupInfo?.fee_entry)}원`} />}
+            {prevGroupInfo?.fee_yn === 'Y' && (
+              <>
+                <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(prevGroupInfo?.fee_entry)}원`} />
+                <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={feeInfoText} />
+              </>
+            )}
             <DetailInfoRow icon={<IconCalendar width={18} height={18} />} text={`${prevGroupInfo?.group_datetime}`} />
             {prevGroupInfo?.place_name && <DetailInfoRow icon={<IconDetailMarker width={18} height={18} />} text={`${prevGroupInfo?.place_name}`} />}
           </View>

@@ -59,6 +59,10 @@ export default function MeetCreateDetailScreen() {
           style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
           enableOnAndroid={true}
+          enableAutomaticScroll={true}
+          keyboardOpeningTime={0}
+          extraScrollHeight={-80}
+          enableResetScrollToCoords={false}
         >
           {/* 소셜링 생성 타이틀 */}
           <View style={COMM_STYLES.detailTitleContainer}>

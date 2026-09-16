@@ -277,6 +277,17 @@ async function setFeeList(data: any) {
 async function getFeeList(): Promise<CodeInfo[]> {
   return await getAsyncData<CodeInfo[]>(STORE_KEY.FEE_LIST, JSON.parse) ?? [];
 }
+
+function formatFeeInfo(feeInfo: string | undefined, feeDesc: string | undefined, feeList: CodeInfo[]): string {
+  return (feeInfo ?? '')
+    .split('|')
+    .filter(Boolean)
+    .map((codeId) => codeId === 'FEE_INFO_99'
+      ? feeDesc
+      : feeList.find((item) => item.code_id === codeId)?.code_value ?? codeId)
+    .filter(Boolean)
+    .join(', ');
+}
 // 메인 배너 리스트
 async function setMainBannerList(data: any) {
   if (data) {
@@ -488,4 +499,4 @@ function formatRelativeMeetDatetime(meetDatetime: string) {
   return `D-${diffDays}`;
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, renderTextWithHttpLinks, isMeetItem, isLikeData, setReportList, getReportList, setPushStatus, getPushStatus };
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, formatFeeInfo, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, renderTextWithHttpLinks, isMeetItem, isLikeData, setReportList, getReportList, setPushStatus, getPushStatus };

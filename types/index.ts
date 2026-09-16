@@ -279,6 +279,7 @@ interface ReviewComment {
   like_yn         : string;
   like_cnt        : number;
   reg_sdate       : string;
+  mod_sdate       : string;
 }
 
 /**

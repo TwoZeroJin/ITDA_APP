@@ -145,6 +145,10 @@ export default function MemberUpdateScreen() {
         ]}
         keyboardShouldPersistTaps="handled"
         enableOnAndroid={true}
+        enableAutomaticScroll={true}
+        keyboardOpeningTime={0}
+        extraScrollHeight={-120}
+        enableResetScrollToCoords={false}
       >
         <FormProvider {...updateForm}>
           <View style={{gap: 16, marginBottom: 16}}>

@@ -432,7 +432,7 @@ const COMM_STYLES = StyleSheet.create({
     borderRadius        : 8,
     paddingHorizontal   : 20,
     paddingVertical     : 17,
-    marginBottom        : 16,
+    marginBottom        : 8,
   },
   //
   detailTitleContainer: {

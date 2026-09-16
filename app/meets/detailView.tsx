@@ -1,10 +1,10 @@
 import { COLOR, COMM_STYLES, COMM_CONSTANTS, QUERY_KEYS } from "@/constants";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View, Image } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import CommBottomButton from "@/components/comm/CommBottomButton";
 import { useMeetApply, useMeetDetailView, useMeetMemberList, useMeetCancelApply, useMeetDelete } from "@/hooks/queries/useMeet";
-import { FileInfo, MeetApply, MeetInfo } from "@/types";
+import { CodeInfo, FileInfo, MeetApply, MeetInfo } from "@/types";
 import { useLocalSearchParams } from "expo-router";
 import ImageCarousel from "@/components/comm/ImageCarousel";
 import CommLabel from "@/components/comm/CommLabel";
@@ -14,6 +14,7 @@ import IconDetailMarker from '@/assets/images/icon_detail_marker.svg';
 import IconDetailCategory from '@/assets/images/icon_detail_category.svg';
 import IconDetailMembers from '@/assets/images/icon_detail_members.svg';
 import IconDetailFee from '@/assets/images/icon_detail_fee.svg';
+import IconDetailAge from '@/assets/images/icon_detail_age.svg';
 import CustomDialog from "@/components/modal/CustomDialog";
 import DividingLine from "@/components/DividingLine";
 import PlaceLocationBox from "@/components/PlaceLocationBox";
@@ -24,14 +25,13 @@ import { useAuthRouter } from "@/components/comm/AuthRoute";
 import { router as expoRouter } from 'expo-router';
 import { showToast } from "@/utils/commToast";
 import DetailInfoRow from "@/components/comm/DetailInfoRow";
-import { formatNumberWithComma, renderTextWithHttpLinks } from "@/utils/commUtil";
+import { formatFeeInfo, formatNumberWithComma, getFeeList } from "@/utils/commUtil";
 import HostMemberSection from "@/components/comm/HostMemberSection";
 import { useReportBlock } from "@/hooks/queries/useReport";
 import { useMemberLike } from "@/hooks/queries/useMember";
 import queryClient from "@/api/queryClient";
 import { shareFeedTemplate } from '@react-native-kakao/share';
 import SelectableWebText from "@/components/comm/SelectableWebText";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 type DialogType = 'none' | 'apply' | 'cancelApply' | 'cancelApply2' | 'delete' | 'error' | 'memUpdate' | 'report' | 'block';
 
@@ -58,6 +58,13 @@ export default function DetailViewScreen() {
   const [isDetailMenuVisible, setIsDetailMenuVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [applyStatus, setApplyStatus] = useState<string | undefined>(undefined);
+  const [feeList, setFeeList] = useState<CodeInfo[]>([]);
+
+  useEffect(() => {
+    getFeeList().then(setFeeList);
+  }, []);
+
+  const feeInfoText = formatFeeInfo(meetInfo?.fee_info, meetInfo?.fee_desc, feeList);
   const handleSharePress = async () => {
     if (!meetInfo) return;
 
@@ -158,6 +165,9 @@ export default function DetailViewScreen() {
         }
         else {
           showToast({ text1: '차단되었습니다.' });
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+          });
           expoRouter.back();
         }
       },
@@ -489,11 +499,16 @@ export default function DetailViewScreen() {
           <Text style={COMM_STYLES.detailMainTitle}>모임에 대해 자세히 알려드려요.</Text>
           {/* 정보 박스 */}
           <View style={COMM_STYLES.detailInfoBox}>
-            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${meetInfo?.meet_subj_name}`} />
-            <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`1회성 ${meetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${meetInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} />
+            <DetailInfoRow icon={<IconDetailCategory width={22} height={22} />} text={`${meetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${meetInfo?.apply_type === 'F' ? '선착순' : '승인제'} · ${meetInfo?.meet_subj_name}`} />
+            {/* <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={`${meetInfo?.meet_type === 'N' ? '일반' : '클럽'} 소셜링 · ${meetInfo?.apply_type === 'F' ? '선착순' : '승인제'}`} /> */}
             <DetailInfoRow icon={<IconDetailMembers width={18} height={18} />} text={`최소 ${meetInfo?.meet_min}명 ~ 최대 ${meetInfo?.meet_max}명`} />
-            <DetailInfoRow icon={<MaterialIcons name="child-care" size={21} color="black" />} text={`나이 ${meetInfo?.age_min}세 ~ ${meetInfo?.age_max}세`} />
-            {meetInfo?.fee_entry && <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(meetInfo?.fee_entry)}원`} />}
+            {meetInfo?.age_min && meetInfo?.age_max && <DetailInfoRow icon={<IconDetailAge width={18} height={18} />} text={`${meetInfo?.age_min === meetInfo?.age_max ? `${meetInfo?.age_min}세` : `${meetInfo?.age_min}세 ~ ${meetInfo?.age_max}세`}`} />}
+            {meetInfo?.fee_yn === 'Y' && (
+              <>
+                <DetailInfoRow icon={<IconDetailFee width={18} height={18} />} text={`${formatNumberWithComma(meetInfo?.fee_entry)}원`} />
+                <DetailInfoRow icon={<IconInfoMark width={18} height={18} />} text={feeInfoText} />
+              </>
+            )}
             <DetailInfoRow icon={<IconCalendar width={18} height={18} />} text={`${meetInfo?.meet_datetime}`} />
             {meetInfo?.place_name && <DetailInfoRow icon={<IconDetailMarker width={18} height={18} />} text={`${meetInfo?.place_name}`} />}
           </View>

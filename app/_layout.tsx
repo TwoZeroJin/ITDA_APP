@@ -17,6 +17,8 @@ import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-
 import Toast from 'react-native-toast-message';
 import * as Notifications from 'expo-notifications';
 import { initializeKakaoSDK } from '@react-native-kakao/core';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 const kakaoNativeAppKey = process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY;
 
@@ -81,28 +83,32 @@ export default function RootLayout() {
   }
 
   return (
-    <ActionSheetProvider>
-      <SafeAreaProvider>
-        <LoadingProvider>
+    <GestureHandlerRootView style={styles.gestureRoot}>
+      <ActionSheetProvider>
+        <SafeAreaProvider>
           <QueryClientProvider client={queryClient}>
-            <AuthRoute>
-              <SafeAreaView style={COMM_STYLES.container}>
-                <RootNavigator />
-              </SafeAreaView>
-              <LoadingLayout/>
-              <Toast config={{
-                customToast: ({text1, text2}) => (
-                  <View style={[styles.toastContainer, { marginTop: insets.top + 16 }]}>
-                    <Text style={{ fontSize: 18, fontFamily: 'Pretendard-Medium', color: COLOR.COMM_WHITE }}>{text1}</Text>
-                    {text2 && <Text style={{ fontFamily: 'Pretendard-Medium', color: COLOR.COMM_WHITE }}>{text2}</Text>}
-                  </View>
-                ),
-              }}/>
-            </AuthRoute>
+            <LoadingProvider>
+              <BottomSheetModalProvider>
+                <AuthRoute>
+                  <SafeAreaView style={COMM_STYLES.container}>
+                    <RootNavigator />
+                  </SafeAreaView>
+                  <LoadingLayout/>
+                  <Toast config={{
+                    customToast: ({text1, text2}) => (
+                      <View style={[styles.toastContainer, { marginTop: insets.top + 16 }]}>
+                        <Text style={{ fontSize: 18, fontFamily: 'Pretendard-Medium', color: COLOR.COMM_WHITE }}>{text1}</Text>
+                        {text2 && <Text style={{ fontFamily: 'Pretendard-Medium', color: COLOR.COMM_WHITE }}>{text2}</Text>}
+                      </View>
+                    ),
+                  }}/>
+                </AuthRoute>
+              </BottomSheetModalProvider>
+            </LoadingProvider>
           </QueryClientProvider>
-        </LoadingProvider>
-      </SafeAreaProvider>
-    </ActionSheetProvider>
+        </SafeAreaProvider>
+      </ActionSheetProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -150,6 +156,9 @@ function RootNavigator() {
 }
 
 const styles = StyleSheet.create({
+  gestureRoot: {
+    flex: 1,
+  },
   toastContainer: { 
     backgroundColor : COLOR.APP_MAIN, 
     padding         : 16, 

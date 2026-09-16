@@ -7,7 +7,6 @@ import ImageCarousel from "@/components/comm/ImageCarousel";
 import PlaceLocationBox from '@/components/PlaceLocationBox';
 import CommCard from '@/components/comm/CommCard';
 import ProfileIcon from "@/components/ProfileIcon";
-import CommentBottomModal from '@/components/modal/CommentBottomModal';
 import IconComment from '@/assets/images/icon_comment.svg';
 import IconLikeOff from '@/assets/images/icon_review_like_off.svg';
 import IconLikeOn from '@/assets/images/icon_review_like_on.svg';
@@ -21,21 +20,17 @@ interface communityFeedProps {
   handleDelete?     : (item: MeetReview) => void;
   handleReport?     : (item: MeetReview) => void;
   handleBlock?      : (item: MeetReview) => void;
+  onCommentPress?   : (item: MeetReview) => void;
 }
 
-export default function CommunityFeed({ item, handleLike, handleReviewLike, handleUpdate, handleDelete, handleReport, handleBlock }: communityFeedProps) {
+export default function CommunityFeed({ item, handleLike, handleReviewLike, handleUpdate, handleDelete, handleReport, handleBlock, onCommentPress }: communityFeedProps) {
   const { requireAuth } = useAuthRouter();
   const [isExpanded, setIsExpanded] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
-  const [isLiked, setIsLiked] = useState(item.like_review_yn === 'Y');
-  const [likeCnt, setLikeCnt] = useState(item.like_cnt ?? 0);
-  const [isCommentModalVisible, setIsCommentModalVisible] = useState(false);
   const imageList = item.img_list || [];
 
   const onPressLike = () => {
     requireAuth(() => {
-      setIsLiked((prev) => !prev);
-      setLikeCnt((prev) => (isLiked ? Math.max(0, prev - 1) : prev + 1));
       handleReviewLike?.(item);
     });
   };
@@ -155,27 +150,31 @@ export default function CommunityFeed({ item, handleLike, handleReviewLike, hand
 
       {/* 좋아요 / 댓글 영역 */}
       <View style={styles.engagementRow}>
-        <TouchableOpacity style={styles.engagementItem} activeOpacity={0.6} onPress={onPressLike}>
-          {isLiked ? (
+        <TouchableOpacity 
+          style={styles.engagementItem} 
+          activeOpacity={0.6} 
+          onPress={onPressLike}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          {item.like_review_yn === 'Y' ? (
             <View style={{ marginEnd: 1.5 }}>
               <IconLikeOn width={23} height={22} />
             </View>
           ) : (
             <IconLikeOff width={22} height={22} />
           )}
-          <Text style={styles.engagementText}>{likeCnt}</Text>
+          <Text style={styles.engagementText}>{item.like_cnt}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.engagementItem} activeOpacity={0.6} onPress={() => setIsCommentModalVisible(true)}>
+        <TouchableOpacity 
+          style={styles.engagementItem} 
+          activeOpacity={0.6} 
+          onPress={() => onCommentPress?.(item)}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
           <IconComment width={22} height={22} />
-          <Text style={styles.engagementText}>{item.comment_cnt ?? 0}</Text>
+          <Text style={styles.engagementText}>{item.comment_cnt}</Text>
         </TouchableOpacity>
       </View>
-
-      <CommentBottomModal
-        visible={isCommentModalVisible}
-        reviewId={item.review_id ?? 0}
-        onClose={() => setIsCommentModalVisible(false)}
-      />
     </View>
   )
 }

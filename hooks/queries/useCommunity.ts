@@ -91,12 +91,13 @@ function useMyMeetListNoReview(searchParams: SearchParams) {
 }
 
 // 후기 댓글 목록 조회 (무한 스크롤)
-function useReviewCommentList(searchParams: SearchParams) {
+function useReviewCommentList(searchParams: SearchParams, enabled = true) {
   const query = useInfiniteQuery({
     queryFn: ({ pageParam }) => reviewCommentList({ ...searchParams, page_no: pageParam }),
     queryKey: [QUERY_KEYS.COMMUNITY, QUERY_KEYS.COMMUNITY_REVIEW_COMMENT_LIST, searchParams],
     initialPageParam: searchParams.page_no, 
     getNextPageParam: getNextPageParamFromPaging,
+    enabled,
   });
   const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
   return { ...query, results };

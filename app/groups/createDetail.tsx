@@ -47,6 +47,10 @@ export default function GroupCreateDetailScreen() {
           style={{ marginBottom: 80 }}
           showsVerticalScrollIndicator={false}
           enableOnAndroid={true}
+          enableAutomaticScroll={true}
+          keyboardOpeningTime={0}
+          extraScrollHeight={-80}
+          enableResetScrollToCoords={false}
         >
           <View style={COMM_STYLES.detailTitleContainer}>
             <Text style={COMM_STYLES.commCreateTitle}>{'어떻게 모임원을 모을까요?'}</Text>

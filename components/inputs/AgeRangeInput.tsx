@@ -1,5 +1,4 @@
 import { COMM_STYLES } from '@/constants';
-import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { Text, View } from 'react-native';
 import IconInfoMark from '@/assets/images/icon_info_mark.svg';

@@ -1,5 +1,5 @@
 import { COLOR, COMM_STYLES, STORE_KEY } from "@/constants";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import CommHeader from "@/components/comm/CommHeader";
 import { usePushListPaging } from "@/hooks/queries/usePush";
@@ -67,10 +67,15 @@ export default function NotiListScreen() {
             activeOpacity={0.6}
             onPress={() => {
               if (item.push_data) {
-                const target_type = item.push_type.includes('MEET') ? COMM_CONSTANTS.COMM_MEET : COMM_CONSTANTS.COMM_GROUP;
+                const push_type = item.push_type;
+                const target_type = push_type.includes('MEET') ? COMM_CONSTANTS.COMM_MEET : COMM_CONSTANTS.COMM_GROUP;
                 const target_id = JSON.parse(item.push_data)?.[`${target_type.toLowerCase()}_id`];
-                const apply_type = item.push_type.includes('APPLY') ? JSON.parse(item.push_data)?.[`apply_type`] : '';
-                const pathname = item.push_type.includes('APPLY') ? (apply_type === 'A' ? '/members/applyList': '/members/memberList') : item.push_type.includes('CONFIRM') ? '/members/memberList' : '/chats';
+                const apply_type = push_type.includes('APPLY') ? JSON.parse(item.push_data)?.[`apply_type`] : '';
+                const pathname = 
+                  push_type.includes('APPLY') ? (apply_type === 'A' ? '/members/applyList' : '/members/memberList') : 
+                  push_type.includes('CONFIRM') ? '/members/memberList' : 
+                  push_type.includes('MEET_PUSH') ? '/meets/detailView' : '/chats';
+                // 회원 승인/가입 알람
                 if (pathname.includes('/members')) {
                   router.navigate({
                     pathname: pathname,
@@ -80,7 +85,8 @@ export default function NotiListScreen() {
                     }
                   });
                 }
-                else if (pathname.includes('/chat')) {
+                // 회원 채팅창
+                else if (pathname.includes('/chats')) {
                   const chat_data = JSON.parse(item.push_data);
                   router.navigate({
                     pathname: pathname,
@@ -89,6 +95,15 @@ export default function NotiListScreen() {
                       room_name     : chat_data?.room_name,
                       room_type     : chat_data?.room_type,
                       expiry_date   : chat_data?.expiry_date
+                    }
+                  });
+                }
+                // 소셜링 상세
+                else if (pathname.includes('/meets')) {
+                  router.navigate({
+                    pathname: pathname,
+                    params: {
+                      meetId: target_id,
                     }
                   });
                 }
