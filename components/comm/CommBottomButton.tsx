@@ -2,7 +2,6 @@ import CustomButton from "@/components/comm/CustomButton";
 import BtnLikeDefault from '@/assets/images/icon_bottom_like_default.svg';
 import BtnLikeActive from '@/assets/images/icon_bottom_like_active.svg';
 import { COLOR } from "@/constants";
-import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

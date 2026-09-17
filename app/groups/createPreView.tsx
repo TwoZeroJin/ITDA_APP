@@ -155,8 +155,7 @@ export default function GroupCreatePreViewScreen() {
 
       <CustomDialog
         visible={isErrorDialogVisible}
-        title="생성 실패"
-        content={`클럽을 생성하지 못했어요. 잠시 후 다시 시도해 주세요. \n${errorMessage}`}
+        content={`${errorMessage}`}
         cancelLabel="닫기"
         confirmLabel="다시 시도"
         onCancel={() => setIsErrorDialogVisible(false)}

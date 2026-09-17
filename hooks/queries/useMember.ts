@@ -2,7 +2,7 @@ import { QUERY_KEYS } from '@/constants';
 import { useLoading } from '@/contexts/LoadingContext';
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { memberApplyGroupList, memberProfileDetail, memberApplyList, memberApplyMeetList, memberDetail, memberLike, memberLikeList, memberMyGroupList, memberMyMeetList, memberUpdate, memberWithdrawal } from '@/api/member';
+import { memberApplyGroupList, memberProfileDetail, memberApplyList, memberApplyMeetList, memberDetail, memberLike, memberLikeList, memberMyGroupList, memberMyMeetList, memberUpdate, memberWithdrawal, memberAllGroupList } from '@/api/member';
 import { getNextPageParamFromPaging } from '@/utils/commUtil';
 import { MemberInfo, MemberLike, SearchParams } from '@/types';
 import queryClient from '@/api/queryClient';
@@ -166,6 +166,20 @@ function useMemberApplyGroupListPaging(searchParams: SearchParams, options?: { e
   return { ...query, results };
 }
 
+// 내가 속한 모든 클럽 목록 조회 (무한 스크롤)
+function useMemberAllGroupListPaging(searchParams: SearchParams, options?: { enabled?: boolean }  ) {
+  const { enabled = true } = options ?? {};
+  const query = useInfiniteQuery({
+    queryFn: ({ pageParam }) => memberAllGroupList({ ...searchParams, page_no: pageParam }),
+    queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_ALL_GROUP_LIST, searchParams],
+    initialPageParam: searchParams.page_no,
+    getNextPageParam: getNextPageParamFromPaging,
+    enabled,
+  });
+  const results = query.data?.pages.flatMap(page => page.data ?? []) ?? [];
+  return { ...query, results };
+}
+
 /**
  * 회원 탈퇴
  */
@@ -188,4 +202,4 @@ function useMemberWithdrawl() {
   });
 }
 
-export { useMemberDetail, useProfileDetailView, useMemberUpdate, useMemberLike, useMemberLikeListPaging, useMemberApplyList, useMemberMyMeetListPaging, useMemberApplyMeetListPaging, useMemberMyGroupListPaging, useMemberApplyGroupListPaging, useMemberWithdrawl }
+export { useMemberDetail, useProfileDetailView, useMemberUpdate, useMemberLike, useMemberLikeListPaging, useMemberApplyList, useMemberMyMeetListPaging, useMemberApplyMeetListPaging, useMemberMyGroupListPaging, useMemberApplyGroupListPaging, useMemberWithdrawl, useMemberAllGroupListPaging }

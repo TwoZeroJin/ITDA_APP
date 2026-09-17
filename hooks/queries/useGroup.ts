@@ -44,13 +44,15 @@ function useGroupInsert() {
       setLoading(true);
       return groupInsert(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -66,13 +68,15 @@ function useGroupUpdate() {
       setLoading(true);
       return groupUpdate(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -88,13 +92,15 @@ function useGroupDelete() {
       setLoading(true);
       return groupDelete(groupId);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_PAGING],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -120,13 +126,15 @@ function useGroupApply() {
       setLoading(true);
       return groupApply(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_APPLY],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_APPLY],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -142,13 +150,15 @@ function useGroupCancelApply() {
       setLoading(true);
       return groupCancelApply(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CANCEL_APPLY],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CANCEL_APPLY],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -164,10 +174,12 @@ function useGroupConfirm() {
       setLoading(true);
       return groupConfirm(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CONFIRM],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GROUP, QUERY_KEYS.GROUP_CONFIRM],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);

@@ -176,9 +176,9 @@ export default function MemberUpdateScreen() {
         confirmLabel="OK"
         onCancel={() => {}}
         onConfirm={() => {
-        setIsAuthDialogVisible(false);
-        logout();
-        router.replace('/user/login');
+          setIsAuthDialogVisible(false);
+          logout();
+          router.replace('/user/login');
         }}
       />
     </View>

@@ -378,7 +378,7 @@ export default function GroupDetailViewScreen() {
         return {
           visible     : true,
           title       : '처리 실패',
-          content     : `정상 처리되지 않았습니다. \n${errorMessage}`,
+          content     : `처리되지 않았습니다. \n${errorMessage}`,
           cancelLabel : '닫기',
           onCancel    : () => setActiveDialog('none'),
           onConfirm   : () => setActiveDialog('none'),

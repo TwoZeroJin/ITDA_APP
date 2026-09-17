@@ -32,7 +32,6 @@ ITDA 사용자 앱
 # ########################
 #
 #
-#
 # #################
 # Android 실행 방법
 # 1. 개발자 옵션 ON 및 노트북 Ctype 선 연결 (권한 물어볼시 승인)
@@ -167,4 +166,12 @@ ITDA 사용자 앱
 # *** 2026-06-20 빌드 에러 발생 ***
 # 1. 애플에서 SMS 인증을 권장하지 않게 함 https://github.com/expo/fyi/blob/main/apple-2fa-sms-issues-workaround.md
 # 2. iOS 기기에 hannewacts@gmail.com 애플 아이디로 로그인 후 빌드 진행 필요
-
+#
+#
+# 앱 버전 업그레이드 후 조치 사항
+# 1. 앱 버전 업그레이드시 package.json에서 version 값 변경 (Major, Minor, Patch)
+# 2. 버전 변경 후 구글 플레이 및 앱스토어 제출
+# 3. cms.newitda.co.kr 접속 후 로그인 -> 설정관리 > 버전관리로 들어가 아이폰/안드로이드마다 앱 버전 및 버전 명, 필수 여부 등 등록 필요
+# 4. DB 직접 접속하여 TB_VIRSION_HIST 테이블에서 DEVICE_TYPE, APP_VER, APP_VER_NAME, UPDATE_STAT 직접 입력 가능
+# 5. DEVICE_TYPE은 IOS, AOS 각각 입력하고 APP_VER는 최대값 + 1로 등록, APP_VER_NAME은 package.json 버전에 맞게 등록, UPDATE_STAT은 1이면 필수로 업데이트 하게 해놨음. 추후 수정 필요시 /api/main/entry API 수정 필요
+# 6. API 및 CMS 적용 필요시 구글 플레이 및 앱스토어 제출 완료 후 적용, ssh로 서버 접속 후 각 디렉터리에서 build.sh 실행

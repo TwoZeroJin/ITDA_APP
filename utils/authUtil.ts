@@ -3,6 +3,8 @@ import { QUERY_KEYS, STORE_KEY } from '@/constants';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { deleteSecureStore } from '@/utils/secureStoreUtil';
 import { router } from 'expo-router';
+import { saveAsyncStore } from './asyncStoreUtil';
+import { emitPushCountChanged } from './pushCountEvent';
 
 const QUERY_KEYS_TO_RESET = [
   QUERY_KEYS.USER,
@@ -52,6 +54,11 @@ async function logoutUser() {
     )
   );
 
+  // push count 초기화
+  await saveAsyncStore(STORE_KEY.PUSH_COUNT, '0');
+  emitPushCountChanged(0);
+
+  router.dismissAll();
   router.replace("/" as any);
 }
 

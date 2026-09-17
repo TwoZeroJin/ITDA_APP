@@ -30,8 +30,24 @@ const subscribeAllTrackedTopics = () => {
       client!.subscribe(topic);
     } catch (e) {
       printErrorLog(`MQTT Resubscribe Exception : ${JSON.stringify(e)}`);
+      scheduleReconnect();
     }
   });
+};
+
+const subscribeTopicSafely = (topic: string) => {
+  if (!client || !client.isConnected()) {
+    return false;
+  }
+
+  try {
+    client.subscribe(topic);
+    return true;
+  } catch (e) {
+    printErrorLog(`MQTT Subscribe Exception : ${JSON.stringify(e)}`);
+    scheduleReconnect();
+    return false;
+  }
 };
 
 const reconnectAndRestoreSubscriptions = async () => {
@@ -90,8 +106,8 @@ const bindClientEvents = (mqttClient: Client) => {
   mqttClient.onConnectionLost = (response) => {
     connectPromise = null;
       if (response.errorCode !== 0) {
-          printInfoLog('connection Lost : ', response.errorMessage);
-      scheduleReconnect();
+        printInfoLog('connection Lost : ', response.errorMessage);
+        scheduleReconnect();
       }
   }
 
@@ -182,8 +198,8 @@ const subscribe = async (topic: string, subscriberId: string, msgReceiveCallback
   subscribers.set(subscriberId, msgReceiveCallback);
   topicSubscribers.set(topic, subscribers);
 
-  if (!hadAnySubscribers) {
-    client.subscribe(topic);
+  if (!hadAnySubscribers && !subscribeTopicSafely(topic)) {
+    return false;
   }
 
   return true;
@@ -289,7 +305,12 @@ const sendMessage = (topic : string, payload: string | object) => {
   const message = new Message(messagePayload);
   message.destinationName = topic;
   message.qos = 1; // QoS 설정
-  client.send(message);
+  try {
+    client.send(message);
+  } catch (e) {
+    printErrorLog(`MQTT Send Exception : ${JSON.stringify(e)}`);
+    scheduleReconnect();
+  }
 }
 
 /**

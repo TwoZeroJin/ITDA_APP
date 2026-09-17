@@ -1,12 +1,10 @@
 import CommHeader from '@/components/comm/CommHeader';
 import CommCard2 from '@/components/comm/CommCard2';
 import { COLOR, COMM_STYLES } from '@/constants';
-import { useMemberMyGroupListPaging } from '@/hooks/queries/useMember';
+import { useMemberAllGroupListPaging } from '@/hooks/queries/useMember';
 import { GroupInfo } from '@/types';
 import { useCallback, useState } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect } from 'expo-router/react-navigation';
-import React from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import CommBottomButton from '@/components/comm/CommBottomButton';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
@@ -20,7 +18,7 @@ export default function SelectGroupScreen() {
   const [group_id, setGroupId] = useState<number>(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useMemberMyGroupListPaging({
+  const { results, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useMemberAllGroupListPaging({
     page_no   : 0,
     page_size : 20,
   });

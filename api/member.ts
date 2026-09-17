@@ -78,6 +78,14 @@ async function memberMyGroupList(searchParams: SearchParams): Promise<ApiResult<
 }
 
 /**
+ * 내가 속한 모든 클럽 목록 조회 
+ */
+async function memberAllGroupList(searchParams: SearchParams): Promise<ApiResult<GroupInfo[]>> {
+  const { data } = await axiosInstance.post(API_URL.MEMBER_ALL_GROUP_LIST, searchParams);
+  return data;
+}
+
+/**
  * 내가 신청한 클럽 목록 조회 
  */
 async function memberApplyGroupList(searchParams: SearchParams): Promise<ApiResult<GroupInfo[]>> {
@@ -101,4 +109,4 @@ async function memberWithdrawal() {
   return data;
 }
 
-export { memberDetail, memberProfileDetail, memberUpdate, memberLike, memberLikeList, memberApplyList, memberMyMeetList, memberApplyMeetList, memberMyGroupList, memberApplyGroupList, memberLogout, memberWithdrawal };
+export { memberDetail, memberProfileDetail, memberUpdate, memberLike, memberLikeList, memberApplyList, memberMyMeetList, memberApplyMeetList, memberMyGroupList, memberApplyGroupList, memberAllGroupList, memberLogout, memberWithdrawal };

@@ -1,5 +1,5 @@
 import { FileInfo } from '@/types';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import IconCamera from '@/assets/images/icon_camera.svg';
 import IconCloseBtn from '@/assets/images/icon_close_btn.svg';
@@ -15,6 +15,12 @@ function CommImagePicker({ onChangeImages, maxCount = 10, imgList = [] }: CommIm
   // 이미지를 뿌리기 위한 URI 배열과, API에서 반환받은 파일 정보 배열을 각각 관리
   const [imageUris, setImageUris] = useState<Array<string>>(imgList.map((file) => file.file_path));
   const [uploadedFiles, setUploadedFiles] = useState<FileInfo[]>(imgList);
+
+  useEffect(() => {
+    setImageUris(imgList.map((file) => file.file_path));
+    setUploadedFiles(imgList);
+  }, [imgList]);
+  
   const addImageUris = (files: FileInfo[]) => {
     if (imageUris.length + files.length > maxCount) {
       Alert.alert('이미지 개수 초과', `추가 가능한 이미지는 최대 ${maxCount}개입니다.`);

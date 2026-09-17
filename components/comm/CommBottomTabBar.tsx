@@ -6,7 +6,7 @@ import My from '@/assets/images/navi_my.svg';
 import { COLOR, STORE_KEY } from '@/constants';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
 import { BottomTabBarProps } from 'expo-router/js-tabs';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { getAsyncStore, saveAsyncStore } from '@/utils/asyncStoreUtil';
@@ -42,11 +42,17 @@ function CommBottomTabBar({state, descriptors, navigation}: BottomTabBarProps)  
           if (memberInfo.mem_id !== Number(payload.sender_id)) {
             setIsChatYn('Y');
           }
+          else {
+            setIsChatYn('N');
+          }
         });
         // 푸시 카운트 있을 경우 뱃지 ON
         const val = await getAsyncStore(STORE_KEY.PUSH_COUNT);
         if (val && Number(val) > 0) {
           setIsChatYn('Y');
+        }
+        else {
+          setIsChatYn('N');
         }
       }
       else {

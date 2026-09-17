@@ -46,14 +46,15 @@ function useMeetInsert() {
       setLoading(true);
       return meetInsert(body);
     },
-    onSuccess: () => {
-      // INVALID 시 해당 쿼리키 캐시 삭제 후 재조회
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -69,13 +70,15 @@ function useMeetUpdate() {
       setLoading(true);
       return meetUpdate(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -91,13 +94,15 @@ function useMeetDelete() {
       setLoading(true);
       return meetDelete(meetId);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_PAGING],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -124,13 +129,15 @@ function useMeetApply() {
       setLoading(true);
       return meetApply(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_APPLY],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_APPLY],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -147,13 +154,15 @@ function useMeetCancelApply() {
       setLoading(true);
       return meetCancelApply(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CANCEL_APPLY],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CANCEL_APPLY],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEMBER, QUERY_KEYS.MEMBER_DETAIL],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);
@@ -169,10 +178,12 @@ function useMeetConfirm() {
       setLoading(true);
       return meetConfirm(body);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CONFIRM],
-      });
+    onSuccess: (result) => {
+      if (result?.ret_code == 200) {
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.MEET, QUERY_KEYS.MEET_CONFIRM],
+        });
+      }
     },
     onSettled: () => {
       setLoading(false);

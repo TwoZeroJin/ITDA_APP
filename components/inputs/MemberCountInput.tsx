@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
   memberInputWrap: {
     flex                : 1,
     minHeight           : 50,
+    maxHeight           : 70,
   },
   memberInput: {
     flex                : 1,
@@ -142,6 +143,6 @@ const styles = StyleSheet.create({
     fontFamily          : 'Pretendard-Medium',
     color               : COLOR.TEXT_DEFAULT,
     alignSelf           : 'center',
-    marginTop           : 25,
+    marginTop           : 35,
   },
 });
