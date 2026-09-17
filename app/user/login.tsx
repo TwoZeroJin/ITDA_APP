@@ -19,8 +19,8 @@ export default function LoginScreen() {
   const { expoPushToken } = usePushNotification();
   const loginForm = useForm<User>({
     defaultValues: {
-      login_id    : "",
-      login_pwd   : "",
+      login_id    : "ghong",
+      login_pwd   : "qwer1234",
     }
   });
 
