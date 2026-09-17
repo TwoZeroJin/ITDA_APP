@@ -31,7 +31,7 @@ async function chatMemberList({ room_id }: { room_id: string }): Promise<ApiResu
 /**
  * 채팅 데이터 입력
  */
-async function chatInsert(body: ChatData): Promise<ApiResult<null>> {
+async function chatInsert(body: ChatData): Promise<ApiResult<string>> {
   const { data } = await axiosInstance.post(API_URL.CHAT_INSERT, body);
   return data;
 }

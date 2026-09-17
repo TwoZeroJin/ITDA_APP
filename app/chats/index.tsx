@@ -1,21 +1,24 @@
 import CommHeader from '@/components/comm/CommHeader';
 import CustomDialog from '@/components/modal/CustomDialog';
+import ImagePreviewModal from '@/components/modal/ImagePreviewModal';
 import { COLOR, COMM_CONSTANTS, COMM_STYLES } from '@/constants';
 import { useChatDelete, useChatExit, useChatInsert, useChatListPaging, useChatMemberList } from '@/hooks/queries/useChat';
 import { ChatData } from '@/types';
 import { MqttUtil } from '@/utils/mqttUtil';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { useMemo, useEffect, useRef, useState, useCallback } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native';
+import { FlatList, KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native';
 import { Alert } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
-import { getMemberInfo, parseChatPayload, renderTextWithHttpLinks } from '@/utils/commUtil';
-import ChatSend from '@/assets/images/icon_chat_send.svg';
+import { getMemberInfo, isImageMessage, parseChatPayload, renderTextWithHttpLinks } from '@/utils/commUtil';
+import IconChatSend from '@/assets/images/icon_chat_send.svg';
+import IconChatAdd from '@/assets/images/icon_chat_add.svg';
 import DropdownModal from '@/components/modal/DropdownModal';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 import CommBottomButton from '@/components/comm/CommBottomButton';
 import { showToast } from '@/utils/commToast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useImagePickerUpload } from '@/hooks/useImagePickerUpload';
 
 /**
  * 채팅 화면
@@ -41,6 +44,8 @@ export default function IndexScreen() {
   const [isExit, setIsExit] = useState(false);
   const [showNewMessageNotice, setShowNewMessageNotice] = useState(false);
   const [newMessageCount, setNewMessageCount] = useState(0);
+  const [pendingImage, setPendingImage] = useState<{ uri: string; filePath: string } | null>(null);
+  const [previewImageUri, setPreviewImageUri] = useState<string | null>(null);
   const [topic] = useState<string>(room_id ? room_id : `${COMM_CONSTANTS.COMM_MEMBER}_${Number(mem_id) < myMemId ? `${mem_id}_${myMemId}` : `${myMemId}_${mem_id}`}`);
   const msgInputRef = useRef<TextInput>(null);
   const mqttUtil = MqttUtil;
@@ -196,10 +201,8 @@ export default function IndexScreen() {
     });
   };
 
-  // 메시지 전송 핸들러
-  const handleSubmitChat = () => {
-    const trimMsg = chatMsg.trim();
-    if (!trimMsg) {
+  const sendChatMessage = (message: string) => {
+    if (!message.trim()) {
       return;
     }
 
@@ -208,34 +211,58 @@ export default function IndexScreen() {
     const chatData : ChatData = {
       chat_id     : chat_id,
       chat_type   : chat_type,
-      chat_msg    : trimMsg,
+      chat_msg    : message.trim(),
       room_id     : room_id,
       sender_id   : myMemId,
       send_date   : nowIso,
     };
 
-    setRealtimeMessages((prev) => [
-      {
-        ...chatData,
-      },
-      ...prev,
-    ]);
-
     setChatMsg('');
+    setPendingImage(null);
 
     // Mongo DB Insert
     chatInsert.mutate(
       {...chatData},
       {
-        onSuccess: () => {
-          // API 통신 후 mqtt 메시지 전송
-          mqttUtil.sendMessage(topic, {...chatData});
+        onSuccess: (result) => {
+          // API 통신 후 mqtt 메시지 전송 및 실시간 메시지 업데이트
+          const sentChatData = {
+            ...chatData,
+            chat_msg: result.data ?? chatData.chat_msg,
+          };
+          mqttUtil.sendMessage(topic, sentChatData);
+          setRealtimeMessages((prev) => [
+            {
+              ...sentChatData,
+            },
+            ...prev,
+          ]);
         },
       }
     );
 
     flatListRef.current?.scrollToOffset({ offset: 0, animated: false });
-  }
+  };
+
+  // 메시지 전송 핸들러
+  const handleSubmitChat = () => {
+    const trimMsg = chatMsg.trim();
+    if (pendingImage) {
+      sendChatMessage(pendingImage.filePath);
+      return;
+    }
+    sendChatMessage(trimMsg);
+  };
+
+  const { open: handleOpenChatImagePicker } = useImagePickerUpload({
+    onSuccess: (files) => {
+      const imagePath = files[0]?.file_path;
+      if (imagePath) {
+        setPendingImage(null);
+        sendChatMessage(imagePath);
+      }
+    },
+  });
 
   const formatDateBadgeText = (sourceDate?: string) => {
   if (!sourceDate) {
@@ -264,8 +291,18 @@ export default function IndexScreen() {
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   };
   const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.COMM_MEMBER ? room_name : item.mem_nick;
+  const renderChatMessage = (message: string, textStyle: object) => (
+    isImageMessage(message)
+      ? <Image source={{ uri: message }} style={styles.chatImage} />
+      : <Text style={textStyle}>{renderTextWithHttpLinks(message)}</Text>
+  );
 
-  const handleMessageLongPress = (message: string) => {
+  const handleMessagePress = (message: string) => {
+    if (isImageMessage(message)) {
+      setPreviewImageUri(message);
+      return;
+    }
+
     Alert.alert('메시지', undefined, [
       {
         text: '복사하기',
@@ -321,11 +358,12 @@ export default function IndexScreen() {
         {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
         <TouchableOpacity
           activeOpacity={1}
-          onLongPress={() => handleMessageLongPress(item.chat_msg)}
+          onPress={() => isImageMessage(item.chat_msg) && handleMessagePress(item.chat_msg)}
+          onLongPress={() => handleMessagePress(item.chat_msg)}
           delayLongPress={350}
           style={[styles.bubble, styles.myBubble]}
         >
-          <Text style={[styles.otherBubbleText, styles.myBubbleText]}>{renderTextWithHttpLinks(item.chat_msg)}</Text>
+          {renderChatMessage(item.chat_msg, [styles.otherBubbleText, styles.myBubbleText])}
         </TouchableOpacity>
       </View>
     ) : (
@@ -344,11 +382,12 @@ export default function IndexScreen() {
             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
               <TouchableOpacity
                 activeOpacity={1}
-                onLongPress={() => handleMessageLongPress(item.chat_msg)}
+                onPress={() => isImageMessage(item.chat_msg) && handleMessagePress(item.chat_msg)}
+                onLongPress={() => handleMessagePress(item.chat_msg)}
                 delayLongPress={350}
                 style={[styles.bubble, styles.otherBubble]}
               >
-                <Text style={styles.otherBubbleText}>{renderTextWithHttpLinks(item.chat_msg)}</Text>
+                {renderChatMessage(item.chat_msg, styles.otherBubbleText)}
               </TouchableOpacity>
               {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
             </View>
@@ -358,11 +397,12 @@ export default function IndexScreen() {
         <View style={styles.otherMessageOnlyWrap}>
           <TouchableOpacity
             activeOpacity={1}
-            onLongPress={() => handleMessageLongPress(item.chat_msg)}
+            onPress={() => isImageMessage(item.chat_msg) && handleMessagePress(item.chat_msg)}
+            onLongPress={() => handleMessagePress(item.chat_msg)}
             delayLongPress={350}
             style={[styles.bubble, styles.otherBubble]}
           >
-            <Text style={styles.otherBubbleText}>{renderTextWithHttpLinks(item.chat_msg)}</Text>
+            {renderChatMessage(item.chat_msg, styles.otherBubbleText)}
           </TouchableOpacity>
           {!isSameDateTime && <Text style={styles.timeText}>{formatTimeText(item.send_date)}</Text>}
         </View>
@@ -469,13 +509,13 @@ export default function IndexScreen() {
 
           {expiryYn === 'N' ? (
             <View style={styles.inputBarWrap}>
-              {/* 
-                <TouchableOpacity 
-                  activeOpacity={0.6}
-                >
-                  <ChatAdd width={30} height={30} />
-                </TouchableOpacity> 
-              */}
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={handleOpenChatImagePicker}
+              >
+                <IconChatAdd width={30} height={30} />
+              </TouchableOpacity>
+              {pendingImage && <Image source={{ uri: pendingImage.uri }} style={styles.pendingImagePreview} />}
               <TouchableOpacity 
                 style={styles.inputBoxWrap}
                 activeOpacity={0.6}
@@ -501,7 +541,7 @@ export default function IndexScreen() {
                 style={{ marginStart: -5, marginEnd: -10, paddingEnd : 10, paddingVertical: 20, zIndex: 10 }}
                 hitSlop={{ top: 30, bottom: 30, left: 30, right: 30 }}
               >
-                <ChatSend width={30} height={30} />
+                <IconChatSend width={30} height={30} />
               </TouchableOpacity>
             </View>
           ) : 
@@ -512,6 +552,13 @@ export default function IndexScreen() {
           }
         </View>
       </KeyboardAvoidingView>
+
+      <ImagePreviewModal
+        visible={Boolean(previewImageUri)}
+        images={previewImageUri ? [previewImageUri] : []}
+        initialIndex={0}
+        onClose={() => setPreviewImageUri(null)}
+      />
       
       <CustomDialog
         visible={!isConnected}
@@ -622,6 +669,11 @@ const styles = StyleSheet.create({
     lineHeight        : 23,
     maxWidth          : 180,
   },
+  chatImage: {
+    width             : 180,
+    height            : 180,
+    borderRadius      : 12,
+  },
   myBubbleText: {
     color             : COLOR.COMM_WHITE,
   },
@@ -658,6 +710,12 @@ const styles = StyleSheet.create({
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_2F2F2F,
     paddingVertical   : 0,
+  },
+  pendingImagePreview: {
+    width             : 44,
+    height            : 44,
+    borderRadius      : 8,
+    marginStart       : 4,
   },
   topLoading: {
     marginVertical    : 10,

@@ -6,6 +6,8 @@ import base64 from 'react-native-base64';
 import { getSecureStore, saveSecureStore } from "./secureStoreUtil";
 import { getAsyncStore, saveAsyncStore } from "./asyncStoreUtil";
 import { showToast } from "./commToast";
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 /**
  * OS 값 return
@@ -499,4 +501,58 @@ function formatRelativeMeetDatetime(meetDatetime: string) {
   return `D-${diffDays}`;
 }
 
-export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, formatFeeInfo, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, formatDisplayBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, renderTextWithHttpLinks, isMeetItem, isLikeData, setReportList, getReportList, setPushStatus, getPushStatus };
+function isImageMessage(message?: string) {
+  return !!message && /\.(jpeg|jpg|png|gif|webp)(\?.*)?$/i.test(message);
+}
+
+async function pickImagesFromLibrary(selectionLimit = 1) {
+  const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  if (!permission.granted) {
+    return [];
+  }
+
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: 'images',
+    allowsMultipleSelection: selectionLimit > 1,
+    selectionLimit,
+    quality: 0.8,
+  });
+
+  return result.canceled ? [] : result.assets;
+}
+
+async function captureImage() {
+  const permission = await ImagePicker.requestCameraPermissionsAsync();
+  if (!permission.granted) {
+    return null;
+  }
+
+  const result = await ImagePicker.launchCameraAsync({
+    mediaTypes: 'images',
+    quality: 0.8,
+  });
+
+  return result.canceled || result.assets.length === 0 ? null : result.assets[0];
+}
+
+async function compressImageAsset(asset: ImagePicker.ImagePickerAsset) {
+  return ImageManipulator.manipulateAsync(
+    asset.uri,
+    [{ resize: { width: 1024 } }],
+    { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG },
+  );
+}
+
+async function prepareImageAssets(assets: ImagePicker.ImagePickerAsset[]) {
+  const imageAssets = assets.filter((asset) => asset.type === 'image');
+  const compressedAssets = await Promise.all(
+    imageAssets.map(async (asset) => {
+      const compressedAsset = await compressImageAsset(asset);
+      return { ...asset, uri: compressedAsset.uri };
+    }),
+  );
+
+  return { imageAssets, compressedAssets };
+}
+
+export { getAccessToken, getClientId, getDeviceUid, getMemberInfo, getOsId, getRefreshToken, saveMemberInfo, setCategoryList, getCategoryList, getCategoryName, setFeeList, getFeeList, formatFeeInfo, setMainBannerList, getMainBannerList, printCommLog, printInfoLog, printDebugLog, printErrorLog, formatYmdDate, formatYmdDateFromParts, parseYmdDate, getDaysInMonth, getDefaultBirthDate, parseImageList, parseChatPayload, getNextPageParamFromPaging, setChurchList, getChurchList, saveMemberInfoForUpdate, formatRelativeMeetDatetime, formatRelativeTime, formatNumberWithComma, renderTextWithHttpLinks, isMeetItem, isLikeData, isImageMessage, setReportList, getReportList, setPushStatus, getPushStatus, pickImagesFromLibrary, captureImage, compressImageAsset, prepareImageAssets, formatDisplayBirthDate };

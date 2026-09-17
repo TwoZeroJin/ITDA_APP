@@ -8,7 +8,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CategoryTab } from "@/components/CategoryTab";
 import ImageDefault from "@/assets/images/no_image.svg";
-import { formatRelativeTime, getMemberInfo, parseChatPayload } from "@/utils/commUtil";
+import { formatRelativeTime, getMemberInfo, isImageMessage, parseChatPayload } from "@/utils/commUtil";
 import { MqttUtil } from "@/utils/mqttUtil";
 
 /**
@@ -131,7 +131,7 @@ export default function ChatListScreen() {
 
   const renderChatRoom = ({ item }: { item: RoomData }) => {
     const updatedText = formatRelativeTime(item.mod_sdate || item.reg_sdate);
-    const messagePreview = item.last_msg || "대화를 시작해 보세요.";
+    const messagePreview = isImageMessage(item.last_msg) ? "(사진)" : item.last_msg || "대화를 시작해 보세요.";
     const roomImageSource = item.thumb_url && !imageErrors[item.room_id]
       ? { uri: item.thumb_url }
       : null;
