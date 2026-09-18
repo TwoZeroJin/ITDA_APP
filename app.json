@@ -45,13 +45,23 @@
       "expo-router",
       "expo-secure-store",
       "expo-web-browser",
-      "expo-build-properties",
-      {
-        "android": {
-          "enableProguardInReleaseBuilds": true,
-          "enableShrinkResourcesInReleaseBuilds": true
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "프로필 사진 및 모임, 게시글 이미지를 선택하여 업로드하기 위해 사진 접근 권한이 필요합니다.",
+          "cameraPermission": "프로필 사진 및 모임, 게시글 이미지를 촬영하여 업로드하기 위해 카메라 접근 권한이 필요합니다.",
+          "microphonePermission": false
         }
-      },
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ],
       [
         "@react-native-kakao/core",
         {
