@@ -153,7 +153,13 @@ ITDA 사용자 앱
 # 2. Play Console 로그인 후 앱 만들기 진행
 # 3. 앱 등록하여 대시보드 이동후 앱 설정 완료 진행
 # 4. 신규 개발자 계정일 경우 비공개 테스트 (12명 이상 테스터가 14일 이상 테스트 진행 필요)
-# . 앱 제출 이후 eas submit --platform android로 배포 가능
+# 5. 앱 첫 게시때에는 npm run build:android 명령어 실행 후 만들어진 .aab(로그 참고) 파일을 구글 플레이 콘솔에 직접 업로드 하여 게시하여야함
+# 6. 그 이후에는 eas submit --platform android 명령어 실행하여 다음 스텝 진행으로 배포 가능
+# (2026.09.18) 구글 플레이 난독화 25% 정책에 따른 expo-build-properties 작업 진행함
+# 5. eas submit --platform android
+# 6. Select a build from EAS 선택
+# 7. Which build would you like to submit -> 선택 후 진행
+#
 #
 #
 # 앱스토어 제출하기 (에플 디벨로퍼 멤버십 가입)
@@ -161,7 +167,7 @@ ITDA 사용자 앱
 # 2. 애플 로그인 및 Y 진행 후 빌드 진행
 # 3. 빌드 완료후 eas submit --platform ios 진행
 # 4. Select a build from EAS
-# 5. Which build would you like to submit -> 선택후 진행
+# 5. Which build would you like to submit -> 선택 후 진행
 # 6. appstoreconnect로 이동하여 배포 및 심사 확인 (제출완료되면 링크 줌)
 # *** 2026-06-20 빌드 에러 발생 ***
 # 1. 애플에서 SMS 인증을 권장하지 않게 함 https://github.com/expo/fyi/blob/main/apple-2fa-sms-issues-workaround.md
