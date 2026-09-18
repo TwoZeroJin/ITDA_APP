@@ -8,8 +8,10 @@ import usePushNotification from '@/hooks/usePushNotification';
 import { User } from '@/types';
 import { router } from 'expo-router';
 import { FormProvider, useForm } from "react-hook-form";
-import { Keyboard, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
+import { useState } from 'react';
+import { Keyboard, Pressable, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from "react-native";
 import { showToast } from '@/utils/commToast';
+import packageJson from '../../package.json';
 
 /**
  * 로그인 화면
@@ -17,10 +19,11 @@ import { showToast } from '@/utils/commToast';
 export default function LoginScreen() {
   const { loginMutation } = useAuth();
   const { expoPushToken } = usePushNotification();
+  const [showVersion, setShowVersion] = useState(false);
   const loginForm = useForm<User>({
     defaultValues: {
-      login_id    : "ghong",
-      login_pwd   : "qwer1234",
+      login_id    : "",
+      login_pwd   : "",
     }
   });
 
@@ -72,6 +75,14 @@ export default function LoginScreen() {
         <View style={styles.imageContainer}>
           <LogoMain width={200} height={98}/>
         </View>
+        <Pressable
+          style={styles.versionTouchArea}
+          delayLongPress={1000}
+          onLongPress={() => setShowVersion(true)}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          {showVersion && <Text style={styles.versionText}>v{packageJson.version}</Text>}
+        </Pressable>
         <FormProvider {...loginForm}>
           <View style={styles.inputContainer}>
             <IdInput focusField="login_pwd"/>
@@ -171,5 +182,21 @@ const styles = StyleSheet.create({
     borderWidth         : 1,
     borderRadius        : 16,
     color               : '#FFFFFF'
-  }
+  },
+  versionTouchArea: {
+    position        : 'absolute',
+    right           : -25,
+    bottom          : 0,
+    width           : 80,
+    height          : 32,
+    alignItems      : 'flex-end',
+    justifyContent  : 'flex-end',
+    paddingRight    : 8,
+    paddingBottom   : 4,
+  },
+  versionText: {
+    color           : COLOR.COMM_BLACK,
+    fontSize        : 10,
+    opacity          : 0.35,
+  },
 })
