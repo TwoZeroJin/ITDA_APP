@@ -1,7 +1,7 @@
 {
   "name": "itda_app",
   "main": "expo-router/entry",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "start:local": "set EXPO_NO_DOTENV=1&& set APP_ENV=local&& expo start --tunnel --clear",
     "start:dev": "set EXPO_NO_DOTENV=1&& set APP_ENV=dev&& expo start --tunnel --clear",
