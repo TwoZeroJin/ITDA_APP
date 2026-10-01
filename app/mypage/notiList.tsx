@@ -74,7 +74,8 @@ export default function NotiListScreen() {
                 const pathname = 
                   push_type.includes('APPLY') ? (apply_type === 'A' ? '/members/applyList' : '/members/memberList') : 
                   push_type.includes('CONFIRM') ? '/members/memberList' : 
-                  push_type.includes('MEET_PUSH') ? '/meets/detailView' : '/chats';
+                  push_type.includes('MEET_PUSH') ? '/meets/detailView' : 
+                  push_type.includes('REVIEW') ? '/community' : '/chats';
                 // 회원 승인/가입 알람
                 if (pathname.includes('/members')) {
                   router.navigate({
@@ -104,6 +105,15 @@ export default function NotiListScreen() {
                     pathname: pathname,
                     params: {
                       meetId: target_id,
+                    }
+                  });
+                }
+                // 커뮤니티로 이동
+                else {
+                  router.navigate({
+                    pathname: pathname,
+                    params: {
+                      reviewId: target_id,
                     }
                   });
                 }

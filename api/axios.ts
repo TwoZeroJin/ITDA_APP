@@ -90,7 +90,7 @@ axiosInstance.interceptors.response.use(
         showToast({ text1: '로그인 상태가 만료되었습니다.\n 다시 로그인해주세요.' });
         isRefreshing = false;
         logoutUser();
-        return Promise.resolve(error);
+        return Promise.resolve();
       }
 
       // 이미 다른 요청이 토큰 갱신 중이면, 갱신 완료 후 재요청하도록 대기
@@ -121,12 +121,17 @@ axiosInstance.interceptors.response.use(
             onTokenRefreshed(data.data.access_token);
 
             originalRequest.headers[STORE_KEY.X_ACCESS_TOKEN] = data.data.access_token;
+            isRefreshing = false;
             return axiosInstance(originalRequest);
           }
-          showToast({ text1: '로그인 상태가 만료되었습니다.\n 다시 로그인해주세요.' });
-        } finally {
-          onTokenRefreshed('');
-          await logoutUser();
+          else {
+            showToast({ text1: '로그인 상태가 만료되었습니다.\n 다시 로그인해주세요.' });
+            onTokenRefreshed('');
+            await logoutUser();
+            isRefreshing = false;
+            return Promise.resolve();
+          }
+        } catch (error) {
           isRefreshing = false;
           return Promise.resolve();
         }
