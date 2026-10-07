@@ -149,16 +149,17 @@ ITDA 사용자 앱
 # MQTT도 작업 필요 (진행됨)
 #
 # 구글 플레이 제출하기 (구글 개발자 계정 세팅, 구글 FCM 설정 필요)
-# 1. npm run build:android 실행 (prod로 build)
+# 1. npm run build:aos 실행 (prod로 build)
 # 2. Play Console 로그인 후 앱 만들기 진행
 # 3. 앱 등록하여 대시보드 이동후 앱 설정 완료 진행
 # 4. 신규 개발자 계정일 경우 비공개 테스트 (12명 이상 테스터가 14일 이상 테스트 진행 필요)
-# 5. 앱 첫 게시때에는 npm run build:android 명령어 실행 후 만들어진 .aab(로그 참고) 파일을 구글 플레이 콘솔에 직접 업로드 하여 게시하여야함
+# 5. 앱 첫 게시때에는 npm run build:aos 명령어 실행 후 만들어진 .aab(로그 참고) 파일을 구글 플레이 콘솔에 직접 업로드 하여 게시하여야함
 # 6. 그 이후에는 eas submit --platform android 명령어 실행하여 다음 스텝 진행으로 배포 가능
 # (2026.09.18) 구글 플레이 난독화 25% 정책에 따른 expo-build-properties 작업 진행함
 # 5. eas submit --platform android
 # 6. Select a build from EAS 선택
-# 7. Which build would you like to submit -> 선택 후 진행
+# 7. Which build would you like to submit -> 선택 후 진행 ===>> 현재 되지 않음. 추후 작업 필요
+# 5-1. .aab 파일을 구글 플레이 콘솔 -> 프로덕션 -> 새 버전 만들기로 직접 aab 파일 업로드 및 배포
 #
 #
 #
