@@ -1,10 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
+import { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Animated, Keyboard, Modal, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Animated, GestureResponderEvent, Keyboard, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useActionSheet } from '@expo/react-native-action-sheet';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetFlatListMethods, BottomSheetFooter, BottomSheetFooterProps } from '@gorhom/bottom-sheet';
 import ChatSend from '@/assets/images/icon_chat_send.svg';
 import ProfileIcon from '@/components/ProfileIcon';
 import { COLOR, QUERY_KEYS } from '@/constants';
@@ -29,17 +29,39 @@ interface CommentBottomModalProps {
 }
 
 /**
+ * 댓글 입력바 렌더 함수를 Footer에 전달하기 위한 Context
+ * - footerComponent에 인라인 함수를 넘기면 렌더링마다 새로운 컴포넌트로 인식되어
+ *   TextInput이 재마운트(포커스 해제)되므로, 고정된 컴포넌트 + Context로 내용만 갱신합니다.
+ */
+const CommentInputBarContext = createContext<(() => ReactNode) | null>(null);
+
+function CommentInputFooter(props: BottomSheetFooterProps) {
+  const renderInputBar = useContext(CommentInputBarContext);
+  return (
+    <BottomSheetFooter {...props} bottomInset={0}>
+      {renderInputBar?.()}
+    </BottomSheetFooter>
+  );
+}
+
+/**
  * 댓글 목록 / 등록 바텀 모달
  */
 export default function CommentBottomModal({ visible, reviewId, onClose }: CommentBottomModalProps) {
+  const [activeMenu, setActiveMenu] = useState<{
+    comment: ReviewComment;
+    top: number;
+  } | null>(null);
   const [blockingComment, setBlockingComment] = useState<ReviewComment | null>(null);
   const [deletingComment, setDeletingComment] = useState<ReviewComment | null>(null);
+  const [myMemId, setMyMemId] = useState<number>(0);
   const [myImageUrl, setMyImageUrl] = useState('');
   const [commentText, setCommentText] = useState('');
   const [editingComment, setEditingComment] = useState<ReviewComment | null>(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
   const [likedMap, setLikedMap] = useState<Record<number, boolean>>({});
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
   const reportBlock = useReportBlock();
   const { requireAuth } = useAuthRouter();
   const commentInsert = useReviewCommentInsert();
@@ -49,7 +71,6 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
   const flatListRef = useRef<BottomSheetFlatListMethods>(null);
   const commentInputRef = useRef<TextInput>(null);
   const inputKeyboardAnim = useRef(new Animated.Value(0)).current;
-  const { showActionSheetWithOptions } = useActionSheet();
   const { results, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useReviewCommentList({
     page_no     : 0,
     page_size   : 20,
@@ -94,10 +115,15 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
   };
 
   useEffect(() => {
-    getMemberInfo().then((info) => setMyImageUrl(info.mem_image_url || ''));
+    getMemberInfo().then((info) => {
+      setMyMemId(info.mem_id || 0);
+      setMyImageUrl(info.mem_image_url || '');
+    });
   }, []);
 
   useEffect(() => {
+    if(Platform.OS != 'ios') return;
+
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
     const showSubscription = Keyboard.addListener(showEvent, (event) => {
@@ -162,68 +188,95 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
     }
   };
 
-  // 댓글 수정/삭제/신고/차단
-  const handleCommentAction = (comment: ReviewComment) => {
-    const isMyComment = comment.my_yn === 'Y';
-    const options = isMyComment ? ['수정하기', '삭제하기', '취소'] : ['신고하기', '차단하기', '취소'];
+  useEffect(() => {
+    if (!visible) {
+      setActiveMenu(null);
+    }
+  }, [visible]);
 
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex: options.length - 1,
-      },
-      (selectedIndex) => {
-        if (selectedIndex === undefined || selectedIndex === options.length - 1) {
-          return;
-        }
+  // 댓글 더보기 메뉴 (수정/삭제/신고/차단) 열기/닫기 토글
+  const handleCommentAction = (comment: ReviewComment, event?: GestureResponderEvent) => {
+    if (!comment.comment_id) return;
+    if (activeMenu?.comment.comment_id === comment.comment_id) {
+      setActiveMenu(null);
+      return;
+    }
+    const pageY = event?.nativeEvent?.pageY ?? 200;
+    const menuHeight = 100;
+    const isNearBottom = pageY + menuHeight > windowHeight - (insets.bottom + 80);
+    const top = isNearBottom ? Math.max(10, pageY - menuHeight) : pageY + 14;
 
-        if (isMyComment) {
-          if (selectedIndex === 1) {
-            setDeletingComment(comment);
-            return;
-          }
-          setEditingComment(comment);
-          setCommentText(comment.review_comment);
-          setTimeout(() => commentInputRef.current?.focus(), 100);
-          return;
-        }
-
-        if (selectedIndex === 0) {
-          if (!comment.comment_id) {
-            return;
-          }
-          onClose();
-          setTimeout(() => {
-            router.navigate({
-              pathname: '/user/reportCreate',
-              params: {
-                target_id   : comment.comment_id,
-                target_type : 'C',
-              },
-            });
-          }, 220);
-          return;
-        }
-
-        setBlockingComment(comment);
-      },
-    );
+    setActiveMenu({
+      comment,
+      top,
+    });
   };
 
   if (!visible) {
     return null;
   }
 
+  // 댓글 입력바 (Context를 통해 고정 Footer 컴포넌트 내부에 렌더링됨)
+  const renderInputBar = () => (
+    <View
+      style={[
+        styles.inputBarWrap,
+        { paddingBottom: insets.bottom },
+      ]}
+    >
+      <ProfileIcon mem_image_url={myImageUrl} type="MEMBER" />
+      <View style={styles.inputBoxWrap}>
+        <TextInput
+          ref={commentInputRef}
+          value={commentText}
+          onChangeText={setCommentText}
+          onFocus={() => {
+            requireAuth(() => {});
+          }}
+          placeholder={editingComment ? '댓글 수정...' : '댓글 달기...'}
+          placeholderTextColor={COLOR.COMM_GRAY_7}
+          style={styles.inputBox}
+          multiline
+          maxLength={500}
+        />
+      </View>
+      {editingComment && (
+        <TouchableOpacity
+          style={styles.editCancelButton}
+          activeOpacity={0.6}
+          onPress={() => {
+            setEditingComment(null);
+            setCommentText('');
+            commentInputRef.current?.blur();
+          }}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Ionicons name="close-circle" size={22} color={COLOR.COLOR_838383} />
+        </TouchableOpacity>
+      )}
+      <TouchableOpacity
+        activeOpacity={0.6}
+        onPress={handleCommentInsert}
+        style={styles.sendButton}
+        hitSlop={{ top: 20, bottom: 20, left: 20, right: 10 }}
+      >
+        <ChatSend width={34} height={34} />
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
-      <View style={styles.modalContainer}>
+      <CommentInputBarContext.Provider value={renderInputBar}>
+      <GestureHandlerRootView style={styles.modalContainer}>
         <BottomSheet
           index={visible ? 0 : -1}
           snapPoints={['55%', '75%']}
           enableDynamicSizing={false}
           enablePanDownToClose
-          keyboardBehavior="interactive"
-          keyboardBlurBehavior="restore"
+          enableContentPanningGesture={true}
+          keyboardBehavior="interactive"    
+          keyboardBlurBehavior="none"
           backgroundStyle={styles.sheetBackground}
           handleIndicatorStyle={styles.handleIndicator}
           backdropComponent={(props) => (
@@ -234,7 +287,11 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
               pressBehavior="close"
             />
           )}
+          footerComponent={CommentInputFooter}
           onChange={(index) => {
+            if (activeMenu) {
+              setActiveMenu(null);
+            }
             if (index === -1) {
               onClose();
             }
@@ -246,120 +303,155 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
                 <Text style={styles.headerTitle}>댓글</Text>
               </View>
             }
-              ref={flatListRef}
-              data={results}
-              keyExtractor={(item, index) => `${item.comment_id ?? index}`}
-              style={styles.commentList}
-              contentContainerStyle={styles.listContent}
-              keyboardShouldPersistTaps="always"
-              ItemSeparatorComponent={() => <View style={styles.separator} />}
-              renderItem={({ item }) => (
-                <View style={styles.commentItem}>
-                  <ProfileIcon mem_id={item?.mem_id} mem_image_url={item.mem_image_url || ''} type="MEMBER" />
-                  <View style={styles.commentContent}>
-                    <Text style={styles.userName}>{item.mem_nick}</Text>
+            ref={flatListRef}
+            data={results}
+            keyExtractor={(item, index) => `${item.comment_id ?? index}`}
+            style={styles.commentList}
+            contentContainerStyle={styles.listContent}
+            keyboardShouldPersistTaps="always"
+            onScrollBeginDrag={() => {
+              if (activeMenu) {
+                setActiveMenu(null);
+              }
+            }}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            renderItem={({ item }) => (
+              <View style={styles.commentItem}>
+                <ProfileIcon mem_id={item?.mem_id} mem_image_url={item.mem_image_url || ''} type="MEMBER" />
+                <View style={styles.commentContent}>
+                  <Text style={styles.userName}>
+                    {item.mem_nick}{'  '}
                     <Text style={styles.timeText}>
                       {formatRelativeTime(item.reg_sdate)}
                       {item.mod_sdate && <Text style={styles.editedText}> (수정됨)</Text>}
                     </Text>
-                    <Text style={styles.contentText}>{item.review_comment}</Text>
-                  </View>
-                  <View style={styles.likeActionColumn}>
-                    <TouchableOpacity style={styles.likeButton} activeOpacity={0.6} onPress={() => toggleLike(item)}>
-                      {isCommentLiked(item) ? (
-                        <IconLikeOn width={19} height={18} />
-                      ) : (
-                        <IconLikeOff width={18} height={18} />
-                      )}
-                      <Text style={styles.likeCountText}>{getLikeCount(item)}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.moreButton}
-                      activeOpacity={0.6}
-                      onPress={() => handleCommentAction(item)}
-                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    >
-                      <Ionicons name="ellipsis-horizontal" size={20} color={COLOR.COLOR_838383} />
-                    </TouchableOpacity>
-                  </View>
+                  </Text>
+                  <Text style={styles.contentText}>{item.review_comment}</Text>
                 </View>
-              )}
-              ListEmptyComponent={
-                !isLoading ? (
-                  <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>등록된 댓글이 없습니다.</Text>
-                  </View>
-                ) : null
+                <View style={styles.likeActionColumn}>
+                  <TouchableOpacity style={styles.likeButton} activeOpacity={0.6} onPress={() => toggleLike(item)}>
+                    {isCommentLiked(item) ? (
+                      <IconLikeOn width={19} height={18} />
+                    ) : (
+                      <IconLikeOff width={18} height={18} />
+                    )}
+                    <Text style={styles.likeCountText}>{getLikeCount(item)}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.moreButton}
+                    activeOpacity={0.6}
+                    onPress={(event) => handleCommentAction(item, event)}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Ionicons name="ellipsis-horizontal" size={20} color={COLOR.COLOR_838383} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+            ListEmptyComponent={
+              !isLoading ? (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>등록된 댓글이 없습니다.</Text>
+                </View>
+              ) : null
+            }
+            onEndReached={() => {
+              if (hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
               }
-              onEndReached={() => {
-                if (hasNextPage && !isFetchingNextPage) {
-                  fetchNextPage();
-                }
-              }}
-              onEndReachedThreshold={0.5}
+            }}
+            onEndReachedThreshold={0.5}
           />
-          <Animated.View
+        </BottomSheet>
+      </GestureHandlerRootView>
+      </CommentInputBarContext.Provider>
+
+      {/* 댓글 더보기 메뉴 (수정/삭제/신고/차단) - 최상단 레이어에 플로팅 렌더링 */}
+      {activeMenu && (
+        <View style={styles.dropdownOverlayLayer} pointerEvents="box-none">
+          {/* 바깥 터치 시 메뉴 닫기 백드롭 */}
+          <Pressable
+            style={StyleSheet.absoluteFill}
+            onPress={() => setActiveMenu(null)}
+          />
+
+          <View
             style={[
-              styles.inputBarWrap,
-              { paddingBottom: insets.bottom },
-              { transform: [{ translateY: inputKeyboardAnim }] },
+              styles.commentDropdownMenu,
+              {
+                top: activeMenu.top,
+                right: 20,
+              },
             ]}
           >
-            <ProfileIcon mem_image_url={myImageUrl} type="MEMBER" />
-            <View style={styles.inputBoxWrap}>
-              <TextInput
-                ref={commentInputRef}
-                value={commentText}
-                onChangeText={setCommentText}
-                onFocus={async () => {
-                  const accessToken = await getSecureStore(STORE_KEY.X_ACCESS_TOKEN);
-                  if (!accessToken) {
-                    commentInputRef.current?.blur();
-                    requireAuth(() => {});
-                  }
-                }}
-                placeholder={editingComment ? '댓글 수정...' : '댓글 달기...'}
-                placeholderTextColor={COLOR.COMM_GRAY_7}
-                style={styles.inputBox}
-                multiline
-                maxLength={500}
-              />
-            </View>
-            {editingComment && (
-              <TouchableOpacity
-                style={styles.editCancelButton}
-                activeOpacity={0.6}
-                onPress={() => {
-                  setEditingComment(null);
-                  setCommentText('');
-                  commentInputRef.current?.blur();
-                }}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Ionicons name="close-circle" size={22} color={COLOR.COLOR_838383} />
-              </TouchableOpacity>
+            {!!myMemId && activeMenu.comment.mem_id === myMemId ? (
+              <>
+                <TouchableOpacity
+                  style={styles.commentDropdownItem}
+                  activeOpacity={0.6}
+                  onPress={() => {
+                    const target = activeMenu.comment;
+                    setActiveMenu(null);
+                    setEditingComment(target);
+                    setCommentText(target.review_comment);
+                    setTimeout(() => commentInputRef.current?.focus(), 100);
+                  }}
+                >
+                  <Text style={styles.commentDropdownText}>수정하기</Text>
+                </TouchableOpacity>
+                <View style={styles.commentDropdownDivider} />
+                <TouchableOpacity
+                  style={styles.commentDropdownItem}
+                  activeOpacity={0.6}
+                  onPress={() => {
+                    const target = activeMenu.comment;
+                    setActiveMenu(null);
+                    setDeletingComment(target);
+                  }}
+                >
+                  <Text style={styles.commentDropdownText}>삭제하기</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <TouchableOpacity
+                  style={styles.commentDropdownItem}
+                  activeOpacity={0.6}
+                  onPress={() => {
+                    const targetId = activeMenu.comment.comment_id;
+                    setActiveMenu(null);
+                    if (!targetId) return;
+                    onClose();
+                    setTimeout(() => {
+                      router.navigate({
+                        pathname: '/user/reportCreate',
+                        params: {
+                          target_id   : targetId,
+                          target_type : 'C',
+                        },
+                      });
+                    }, 220);
+                  }}
+                >
+                  <Text style={styles.commentDropdownText}>신고하기</Text>
+                </TouchableOpacity>
+                <View style={styles.commentDropdownDivider} />
+                <TouchableOpacity
+                  style={styles.commentDropdownItem}
+                  activeOpacity={0.6}
+                  onPress={() => {
+                    const target = activeMenu.comment;
+                    setActiveMenu(null);
+                    setBlockingComment(target);
+                  }}
+                >
+                  <Text style={styles.commentDropdownText}>차단하기</Text>
+                </TouchableOpacity>
+              </>
             )}
-            <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={handleCommentInsert}
-              style={styles.sendButton}
-              hitSlop={{ top: 20, bottom: 20, left: 20, right: 10 }}
-            >
-              <ChatSend width={34} height={34} />
-            </TouchableOpacity>
-            {isKeyboardVisible && (
-              <TouchableOpacity
-                style={styles.keyboardDismissButton}
-                activeOpacity={0.6}
-                onPress={() => Keyboard.dismiss()}
-                hitSlop={{ top: 20, bottom: 20, left: 10, right: 20 }}
-              >
-                <Ionicons name="chevron-down" size={22} color={COLOR.COLOR_838383} />
-              </TouchableOpacity>
-            )}
-          </Animated.View>
-        </BottomSheet>
-      </View>
+          </View>
+        </View>
+      )}
 
 
       <CustomDialog
@@ -452,7 +544,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal   : 24,
-    paddingBottom       : 12,
+    paddingBottom       : 90,
     flexGrow            : 1,
   },
   commentList: {
@@ -462,6 +554,7 @@ const styles = StyleSheet.create({
     flexDirection       : 'row',
     alignItems          : 'flex-start',
     paddingVertical     : 12,
+    position            : 'relative',
   },
   commentContent: {
     flex                : 1,
@@ -475,7 +568,7 @@ const styles = StyleSheet.create({
     fontSize            : 14,
     fontFamily          : 'Pretendard-Regular',
     color               : COLOR.COLOR_838383,
-    marginTop           : 2,
+    marginTop           : 2,    
   },
   editedText: {
     fontSize            : 11,
@@ -489,24 +582,65 @@ const styles = StyleSheet.create({
     marginTop           : 6,
   },
   likeButton: {
+    flexDirection       : 'row',
     alignItems          : 'center',
-    minWidth            : 24,
+    gap                 : 4,
   },
   likeActionColumn: {
     alignItems          : 'center',
     marginStart         : 12,
     minWidth            : 24,
+    position            : 'relative',
   },
   moreButton: {
     alignItems          : 'center',
+    justifyContent      : 'center',
     minWidth            : 24,
     marginTop           : 8,
+  },
+  dropdownOverlayLayer: {
+    position            : 'absolute',
+    top                 : 0,
+    left                : 0,
+    right               : 0,
+    bottom              : 0,
+    zIndex              : 99999,
+    elevation           : 20,
+  },
+  commentDropdownMenu: {
+    position            : 'absolute',
+    backgroundColor     : COLOR.COMM_WHITE,
+    borderRadius        : 14,
+    minWidth            : 105,
+    paddingVertical     : 4,
+    zIndex              : 99999,
+    elevation           : 20,
+    shadowColor         : COLOR.COMM_BLACK,
+    shadowOffset        : { width: 0, height: 4 },
+    shadowOpacity       : 0.15,
+    shadowRadius        : 8,
+  },
+  commentDropdownItem: {
+    paddingVertical     : 12,
+    paddingHorizontal   : 16,
+    alignItems          : 'center',
+    justifyContent      : 'center',
+  },
+  commentDropdownText: {
+    fontSize            : 15,
+    fontFamily          : 'Pretendard-Regular',
+    color               : COLOR.COLOR_1A1A1A,
+  },
+  commentDropdownDivider: {
+    height              : 1,
+    width               : '85%',
+    backgroundColor     : COLOR.COLOR_E6E6E6,
+    alignSelf           : 'center',
   },
   likeCountText: {
     fontSize            : 14,
     fontFamily          : 'Pretendard-Regular',
     color               : COLOR.COLOR_838383,
-    marginTop           : 2,
   },
   separator: {
     height              : 1,
