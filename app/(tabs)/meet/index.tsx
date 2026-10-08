@@ -175,7 +175,7 @@ export default function MeetGroupListScreen() {
               <View style={styles.filterWrapper}>
                 <TouchableOpacity
                   activeOpacity={0.6}
-                  onPress={() => setIsDetailMenuVisible(true)}
+                  onPress={() => setIsDetailMenuVisible((prev) => !prev)}
                   style={styles.filterButton}
                 >
                   <IconFilter width={20} height={20} />
@@ -253,8 +253,13 @@ const styles = StyleSheet.create({
     zIndex              : 100,
   },
   detailMenuBackdrop: {
+    position            : 'absolute',
+    top                 : -1000,
+    bottom              : -1000,
+    left                : -1000,
+    right               : -1000,
     backgroundColor     : 'transparent',
-    zIndex              : 1,
+    zIndex              : 99,
   },
   listTitle: {
     fontSize          : 20,
