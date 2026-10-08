@@ -17,8 +17,8 @@ interface AuthRouterContextValue {
   replace           : (href: Href) => void;
   /** navigation.navigate 등 커스텀 함수를 Auth 체크 후 실행하고 싶을 때 사용 */
   checkAndNavigate  : (navigateFn: () => void, path: string) => void;
-  /** 경로와 무관하게 로그인 여부만 체크 후 콜백 실행 (비로그인 시 다이얼로그) */
-  requireAuth       : (callback: () => void) => void;
+  /** 경로와 무관하게 로그인 여부를 확인하고, 비로그인 시 선택적으로 별도 콜백 실행 */
+  requireAuth       : (callback: () => void, onUnauthenticated?: () => void) => void;
 }
 
 const AuthRouterContext = createContext<AuthRouterContextValue>({
@@ -26,7 +26,7 @@ const AuthRouterContext = createContext<AuthRouterContextValue>({
   navigate         : router.navigate,
   replace          : router.replace,
   checkAndNavigate : (_navigateFn, _path) => {},
-  requireAuth      : (_callback) => {},
+  requireAuth      : (_callback, _onUnauthenticated) => {},
 });
 
 /** router.push / navigate / replace 대신 이 훅을 사용하면 이동 전 Auth 체크를 수행합니다. */
@@ -53,7 +53,11 @@ function isExcludedPath(path: string): boolean {
 function AuthRoute({ children }: AuthRouteProps) {
   const [isDialogVisible, setIsDialogVisible] = useState(false);
 
-  const checkAndNavigate = useCallback(async (navigateFn: () => void, href: Href | string) => {
+  const checkAndNavigate = useCallback(async (
+    navigateFn: () => void,
+    href: Href | string,
+    onUnauthenticated?: () => void,
+  ) => {
     const pathname = getPathname(href);
 
     if (isExcludedPath(pathname)) {
@@ -65,6 +69,7 @@ function AuthRoute({ children }: AuthRouteProps) {
     if (access_token) {
       navigateFn();
     } else {
+      onUnauthenticated?.();
       setIsDialogVisible(true);
     }
   }, []);
@@ -74,7 +79,8 @@ function AuthRoute({ children }: AuthRouteProps) {
     navigate         : (href) => checkAndNavigate(() => router.navigate(href), href),
     replace          : (href) => checkAndNavigate(() => router.replace(href),  href),
     checkAndNavigate : (fn, path) => checkAndNavigate(fn, path),
-    requireAuth      : (callback) => checkAndNavigate(callback, '/__auth_required__'),
+    requireAuth      : (callback, onUnauthenticated) =>
+      checkAndNavigate(callback, '/__auth_required__', onUnauthenticated),
   };
 
   return (

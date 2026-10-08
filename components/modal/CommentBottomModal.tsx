@@ -107,7 +107,14 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
   useEffect(() => {
     if (visible) {
       setIsSheetClosing(false);
+      return;
     }
+
+    setCommentText('');
+    setEditingComment(null);
+    setActiveMenu(null);
+    commentInputRef.current?.blur();
+    Keyboard.dismiss();
   }, [visible]);
 
   useEffect(() => {
@@ -199,12 +206,22 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
     });
   };
 
+  const handleSheetClose = () => {
+    setIsSheetClosing(true);
+    setCommentText('');
+    setEditingComment(null);
+    setActiveMenu(null);
+    commentInputRef.current?.blur();
+    Keyboard.dismiss();
+    onClose();
+  };
+
   if (!visible) {
     return null;
   }
 
   return (
-    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="none" onRequestClose={handleSheetClose}>
       <GestureHandlerRootView style={styles.modalContainer}>
         <BottomSheet
           index={visible ? 0 : -1}
@@ -222,18 +239,14 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
               pressBehavior="close"
             />
           )}
-          onChange={(index) => {
+          onChange={() => {
             if (activeMenu) {
               setActiveMenu(null);
-            }
-            if (index === -1) {
-              onClose();
             }
           }}
           onAnimate={(_, toIndex) => {
             if (toIndex === -1) {
-              setIsSheetClosing(true);
-              Keyboard.dismiss();
+              handleSheetClose();
             }
           }}
         >
@@ -318,7 +331,13 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
               value={commentText}
               onChangeText={setCommentText}
               onFocus={() => {
-                requireAuth(() => {});
+                requireAuth(
+                  () => {},
+                  () => {
+                    showToast({ text1: '로그인이 필요합니다.' });
+                    commentInputRef.current?.blur();
+                  }
+                );
               }}
               placeholder={editingComment ? '댓글 수정...' : '댓글 달기...'}
               placeholderTextColor={COLOR.COMM_GRAY_7}
@@ -442,7 +461,12 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
                   onPress={() => {
                     const target = activeMenu.comment;
                     setActiveMenu(null);
-                    setBlockingComment(target);
+                    requireAuth(
+                      () => setBlockingComment(target),
+                      () => {
+                        showToast({ text1: '로그인이 필요합니다.' });
+                      }
+                    );
                   }}
                 >
                   <Text style={styles.commentDropdownText}>차단하기</Text>
