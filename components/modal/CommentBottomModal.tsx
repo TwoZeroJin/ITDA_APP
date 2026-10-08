@@ -1,10 +1,10 @@
-import { ReactNode, createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Animated, GestureResponderEvent, Keyboard, Modal, Platform, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, useWindowDimensions, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetFlatListMethods, BottomSheetFooter, BottomSheetFooterProps } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetBackdrop, BottomSheetFlatList, BottomSheetFlatListMethods } from '@gorhom/bottom-sheet';
 import ChatSend from '@/assets/images/icon_chat_send.svg';
 import ProfileIcon from '@/components/ProfileIcon';
 import { COLOR, QUERY_KEYS } from '@/constants';
@@ -18,30 +18,12 @@ import IconLikeOff from '@/assets/images/icon_review_like_off.svg';
 import IconLikeOn from '@/assets/images/icon_review_like_on.svg';
 import { useMemberLike } from '@/hooks/queries/useMember';
 import { useAuthRouter } from '@/components/comm/AuthRoute';
-import { STORE_KEY } from '@/constants';
-import { getSecureStore } from '@/utils/secureStoreUtil';
 import queryClient from '@/api/queryClient';
 
 interface CommentBottomModalProps {
   visible   : boolean;
   reviewId  : number;
   onClose   : () => void;
-}
-
-/**
- * 댓글 입력바 렌더 함수를 Footer에 전달하기 위한 Context
- * - footerComponent에 인라인 함수를 넘기면 렌더링마다 새로운 컴포넌트로 인식되어
- *   TextInput이 재마운트(포커스 해제)되므로, 고정된 컴포넌트 + Context로 내용만 갱신합니다.
- */
-const CommentInputBarContext = createContext<(() => ReactNode) | null>(null);
-
-function CommentInputFooter(props: BottomSheetFooterProps) {
-  const renderInputBar = useContext(CommentInputBarContext);
-  return (
-    <BottomSheetFooter {...props} bottomInset={0}>
-      {renderInputBar?.()}
-    </BottomSheetFooter>
-  );
 }
 
 /**
@@ -59,6 +41,7 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
   const [commentText, setCommentText] = useState('');
   const [editingComment, setEditingComment] = useState<ReviewComment | null>(null);
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [isSheetClosing, setIsSheetClosing] = useState(false);
   const [likedMap, setLikedMap] = useState<Record<number, boolean>>({});
   const insets = useSafeAreaInsets();
   const { height: windowHeight } = useWindowDimensions();
@@ -122,8 +105,12 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
   }, []);
 
   useEffect(() => {
-    if(Platform.OS != 'ios') return;
+    if (visible) {
+      setIsSheetClosing(false);
+    }
+  }, [visible]);
 
+  useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
     const showSubscription = Keyboard.addListener(showEvent, (event) => {
@@ -216,67 +203,15 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
     return null;
   }
 
-  // 댓글 입력바 (Context를 통해 고정 Footer 컴포넌트 내부에 렌더링됨)
-  const renderInputBar = () => (
-    <View
-      style={[
-        styles.inputBarWrap,
-        { paddingBottom: insets.bottom },
-      ]}
-    >
-      <ProfileIcon mem_image_url={myImageUrl} type="MEMBER" />
-      <View style={styles.inputBoxWrap}>
-        <TextInput
-          ref={commentInputRef}
-          value={commentText}
-          onChangeText={setCommentText}
-          onFocus={() => {
-            requireAuth(() => {});
-          }}
-          placeholder={editingComment ? '댓글 수정...' : '댓글 달기...'}
-          placeholderTextColor={COLOR.COMM_GRAY_7}
-          style={styles.inputBox}
-          multiline
-          maxLength={500}
-        />
-      </View>
-      {editingComment && (
-        <TouchableOpacity
-          style={styles.editCancelButton}
-          activeOpacity={0.6}
-          onPress={() => {
-            setEditingComment(null);
-            setCommentText('');
-            commentInputRef.current?.blur();
-          }}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Ionicons name="close-circle" size={22} color={COLOR.COLOR_838383} />
-        </TouchableOpacity>
-      )}
-      <TouchableOpacity
-        activeOpacity={0.6}
-        onPress={handleCommentInsert}
-        style={styles.sendButton}
-        hitSlop={{ top: 20, bottom: 20, left: 20, right: 10 }}
-      >
-        <ChatSend width={34} height={34} />
-      </TouchableOpacity>
-    </View>
-  );
-
   return (
     <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
-      <CommentInputBarContext.Provider value={renderInputBar}>
       <GestureHandlerRootView style={styles.modalContainer}>
         <BottomSheet
           index={visible ? 0 : -1}
-          snapPoints={['55%', '75%']}
+          snapPoints={['65%', '85%']}
           enableDynamicSizing={false}
           enablePanDownToClose
           enableContentPanningGesture={true}
-          keyboardBehavior="interactive"    
-          keyboardBlurBehavior="none"
           backgroundStyle={styles.sheetBackground}
           handleIndicatorStyle={styles.handleIndicator}
           backdropComponent={(props) => (
@@ -287,13 +222,18 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
               pressBehavior="close"
             />
           )}
-          footerComponent={CommentInputFooter}
           onChange={(index) => {
             if (activeMenu) {
               setActiveMenu(null);
             }
             if (index === -1) {
               onClose();
+            }
+          }}
+          onAnimate={(_, toIndex) => {
+            if (toIndex === -1) {
+              setIsSheetClosing(true);
+              Keyboard.dismiss();
             }
           }}
         >
@@ -363,8 +303,68 @@ export default function CommentBottomModal({ visible, reviewId, onClose }: Comme
             onEndReachedThreshold={0.5}
           />
         </BottomSheet>
+        {!isSheetClosing && (
+          <Animated.View
+            style={[
+              styles.inputBarWrap,
+              { paddingBottom: insets.bottom },
+              { transform: [{ translateY: inputKeyboardAnim }] },
+            ]}
+          >
+          <ProfileIcon mem_image_url={myImageUrl} type="MEMBER" />
+          <View style={styles.inputBoxWrap}>
+            <TextInput
+              ref={commentInputRef}
+              value={commentText}
+              onChangeText={setCommentText}
+              onFocus={() => {
+                requireAuth(() => {});
+              }}
+              placeholder={editingComment ? '댓글 수정...' : '댓글 달기...'}
+              placeholderTextColor={COLOR.COMM_GRAY_7}
+              style={styles.inputBox}
+              multiline
+              maxLength={500}
+            />
+          </View>
+          {editingComment && (
+            <TouchableOpacity
+              style={[
+                styles.editCancelButton,
+                isKeyboardVisible && { right: 100 },
+              ]}
+              activeOpacity={0.6}
+              onPress={() => {
+                setEditingComment(null);
+                setCommentText('');
+                commentInputRef.current?.blur();
+              }}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="close-circle" size={22} color={COLOR.COLOR_838383} />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={handleCommentInsert}
+            style={styles.sendButton}
+            hitSlop={{ top: 20, bottom: 20, left: 20, right: 10 }}
+          >
+            <ChatSend width={34} height={34} />
+          </TouchableOpacity>
+          {isKeyboardVisible && (
+            <TouchableOpacity
+              style={styles.keyboardDismissButton}
+              activeOpacity={0.6}
+              onPress={() => Keyboard.dismiss()}
+              hitSlop={{ top: 20, bottom: 20, left: 10, right: 20 }}
+            >
+              <Ionicons name="chevron-down" size={22} color={COLOR.COLOR_838383} />
+            </TouchableOpacity>
+          )}
+          </Animated.View>
+        )}
       </GestureHandlerRootView>
-      </CommentInputBarContext.Provider>
 
       {/* 댓글 더보기 메뉴 (수정/삭제/신고/차단) - 최상단 레이어에 플로팅 렌더링 */}
       {activeMenu && (
@@ -656,6 +656,12 @@ const styles = StyleSheet.create({
     color               : COLOR.COLOR_838383,
   },
   inputBarWrap: {
+    position            : 'absolute',
+    left                : 0,
+    right               : 0,
+    bottom              : 0,
+    zIndex              : 10,
+    elevation           : 10,
     flexDirection       : 'row',
     alignItems          : 'center',
     gap                 : 10,
@@ -684,8 +690,8 @@ const styles = StyleSheet.create({
   },
   editCancelButton: {
     position            : 'absolute',
-    right               : 72,
-    top                 : 40,
+    right               : 70,
+    top                 : 30,
     alignItems          : 'center',
     justifyContent      : 'center',
   },
