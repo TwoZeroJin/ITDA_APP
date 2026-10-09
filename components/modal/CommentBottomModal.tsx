@@ -573,6 +573,7 @@ const styles = StyleSheet.create({
   },
   commentList: {
     flex                : 1,
+    marginBottom        : 50,
   },
   commentItem: {
     flexDirection       : 'row',
