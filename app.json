@@ -34,7 +34,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#FA6E78"
       },
       "package": "church.hacts.itda",
       "googleServicesFile": "./google-services.json"
