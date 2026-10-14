@@ -30,7 +30,7 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
     { mem_id: targetMemId }
   );
 
-  const displayInfo: MemberInfo | undefined = apiProfile ?? profileInfo;
+  const displayInfo: MemberInfo & { room_id?: string } | undefined = apiProfile ?? profileInfo;
 
   const [interestLabels, setInterestLabels] = useState<string[]>([]);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -88,9 +88,10 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
       router.push({
         pathname: '/chats',
         params: {
-          // 해당 화면에서 room_id는 /chats에서 관리
-          room_name: displayInfo.mem_nick ?? displayInfo.mem_name,
-          room_type: COMM_CONSTANTS.COMM_MEMBER,
+          room_id   : displayInfo.room_id,
+          room_name : displayInfo.mem_nick ?? displayInfo.mem_name,
+          room_type : COMM_CONSTANTS.COMM_MEMBER,
+          mem_id    : displayInfo.mem_id,
         },
       });
     }

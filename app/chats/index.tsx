@@ -14,7 +14,7 @@ import { getMemberInfo, isImageMessage, parseChatPayload, renderTextWithHttpLink
 import IconChatSend from '@/assets/images/icon_chat_send.svg';
 import IconChatAdd from '@/assets/images/icon_chat_add.svg';
 import DropdownModal from '@/components/modal/DropdownModal';
-import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
+import ProfileIcon from '@/components/ProfileIcon';
 import CommBottomButton from '@/components/comm/CommBottomButton';
 import { showToast } from '@/utils/commToast';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -55,7 +55,12 @@ export default function IndexScreen() {
   const hasUserDraggedRef = useRef(false);
   const onEndReachedCalledDuringMomentum = useRef(true);
   const hasFocusedOnceRef = useRef(false);
-  const chat_id = Number(room_id ? room_id.split("_")[1] : Number(mem_id));
+  const chat_id = (() => {
+    if (!room_id) return Number(mem_id);
+    if (!room_type.includes('MEMBER')) return Number(room_id.split("_")[1]);
+    const ids = room_id.split("_").slice(1).map(Number);
+    return ids.find((id) => id !== myMemId) ?? Number(mem_id);
+  })();
   const chat_type = room_type;
   const insets = useSafeAreaInsets();
 
@@ -370,13 +375,12 @@ export default function IndexScreen() {
       !isSameSender ? (
         // 보낸 사람이 다르면 아바타와 함께 표시
         <View style={styles.otherMessageWrap}>
-          {item.mem_image_url ? (
-            <Image source={{ uri: item.mem_image_url }} style={styles.avatar} />
-          ) : (
-            <View style={styles.avatarDefaultWrap}>
-              <IconProfileDefault width={40} height={40} />
-            </View>
-          )}
+          <ProfileIcon
+            type="MEMBER"
+            mem_id={item.sender_id}
+            mem_image_url={item.mem_image_url}
+            containerStyle={{ marginEnd: 8 }}
+          />
           <View>
             <Text style={styles.senderText}>{getSenderText(item)}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
@@ -431,7 +435,7 @@ export default function IndexScreen() {
         // keyboardVerticalOffset={os === 'ios' ? 45 : 0}
         keyboardVerticalOffset={insets.top}
       >
-        <View style={styles.container}>
+        <View style={[styles.container, expiryYn === 'Y' && { paddingBottom: 100 }]}>
           <CommHeader 
             isLike={false} 
             isNoti={false} 
@@ -594,7 +598,6 @@ export default function IndexScreen() {
 const styles = StyleSheet.create({
   container : {
     flex              : 1,
-    backgroundColor   : COLOR.COMM_WHITE,
   },
   dateBadgeWrap: {
     alignItems        : 'center',
@@ -619,19 +622,6 @@ const styles = StyleSheet.create({
   otherMessageWrap: {
     flexDirection     : 'row',
     alignItems        : 'flex-start',
-  },
-  avatar: {
-    width             : 40,
-    height            : 40,
-    borderRadius      : 20,
-    marginEnd         : 8,
-  },
-  avatarDefaultWrap: {
-    width             : 40,
-    height            : 40,
-    borderRadius      : 20,
-    marginEnd         : 8,
-    overflow          : 'hidden',
   },
   otherMessageOnlyWrap: {
     flexDirection     : 'row',

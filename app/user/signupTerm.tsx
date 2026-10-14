@@ -7,7 +7,7 @@ import { COLOR, COMM_STYLES } from '@/constants';
 import { router } from "expo-router";
 import { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View, Text, Modal } from "react-native";
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 /**
