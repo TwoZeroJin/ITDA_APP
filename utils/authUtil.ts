@@ -58,7 +58,10 @@ async function logoutUser() {
   await saveAsyncStore(STORE_KEY.PUSH_COUNT, '0');
   emitPushCountChanged(0);
 
-  router.dismissAll();
+  // 스택에 닫을 화면이 없을 때 dismissAll 하면 POP_TO_TOP 미처리 에러 발생
+  if (router.canDismiss()) {
+    router.dismissAll();
+  }
   router.replace("/" as any);
 }
 

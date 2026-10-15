@@ -97,7 +97,7 @@ export default function ChatListScreen() {
     setChatRooms(results);
   }, [results]);
 
-  // 카테고리에 따른 필터 및 
+  // 카테고리에 따른 필터 및 데이터 가공
   const filteredChatRooms = useMemo(() => {
     const filtered =
       activeCategory === ""
@@ -109,22 +109,20 @@ export default function ChatListScreen() {
         return room;
       }
 
-      const roomTitle = room.room_name
+      // room_name 항목 형식: "회원ID$닉네임$썸네일URL"
+      const others = room.room_name
         .split(",")
         .map((item) => item.trim())
-        .filter((item) => {
-          const [memId] = item.split("$");
-          return Number(memId) !== myMemId;
-        })
         .map((item) => {
-          const [, memNick] = item.split("$");
-          return memNick;
+          const [memId, memNick, thumb] = item.split("$");
+          return { memId: Number(memId), memNick, thumb };
         })
-        .join(",");
+        .filter(({ memId }) => memId !== myMemId);
 
       return {
         ...room,
-        room_name: roomTitle,
+        room_name: others.map(({ memNick }) => memNick).join(","),
+        thumb_url: others.find(({ thumb }) => thumb)?.thumb || room.thumb_url,
       };
     });
   }, [activeCategory, chatRooms, myMemId]);
@@ -241,19 +239,19 @@ const styles = StyleSheet.create({
     paddingVertical   : 12,
   },
   roomImageWrapper: {
-    width             : 65,
-    height            : 65,
+    width             : 60,
+    height            : 60,
     marginRight       : 14,
   },
   roomImage: {
-    width             : 65,
-    height            : 65,
-    borderRadius      : 14,
+    width             : 60,
+    height            : 60,
+    borderRadius      : 23,
     overflow          : "hidden",
   },
   chatTextContainer: {
     flex              : 1,
-    gap               : 6,
+    gap               : 4,
   },
   titleRow: {
     flexDirection     : "row",
@@ -264,10 +262,9 @@ const styles = StyleSheet.create({
     fontSize          : 16,
     fontFamily        : 'Pretendard-Medium',
     color             : COLOR.COLOR_323232,
-    marginRight       : 6,
+    marginEnd         : 3,
   },
   updatedText: {
-    marginTop         : 4,
     fontSize          : 12,
     fontFamily        : 'Pretendard-Regular',
     color             : COLOR.TEXT_DEFAULT,

@@ -20,7 +20,7 @@ function NickNameInput() {
           onSubmitEditing={() => setFocus("mem_church_nm")}
           value={value}
           maxLength={20}
-          onChangeText={onChange}
+          onChangeText={(text) => onChange(text.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s]/g, ''))}
         />
       )}
     />

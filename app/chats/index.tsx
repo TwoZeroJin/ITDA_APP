@@ -100,7 +100,12 @@ export default function IndexScreen() {
       const senderInfo = chatMemberList.find((member) => Number(member.mem_id) === Number(message.sender_id));
 
       if (!senderInfo) {
-        return message;
+        return {
+          ...message,
+          sender_id       : 0,
+          mem_nick        : '(알 수 없음)',
+          mem_image_url   : '',
+        };
       }
 
       return {
@@ -295,7 +300,7 @@ export default function IndexScreen() {
     const date = new Date(sourceDate);
     return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
   };
-  const getSenderText = (item: ChatData) => room_type === COMM_CONSTANTS.COMM_MEMBER ? room_name : item.mem_nick;
+  const getSenderText = (item: ChatData) => item.mem_nick;
   const renderChatMessage = (message: string, textStyle: object) => (
     isImageMessage(message)
       ? <Image source={{ uri: message }} style={styles.chatImage} />
@@ -380,6 +385,7 @@ export default function IndexScreen() {
             mem_id={item.sender_id}
             mem_image_url={item.mem_image_url}
             containerStyle={{ marginEnd: 8 }}
+            room_id={room_id}
           />
           <View>
             <Text style={styles.senderText}>{getSenderText(item)}</Text>

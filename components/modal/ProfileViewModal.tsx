@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import IconProfileDefault from '@/assets/images/icon_profile_default.svg';
 import { COLOR, COMM_CONSTANTS } from '@/constants';
 import { MemberInfo } from '@/types';
@@ -15,6 +14,7 @@ const GENDER_LABEL: Record<string, string> = { M: '남', F: '여' };
 interface ProfileViewModalProps {
   visible       : boolean;
   memId?        : number;
+  roomId?       : string;
   profileInfo?  : MemberInfo;
   onClose       : () => void;
   onChatPress?  : (profileInfo: MemberInfo) => void;
@@ -23,7 +23,7 @@ interface ProfileViewModalProps {
 /**
  * 회원 프로필 확인 모달
  */
-export default function ProfileViewModal({ visible, memId, profileInfo, onClose, onChatPress }: ProfileViewModalProps) {
+export default function ProfileViewModal({ visible, memId, roomId, profileInfo, onClose, onChatPress }: ProfileViewModalProps) {
   const targetMemId = memId ?? Number(profileInfo?.mem_id ?? 0);
 
   const { results: apiProfile } = useProfileDetailView(
@@ -40,7 +40,7 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
     const fetchMyMemberInfo = async () => {
       const memberInfo = await getMemberInfo();
       setMyMemId(memberInfo.mem_id ?? 0);
-      }
+    }
     fetchMyMemberInfo();
   }, []);
 
@@ -99,8 +99,8 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
 
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>
-      <View style={styles.background}>
-        <View style={styles.container}>
+      <TouchableOpacity style={styles.background} activeOpacity={1} onPress={onClose}>
+        <TouchableOpacity style={styles.container} activeOpacity={1} onPress={() => {}}>
           {/* 상단 헤더 */}
           <View style={styles.header}>
             <Text style={styles.headerTitle}>프로필 확인</Text>
@@ -143,7 +143,7 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
               )}
             </View>
 
-            {myMemId !== displayInfo.mem_id && (
+            {((myMemId !== displayInfo.mem_id) && (displayInfo.room_id !== roomId)) && (
               <TouchableOpacity style={styles.chatButton} activeOpacity={0.6} onPress={handleChatPress}>
                 <Text style={styles.chatButtonText}>채팅</Text>
               </TouchableOpacity>
@@ -174,8 +174,8 @@ export default function ProfileViewModal({ visible, memId, profileInfo, onClose,
               <Text style={styles.interestEmptyText}>등록된 관심 취미가 없습니다.</Text>
             )}
           </View>
-        </View>
-      </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 }
@@ -258,6 +258,7 @@ const styles = StyleSheet.create({
     borderRadius        : 14,
     paddingHorizontal   : 10,
     paddingVertical     : 3,
+    justifyContent      : 'center',
   },
   churchChipText: {
     fontSize            : 12,

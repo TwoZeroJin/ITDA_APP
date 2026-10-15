@@ -7,18 +7,19 @@ import { MemberInfo } from '@/types';
 import ProfileViewModal from '@/components/modal/ProfileViewModal';
 
 interface ProfileIconProps {
-  mem_image_url?: string;
-  type?: 'HOST' | 'MEMBER';
-  mem_id?: number | string;
-  profileInfo?: MemberInfo;
-  onChatPress?: (profileInfo: MemberInfo) => void;
-  containerStyle?: StyleProp<ViewStyle>;
+  mem_image_url?  : string;
+  type?           : 'HOST' | 'MEMBER';
+  mem_id?         : number | string;
+  room_id?        : string;
+  profileInfo?    : MemberInfo;
+  onChatPress?    : (profileInfo: MemberInfo) => void;
+  containerStyle? : StyleProp<ViewStyle>;
 }
 
 /**
  * 사용자 프로필 아이콘
  */
-const ProfileIcon = ({ mem_image_url, type, mem_id, profileInfo, onChatPress, containerStyle }: ProfileIconProps) => {
+const ProfileIcon = ({ mem_image_url, type, mem_id, room_id, profileInfo, onChatPress, containerStyle }: ProfileIconProps) => {
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
 
   const targetMemId = Number(mem_id ?? profileInfo?.mem_id ?? 0);
@@ -66,6 +67,7 @@ const ProfileIcon = ({ mem_image_url, type, mem_id, profileInfo, onChatPress, co
         <ProfileViewModal
           visible={isProfileModalVisible}
           memId={targetMemId}
+          roomId={room_id}
           profileInfo={effectiveProfileInfo}
           onClose={() => setIsProfileModalVisible(false)}
           onChatPress={onChatPress}

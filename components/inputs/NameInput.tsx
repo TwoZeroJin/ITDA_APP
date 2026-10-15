@@ -29,7 +29,7 @@ function NameInput({ focusField = "mem_telno" }: NameInputProps) {
           submitBehavior='submit'
           onSubmitEditing={() => setFocus(focusField)}
           value={value}
-          onChangeText={onChange}
+          onChangeText={(text) => onChange(text.replace(/[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s]/g, ''))}
           maxLength={20}
           error={error?.message}
         />
