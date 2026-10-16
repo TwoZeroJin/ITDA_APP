@@ -10,19 +10,27 @@ interface ImageCarouselProps  {
   height?           : number;             // 기본 높이
   imageRadius?      : number;             // 이미지 모서리 둥글기 (옵션)
   showIndicator?    : boolean;            // 인디케이터 표시 여부
+  fitFirstImage?    : boolean;            // 첫 이미지 비율에 맞춰 높이 조정
   resizeMode?       : "contain" | "cover" | "stretch" | "repeat" | "center"; // 이미지 리사이즈 모드 (옵션)
   isZoomEnabled?    : boolean;            // 이미지 줌 가능 여부 (옵션)
   onPressImage?     : (idx: number) => void;
 };
 
-export function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true, resizeMode = "contain", isZoomEnabled = false }: ImageCarouselProps) {
+export function ImageCarousel({ images, height = 300, imageRadius, showIndicator = true, fitFirstImage = false, resizeMode = "contain", isZoomEnabled = false }: ImageCarouselProps) {
   const [index, setIndex] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [firstImageAspectRatio, setFirstImageAspectRatio] = useState<{ uri: string; ratio: number } | null>(null);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
   const [previewIndex, setPreviewIndex] = useState(0);
   const ref = useRef<FlatList<string> | null>(null);
   
   const currentWidth = containerWidth || Dimensions.get('window').width;
+  const aspectRatio = images[0] && firstImageAspectRatio?.uri === images[0]
+    ? firstImageAspectRatio.ratio
+    : null;
+  const carouselHeight = fitFirstImage && aspectRatio
+    ? Math.min(currentWidth / aspectRatio, currentWidth * 1.00)
+    : height;
   const canSwipe = images.length > 1;
 
   const handleLayout = (event: LayoutChangeEvent) => {
@@ -46,7 +54,7 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
   };
 
   return (
-    <View style={[styles.container, { height }]} onLayout={handleLayout}>
+    <View style={[styles.container, { height: carouselHeight }]} onLayout={handleLayout}>
       {images.length > 0 && (
       <FlatList
         ref={ref}
@@ -60,7 +68,7 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
         onMomentumScrollEnd={onMomentumScrollEnd}
         renderItem={({ item, index: idx }) => (
           <Pressable
-            style={[styles.imagePage, { width: currentWidth, height }]}
+            style={[styles.imagePage, { width: currentWidth, height: carouselHeight }]}
             onPress={() => handleImagePress(idx)}
           >
             {/* @ts-ignore */}
@@ -68,9 +76,9 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
               // @ts-ignore
               <ImageZoom 
                 cropWidth={currentWidth}
-                cropHeight={height}
+                cropHeight={carouselHeight}
                 imageWidth={currentWidth}
-                imageHeight={height}
+                imageHeight={carouselHeight}
                 panToMove={true}
                 pinchToZoom={true}
                 enableDoubleClickZoom={true}
@@ -81,7 +89,7 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
                   source={{ uri: item }}
                   style={[
                     styles.image,
-                    { width: currentWidth, height },
+                    { width: currentWidth, height: carouselHeight },
                     imageRadius !== undefined && { borderRadius: imageRadius },
                   ]}
                   resizeMode={resizeMode}
@@ -92,10 +100,18 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
                 source={{ uri: item }}
                 style={[
                   styles.image,
-                  { width: currentWidth, height },
+                  { width: currentWidth, height: carouselHeight },
                   imageRadius !== undefined && { borderRadius: imageRadius },
                 ]}
                 resizeMode={resizeMode}
+                onLoad={({ nativeEvent }) => {
+                  if (fitFirstImage && idx === 0) {
+                    const { width: imageWidth, height: imageHeight } = nativeEvent.source;
+                    if (imageWidth > 0 && imageHeight > 0) {
+                      setFirstImageAspectRatio({ uri: item, ratio: imageWidth / imageHeight });
+                    }
+                  }
+                }}
               />
             )}
           </Pressable>
@@ -117,7 +133,6 @@ export function ImageCarousel({ images, height = 300, imageRadius, showIndicator
           ))}
         </View>
       )}
-
       <ImagePreviewModal
         visible={isPreviewVisible}
         images={images}

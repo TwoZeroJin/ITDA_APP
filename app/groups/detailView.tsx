@@ -461,7 +461,8 @@ export default function GroupDetailViewScreen() {
         <View>
           <ImageCarousel
             images={groupInfo?.img_list?.length ? groupInfo.img_list.map((file) => file.file_path) : []}
-            height={280}
+            fitFirstImage
+            resizeMode="cover"
           />
         </View>
 

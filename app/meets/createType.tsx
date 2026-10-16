@@ -9,6 +9,7 @@ import IconClub from '@/assets/images/icon_club.svg';
 
 /**
  * 모임 생성 - 모임 유형 세부 선택 화면(소셜링 - 일반, 클럽 - 일반/클럽 클래스 - 일반)
+ * 2026/10/16 화면 가림
  */
 export default function MeetCreateTypeScreen() {
   const [meet_type, setMeet_type] = useState<string | null>(null);

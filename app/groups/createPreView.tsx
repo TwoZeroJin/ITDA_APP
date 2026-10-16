@@ -96,7 +96,8 @@ export default function GroupCreatePreViewScreen() {
         <View>
           <ImageCarousel
             images={imageList.map((file) => file.file_path)}
-            height={280}
+            fitFirstImage
+            resizeMode="cover"
           />
         </View>
 

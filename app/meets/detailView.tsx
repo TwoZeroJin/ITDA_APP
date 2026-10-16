@@ -457,7 +457,8 @@ export default function DetailViewScreen() {
         <View>
           <ImageCarousel
             images={meetInfo?.img_list?.length ? meetInfo.img_list.map((file) => file.file_path) : []}
-            height={280}
+            fitFirstImage
+            resizeMode="cover"
           />
         </View>
 

@@ -138,7 +138,7 @@ export default function HomeScreen() {
         <CommUpcomingMeetList upcomingMeetList={upcomingMeetList} />
 
         {/* 카테고리 섹션 */}
-        <CommCategoryList onCategorySelect={handleCategorySelect} />
+        {/* <CommCategoryList onCategorySelect={handleCategorySelect} /> */}
 
         <DividingLine />
 
@@ -148,7 +148,7 @@ export default function HomeScreen() {
         <DividingLine />
 
         {/* 함께한 이야기 섹션 */}
-        <CommReviewList title="함께한 이야기" subTitle="우리가 함께한 순간, 진심이 담긴 후기 📝" reviewList={reviewList} />
+        <CommReviewList title="커뮤니티" subTitle="우리들의 일상 이야기 📝" reviewList={reviewList} />
 
       </ScrollView>
       {/* Floating 버튼, 소셜링/클럽 생성 버튼 (화면에 고정) */}

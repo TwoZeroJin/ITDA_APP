@@ -100,10 +100,11 @@ export default function CommunityFeed({ item, handleLike, handleReviewLike, hand
 
         {/* 이미지 슬라이더 영역 */}
         {imageList.length > 0 && (
-          <View style={styles.commMargin}>
+          <View style={styles.imageSlider}>
             <ImageCarousel
               images={imageList?.length ? imageList.map((file) => file.file_path) : []}
-              height={330}
+              fitFirstImage
+              resizeMode="cover"
             />
           </View>
         )}
@@ -181,6 +182,10 @@ export default function CommunityFeed({ item, handleLike, handleReviewLike, hand
 
 const styles = StyleSheet.create({
   commMargin: {
+    marginBottom        : 16,
+  },
+  imageSlider: {
+    width               : '100%',
     marginBottom        : 16,
   },
   feedContainer: {

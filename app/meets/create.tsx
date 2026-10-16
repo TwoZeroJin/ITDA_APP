@@ -68,10 +68,16 @@ export default function MeetCreateScreen() {
           })}
         </View>
 
-        <CommBottomButton label="다음" onPress={() => meet && router.navigate(
-            meet === COMM_CONSTANTS.COMM_GROUP ? '/groups/createDetail' : '/meets/createType',
-          )}
-          disabled={!meet}/>
+        <CommBottomButton label="다음" onPress={() => meet && router.navigate({
+            // 2026/10/16 화면 바로 이동
+            // meet === COMM_CONSTANTS.COMM_GROUP ? '/groups/createDetail' : '/meets/createType',
+            pathname : meet === COMM_CONSTANTS.COMM_GROUP ? '/groups/createDetail' : '/meets/createDetail',
+            params : {
+              meet_type: COMM_CONSTANTS.MEET_TYPE_NORMAL
+            }
+          })}
+          disabled={!meet}
+        />
     </View>
   );
 }
