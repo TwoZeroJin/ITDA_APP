@@ -38,6 +38,7 @@ export default function CommReviewList({ title = '피드', subTitle = '', review
         <TouchableOpacity 
           style={styles.moreButton}
           onPress={() => router.navigate('/community')}
+          hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
           activeOpacity={0.6}
         >
           <ArrowRight width={11} height={16} />
@@ -53,7 +54,12 @@ export default function CommReviewList({ title = '피드', subTitle = '', review
         columnWrapperStyle={styles.row}
         renderItem={({ item }) => {
           return (
-            <View style={styles.card}>
+            <TouchableOpacity 
+              style={styles.card}
+              onPress={() => router.navigate('/community')}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              activeOpacity={0.6}
+            >
               <Image
                 source={imageErrors[item.review_id ?? 0] || !item.thumb_url ? require('@/assets/images/no_image.png') : { uri: item.thumb_url }}
                 style={styles.image}
@@ -65,7 +71,7 @@ export default function CommReviewList({ title = '피드', subTitle = '', review
               <Text style={styles.cardDesc} numberOfLines={2} ellipsizeMode="tail">
                 {item.review_content}
               </Text>
-            </View>
+            </TouchableOpacity>
           );
         }}
       />
